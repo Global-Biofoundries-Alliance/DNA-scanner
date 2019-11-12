@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+	xmlns:sbol="http://sbols.org/v1#"
+	xmlns:sublime="http://clarkparsia.com/sublime#"
+	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+<sbol:DnaComponent rdf:about="urn:30fa66e8-bb09-4cba-a584-aa31e47d7c32">
+	<sbol:displayId>R_oryzae_lipase_noSP_KB-P61872</sbol:displayId>
+	<sbol:description>pTwist Amp Medium Copy</sbol:description>
+	<sbol:dnaSequence>
+		<sbol:DnaSequence rdf:about="urn:5e26a655-c394-41a4-b3d4-ce388a92c1ba">
+			<sbol:nucleotides>atggtgccagtgagcgggaaatcaggcagttcaaacacggctgtatcagcgagtgacaacgctgcattgccgccgctgatatcatcacgttgtgcacccccatcaaacaagggttcaaagtctgacttgcaggcagagccgtacaacatgcagaagaatactgaatggtacgaatctcacggtggtaatttaacctcgattggaaagagggatgataacctggttggtggcatgactcttgacttaccttctgacgccccgccaatctctttatcttcatctacgaattcagcatcagacggtggaaaggtcgtcgccgcaaccactgctcagatacaggagttcacgaagtacgccggaatcgcggcgacggcgtactgtcgcagtgttgtccctgggaacaagtgggattgcgtccagtgtcagaagtgggtgccagacggcaagatcatcacgacgttcactagccttctttctgacactaacggttatgtgctgcgttcagacaagcagaagacaatatacctggtgtttaggggtacgaacagcttcaggtccgccatcacagacatcgtatttaactttagcgattacaagccggtaaagggagcaaaagtgcatgccggttttctgagctcatatgagcaggtcgtgaacgattacttcccggttgtccaggagcaactgaccgctcatccgacatacaaggtcattgttactggacactctttgggcggtgcccaggctttgttagcagggatggacttgtaccaaagagaaccaagactgagccctaagaatttgtcgatatttaccgtcggtggccccagggtgggcaaccctactttcgcgtactatgtagagtcaacaggaatacctttccagaggactgtccacaagagagatatagtcccccacgtcccgccacagtccttcggattcttacatcctggggttgagtcttggatcaagtcgggaacgtcaaatgtacagatttgtacttcagagattgagactaaggactgctcaaacagcatcgttcctttcacttcaatcttggaccacttatcttacttcgacataaacgaagggtcctgtttggaagcggccgcgaaagaggctgcggcgaaagaagccgccgcgaaa</sbol:nucleotides>
+		</sbol:DnaSequence>
+	</sbol:dnaSequence>
+</sbol:DnaComponent>
+
+</rdf:RDF>

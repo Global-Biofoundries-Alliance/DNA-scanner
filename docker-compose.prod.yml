@@ -1,0 +1,5 @@
+# Extends the docker-compose.yml for production use.
+
+version: '3.3'
+services:
+    backend:

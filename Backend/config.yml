@@ -1,0 +1,14 @@
+pinger:
+
+controller:
+
+review:
+    db: 
+        # https://docs.sqlalchemy.org/en/13/core/engines.html
+        dialect: mysql 
+        driver: 
+        username: KeBqDrxA8ScfD9l7x1QhSprU9LjZVL
+        password: z0uo6nK3l5thpph4uXykbMpwur6zgA
+        host: db
+        port: 3306
+        database: review

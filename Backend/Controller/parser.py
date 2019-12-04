@@ -41,7 +41,7 @@ def parseFile(inputFile, fileFormat):
     return returnList
 
   
-def parseSBOL(inputString):
+def parseSBOL(inputFile):
     i = 0
     doc = sbol.Document()
     doc.read(inputFile)

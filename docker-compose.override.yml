@@ -1,4 +1,4 @@
-# Extends tthe docker-compose.yml for development use
+# Extends the docker-compose.yml for development use
 
 version: '3.3'
 services:

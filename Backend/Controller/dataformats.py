@@ -1,8 +1,9 @@
-class SearchResponse:
-        size = 10
-        count = 150
-        offset = 1
-        result = [
+class SearchResponse(object):
+    def __init__(self):
+        self.size = 10
+        self.count = 150
+        self.offset = 1
+        self.result = [
             {
                 "offers": [
                     {
@@ -22,5 +23,12 @@ class SearchResponse:
                 }
             }
         ]
-        message = ["TWIST API currently unavailable"]
+        self.message = ["TWIST API currently unavailable"]
 
+
+def toDict(resp: SearchResponse):
+    dictionary = resp.__dict__
+    for key in dictionary.keys():  # remove all of the keys added by python
+        if key.startswith("__", 0, len(key)):
+            del dictionary[key]
+    return dictionary

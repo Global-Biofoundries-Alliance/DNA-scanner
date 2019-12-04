@@ -4,14 +4,12 @@ FROM alpine:3.1
 RUN apk add --update python py-pip
 
 # Copy Python Sources
+COPY Backend /src/backend
 WORKDIR /src/backend/
-COPY Controller .
-COPY Pinger .
-ADD *.py .
 
 # Copy Konfiguration File
-ADD config.yml .
-ADD requirements.txt .
+#ADD config.yml .
+#ADD requirements.txt .
 
 # Install app dependencies
 RUN pip install -r requirements.txt

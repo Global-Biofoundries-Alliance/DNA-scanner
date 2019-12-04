@@ -1,0 +1,35 @@
+# Extends the docker-compose.yml for development use
+
+version: '3.3'
+services:
+    backend:
+        # backend will be startet after db
+        depends_on:
+            - db
+        networks:
+            - frontnet
+            - backnet
+    frontend:
+        networks:
+            - frontnet
+    # Creates container with a database
+    db:
+        image: mariadb
+        container_name: review
+        volumes:
+            - /srv/dnascanner/db:/var/lib/mysql
+            - /etc/localtime:/etc/localtime:ro
+        environment:
+            - MYSQL_ROOT_PASSWORD=81OtNwdKcYdV4SEeki9SgotiW8GotF
+            - MYSQL_PASSWORD=z0uo6nK3l5thpph4uXykbMpwur6zgA
+            - MYSQL_DATABASE=review
+            - MYSQL_USER=KeBqDrxA8ScfD9l7x1QhSprU9LjZVL
+        networks:
+            - backnet
+        restart: unless-stopped
+
+# Network is used to make DB only available for the backend and not for the frontend.
+networks:
+    frontnet:
+    backnet:
+

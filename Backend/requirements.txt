@@ -1,1 +1,4 @@
 Flask
+biopython
+json
+pysbol

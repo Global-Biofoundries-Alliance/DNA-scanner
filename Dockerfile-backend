@@ -1,7 +1,7 @@
-FROM alpine:3.1
+FROM python:3
 
 # Update 
-RUN apk add --update python py-pip
+#RUN apk add --update python3 py-pip3
 
 # Copy Python Sources
 COPY Backend /src/backend

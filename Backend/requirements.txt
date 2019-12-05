@@ -1,4 +1,2 @@
 Flask
 biopython
-json
-pysbol

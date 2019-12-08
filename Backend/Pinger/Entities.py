@@ -1,3 +1,6 @@
+import json
+from enum import Enum
+
 #########################################################
 #                                                       #
 #   Static                                              #
@@ -74,7 +77,7 @@ class Price:
     currency = "EUR"
 
     # Is this price specific for the user
-    customerSpecific = false
+    customerSpecific = False
 
 
 class Offer:

@@ -1,4 +1,3 @@
-import json
 from enum import Enum
 
 #########################################################
@@ -19,6 +18,22 @@ class MessageType(Enum):
     # Pinger Internal Error
     INTERNAL_ERROR = 4
 
+
+# Type of the way to make the order
+class PurchaseType(Enum):
+    # By Shopping Card
+    SHOPPING_CARD = 0
+    # Not supported
+    NOT_SUPPORTED = 1
+    # By redirect to an specific URL
+    URL_REDIRECT = 2
+
+
+# Specific currencies
+class Currency(Enum):
+    # Euro
+    EUR = 0
+
 #########################################################
 #                                                       #
 #   Data-Classes                                        #
@@ -31,72 +46,91 @@ class MessageType(Enum):
 #
 class SequenzInformation:
 
-    def __init__(self, name, sequence):
+    def __init__(self, sequence, name = "", key = ""):
+        # ID of the sequence. TODO Autogenerate if not set
+        self.key = key
+        # Name of the sequence. Readable representation of the sequence for users
         self.name = name
+        # The sequence
         self.sequence = sequence
 
-    # ID of the sequence. TODO Autogenerate if not set
-    key = ""
-    # Name of the sequence. Readable representation of the sequence for users 
-    name = ""
-    # The sequence
-    sequence = ""
-
-    # TODO add an toJSON for serializable
-
-    def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__, 
-            sort_keys=True, indent=4)
 
 #
 #   Desc: Represantation of a Vendor
 #
 class VendorInformation:
 
-    def __init__(self, key, name, shortName):
+    def __init__(self, name = "", shortName = "", key = ""):
+        # ID of an Vendor. Will be static for every vendor
         self.key = key
+
+        # Full name of the vendor
         self.name = name
+
+        # Short version name of the vendor. Maybe equal to full name.
         self.shortName = shortName
-    
-    # ID of an Vendor. Will be static for every vendor
-    key = ""
-    # Full name of the vendor
-    name = ""
-    # Short version name of the vendor. Maybe equal to full name.
-    shortName = ""
 
 #
 #   Desc: Representation of a price
 #
 class Price:
 
-    # The price
-    amount = 0
+    def __init__(self, amount=0, currency=Currency.EUR, customerSpecific=False):
 
-    # the currency of the price
-    currency = "EUR"
+        # the currency of the price
+        self.currency = currency
 
-    # Is this price specific for the user
-    customerSpecific = False
+        # The price
+        self.amount = amount
 
+        # Is this price specific for the user
+        self.customerSpecific = customerSpecific
 
+#
+#   Desc:   Sequence and a list of offers for this sequence
+#
+class SequenceOffers:
+
+    def __init__(self, sequenceInformation, offers = []):
+
+        # Sequence information
+        self.sequenceInformation = sequenceInformation
+
+        # Multiple offers for the sequence information
+        self.offers = offers
+
+#
+#   Desc:   Representation of a Offer
+#
 class Offer:
 
-    def __init__(self):
-        pass
+    def __init__(self, vendorInformation = {}, price = {}, messages = [], turnovertime = -1):
 
-    # sequence of the offer
-    sequenceInformation = {}
+        ### Removed for class SequenceOffers
+        # sequence of the offer
+        # sequenceInformation = {}
 
-    # vendor of the offer
-    vendorInformation = {}
+        # vendor of the offer
+        self.vendorInformation = vendorInformation
 
-    # price of the offer
-    price = {}
+        # price of the offer
+        self.price = price
 
-    # for example syntesis-errors
-    messages = []
+        # Time to deliver
+        # TODO find representation. Days?
+        self.turnovertime = turnovertime
 
+        # for example syntesis-errors
+        self.messages = messages
+
+#
+#   Desc:   Messages with specific type and text
+#
 class Message:
-    msgType = MessageType.DEBUG
-    value = ""
+
+    def __init__(self, type = MessageType.DEBUG, text = ""):
+        self.type = type
+        self.text = text
+
+
+

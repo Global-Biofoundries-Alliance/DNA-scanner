@@ -1,4 +1,4 @@
-FROM python:3
+FROM python:3.6.9
 
 # Update 
 #RUN apk add --update python3 py-pip3

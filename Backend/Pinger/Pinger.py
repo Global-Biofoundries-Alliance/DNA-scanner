@@ -61,7 +61,6 @@ class BasePinger:
 class CompositePinger(BasePinger):
 
     def __init__(self):
-        print("Composite Pinger")
         self.vendorHandler = []
         self.sequenceOffers = []
 
@@ -146,7 +145,6 @@ class DummyPinger(BasePinger):
 
 
     def __init__(self):
-        print("dummy pinger")
         self.running = False
 
 

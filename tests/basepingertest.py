@@ -5,8 +5,11 @@ from Pinger import Pinger, Entities
 
 class TestCompositePinger(unittest.TestCase):
 
+    name = "CompositePinger"
+
     # Checks the isRunning() method.
     def test_is_running(self):
+        print ("Start test for: " + TestCompositePinger.name + " - isRunning()")
         # Create CompositePinge with 2 registered DummyPinger
         pingerDummy1 = Pinger.DummyPinger()
         pingerDummy2 = Pinger.DummyPinger()
@@ -36,6 +39,7 @@ class TestCompositePinger(unittest.TestCase):
 
     # Check the getVendor method
     def test_get_vendor(self):
+        print ("Start test for: " + TestCompositePinger.name + " - getVendor")
         # Create Dummy Pinger
         pingerDummy1 = Pinger.DummyPinger()
         pingerDummy2 = Pinger.DummyPinger()
@@ -64,6 +68,8 @@ class TestCompositePinger(unittest.TestCase):
 
     # Checks the getorders method
     def test_getorders(self):
+        print ("Start test for: " + TestCompositePinger.name + " - getVendors")
+
         # Intitialize Pinger and DummyPinger
         pingerDummy1 = Pinger.DummyPinger()
         pingerDummy2 = Pinger.DummyPinger()

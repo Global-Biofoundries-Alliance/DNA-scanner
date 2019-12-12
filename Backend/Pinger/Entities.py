@@ -47,7 +47,7 @@ class Currency(Enum):
 class SequenzInformation:
 
     def __init__(self, sequence, name = "", key = ""):
-        # ID of the sequence. TODO Autogenerate if not set
+        # ID of the sequence.
         self.key = key
         # Name of the sequence. Readable representation of the sequence for users
         self.name = name
@@ -117,7 +117,6 @@ class Offer:
         self.price = price
 
         # Time to deliver
-        # TODO find representation. Days?
         self.turnovertime = turnovertime
 
         # for example syntesis-errors

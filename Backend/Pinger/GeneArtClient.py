@@ -1,19 +1,10 @@
-class GeneArtClient:
-    server = ""
-    validate = ""
-    status = ""
-    addToCart = ""
-    upload = ""
-    username = ""
-    token = ""
-    diagnostics = ""
-    validAcc = False
-    conf = {}
-    
+class GeneArtClient:   
     def __init__(self): 
         with open("../config.yml", 'r') as ymlfile:
             cfg = yaml.load(ymlfile)
         self.conf = cfg['pinger']['geneart']
+        self.dnaStrings = self.conf['dnaStrings'] == "enabled"
+        self.hqDnaStrings = self.conf['hqDnaStrings'] == "enabled"
         self.server = self.conf['server']
         self.validate = self.conf['validate']
         self.status = self.conf['status']
@@ -21,8 +12,7 @@ class GeneArtClient:
         self.upload = self.conf['upload']
         self.username = self.conf['username']
         self.token = self.conf['token']
-        self.diagnostics = "https://www.thermofisher.com/order/gene-design-services/api/diagnostics/v1/bulk?waitSec=60&forceRecompute=true"
-        self.validAcc = self.auth()
+        self.validAcc = self.authenticate()
         if(self.validAcc == False):
             raise Exception('User Credentials are wrong')
         
@@ -46,23 +36,94 @@ class GeneArtClient:
         }
         return request
     
-    def auth(self):
-        result = self.statusRev("2019AAAAAX")
+    def authenticate(self):
+        result = self.statusReview("2019AAAAAX")
         if("errortype" in result.keys() and result["errortype"] == "authenticationFailed"):
             return False
         else:
             return True
     
-    def statusRev(self, projectId):
+    def statusReview(self, projectId):
         request = self.getAuthPart(projectId)
         dest = self.destination("status")
         resp = requests.post(dest, json = request)
         result = resp.json()
         return result
     
-    def addtocrt(self, projectId):
+    def toCart(self, projectId):
         request = self.getAuthPart(projectId)
         dest = self.destination("addToCart")
         resp = requests.post(dest, json = request)
         result = resp.json()
         return result
+    
+    def constUpload(self, listOfSequences, product):
+        now = datetime.now() 
+        dt_string = now.strftime("%d-%m-%Y_%H_%M")
+        projectname = "ect-" + str(dt_string)
+        dest = self.destination("upload")
+        constructsList = []
+        for construct in listOfSequences:
+            sequence = {
+                "name": self.generateName(construct["name"]),
+                "sequence": construct["sequence"],
+                "product": product,
+                "comment": "idN: " + construct["idN"] + " , name: " + construct["name"]
+              }
+            constructsList.append(sequence)
+        request = {
+            "authentication":
+         { "username": self.username,
+           "token": self.token
+         },
+            "project": {
+                "name": projectname,
+                "constructs": constructsList
+            }
+        }
+        #print(constructsList)
+        #print(index)
+        print(request)
+        resp = requests.post(dest, json = request)
+        print(resp)
+        result = resp.json()
+        print(result)
+        
+    def constValidate(self, listOfSequences, product):
+        now = datetime.now() 
+        dt_string = now.strftime("%d-%m-%Y_%H_%M")
+        projectname = "project-" + str(dt_string)
+        dest = self.destination("validate")
+        constructsList = []
+        for construct in listOfSequences:
+            sequence = {
+                "name": self.generateName(construct["name"]),
+                "sequence": construct["sequence"],
+                "product": product,
+                "comment": "idN: " + construct["idN"] + " , name: " + construct["name"]
+              }
+            constructsList.append(sequence)
+        request = {
+           "project": {
+                "name": projectname,
+                "constructs": constructsList
+            }
+        }
+        #print(constructsList)
+        #print(index)
+        print(request)
+        resp = requests.post(dest, json = request)
+        print(resp)
+        result = resp.json()
+        print(result)
+    
+    def generateName(self, prevName):
+        if(len(prevName) == 0):
+            now = datetime.now() 
+            dt_string = now.strftime("%d/%m/%Y_%H:%M")
+            prevName = "consname-" + str(dt_string)
+        else: 
+            if(len(prevName) > 20):
+                prevName = prevName[:20]
+        clean_consName = re.sub(r'[^.A-z0-9_\-]', "_", prevName)
+        return clean_consName

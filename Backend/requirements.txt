@@ -1,3 +1,8 @@
 Flask
 biopython
 pysbol
+json
+requests
+yaml
+re
+datetime

@@ -76,27 +76,27 @@ class TestCompositePinger(unittest.TestCase):
         p = Pinger.CompositePinger()
 
         # Start search with 1 Sequence and without vendors
-        p.searchOffers([Entities.SequenzInformation("ACTG", "TestSequence", "ts1")])
+        p.searchOffers([Entities.SequenceInformation("ACTG", "TestSequence", "ts1")])
         self.assertEqual(1, len(p.getOffers()))
         self.assertEqual(0, len(p.getOffers()[0].offers))
 
         # search with 2 sequences and 1 vendor
         p.registerVendor(Entities.VendorInformation("Dummy", "Dummy", "D1"), pingerDummy1)
-        p.searchOffers([Entities.SequenzInformation("ACTG", "TestSequence", "ts1"),
-                        Entities.SequenzInformation("ACTG", "TestSequence", "ts2")])
+        p.searchOffers([Entities.SequenceInformation("ACTG", "TestSequence", "ts1"),
+                        Entities.SequenceInformation("ACTG", "TestSequence", "ts2")])
         self.assertEqual(2, len(p.getOffers()))
         self.assertEqual(1, len(p.getOffers()[0].offers))
         self.assertEqual(1, len(p.getOffers()[1].offers))
 
         # search with 1 sequence and 2 vendors
         p.registerVendor(Entities.VendorInformation("Dummy", "Dummy", "D2"), pingerDummy2)
-        p.searchOffers([Entities.SequenzInformation("ACTG", "TestSequence", "ts1")])
+        p.searchOffers([Entities.SequenceInformation("ACTG", "TestSequence", "ts1")])
         self.assertEqual(1, len(p.getOffers()))
         self.assertEqual(2, len(p.getOffers()[0].offers))
 
         # search with 2 sequences, 1 vendor with orders and 1 vendor without orders
-        p.searchOffers([Entities.SequenzInformation("ACTG", "TestSequence", "ts1"),
-                        Entities.SequenzInformation("ACTG", "TestSequence", "ts2")])
+        p.searchOffers([Entities.SequenceInformation("ACTG", "TestSequence", "ts1"),
+                        Entities.SequenceInformation("ACTG", "TestSequence", "ts2")])
         pingerDummy2.offers = []
         self.assertEqual(2, len(p.getOffers()))
         self.assertEqual(1, len(p.getOffers()[0].offers))

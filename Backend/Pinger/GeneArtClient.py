@@ -1,21 +1,23 @@
-class GeneArtClient:   
-    def __init__(self): 
-        with open("../config.yml", 'r') as ymlfile:
-            cfg = yaml.load(ymlfile)
-        self.conf = cfg['pinger']['geneart']
-        self.dnaStrings = self.conf['dnaStrings'] == "enabled"
-        self.hqDnaStrings = self.conf['hqDnaStrings'] == "enabled"
-        self.server = self.conf['server']
-        self.validate = self.conf['validate']
-        self.status = self.conf['status']
-        self.addToCart = self.conf['addToCart']
-        self.upload = self.conf['upload']
-        self.username = self.conf['username']
-        self.token = self.conf['token']
+class GeneArtClient: 
+    # Constructur for a GeneArtClient ()
+    # Takes as input the configuration's parameters 
+    # dnaStrings and hqDnaStrings have per defualt the value True
+
+    def __init__(self, server, validate, status, addToCart, upload, username, token, dnaStrings = True, hqDnaStrings = True): 
+        self.server = server
+        self.validate = validate
+        self.status = status
+        self.addToCart = addToCart
+        self.upload = upload
+        self.username = username
+        self.token = token
+        self.dnaStrings = dnaStrings 
+        self.hqDnaStrings = hqDnaStrings
         self.validAcc = self.authenticate()
         if(self.validAcc == False):
             raise Exception('User Credentials are wrong')
         
+    # Defines the destination address for the action defined in the parameter     
     def destination(self, action):
         if(action == "validate"):
             return self.server + self.validate
@@ -26,6 +28,7 @@ class GeneArtClient:
         if(action == "upload"):
             return self.server + self.upload
     
+    # Returns the authentication field which is used in several requests.
     def getAuthPart(self, projectId):
         request = {
             "authentication":
@@ -36,20 +39,25 @@ class GeneArtClient:
         }
         return request
     
+    # Authentication Operation
+    # Checks if the username and password are correct
+    # Distinguishes based on the error message
     def authenticate(self):
-        result = self.statusReview("2019AAAAAX")
+        result = self.statusReview("2019AAAAAX") # Dummy projectId
         if("errortype" in result.keys() and result["errortype"] == "authenticationFailed"):
             return False
         else:
             return True
-    
+
+    # Review stored project
     def statusReview(self, projectId):
         request = self.getAuthPart(projectId)
         dest = self.destination("status")
         resp = requests.post(dest, json = request)
         result = resp.json()
         return result
-    
+
+    # Add Project to Cart
     def toCart(self, projectId):
         request = self.getAuthPart(projectId)
         dest = self.destination("addToCart")
@@ -57,6 +65,7 @@ class GeneArtClient:
         result = resp.json()
         return result
     
+    # Upload Project with constructs
     def constUpload(self, listOfSequences, product):
         now = datetime.now() 
         dt_string = now.strftime("%d-%m-%Y_%H_%M")
@@ -81,14 +90,11 @@ class GeneArtClient:
                 "constructs": constructsList
             }
         }
-        #print(constructsList)
-        #print(index)
-        print(request)
         resp = requests.post(dest, json = request)
-        print(resp)
         result = resp.json()
-        print(result)
-        
+        return result
+    
+    # Validate Project
     def constValidate(self, listOfSequences, product):
         now = datetime.now() 
         dt_string = now.strftime("%d-%m-%Y_%H_%M")
@@ -109,14 +115,11 @@ class GeneArtClient:
                 "constructs": constructsList
             }
         }
-        #print(constructsList)
-        #print(index)
-        print(request)
         resp = requests.post(dest, json = request)
-        print(resp)
         result = resp.json()
-        print(result)
+        return result
     
+    # Name-Generator used to define project name if none is given and adjust the given name if it isn't conform the documentation
     def generateName(self, prevName):
         if(len(prevName) == 0):
             now = datetime.now() 

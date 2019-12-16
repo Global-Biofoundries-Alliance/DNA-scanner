@@ -1,35 +1,40 @@
 from Bio import SeqIO
 import json
-import requests
 import sbol
-# from ..Pinger import p
+
+# Object representing a sequence
 class SeqObject:
     idN = ""
     name = ""
     sequence = ""
-
+    
+    # Converts the SeqObject into a JSON-Object
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__, 
             sort_keys=True, indent=4)
 
+    # Parse File based on inputFileName
 def parse(inputFileName):
     fileType = getFileType(inputFileName)
     if(fileType == "fasta" or fileType == "genbank"):
-        return parseFile(inputFileName,fileType)
+        return parseFastaGB(inputFileName,fileType)
     if(fileType == "sbol"):
         return parseSBOL(inputFileName)
-        
+    
+    # Returns the file format based on the file ending
 def getFileType(inputFileName):
     if(inputFileName.endswith('.gb') or inputFileName.endswith('.gbk')):
         return 'genbank'
-    elif(inputFileName.endswith('.fasta')):
+    elif(inputFileName.endswith('.fasta') or inputFileName.endswith('.fna') or inputFileName.endswith('.faa')):
         return 'fasta'
     elif(inputFileName.endswith('.xml') or inputFileName.endswith('.rdf')):
         return 'sbol'
     else:
-        raise NameError("FILE NOT SUPPORTED! --gb, gbk, fasta, xml, rdf")
+        raise NameError("FILE NOT SUPPORTED! --gb, gbk, fasta, faa, fna, xml, rdf")
     
-def parseFile(inputFile, fileFormat):
+    # Parses only Fasta and GenBank files
+    # Returns a list of SeqObject where each object represents a sequence of the given file
+def parseFastaGB(inputFile, fileFormat):
     i = 0
     returnList = []
     for seq_record in SeqIO.parse(inputFile, fileFormat):
@@ -40,7 +45,8 @@ def parseFile(inputFile, fileFormat):
         returnList.append(sequence)
     return returnList
 
-  
+    # Parses only SBOL files
+    # Returns a list of SeqObject where each object represents a sequence of the given file
 def parseSBOL(inputFile):
     i = 0
     doc = sbol.Document()

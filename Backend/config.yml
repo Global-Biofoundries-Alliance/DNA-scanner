@@ -5,10 +5,10 @@ pinger:
         status: /status/v1
         addToCart: /addtocart/v1
         upload: /upload/v1
-        username: YOUR_USERNAME
-        token: YOUR_TOKEN
         dnaStrings: enabled
         hqDnaStrings: enabled
+        username: YOUR_USERNAME
+        token: YOUR_TOKEN
     twist:
         server: https://twist-api.twistbioscience-staging.com
         email: YOUR_EMAIL

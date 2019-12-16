@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+	xmlns:sbol="http://sbols.org/v1#"
+	xmlns:sublime="http://clarkparsia.com/sublime#"
+	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+<sbol:DnaComponent rdf:about="urn:cf782a11-da63-4584-8993-855de7a64bf8">
+	<sbol:displayId>PBAD</sbol:displayId>
+	<sbol:description>Promoter sequence</sbol:description>
+	<sbol:dnaSequence>
+		<sbol:DnaSequence rdf:about="urn:ffaab88b-ba55-4c2e-9d84-50a2bf7a8a45">
+			<sbol:nucleotides>acttttcatactcccgccattcagagaagaaaccaattgtccatattgcatcagacattgccgtcactgcgtcttttactggctcttctcgctaaccaaaccggtaaccccgcttattaaaagcattctgtaacaaagcgggaccaaagccatgacaaaaacgcgtaacaaaagtgtctataatcacggcagaaaagtccacattgattatttgcacggcgtcacactttgctatgccatagcatttttatccataagattagcggatcctacctgacgctttttatcgcaactctctactgtttctccatacccgtttttttgggctagc</sbol:nucleotides>
+		</sbol:DnaSequence>
+	</sbol:dnaSequence>
+	<rdf:type rdf:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+</sbol:DnaComponent>
+<sbol:DnaComponent rdf:about="urn:3977b893-899c-4e14-912f-e0dfdbedc5b4">
+	<sbol:displayId>TEF1-Promotor-Region (Ashbya gossypii)</sbol:displayId>
+	<sbol:description>YALI0E06479_Transketolase_(TK)_TZO</sbol:description>
+	<sbol:dnaSequence>
+		<sbol:DnaSequence rdf:about="urn:a41ee20a-c4a8-4b4c-9a03-f536480f740c">
+			<sbol:nucleotides>tgtgactgtcgcccgtacatttagcccatacatccccatgtataatcatttgcatccatacattttgatggccgcacggcgcgaagcaaaaattacggctcctcgctgcagacctgcgagcagggaaacgctcccctcacagacgcgttgaattgtccccacgccgcgcccctgtagagaaatataaaaggttaggatttgccactgaggttcttctttcatatacttccttttaaaatcttgctaggatacagttctcacatcacatccgaacataaacaa</sbol:nucleotides>
+		</sbol:DnaSequence>
+	</sbol:dnaSequence>
+	<sbol:annotation>
+		<sbol:SequenceAnnotation rdf:about="urn:2bd8f24b-c37f-4a5a-a221-f1e77dc73b03">
+			<sbol:bioStart>1</sbol:bioStart>
+			<sbol:bioEnd>282</sbol:bioEnd>
+			<sbol:strand>+</sbol:strand>
+			<sbol:subComponent>
+				<sbol:DnaComponent rdf:about="urn:50c5d4cf-24b5-4eb9-a0f2-c57182fdd58b">
+					<sbol:displayId>TEF1-Promotor-Region (Ashbya gossypii)</sbol:displayId>
+					<rdf:type rdf:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+				</sbol:DnaComponent>
+			</sbol:subComponent>
+		</sbol:SequenceAnnotation>
+	</sbol:annotation>
+	<sbol:annotation>
+		<sbol:SequenceAnnotation rdf:about="urn:321c9bd4-6c9e-42c4-8e3b-589c065b4516">
+			<sbol:bioStart>1</sbol:bioStart>
+			<sbol:bioEnd>282</sbol:bioEnd>
+			<sbol:strand>+</sbol:strand>
+			<sbol:subComponent>
+				<sbol:DnaComponent rdf:about="urn:a6165cae-d790-4be9-8a89-313664ce1906">
+					<sbol:displayId>TAR 3#6</sbol:displayId>
+				</sbol:DnaComponent>
+			</sbol:subComponent>
+		</sbol:SequenceAnnotation>
+	</sbol:annotation>
+	<sbol:annotation>
+		<sbol:SequenceAnnotation rdf:about="urn:519f841b-ccc5-4200-8306-ea455592f03d">
+			<sbol:bioStart>1</sbol:bioStart>
+			<sbol:bioEnd>282</sbol:bioEnd>
+			<sbol:strand>+</sbol:strand>
+			<sbol:subComponent>
+				<sbol:DnaComponent rdf:about="urn:0584158e-1d17-4a37-8015-338346bccb94">
+					<sbol:displayId>Extracted region from pFA6-kanMX4 (p11032)</sbol:displayId>
+				</sbol:DnaComponent>
+			</sbol:subComponent>
+		</sbol:SequenceAnnotation>
+	</sbol:annotation>
+</sbol:DnaComponent>
+<sbol:DnaComponent rdf:about="urn:b3d24004-57f2-4745-a15c-5646c750786f">
+	<sbol:displayId>P_hrpL</sbol:displayId>
+	<sbol:description>Promoter of HrpL Sigma Factor of Pseudomonas syringae pv. tomato str. DC3000</sbol:description>
+	<sbol:dnaSequence>
+		<sbol:DnaSequence rdf:about="urn:6290596a-5b87-4a2e-ab50-7b27cacaffd6">
+			<sbol:nucleotides>gccggattatgtccgctgagtgggtcacggtcccggatcagttcccttgcgaagctgaccgatgtttttgtgccaaaagctgttgtggcaaaaaacggtttgcgcaaagttttgtattacaaagaatttcacattttaaaatatctttataaatcaatcagttatttctatttttaagctggcatggttatcgctatagggcttgtactactagagtcacacaggaaagtactag</sbol:nucleotides>
+		</sbol:DnaSequence>
+	</sbol:dnaSequence>
+	<sbol:annotation>
+		<sbol:SequenceAnnotation rdf:about="urn:0f5db837-e353-41df-a0a7-d7bcb703d6ea">
+			<sbol:bioStart>1</sbol:bioStart>
+			<sbol:bioEnd>235</sbol:bioEnd>
+			<sbol:strand>+</sbol:strand>
+			<sbol:subComponent>
+				<sbol:DnaComponent rdf:about="urn:db18346f-a1c3-401b-975d-e36d6ade9a3b">
+					<sbol:displayId>source synthetic DNA construct</sbol:displayId>
+				</sbol:DnaComponent>
+			</sbol:subComponent>
+		</sbol:SequenceAnnotation>
+	</sbol:annotation>
+	<sbol:annotation>
+		<sbol:SequenceAnnotation rdf:about="urn:3adb113f-eaaa-4e4f-a48a-b63bc354f0bd">
+			<sbol:bioStart>1</sbol:bioStart>
+			<sbol:bioEnd>235</sbol:bioEnd>
+			<sbol:strand>+</sbol:strand>
+			<sbol:subComponent>
+				<sbol:DnaComponent rdf:about="urn:5987f738-5518-4516-b5c2-ac9ae7a6f418">
+					<sbol:displayId>P_HrpL</sbol:displayId>
+					<rdf:type rdf:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+				</sbol:DnaComponent>
+			</sbol:subComponent>
+		</sbol:SequenceAnnotation>
+	</sbol:annotation>
+</sbol:DnaComponent>
+<sbol:DnaComponent rdf:about="urn:2a086a07-784d-4a1e-9fee-6f5201220637">
+	<sbol:displayId>P_Cat1</sbol:displayId>
+	<sbol:description>Citrobacter freundii 33587_Promoter of Cat1 gene</sbol:description>
+	<sbol:dnaSequence>
+		<sbol:DnaSequence rdf:about="urn:44e5e766-f97f-44d4-9245-26cacc582183">
+			<sbol:nucleotides>ggcacgtaagaggttccaactttcaccataatgaaataagatcactaccgggcgtattttttgagttatcgagattttcaggagctaaggaagctaaa</sbol:nucleotides>
+		</sbol:DnaSequence>
+	</sbol:dnaSequence>
+	<sbol:annotation>
+		<sbol:SequenceAnnotation rdf:about="urn:316f1780-cd21-4fa2-ba08-d42776849cd2">
+			<sbol:bioStart>1</sbol:bioStart>
+			<sbol:bioEnd>98</sbol:bioEnd>
+			<sbol:strand>+</sbol:strand>
+			<sbol:subComponent>
+				<sbol:DnaComponent rdf:about="urn:8e89d27f-dc60-4162-81b9-74041309860d">
+					<sbol:displayId>P_Cat1</sbol:displayId>
+					<rdf:type rdf:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+				</sbol:DnaComponent>
+			</sbol:subComponent>
+		</sbol:SequenceAnnotation>
+	</sbol:annotation>
+	<sbol:annotation>
+		<sbol:SequenceAnnotation rdf:about="urn:20b01dba-6faa-400b-8462-e0e2edf9d607">
+			<sbol:bioStart>1</sbol:bioStart>
+			<sbol:bioEnd>98</sbol:bioEnd>
+			<sbol:strand>+</sbol:strand>
+			<sbol:subComponent>
+				<sbol:DnaComponent rdf:about="urn:15eb5c7b-37cf-4f6b-93fa-4f0a983ca29f">
+					<sbol:displayId>Extracted region from 71207-attachment (reversed)</sbol:displayId>
+				</sbol:DnaComponent>
+			</sbol:subComponent>
+		</sbol:SequenceAnnotation>
+	</sbol:annotation>
+</sbol:DnaComponent>
+<sbol:DnaComponent rdf:about="urn:46fa47be-9d0e-4a47-b67b-93fd621e9cd0">
+	<sbol:displayId>PSrpR</sbol:displayId>
+	<sbol:description>Promoter sequence</sbol:description>
+	<sbol:dnaSequence>
+		<sbol:DnaSequence rdf:about="urn:7007150b-4ce8-4f23-806a-e33166b01799">
+			<sbol:nucleotides>tctatgattggtccagattcgttaccaattgacagctagctcagtcctaggtatatacatacatgcttgtttgtttgtaaac</sbol:nucleotides>
+		</sbol:DnaSequence>
+	</sbol:dnaSequence>
+	<sbol:annotation>
+		<sbol:SequenceAnnotation rdf:about="urn:3f5aed43-2ef3-4589-a84f-68ccd60f77fc">
+			<sbol:bioStart>1</sbol:bioStart>
+			<sbol:bioEnd>15</sbol:bioEnd>
+			<sbol:strand>+</sbol:strand>
+			<sbol:subComponent>
+				<sbol:DnaComponent rdf:about="urn:f8dfba36-20cf-425f-b795-c214d14cf505">
+					<sbol:displayId>UpstreamPromoterSpacer</sbol:displayId>
+				</sbol:DnaComponent>
+			</sbol:subComponent>
+		</sbol:SequenceAnnotation>
+	</sbol:annotation>
+	<sbol:annotation>
+		<sbol:SequenceAnnotation rdf:about="urn:fb0d5825-5fe4-446a-b024-15b3265de7e5">
+			<sbol:bioStart>16</sbol:bioStart>
+			<sbol:bioEnd>82</sbol:bioEnd>
+			<sbol:strand>+</sbol:strand>
+			<sbol:subComponent>
+				<sbol:DnaComponent rdf:about="urn:ee9c319d-0113-4565-a5da-2e88768ce206">
+					<sbol:displayId>PSrpR</sbol:displayId>
+					<rdf:type rdf:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+				</sbol:DnaComponent>
+			</sbol:subComponent>
+		</sbol:SequenceAnnotation>
+	</sbol:annotation>
+</sbol:DnaComponent>
+<sbol:DnaComponent rdf:about="urn:bcb6405c-0159-40e1-8681-ec60a4412ddb">
+	<sbol:displayId>PLacI</sbol:displayId>
+	<sbol:description>Promoter sequence</sbol:description>
+	<sbol:dnaSequence>
+		<sbol:DnaSequence rdf:about="urn:7fc84f65-2af8-4c28-9de5-ac66fa724c32">
+			<sbol:nucleotides>gcggcgcgccatcgaatggcgcaaaacctttcgcggtatggcatgatagcgcccggaagagagtcaattcagggtggtgaat</sbol:nucleotides>
+		</sbol:DnaSequence>
+	</sbol:dnaSequence>
+	<rdf:type rdf:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+</sbol:DnaComponent>
+<sbol:DnaComponent rdf:about="urn:4afdd282-602e-4529-81f0-09177bbab7f6">
+	<sbol:displayId>PLmrA</sbol:displayId>
+	<sbol:description>Promoter sequence</sbol:description>
+	<sbol:dnaSequence>
+		<sbol:DnaSequence rdf:about="urn:16681ebf-11a7-4345-b2fb-a06f79b4068b">
+			<sbol:nucleotides>cgctcattcactaggtctgattcgttaccaattgacaactggtggtcgaatcaagataatagaccagtcactatattt</sbol:nucleotides>
+		</sbol:DnaSequence>
+	</sbol:dnaSequence>
+	<sbol:annotation>
+		<sbol:SequenceAnnotation rdf:about="urn:6b74ed8f-d990-4dcb-b92b-defbde204db8">
+			<sbol:bioStart>1</sbol:bioStart>
+			<sbol:bioEnd>15</sbol:bioEnd>
+			<sbol:strand>+</sbol:strand>
+			<sbol:subComponent>
+				<sbol:DnaComponent rdf:about="urn:a1f4fc94-c7f5-4cbf-9540-2428d73cbd6c">
+					<sbol:displayId>UpstreamPromoterSpacer</sbol:displayId>
+				</sbol:DnaComponent>
+			</sbol:subComponent>
+		</sbol:SequenceAnnotation>
+	</sbol:annotation>
+	<sbol:annotation>
+		<sbol:SequenceAnnotation rdf:about="urn:440f5c33-d4d0-47f7-8dbc-e8bda2154ad6">
+			<sbol:bioStart>16</sbol:bioStart>
+			<sbol:bioEnd>78</sbol:bioEnd>
+			<sbol:strand>+</sbol:strand>
+			<sbol:subComponent>
+				<sbol:DnaComponent rdf:about="urn:2b52f0f7-9ca6-44a6-b95e-5a4c2e25438d">
+					<sbol:displayId>PLmrA</sbol:displayId>
+					<rdf:type rdf:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+				</sbol:DnaComponent>
+			</sbol:subComponent>
+		</sbol:SequenceAnnotation>
+	</sbol:annotation>
+</sbol:DnaComponent>
+<sbol:DnaComponent rdf:about="urn:3209e20a-6f79-4022-9662-e279ddfb7e23">
+	<sbol:displayId>PQacR</sbol:displayId>
+	<sbol:description>Promoter sequence</sbol:description>
+	<sbol:dnaSequence>
+		<sbol:DnaSequence rdf:about="urn:a7145d5f-f8f7-4233-8587-6e43230f0628">
+			<sbol:nucleotides>ggtatggaagctatacgttaccaattgacagctagctcagtcctactttagtatatagaccgtgcgatcggtctata</sbol:nucleotides>
+		</sbol:DnaSequence>
+	</sbol:dnaSequence>
+	<sbol:annotation>
+		<sbol:SequenceAnnotation rdf:about="urn:108b72a9-c6eb-4fa1-87ba-c0f00e089435">
+			<sbol:bioStart>1</sbol:bioStart>
+			<sbol:bioEnd>15</sbol:bioEnd>
+			<sbol:strand>+</sbol:strand>
+			<sbol:subComponent>
+				<sbol:DnaComponent rdf:about="urn:5bd8019f-a455-438f-b270-74d77562afc9">
+					<sbol:displayId>UpstreamPromoterSpacer</sbol:displayId>
+				</sbol:DnaComponent>
+			</sbol:subComponent>
+		</sbol:SequenceAnnotation>
+	</sbol:annotation>
+	<sbol:annotation>
+		<sbol:SequenceAnnotation rdf:about="urn:328a922f-13f9-4821-b965-530ba566afaa">
+			<sbol:bioStart>16</sbol:bioStart>
+			<sbol:bioEnd>77</sbol:bioEnd>
+			<sbol:strand>+</sbol:strand>
+			<sbol:subComponent>
+				<sbol:DnaComponent rdf:about="urn:39558b3b-47b7-404f-b311-7ddb63b0f1b5">
+					<sbol:displayId>PQacR</sbol:displayId>
+					<rdf:type rdf:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+				</sbol:DnaComponent>
+			</sbol:subComponent>
+		</sbol:SequenceAnnotation>
+	</sbol:annotation>
+</sbol:DnaComponent>
+<sbol:DnaComponent rdf:about="urn:0e394326-25a6-4815-9806-4f40eac7d282">
+	<sbol:displayId>PTet</sbol:displayId>
+	<sbol:description>Promoter sequence</sbol:description>
+	<sbol:dnaSequence>
+		<sbol:DnaSequence rdf:about="urn:c2d247a1-f90c-4d3f-8648-61ef481b17a7">
+			<sbol:nucleotides>tactccaccgttggcttttttccctatcagtgatagagattgacatccctatcagtgatagagataatgagcac</sbol:nucleotides>
+		</sbol:DnaSequence>
+	</sbol:dnaSequence>
+	<sbol:annotation>
+		<sbol:SequenceAnnotation rdf:about="urn:fdbf93a3-e13e-41fd-9fd9-d1b1e46370fc">
+			<sbol:bioStart>1</sbol:bioStart>
+			<sbol:bioEnd>15</sbol:bioEnd>
+			<sbol:strand>+</sbol:strand>
+			<sbol:subComponent>
+				<sbol:DnaComponent rdf:about="urn:60ed4538-82a6-4842-aaa2-15c05dd1dfdb">
+					<sbol:displayId>UpstreamPromoterSpacer</sbol:displayId>
+				</sbol:DnaComponent>
+			</sbol:subComponent>
+		</sbol:SequenceAnnotation>
+	</sbol:annotation>
+	<sbol:annotation>
+		<sbol:SequenceAnnotation rdf:about="urn:25328b3e-cbd1-4b8e-adca-27c0319c5f23">
+			<sbol:bioStart>16</sbol:bioStart>
+			<sbol:bioEnd>74</sbol:bioEnd>
+			<sbol:strand>+</sbol:strand>
+			<sbol:subComponent>
+				<sbol:DnaComponent rdf:about="urn:e6e742dd-8ebe-46e9-9eba-0b7463c73dc6">
+					<sbol:displayId>PTet</sbol:displayId>
+					<rdf:type rdf:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+				</sbol:DnaComponent>
+			</sbol:subComponent>
+		</sbol:SequenceAnnotation>
+	</sbol:annotation>
+</sbol:DnaComponent>
+<sbol:DnaComponent rdf:about="urn:b6d85a73-e00b-4d5c-8de5-85b671d15691">
+	<sbol:displayId>PTac</sbol:displayId>
+	<sbol:description>Promoter sequence</sbol:description>
+	<sbol:dnaSequence>
+		<sbol:DnaSequence rdf:about="urn:c37b4cb8-a094-4dee-9e5b-df2b09199670">
+			<sbol:nucleotides>aacgatcgttggctgtgttgacaattaatcatcggctcgtataatgtgtggaattgtgagcgctcacaatt</sbol:nucleotides>
+		</sbol:DnaSequence>
+	</sbol:dnaSequence>
+	<sbol:annotation>
+		<sbol:SequenceAnnotation rdf:about="urn:29e93acd-7880-462a-bf41-a98cef643a14">
+			<sbol:bioStart>1</sbol:bioStart>
+			<sbol:bioEnd>15</sbol:bioEnd>
+			<sbol:strand>+</sbol:strand>
+			<sbol:subComponent>
+				<sbol:DnaComponent rdf:about="urn:77b6a029-5fd6-48e7-a4b1-f40b7a3a210b">
+					<sbol:displayId>UpstreamPromoterSpacer</sbol:displayId>
+				</sbol:DnaComponent>
+			</sbol:subComponent>
+		</sbol:SequenceAnnotation>
+	</sbol:annotation>
+	<sbol:annotation>
+		<sbol:SequenceAnnotation rdf:about="urn:8da2b8f5-4fc1-4cd9-bab2-bb4e88c2d406">
+			<sbol:bioStart>16</sbol:bioStart>
+			<sbol:bioEnd>71</sbol:bioEnd>
+			<sbol:strand>+</sbol:strand>
+			<sbol:subComponent>
+				<sbol:DnaComponent rdf:about="urn:dd6d69df-6556-483f-823a-ccb632ec28f1">
+					<sbol:displayId>PTac</sbol:displayId>
+					<rdf:type rdf:resource="http://purl.obolibrary.org/obo/SO_0000167"/>
+				</sbol:DnaComponent>
+			</sbol:subComponent>
+		</sbol:SequenceAnnotation>
+	</sbol:annotation>
+</sbol:DnaComponent>
+
+</rdf:RDF>

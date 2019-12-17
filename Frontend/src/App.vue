@@ -12,8 +12,8 @@
         For that the landing comp. passes two events: (1) switch and (2) gotFile which says that result comp. can be
         shown and the file is passed to the result comp.-->
         <v-content>
-            <Landing @switch="mySearch = true" @gotFile="fileName = $event" v-if="!mySearch"></Landing>
-            <Result v-if="mySearch" :file="fileName"></Result>
+            <Landing @switch="mySearch = true" @gotFile="fileName = $event" @gotRes="result = $event" v-if="!mySearch"></Landing>
+            <Result v-if="mySearch" :file="fileName" :res="result"></Result>
         </v-content>
 
     </v-app>
@@ -34,7 +34,8 @@
         data() {
             return {
                 mySearch: false,
-                fileName: null
+                fileName: null,
+                result: null
             }
         }
     };

@@ -95,7 +95,7 @@
         </v-row>
         <br>
         <v-row justify="center">
-            <v-btn color="primary" style="width: 20%;" class="align-center" @click="searchNow"> Search</v-btn>
+            <v-btn color="primary" style="width: 20%;" class="align-center" @click="searchNow()"> Search</v-btn>
         </v-row>
     </div>
 </template>
@@ -115,13 +115,19 @@
                 dialog: false,
                 twist: true,
                 idt: true,
+                res: []
             }
         },
 
         methods: {
             searchNow() {
-                this.$emit('switch');
-                this.$emit('gotFile', this.file)
+                this.$emit('gotFile', this.file);
+                this.$http.post('upload', {headers:{'Access-Control-Allow-Origin': 'true'}})
+                    .then(response => {
+                        this.res = response.body.result[0];
+                        this.$emit('gotRes', this.res);
+                        this.$emit('switch');
+                    });
             }
         }
     };

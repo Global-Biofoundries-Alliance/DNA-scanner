@@ -1,6 +1,6 @@
 from Bio import SeqIO
 import json
-#import requests
+import requests
 import sbol
 # from ..Pinger import p
 class SeqObject:

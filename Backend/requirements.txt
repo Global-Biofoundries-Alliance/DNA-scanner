@@ -2,6 +2,3 @@ Flask
 biopython
 pysbol
 requests
-yaml
-re
-datetime

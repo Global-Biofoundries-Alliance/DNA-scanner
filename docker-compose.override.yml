@@ -3,22 +3,45 @@
 version: '3.3'
 services:
     backend:
-        # backend will be startet after db
+        image: dnabackend
+        container_name: dnabackend
+        hostname: dnabackend
+        build:
+            context: .
+            dockerfile: Dockerfile-backend
+        ports:
+            - 8080:8080
+#         backend will be startet after db
         depends_on:
             - db
         networks:
             - frontnet
             - backnet
+
     frontend:
+        image: frontend
+        container_name: frontend
+        hostname: frontend
+        build:
+            context: .
+            dockerfile: Dockerfile-frontend
+        volumes:
+            - /Users/yashk/WebstormProjects/dna-scanner/Frontend:/app
+        ports:
+            - 80:80
+        depends_on:
+          - backend
         networks:
-            - frontnet
+          - frontnet
+
     # Creates container with a database
     db:
         image: mariadb
         container_name: review
+        hostname: review
         volumes:
-            - /srv/dnascanner/db:/var/lib/mysql
-            - /etc/localtime:/etc/localtime:ro
+            - /Users/yashk/docker_share/db:/var/lib/mysql
+#            - /etc/localtime:/etc/localtime
         environment:
             - MYSQL_ROOT_PASSWORD=81OtNwdKcYdV4SEeki9SgotiW8GotF
             - MYSQL_PASSWORD=z0uo6nK3l5thpph4uXykbMpwur6zgA

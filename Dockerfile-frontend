@@ -3,7 +3,7 @@ FROM node:lts-alpine as build
 WORKDIR /app
 
 # Install dependencies
-COPY Frontend/package*.json ./
+COPY Frontend/package.json package.json
 RUN npm install --silent
 
 # Copy Project files
@@ -11,8 +11,6 @@ COPY Frontend .
 
 # Build App
 RUN npm run build
-
-
 
 #
 # Add Nginx

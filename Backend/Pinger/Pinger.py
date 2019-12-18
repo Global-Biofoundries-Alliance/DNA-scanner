@@ -2,10 +2,28 @@ from .Entities import *
 
 #########################################################
 #                                                       #
+#   Classes only used inside of the Pinger              #
+#                                                       #
+#########################################################
+
+class VendorHandler:
+    def __init__(self, vendorInformation, vendorPinger):
+        self.vendor = vendorInformation
+        self.handler = vendorPinger
+
+#########################################################
+#                                                       #
 #   Pinger                                              #
 #                                                       #
 #########################################################
 
+#
+#   Composite Pattern
+#   Client & Component: BasePinger
+#   Composite: CompositePattern
+#   Leaf: The implemented BasePinger for an specific Vendor.
+#   Operations; See the functions of BasePinger
+#
 
 class BasePinger:
 
@@ -13,104 +31,155 @@ class BasePinger:
         raise NotImplementedError
 
     #
-    #   Desc:   Start a search for the given sequence. 
-    #           Has no result, because asynchronous search.
+    #   Desc:   Start a search for a given list of sequences. This method has no result because of asynchronous search.
+    #           After call this method it starts searching. isRunning will be true. If the search is finished isRunning()
+    #           will return False. Then you can get the full result with getOffers().
+    #           Maybe you can get a partially result from getOffers() while running.
     #
     def searchOffers(self, seqInf):
         raise NotImplementedError
 
     #
-    #   Desc:   True if pinger is currently searching
+    #   Desc:   True if Pinger is currently searching,
+    #           else false.
+    #   Result-Type: Boolean
     #
     def isRunning(self):
         raise NotImplementedError
 
     #
-    #   Desc: Returns the current offers. Result can change while searching.
+    #   Desc:   Returns the current offers. If isRunning() is True, then searching is not finished and maybe you can
+    #           get partially result. After searching is finished isRunning() is False and the result will be complete.
+    #   Result-Type: [SequenceOffers, ...]
     #
     def getOffers(self):
         raise NotImplementedError
 
+#
+#   Desc: Allows the registration of pingers and forward actions and joins the return-values.
+#
+class CompositePinger(BasePinger):
 
-class AbstractPinger(BasePinger):
+    def __init__(self):
+        self.vendorHandler = []
+        self.sequenceOffers = []
 
     #
     #   Desc: Registration of the basepinger handlers of the various vendors
     #
-    def registerVender(self, vendorInformation, vendorPinger):
+    def registerVendor(self, vendorInformation, vendorPinger):
         if self.vendorHandler is None:
             self.vendorHandler = []
 
-        self.vendorHandler.append({ "vendor": vendorInformation, "handler": vendorPinger})
+        self.vendorHandler.append(VendorHandler(vendorInformation, vendorPinger))
 
 
+    #
+    #   Desc: Returns all Vendor Informations in an list
+    #   Result-Type: [VendorInformation, ...]
+    #
     def getVendors(self):
         result = []
         for vendor in self.vendorHandler:
-            result.append(vendor.v)
+            result.append(vendor.vendor)
         return result
 
-
-class ProductivePinger(AbstractPinger):
-        
-    def __init__(self):
-        print("productive pinger")
-
+    #
+    #   Desc:   Start searching in every vendor pinger.
+    #
     def searchOffers(self, seqInf):
-        # TODO Maybe throw error if running or maybe create abort function
-        self.offers = []
+
+        self.sequenceOffers = []
         for s in seqInf:
             self.sequenceOffers.append(SequenceOffers(s))
 
         for vh in self.vendorHandler:
             vh.handler.searchOffers(seqInf)
 
-
+    #
+    #   Desc:   True if one or more Pinger are searching.
+    #           False if all Vendor Pinger are finished.
+    #   Result-Type: Boolean
+    #
     def isRunning(self):
 
         for vh in self.vendorHandler:
-            if vh.handler.isRunning() == True:
+            if vh.handler.isRunning():
                 return True
 
         return False
 
-
+    #
+    #   Desc:   Returns the joined offers from every vendor.
+    #   Result-Type: [SequenceOffers, ...]
+    #
     def getOffers(self):
-        result = []
 
+        # Clear offers
+        for s in self.sequenceOffers:
+            s.offers = []
+
+        # Load offers from Vendor-Pingers
+        leafSeqOffers = []
         for vh in self.vendorHandler:
             vOffers = vh.handler.getOffers()
+            leafSeqOffers.extend(vOffers)
 
-            for offer in vOffers:
-                for so in self.sequenceOffers:
-                    self.sequenceOffers.offers = []
+        # For every SequenceOffer from Leaf
+        for leafSeqOffer in leafSeqOffers:
+            # ... get the Key of the SequenceInformation
+            seqKey = leafSeqOffer.sequenceInformation.key
 
-                    if(so.sequenceInformation.key == offer.sequenceInformation.key ):
-                        so.offers.append(offer.offers)
+            # ... and for every local SequenceOffer ...
+            for seqOffer in self.sequenceOffers:
+                # apend Offers from leaf to lokal if SequenceKeys are equal
+                if seqOffer.sequenceInformation.key == seqKey:
+                    seqOffer.offers.append(leafSeqOffer.offers)
 
-        return result
+        return self.sequenceOffers
 
-
-class DummyPinger(AbstractPinger):
+#
+#   The Dummy Pinger is for testing.
+#
+class DummyPinger(BasePinger):
 
 
     def __init__(self):
-        print("dummy pinger")
         self.running = False
 
-        self.offers = Offer()
-        self.offers.vendorInformation = VendorInformation("dummy", "DummyVendor", "DummyVendor Not Real GmbH")
-        self.offers.price = Price(currency=Currency.EUR)
-        self.offers.price.amount = 120
-        self.offers.turnovertime = 14
-        self.offers.messages.append(Message(MessageType.DEBUG, "This offer is created from Dummy"))
 
-    def searchOffers(seqInf):
-        pass
+        self.tempOffer = Offer()
+        self.tempOffer.vendorInformation = VendorInformation("dummy", "DummyVendor", "DummyVendor Not Real GmbH")
+        self.tempOffer.price = Price(currency=Currency.EUR)
+        self.tempOffer.price.amount = 120
+        self.tempOffer.turnovertime = 14
+        self.tempOffer.messages.append(Message(MessageType.DEBUG, "This offer is created from Dummy"))
+        self.offers = []
 
+    #
+    #   After:
+    #       isRunning() -> true
+    #       getOffers() -> [SequenceOffer(seqInf[0], self.tempOffer), SequenceOffer(seqInf[1], self.tempOffer), ...
+    #                           SequenceOffer(seqInf[n], self.tempOffer)]
+    #
+    def searchOffers(self, seqInf):
+        self.offers = []
+        for s in seqInf:
+            self.offers.append(SequenceOffers(s, [self.tempOffer]))
+        self.running = True
+
+    #
+    #   True if searchOffers called last
+    #   False if getOffers called last
+    #
     def isRunning(self):
         return self.running
 
+    #
+    #   Returns List with a  SequenceOffer for every sequence in last searchOffers(seqInf)-call.
+    #   Every SequenceOffer contains the same offers. Default 1 see self.tempOffer and self.offers.
+    #
     def getOffers(self):
+        self.running = False
         return self.offers
 

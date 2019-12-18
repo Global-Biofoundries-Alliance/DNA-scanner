@@ -3,6 +3,6 @@ module.exports = {
     "vuetify"
   ],
   devServer: {
-    proxy: 'http://schiggo.de:8088/'
+    proxy: 'http://dnabackend:8088/'
   }
 };

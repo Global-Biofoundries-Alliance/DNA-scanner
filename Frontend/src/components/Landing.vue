@@ -121,9 +121,13 @@
 
         methods: {
             searchNow() {
+                // eslint-disable-next-line no-console
+                console.log('searchNow');
                 this.$emit('gotFile', this.file);
                 this.$http.post('upload', {headers:{'Access-Control-Allow-Origin': 'true'}})
                     .then(response => {
+                        // eslint-disable-next-line no-console
+                        console.log(response);
                         this.res = response.body.result[0];
                         this.$emit('gotRes', this.res);
                         this.$emit('switch');

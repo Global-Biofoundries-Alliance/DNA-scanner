@@ -7,7 +7,7 @@ from enum import Enum
 #########################################################
 
 class MessageType(Enum):
-    # Vendor cannot synthesize the sequence
+    # Vendor can not synthesize the sequence
     SYNTHESIS_ERROR = 0
     # For Example: Vendor API is currently unavailable
     VENDOR_ERROR = 1
@@ -44,10 +44,10 @@ class Currency(Enum):
 #
 #   Desc: Representation of a Sequence
 #
-class SequenzInformation:
+class SequenceInformation:
 
     def __init__(self, sequence, name = "", key = ""):
-        # ID of the sequence. TODO Autogenerate if not set
+        # ID of the sequence.
         self.key = key
         # Name of the sequence. Readable representation of the sequence for users
         self.name = name
@@ -117,7 +117,6 @@ class Offer:
         self.price = price
 
         # Time to deliver
-        # TODO find representation. Days?
         self.turnovertime = turnovertime
 
         # for example syntesis-errors

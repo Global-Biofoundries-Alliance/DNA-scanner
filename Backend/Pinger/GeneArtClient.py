@@ -1,3 +1,9 @@
+import json
+#import yaml
+import re
+from datetime import datetime
+import requests
+
 class GeneArtClient: 
     # Constructur for a GeneArtClient ()
     # Takes as input the configuration's parameters 

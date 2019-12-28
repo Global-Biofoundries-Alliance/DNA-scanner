@@ -8,5 +8,8 @@ To run a Test
 ```
 python3 -m venv venv
 ./venv/bin/pip3 install -e ../Backend/
+./venv/bin/pip3 install -r requirements.txt
 venv/bin/python3 basepingertest.py
+venv/bin/python3 geneartclienttest.py
+venv/bin/python3 geneartpingertest.py
 ```

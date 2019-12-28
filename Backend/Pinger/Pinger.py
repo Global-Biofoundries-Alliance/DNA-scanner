@@ -1,5 +1,5 @@
 from .Entities import *
-
+from .GeneArtClient import *
 #########################################################
 #                                                       #
 #   Classes only used inside of the Pinger              #
@@ -182,4 +182,123 @@ class DummyPinger(BasePinger):
     def getOffers(self):
         self.running = False
         return self.offers
+
+
+#
+#   The GeneArt Pinger
+#
+class GeneArt(BasePinger):
+    server= "https://www.thermofisher.com/order/gene-design-ordering/api"
+    validate = "/validate/v1"
+    status = "/status/v1"
+    addToCart = "/addtocart/v1"
+    upload = "/upload/v1"
+    dnaStrings = True
+    hqDnaStrings = True
+
+    def __init__(self, username, token):
+        self.running = False
+
+        self.username = username
+        self.token = token
+        
+        self.client = GeneArtClient(GeneArt.server, 
+                      GeneArt.validate, GeneArt.status, GeneArt.addToCart,
+                      GeneArt.upload, 
+                      self.username, self.token, 
+                      GeneArt.dnaStrings, GeneArt.hqDnaStrings)
+        #self.tempOffer = Offer()
+        #self.tempOffer.vendorInformation = VendorInformation("geneart", "GeneArt", "ThermoFischer")
+        #self.tempOffer.price = Price(currency=Currency.EUR)
+        #self.tempOffer.price.amount = 120
+        #self.tempOffer.turnovertime = 14
+        #self.tempOffer.messages.append(Message(MessageType.DEBUG, "This offer is created from gene"))
+        #self.offers = []
+    
+    
+     
+    def encode_pinger(self, seqInf):
+        if isinstance(seqInf, SequenceInformation):
+            return { "idN": seqInf.key, "name": seqInf.name, "sequence": seqInf.sequence}
+        else:
+            type_name = seqInf.__class__.__name__
+            raise TypeError(f"Object of type '{type_name}' is not JSON serializable")
+    
+    #
+    #   Authenticates the instance
+    #       
+    #
+    #   
+    #
+    def authenticate(self):
+        self.running = True
+        response = self.client.authenticate()
+        self.running = False 
+        return response
+        
+    #
+    #   After:
+    #       isRunning() -> true
+    #       getOffers() -> [SequenceOffer(seqInf[0], self.tempOffer), SequenceOffer(seqInf[1], self.tempOffer), ...
+    #                           SequenceOffer(seqInf[n], self.tempOffer)]
+    #
+    def searchOffers(self, seqInf):
+        raise NotImplementedError
+    
+    
+    def constUpload(self, seqInf, product):
+        self.running = True
+        gaSequences  = []
+        for s in seqInf:
+            seq = self.encode_pinger(s)
+            gaSequences.append(seq)
+        response = self.client.constUpload(gaSequences, product)
+        return response
+    
+    def constValidate(self, seqInf, product):
+        self.running = True
+        gaSequences  = []
+        for s in seqInf:
+            seq = self.encode_pinger(s)
+            gaSequences.append(seq)
+        response = self.client.constValidate(gaSequences, product)
+        return response
+        
+    #
+    #   True if searchOffers called last
+    #   False if getOffers called last
+    #
+    def isRunning(self):
+        return self.running
+
+    #
+    #   Returns List with a  SequenceOffer for every sequence in last searchOffers(seqInf)-call.
+    #   Every SequenceOffer contains the same offers. Default 1 see self.tempOffer and self.offers.
+    #
+    def getOffers(self):
+        raise NotImplementedError
+    
+    #
+    #   Add to Cart
+    #       
+    #
+    #   
+    #
+    def toCart(self, projectId):
+        self.running = True
+        response = self.client.toCart(projectId)
+        self.running = False
+        return response
+        
+    #
+    #   Add to Cart
+    #       
+    #
+    #   
+    #
+    def statusReview(self, projectId):
+        self.running = True
+        response = self.client.statusReview(projectId)
+        self.running = False
+        return response
 

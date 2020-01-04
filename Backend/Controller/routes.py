@@ -11,21 +11,36 @@ from .parser import parse
 
 @app.route('/upload', methods=['post'])
 def uploadFile():
-    #if 'seqfile' not in request.files or request.files['seqfile'] == "":
+    # if 'seqfile' not in request.files or request.files['seqfile'] == "":
     #    return json.jsonify({'error': 'No file specified'})
 
+    vendornames = ["Twist DNA", "IDT DNA", "GeneArt"]
+    vendorshorts = ["Twist", "IDT", "GenA"]
+    sequencenames = ["Detergent", "Spider Silk", "Smoke Flavor", "Insulin"]
     resp = SearchResponse()
-    for i in range(0, 10):
-        vendor_id = randint(0, 1)
-        resp.result[0]['offers'].append({
-            "vendorinformation": {
-                "name": "Twist DNA ..." if vendor_id == 0 else "IDT DNA ...",
-                "shortname": "Twist" if vendor_id == 0 else "IDT",
-                "key": ""
-            },
-            "price": random(),
-            "turnovertime": randint(1, 20)
-        })
+    for s in range(0, 100):
+        if s > 0:
+            resp.result.append({})  # make space for the next result
+
+        resp.result[s]["sequenceinformation"] = {
+                    "id": str(randint(0, 9999)) + '-' + str(randint(0, 9999)),
+                    "name": sequencenames[randint(0, len(sequencenames) - 1)],
+                    "sequence": "ACTG"
+                }
+
+        resp.result[s]['offers'] = []
+        for i in range(0, 10):
+            vendor_id = randint(0, 2)
+            resp.result[s]['offers'].append({
+                "vendorinformation": {
+                    "name": vendornames[vendor_id],
+                    "shortname": vendorshorts[vendor_id],
+                    "key": ""
+                },
+                "price": random(),
+                "turnovertime": randint(1, 20)
+            })
+            resp.count = resp.count + 1
 
     #
     #   TODO: Arr, Here be stuff for populating the response object such as file parsing!

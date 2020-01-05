@@ -10,11 +10,11 @@ Check out the project from the git repository.
 
 First the configuration file _config.yml_ in the directory _Backend_ must be customized.
 
-The application runs in docker-container, therefore docker and docker-compose must be installed.
+The application runs in a docker container, therefore docker and docker-compose must be installed.
 
 ## Development installation
 
-In the development environment, a database is made available within a container. This is not the case in the production environment, because this is not recommend for production use.
+In the development environment, a database is made available within a container. This is not the case in the production environment, because it is not recommended for production use.
 
 Use the shell script _deploy.sh_ to start the environment. The script will run docker-compose with the _docker-compose.yml_ and it will be extended by the _docker-compose.override.yml_.
 
@@ -25,13 +25,13 @@ Use the shell script _deploy.sh_ to start the environment. The script will run d
 
 By default the _./Backend/config.yml_ has the database credentials as configured in the _docker-compose.override.yml_.
 
-By default the volumes of the database are bind to _/srv/dnascanner/db/_ to persist the data. You can make the saved information temporary by removing the volume shown below from the _docker-compose.override.yml_.
+By default the volumes of the database are bound to _/srv/dnascanner/db/_ to make the data persistent. You can make the saved information temporary by removing the volume shown below from the _docker-compose.override.yml_.
 
 `- /srv/dnascanner/db:/var/lib/mysql`
 
 ### Force Rebuild
 
-You can force an rebuild without caching using the skript _rebuild.sh_.
+You can force a rebuild without caching using the script _rebuild.sh_.
 
 ```
     chmod 775 rebuild.sh
@@ -40,9 +40,9 @@ You can force an rebuild without caching using the skript _rebuild.sh_.
 
 ## Production installation
 
-The production environment requires a seperate database. You can configure it in _./Backend/config.yml_. In the production environment the database must be separate, because it is not recommend to run a database inside of a container for production use.
+The production environment requires a separate database. You can configure it in _./Backend/config.yml_. In the production environment the database must be separate because it is not recommend to run a database inside of a container for production use.
 
-Certificates for https are required for the productive environment. The certificates must be placed in `/srv/dnascanner/cert/`. In the following code we create the directory and generate self-signed certificates. Alternatively you can put your own certificates there. The certificates are configured in the file _nginx-secure.conf_.
+Certificates for https are required for the production environment. The certificates must be placed in `/srv/dnascanner/cert/`. In the following code we create the directory and generate self-signed certificates. Alternatively you can put your own certificates there. The certificates are configured in the file _nginx-secure.conf_.
 
 ```
     mkdir /srv/dnascanner/cert -p

@@ -7,7 +7,7 @@ cp nginx-secure.conf /srv/dnascanner/nginx/
 echo "Create directory /srv/dnascanner/cert/ for certificates"
 mkdir /srv/dnascanner/cert
 
-echo "Deleting old container befor recreate"
+echo "Deleting old container before recreate"
 docker container stop dnafrontend
 docker container rm dnafrontend
 docker container stop dnabackend

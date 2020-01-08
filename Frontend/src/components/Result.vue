@@ -1,7 +1,7 @@
 <template>
     <div>
         <br><br>
-        <p style="text-align: center">Your file: {{ file.name }}</p>
+        <p style="text-align: center">Your file: {{ fileName }}</p>
         <p style="text-align: center">Number of Sequences: XY</p>
         <br><br>
         <v-container fluid>
@@ -70,7 +70,6 @@
                             {{n}}
                         </p>
                         <p style="margin-left: 9%">
-                            {{res.sequenceinformation.name}}
                         </p>
                         <v-spacer></v-spacer>
                         <v-col cols="2" sm="6" class="mt-n4">
@@ -94,11 +93,9 @@
                 >
                     <v-row class="ml-2">
                         <p>
-                            {{res.offers[0].turnovertime}}
                         </p>
                         <v-spacer></v-spacer>
                         <p class="mr-4">
-                            {{res.offers[0].price}}
                         </p>
                     </v-row>
                 </v-card>
@@ -129,9 +126,9 @@
 
     export default {
         name: "Result",
-        props: ['file', 'res'],
         data() {
             return {
+                fileName: this.$store.state.StoreFile.name,
                 icons: {
                     mdiCurrencyUsd
                 },

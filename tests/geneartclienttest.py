@@ -1,14 +1,14 @@
 import unittest
 import json
 
-from Pinger import GeneArtClient
+from Pinger import GeneArt
 
 # Log-In Credentials
 username_real = "YOUR_USERNAME_HERE"
 token_real = "YOUR_TOKEN_HERE"
 
 # Test file which can be successfully valideted by the API.
-with open('./examples/constValidate_successful.json') as json_file:
+with open('./examples/projectValidate_successful.json') as json_file:
     data = json.load(json_file)
 
 class TestGeneArtClient(unittest.TestCase):
@@ -22,9 +22,10 @@ class TestGeneArtClient(unittest.TestCase):
     upload = "/upload/v1"
     dnaStrings = True
     hqDnaStrings = True
+    timeout = 60
 
     # Object of type GeneArtClient used in these tests to communicate with the API.
-    geneArt1 = GeneArtClient.GeneArtClient(server, validate, status, addToCart, upload, username_real, token_real, dnaStrings, hqDnaStrings)
+    geneArt1 = GeneArt.GeneArtClient(server, validate, status, addToCart, upload, username_real, token_real, dnaStrings, hqDnaStrings, 60)
 
     # Checks the authentication.
     def test_authenticate(self):
@@ -32,16 +33,16 @@ class TestGeneArtClient(unittest.TestCase):
         # Give dummy username and token
         username_dummy = "USERNAME"
         token_dummy = "TOKEN"
-        with self.assertRaises(Exception): GeneArtClient.GeneArtClient(TestGeneArtClient.server, TestGeneArtClient.validate, TestGeneArtClient.status, TestGeneArtClient.addToCart, TestGeneArtClient.upload, username_dummy, token_dummy, TestGeneArtClient.dnaStrings, TestGeneArtClient.hqDnaStrings)
+        with self.assertRaises(Exception): GeneArt.GeneArtClient(TestGeneArtClient.server, TestGeneArtClient.validate, TestGeneArtClient.status, TestGeneArtClient.addToCart, TestGeneArtClient.upload, username_dummy, token_dummy, TestGeneArtClient.dnaStrings, TestGeneArtClient.hqDnaStrings, TestGeneArtClient.timeout)
         
         self.assertEqual(True, self.geneArt1.authenticate())
         
-    # Check the constValidate method by checking the keys and their values returned by the API.
-    def test_constValidate(self):
+    # Check the projectValidate method by checking the keys and their values returned by the API.
+    def test_projectValidate(self):
         print ("Start test for construct Validate method")
         product = "dnaStrings"
         listOfSequences = data
-        response = self.geneArt1.constValidate(listOfSequences, product)
+        response = self.geneArt1.projectValidate(listOfSequences, product)
         # Expected Response Keys
         responseKeys = ['name','constructs']
         # Expected Keys under response['constructs']

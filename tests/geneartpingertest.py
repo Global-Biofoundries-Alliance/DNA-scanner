@@ -1,6 +1,6 @@
 import unittest
 import json
-from Pinger import Pinger, Entities
+from Pinger import Pinger, Entities, GeneArt
 
 # Test file which can be successfully valideted by the API.
 with open('./examples/seqinf_geneart.json') as json_file:
@@ -14,13 +14,13 @@ for seq in data:
 
 # Log-In Credentials
 username_real = "YOUR_USERNAME_HERE"
-token_real = "YOUR_TOKEN_HERE"    
+token_real = "YOUR_TOKEN_HERE"
     
 class TestGeneArtPinger(unittest.TestCase):
 
     name = "GeneArtPinger"
     # Pinger Object used for theses tests.
-    pinger_example = Pinger.GeneArt(username_real, token_real)
+    pinger_example = GeneArt.GeneArt(username = username_real, token = token_real)
     
     # Checks the authentication.
     def test_authenticate(self):
@@ -31,12 +31,12 @@ class TestGeneArtPinger(unittest.TestCase):
         # Give dummy username and token
         with self.assertRaises(Exception): Pinger.GeneArt("USERNAME", "TOKEN")
     
-    # Check the constValidate method by checking the keys and their values returned by the API.    
-    def test_constValidate(self):
+    # Check the projectValidate method by checking the keys and their values returned by the API.    
+    def test_projectValidate(self):
         print ("Start test for method construct Validate method of " + self.name + ".")
         product = "dnaStrings"
         listOfSequences = example_list
-        response = self.pinger_example.constValidate(listOfSequences, product)
+        response = self.pinger_example.projectValidate(listOfSequences, product)
         # Expected Response Keys
         responseKeys = ['name','constructs']
         # Expected Keys under response['constructs']

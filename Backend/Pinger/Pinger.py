@@ -188,6 +188,9 @@ class DummyPinger(BasePinger):
 #   The GeneArt Pinger
 #
 class GeneArt(BasePinger):
+    # The configuration's parameters 
+    # dnaStrings and hqDnaStrings have per defualt the value True
+
     server= "https://www.thermofisher.com/order/gene-design-ordering/api"
     validate = "/validate/v1"
     status = "/status/v1"
@@ -195,7 +198,11 @@ class GeneArt(BasePinger):
     upload = "/upload/v1"
     dnaStrings = True
     hqDnaStrings = True
-
+    
+    #
+    # Constructur for a GeneArt-Pinger
+    # Takes as input the log-in parameters.
+    #
     def __init__(self, username, token):
         self.running = False
 
@@ -207,17 +214,13 @@ class GeneArt(BasePinger):
                       GeneArt.upload, 
                       self.username, self.token, 
                       GeneArt.dnaStrings, GeneArt.hqDnaStrings)
-        #self.tempOffer = Offer()
-        #self.tempOffer.vendorInformation = VendorInformation("geneart", "GeneArt", "ThermoFischer")
-        #self.tempOffer.price = Price(currency=Currency.EUR)
-        #self.tempOffer.price.amount = 120
-        #self.tempOffer.turnovertime = 14
-        #self.tempOffer.messages.append(Message(MessageType.DEBUG, "This offer is created from gene"))
-        #self.offers = []
     
-    
-     
-    def encode_pinger(self, seqInf):
+
+    #
+    #   Encodes a 'SequenceInformation' object into JSON-Format with fields readable by the GeneArtClient.
+    #       Returns the newly created object, if the given input is valid. Otherwise raises a 'TypeError'
+    #
+    def encode_sequence(self, seqInf):
         if isinstance(seqInf, SequenceInformation):
             return { "idN": seqInf.key, "name": seqInf.name, "sequence": seqInf.sequence}
         else:
@@ -226,12 +229,11 @@ class GeneArt(BasePinger):
     
     #
     #   Authenticates the instance
-    #       
-    #
-    #   
+    #       Returns True if the authentication was successful and False otherwise.
     #
     def authenticate(self):
         self.running = True
+        # Authenticate by calling the corresponding method.
         response = self.client.authenticate()
         self.running = False 
         return response
@@ -245,28 +247,46 @@ class GeneArt(BasePinger):
     def searchOffers(self, seqInf):
         raise NotImplementedError
     
-    
+    # 
+    #   Upload Project with constructs
+    #       Takes as input a list of 'SequenceInformation' objects and the desired product type 
+    #           (The parameter "product" can only have the value: 'dnaStrings' or 'hqDnaStrings')
+    #       Returns the API-Response 
+    # 
     def constUpload(self, seqInf, product):
         self.running = True
+        # Sequences in JSON-Format with fields readable by the GeneArtClient. At first is empty.
         gaSequences  = []
         for s in seqInf:
-            seq = self.encode_pinger(s)
+            # Encode each element in JSON-Format with fields readable by the GeneArtClient and add it to the list.
+            seq = self.encode_sequence(s)
             gaSequences.append(seq)
+        # Upload the construct by calling the corresponding method.
         response = self.client.constUpload(gaSequences, product)
+        self.running = False
         return response
     
+    #    
+    #   Validate Project
+    #       Takes as input a list of 'SequenceInformation' objects and the desired product type 
+    #           (The parameter "product" can only have the value: 'dnaStrings' or 'hqDnaStrings')
+    #       Returns the API-Response     
+    #
     def constValidate(self, seqInf, product):
         self.running = True
+        # Sequences in JSON-Format with fields readable by the GeneArtClient. At first is empty.
         gaSequences  = []
         for s in seqInf:
-            seq = self.encode_pinger(s)
+            # Encode each element in JSON-Format with fields readable by the GeneArtClient and add it to the list.
+            seq = self.encode_sequence(s)
             gaSequences.append(seq)
+        # Validate the project by calling the corresponding method.
         response = self.client.constValidate(gaSequences, product)
+        self.running = False
         return response
         
     #
-    #   True if searchOffers called last
-    #   False if getOffers called last
+    #   Checks if the Pinger is Running.
     #
     def isRunning(self):
         return self.running
@@ -280,24 +300,24 @@ class GeneArt(BasePinger):
     
     #
     #   Add to Cart
-    #       
-    #
-    #   
+    #       Takes as parameter a projectId       
+    #       Returns the API-Response
     #
     def toCart(self, projectId):
         self.running = True
+        # Add the project to cart by calling the corresponding method.
         response = self.client.toCart(projectId)
         self.running = False
         return response
         
     #
-    #   Add to Cart
-    #       
-    #
-    #   
+    #   Status Review
+    #       Takes as parameter a projectId       
+    #       Returns the API-Response
     #
     def statusReview(self, projectId):
         self.running = True
+        # Review the status of the project by calling the corresponding method.
         response = self.client.statusReview(projectId)
         self.running = False
         return response

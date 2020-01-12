@@ -33,7 +33,7 @@ class TestGeneArtPinger(unittest.TestCase):
     
     # Check the projectValidate method by checking the keys and their values returned by the API.    
     def test_projectValidate(self):
-        print ("Start test for method construct Validate method of " + self.name + ".")
+        print ("Start test for method projectValidate method of " + self.name + ".")
         product = "dnaStrings"
         listOfSequences = example_list
         response = self.pinger_example.projectValidate(listOfSequences, product)
@@ -93,6 +93,92 @@ class TestGeneArtPinger(unittest.TestCase):
             "cartId": cartId
         }
         self.assertEqual(expectedStatusResponse2,statusResponse2)
-  
+
+    # Check the BasePinger Functions methods.
+    def test_pingerFunctions(self):
+        print ("Start test for the methods searchOffers and getOffers of " + self.name + ".")
+        listOfSequences = example_list
+        response = self.pinger_example.searchOffers(listOfSequences)
+        i = 0
+        while(self.pinger_example.isRunning()):
+            i = i + 1
+            if i == 10000000:
+                raise RuntimeError('Waiting Error. API is not responding')
+        print("Turns waited: " + str(i))
+        offers = self.pinger_example.getOffers()
+        self.assertEqual(len(offers), 4)
+
+        sequenceOffer0 = offers[0]
+        sequence0 = sequenceOffer0.sequenceInformation
+        self.assertEqual(sequence0.key, listOfSequences[0].key)        
+        self.assertEqual(sequence0.name, listOfSequences[0].name)
+        self.assertEqual(sequence0.sequence, listOfSequences[0].sequence)
+        offers0 = sequenceOffer0.offers
+        vendorInformation0 = offers0.vendorInformation
+        self.assertEqual(vendorInformation0.name, "Thermo Fisher Scientific - GeneArt")
+        self.assertEqual(vendorInformation0.shortName, "GeneArt")
+        self.assertEqual(vendorInformation0.key, "ga")
+        price0 = offers0.price
+        self.assertEqual(price0, {})
+        messages0 = offers0.messages
+        self.assertEqual(len(messages0), 1)
+        self.assertEqual(messages0[0].type, 2)
+        self.assertEqual(messages0[0].text, "dnaStrings_accepted")
+        self.assertEqual(offers0.turnovertime, -1)
+        
+        sequenceOffer1 = offers[1]
+        sequence1 = sequenceOffer1.sequenceInformation
+        self.assertEqual(sequence1.key, listOfSequences[1].key)        
+        self.assertEqual(sequence1.name, listOfSequences[1].name)
+        self.assertEqual(sequence1.sequence, listOfSequences[1].sequence)
+        offers1 = sequenceOffer1.offers
+        vendorInformation1 = offers1.vendorInformation
+        self.assertEqual(vendorInformation1.name, "Thermo Fisher Scientific - GeneArt")
+        self.assertEqual(vendorInformation1.shortName, "GeneArt")
+        self.assertEqual(vendorInformation1.key, "ga")
+        price1 = offers1.price
+        self.assertEqual(price1, {})
+        messages1 = offers1.messages
+        self.assertEqual(len(messages1), 1)
+        self.assertEqual(messages1[0].type, 2)
+        self.assertEqual(messages1[0].text, "dnaStrings_accepted")
+        self.assertEqual(offers1.turnovertime, -1)
+
+        sequenceOffer2 = offers[2]
+        sequence2 = sequenceOffer2.sequenceInformation
+        self.assertEqual(sequence2.key, listOfSequences[0].key)        
+        self.assertEqual(sequence2.name, listOfSequences[0].name)
+        self.assertEqual(sequence2.sequence, listOfSequences[0].sequence)
+        offers2 = sequenceOffer2.offers
+        vendorInformation2 = offers2.vendorInformation
+        self.assertEqual(vendorInformation2.name, "Thermo Fisher Scientific - GeneArt")
+        self.assertEqual(vendorInformation2.shortName, "GeneArt")
+        self.assertEqual(vendorInformation2.key, "ga")
+        price2 = offers2.price
+        self.assertEqual(price2, {})
+        messages2 = offers2.messages
+        self.assertEqual(len(messages2), 1)
+        self.assertEqual(messages2[0].type, 0)
+        self.assertEqual(messages2[0].text, "hqDnaStrings_rejected_homology.")
+        self.assertEqual(offers2.turnovertime, -1)
+
+        sequenceOffer3 = offers[3]
+        sequence3 = sequenceOffer3.sequenceInformation
+        self.assertEqual(sequence3.key, listOfSequences[1].key)        
+        self.assertEqual(sequence3.name, listOfSequences[1].name)
+        self.assertEqual(sequence3.sequence, listOfSequences[1].sequence)
+        offers3 = sequenceOffer3.offers
+        vendorInformation3 = offers3.vendorInformation
+        self.assertEqual(vendorInformation3.name, "Thermo Fisher Scientific - GeneArt")
+        self.assertEqual(vendorInformation3.shortName, "GeneArt")
+        self.assertEqual(vendorInformation3.key, "ga")
+        price3 = offers3.price
+        self.assertEqual(price3, {})
+        messages3 = offers3.messages
+        self.assertEqual(len(messages3), 1)
+        self.assertEqual(messages3[0].type, 0)
+        self.assertEqual(messages3[0].text, "hqDnaStrings_rejected_homology.")
+        self.assertEqual(offers3.turnovertime, -1)
+
 if __name__ == '__main__':
     unittest.main()

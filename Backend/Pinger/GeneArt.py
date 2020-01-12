@@ -206,15 +206,33 @@ class GeneArt(BasePinger):
     #       getOffers() -> [SequenceOffer(seqInf[0], self.tempOffer), SequenceOffer(seqInf[1], self.tempOffer), ...
     #                           SequenceOffer(seqInf[n], self.tempOffer)]
     #
-    def searchOffers(self, seqInf, product):
+    def searchOffers(self, seqInf):
         self.running = True
-        response = self.projectValidate(seqInf, product)
-        offers = []
-        count = 0
-        for seq in seqInf:
-            seqOffer = SequenceOffers(seq, Offer(messages = [response["constructs"][count]]))
-            offers.append(seqOffer)
-            count = count + 1
+        vendorInformation = VendorInformation(name = "Thermo Fisher Scientific - GeneArt", shortName = "GeneArt", key = "ga") # Vendor Information
+        offers = [] # Empty Offers List
+        for product in "dnaStrings", "hqDnaStrings": # Two possible Product Types. 
+            try:
+                response = self.projectValidate(seqInf, product)
+            except requests.ConnectionError:  # If request timeout             
+                offers.append(SequenceOffers(None, Offer(vendorInformation = vendorInformation, messages = [Message(1, "GeneArt API is not available")])))
+                break
+            count = 0 # Count the sequences
+            for seq in seqInf:
+                accepted = response["constructs"][count]["accepted"] # See if the API accepted the sequence
+                if accepted == True:
+                    messageType = 2 # Just informational message (INFO)
+                    messageText = product + "_" + "accepted"
+                    message = Message(messageType, messageText)
+                else:
+                    messageType = 0 # Vendor can not synthesize the sequence (SYNTHESIS_ERROR)
+                    messageText = product + "_" + "rejected_"
+                    for reason in response["constructs"][count]["reasons"]:
+                        messageText = messageText + str(reason) + "."
+                    message = Message(messageType, messageText)
+
+                seqOffer = SequenceOffers(seq, Offer(vendorInformation = vendorInformation, messages = [message]))
+                offers.append(seqOffer)
+                count = count + 1
         self.offers = offers
         self.running = False
         

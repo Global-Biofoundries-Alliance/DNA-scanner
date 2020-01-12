@@ -113,7 +113,8 @@ class TestGeneArtPinger(unittest.TestCase):
         self.assertEqual(sequence0.key, listOfSequences[0].key)        
         self.assertEqual(sequence0.name, listOfSequences[0].name)
         self.assertEqual(sequence0.sequence, listOfSequences[0].sequence)
-        offers0 = sequenceOffer0.offers
+        self.assertEqual(len(sequenceOffer0.offers), 1)
+        offers0 = sequenceOffer0.offers[0]
         vendorInformation0 = offers0.vendorInformation
         self.assertEqual(vendorInformation0.name, "Thermo Fisher Scientific - GeneArt")
         self.assertEqual(vendorInformation0.shortName, "GeneArt")
@@ -131,7 +132,8 @@ class TestGeneArtPinger(unittest.TestCase):
         self.assertEqual(sequence1.key, listOfSequences[1].key)        
         self.assertEqual(sequence1.name, listOfSequences[1].name)
         self.assertEqual(sequence1.sequence, listOfSequences[1].sequence)
-        offers1 = sequenceOffer1.offers
+        self.assertEqual(len(sequenceOffer1.offers), 1)        
+        offers1 = sequenceOffer1.offers[0]
         vendorInformation1 = offers1.vendorInformation
         self.assertEqual(vendorInformation1.name, "Thermo Fisher Scientific - GeneArt")
         self.assertEqual(vendorInformation1.shortName, "GeneArt")
@@ -149,7 +151,8 @@ class TestGeneArtPinger(unittest.TestCase):
         self.assertEqual(sequence2.key, listOfSequences[0].key)        
         self.assertEqual(sequence2.name, listOfSequences[0].name)
         self.assertEqual(sequence2.sequence, listOfSequences[0].sequence)
-        offers2 = sequenceOffer2.offers
+        self.assertEqual(len(sequenceOffer2.offers), 1)
+        offers2 = sequenceOffer2.offers[0]
         vendorInformation2 = offers2.vendorInformation
         self.assertEqual(vendorInformation2.name, "Thermo Fisher Scientific - GeneArt")
         self.assertEqual(vendorInformation2.shortName, "GeneArt")
@@ -167,7 +170,8 @@ class TestGeneArtPinger(unittest.TestCase):
         self.assertEqual(sequence3.key, listOfSequences[1].key)        
         self.assertEqual(sequence3.name, listOfSequences[1].name)
         self.assertEqual(sequence3.sequence, listOfSequences[1].sequence)
-        offers3 = sequenceOffer3.offers
+        self.assertEqual(len(sequenceOffer3.offers), 1)
+        offers3 = sequenceOffer3.offers[0]
         vendorInformation3 = offers3.vendorInformation
         self.assertEqual(vendorInformation3.name, "Thermo Fisher Scientific - GeneArt")
         self.assertEqual(vendorInformation3.shortName, "GeneArt")

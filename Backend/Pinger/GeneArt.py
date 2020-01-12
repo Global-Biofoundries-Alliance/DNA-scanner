@@ -214,7 +214,7 @@ class GeneArt(BasePinger):
             try:
                 response = self.projectValidate(seqInf, product)
             except requests.ConnectionError:  # If request timeout             
-                offers.append(SequenceOffers(None, Offer(vendorInformation = vendorInformation, messages = [Message(1, "GeneArt API is not available")])))
+                offers.append(SequenceOffers(None, [Offer(vendorInformation = vendorInformation, messages = [Message(1, "GeneArt API is not available")])]))
                 break
             count = 0 # Count the sequences
             for seq in seqInf:
@@ -230,7 +230,7 @@ class GeneArt(BasePinger):
                         messageText = messageText + str(reason) + "."
                     message = Message(messageType, messageText)
 
-                seqOffer = SequenceOffers(seq, Offer(vendorInformation = vendorInformation, messages = [message]))
+                seqOffer = SequenceOffers(seq, [Offer(vendorInformation = vendorInformation, messages = [message])])
                 offers.append(seqOffer)
                 count = count + 1
         self.offers = offers

@@ -75,7 +75,7 @@ class CompositePinger(BasePinger):
 
 
     #
-    #   Desc: Returns all Vendor Informations in an list
+    #   Desc: Returns all Vendor Information in an list
     #   Result-Type: [VendorInformation, ...]
     #
     def getVendors(self):
@@ -132,7 +132,7 @@ class CompositePinger(BasePinger):
 
             # ... and for every local SequenceOffer ...
             for seqOffer in self.sequenceOffers:
-                # apend Offers from leaf to lokal if SequenceKeys are equal
+                # append Offers from leaf to local if SequenceKeys are equal
                 if seqOffer.sequenceInformation.key == seqKey:
                     seqOffer.offers.append(leafSeqOffer.offers)
 

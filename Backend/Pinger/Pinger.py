@@ -33,9 +33,9 @@ class BasePinger:
 
     #
     #   Desc:   Start a search for a given list of sequences. This method has no result because of asynchronous search.
-    #           After call this method it starts searching. isRunning will be true. If the search is finished isRunning()
+    #           After this method is called it starts searching. isRunning will be true. If the search is finished isRunning()
     #           will return False. Then you can get the full result with getOffers().
-    #           Maybe you can get a partially result from getOffers() while running.
+    #           Maybe you can get a partial result from getOffers() while running.
     #
     def searchOffers(self, seqInf):
         raise NotImplementedError
@@ -50,7 +50,7 @@ class BasePinger:
 
     #
     #   Desc:   Returns the current offers. If isRunning() is True, then searching is not finished and maybe you can
-    #           get partially result. After searching is finished isRunning() is False and the result will be complete.
+    #           get a partial result. After searching is finished isRunning() is False and the result will be complete.
     #   Result-Type: [SequenceOffers, ...]
     #
     def getOffers(self):
@@ -59,7 +59,7 @@ class BasePinger:
 
 
 #
-#   Desc: Allows the registration of pingers and forward actions and joins the return-values.
+#   Desc: Allows the registration of pingers, forward actions and joins the return-values.
 #
 class CompositePinger(BasePinger):
 
@@ -78,7 +78,7 @@ class CompositePinger(BasePinger):
 
 
     #
-    #   Desc: Returns all Vendor Informations in an list
+    #   Desc: Returns all Vendor information in an list
     #   Result-Type: [VendorInformation, ...]
     #
     def getVendors(self):
@@ -100,8 +100,8 @@ class CompositePinger(BasePinger):
             vh.handler.searchOffers(seqInf)
 
     #
-    #   Desc:   True if one or more Pinger are searching.
-    #           False if all Vendor Pinger are finished.
+    #   Desc:   True if one or more Pingers are searching.
+    #           False if all Vendor Pingers are finished.
     #   Result-Type: Boolean
     #
     def isRunning(self):
@@ -135,7 +135,7 @@ class CompositePinger(BasePinger):
 
             # ... and for every local SequenceOffer ...
             for seqOffer in self.sequenceOffers:
-                # apend Offers from leaf to lokal if SequenceKeys are equal
+                # append Offers from leaf to local if SequenceKeys are equal
                 if seqOffer.sequenceInformation.key == seqKey:
                     seqOffer.offers.append(leafSeqOffer.offers)
 

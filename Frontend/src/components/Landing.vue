@@ -30,7 +30,9 @@
                                             <v-col
                                                     style="height: auto"
                                             >
-                                                <v-checkbox v-for="vendor in vendors" :key="vendor.name" :label="`${vendor.name}`" v-model="vendor.value"></v-checkbox>
+                                                <v-checkbox v-for="vendor in vendors" :key="vendor.name"
+                                                            :label="`${vendor.name}`"
+                                                            v-model="vendor.value"></v-checkbox>
                                             </v-col>
                                         </v-container>
                                     </v-col>
@@ -107,12 +109,14 @@
                 </v-dialog>
                 <v-btn color="primary" style="width: 25%;" class="ml-2" @click="searchNow()">Search</v-btn>
             </v-row>
+            <v-alert v-if="noFile === true" type="error" class="mt-4 mx-auto" width="350px">
+                Please upload a file
+            </v-alert>
         </v-container>
     </div>
 </template>
 
 <script>
-
     export default {
         name: 'HelloWorld',
         data() {
@@ -124,34 +128,43 @@
                 deliveryDays: 7,
                 dialog: false,
                 vendors: [],
-                filter: []
+                filter: [],
+                noFile: false
             }
         },
-
         methods: {
             searchNow() {
-                this.$http.post('/api/upload', {
-                    headers: {
-                        'Access-Control-Allow-Origin': '*',
-                        'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE, PUT',
-                        'Access-Control-Allow-Headers': 'append,delete,entries,foreach,get,has,keys,set,values,Authorization'
-                    }
-                })
-                    .then(response => {
-                        // eslint-disable-next-line no-console
-                        console.log(response);
-                        this.$store.state.StoreResult = response.body.result;
-                        // eslint-disable-next-line no-console
-                        console.log(this.$store.state.StoreResult);
-                        this.$store.state.StoreFile = this.file;
-                        this.$router.push('/result');
-                    });
-                // this.filter = [this.vendors, this.range, this.deliveryDays];
-                // this.$http.post('/api/filter', this.filter);
+                if (this.file.length === 0) {
+                    this.noFile = true;
+                } else {
+                    var data = new FormData();
+                    data.append('seqfile', this.file);
+
+                    this.$http.post('/api/upload', data, {
+                        headers: {
+                            'Access-Control-Allow-Origin': '*',
+                            'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE, PUT',
+                            'Access-Control-Allow-Headers': 'append,delete,entries,foreach,get,has,keys,set,values,Authorization',
+                        }
+                    })
+                        .then(response => {
+                            // eslint-disable-next-line no-console
+                            console.log(response);
+                            this.$store.state.StoreResult = response.body.result;
+                            // eslint-disable-next-line no-console
+                            console.log(this.$store.state.StoreResult);
+                            // eslint-disable-next-line no-console
+                            console.log(this.file.length);
+                            this.$store.state.StoreFile = this.file;
+                            this.$router.push('/result');
+                        });
+                    // this.filter = [this.vendors, this.range, this.deliveryDays];
+                    // this.$http.post('/api/filter', this.filter);
+                }
             },
             reset() {
                 this.dialog = false;
-                for(let i = 0; i < this.vendors.length; i++) {
+                for (let i = 0; i < this.vendors.length; i++) {
                     this.vendors[i].value = true;
                 }
                 this.range = [1, 100];
@@ -167,7 +180,7 @@
                 }
             })
                 .then(response => {
-                    for(let i = 0; i < response.body.vendors.length; i++) {
+                    for (let i = 0; i < response.body.vendors.length; i++) {
                         this.vendors[i] = {name: response.body.vendors[i], value: true};
                     }
                 });

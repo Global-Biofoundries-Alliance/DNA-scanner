@@ -14,8 +14,11 @@ def get_vendors():
 
 @app.route('/upload', methods=['post'])
 def uploadFile():
-    # if 'seqfile' not in request.files or request.files['seqfile'] == "":
-    #    return json.jsonify({'error': 'No file specified'})
+    if not request.files:
+       return json.jsonify({'error': 'File empty'})
+    if 'seqfile' not in request.files or request.files['seqfile'] == "":
+       return json.jsonify({'error': 'No file specified'})
+
 
     vendornames = ["TWIST", "IDT"]
     sequencenames = ["Detergent", "Spider Silk", "Smoke Flavor", "Insulin"]

@@ -124,7 +124,7 @@
                 // eslint-disable-next-line no-console
                 console.log('searchNow');
                 this.$emit('gotFile', this.file);
-                this.$http.post('upload', {headers:{'Access-Control-Allow-Origin': 'true'}})
+                this.$http.post('/api/upload', {headers:{'Access-Control-Allow-Origin': 'true'}})
                     .then(response => {
                         // eslint-disable-next-line no-console
                         console.log(response);

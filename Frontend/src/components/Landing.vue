@@ -11,7 +11,7 @@
             <v-row justify="center">
                 <v-dialog v-model="dialog" persistent max-width="600px">
                     <template v-slot:activator="{ on }">
-                        <v-btn @click="dialog=true">Set Filter</v-btn>
+                        <v-btn @click="dialog = true">Set Filter</v-btn>
                     </template>
                     <v-card>
                         <v-card-title>
@@ -22,8 +22,17 @@
                                 <v-row>
                                     <v-col cols="12" sm="6" md="4">
                                         <v-subheader>DNA Supplier</v-subheader>
-                                        <v-checkbox v-model="twist" label="TWIST" hide-details></v-checkbox>
-                                        <v-checkbox v-model="idt" label="IDT" hide-details></v-checkbox>
+                                        <v-container
+                                                id="scroll-target"
+                                                style="max-height: 210px"
+                                                class="overflow-y-auto"
+                                        >
+                                            <v-col
+                                                    style="height: auto"
+                                            >
+                                                <v-checkbox v-for="vendor in vendors" :key="vendor.name" :label="`${vendor.name}`" v-model="vendor.value"></v-checkbox>
+                                            </v-col>
+                                        </v-container>
                                     </v-col>
                                     <v-card-text>
                                         <v-subheader>Select min and max price in Euros(€)</v-subheader>
@@ -66,7 +75,7 @@
                                         <v-row>
                                             <v-col class="pr-4">
                                                 <v-slider
-                                                        v-model="slider"
+                                                        v-model="deliveryDays"
                                                         class="align-center"
                                                         :max="max"
                                                         :min="min"
@@ -74,7 +83,7 @@
                                                 >
                                                     <template v-slot:append>
                                                         <v-text-field
-                                                                v-model="slider"
+                                                                v-model="deliveryDays"
                                                                 class="mt-0 pt-0"
                                                                 hide-details
                                                                 single-line
@@ -91,17 +100,14 @@
                         </v-card-text>
                         <v-card-actions>
                             <v-spacer></v-spacer>
-                            <v-btn color="blue darken-1" text @click="dialog = false">Close</v-btn>
+                            <v-btn color="blue darken-1" text @click="reset()">Close</v-btn>
                             <v-btn color="blue darken-1" text @click="dialog = false">Save</v-btn>
                         </v-card-actions>
                     </v-card>
                 </v-dialog>
-                <router-link to="/result">
-                    <v-btn color="primary" style="width: 25%;" class="ml-2" @click="searchNow()">Search</v-btn>
-                </router-link>
+                <v-btn color="primary" style="width: 25%;" class="ml-2" @click="searchNow()">Search</v-btn>
             </v-row>
         </v-container>
-        <p>{{this.file.name}}</p>
     </div>
 </template>
 
@@ -115,36 +121,60 @@
                 min: 1,
                 max: 1000,
                 range: [1, 100],
-                slider: 7,
+                deliveryDays: 7,
                 dialog: false,
-                twist: true,
-                idt: true,
+                vendors: [],
+                filter: []
             }
         },
 
         methods: {
             searchNow() {
-                // eslint-disable-next-line no-console
-                console.log('searchNow');
-                this.$http.post('upload', {headers: {'Access-Control-Allow-Origin': 'true'}})
+                this.$http.post('/api/upload', {
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE, PUT',
+                        'Access-Control-Allow-Headers': 'append,delete,entries,foreach,get,has,keys,set,values,Authorization'
+                    }
+                })
                     .then(response => {
                         // eslint-disable-next-line no-console
                         console.log(response);
-                        this.$store.state.StoreResult = response.body.result[0];
+                        this.$store.state.StoreResult = response.body.result;
+                        // eslint-disable-next-line no-console
+                        console.log(this.$store.state.StoreResult);
                         this.$store.state.StoreFile = this.file;
-                        // eslint-disable-next-line no-console
-                        console.log(this.$store.state.StoreFile);
-                        // eslint-disable-next-line no-console
-                        console.log(this.$store.state.StoreResult.sequenceinformation.name);
+                        this.$router.push('/result');
                     });
+                // this.filter = [this.vendors, this.range, this.deliveryDays];
+                // this.$http.post('/api/filter', this.filter);
+            },
+            reset() {
+                this.dialog = false;
+                for(let i = 0; i < this.vendors.length; i++) {
+                    this.vendors[i].value = true;
+                }
+                this.range = [1, 100];
+                this.deliveryDays = 7;
             }
+        },
+        created() {
+            this.$http.get('/api/vendors', {
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE, PUT',
+                    'Access-Control-Allow-Headers': 'append,delete,entries,foreach,get,has,keys,set,values,Authorization'
+                }
+            })
+                .then(response => {
+                    for(let i = 0; i < response.body.vendors.length; i++) {
+                        this.vendors[i] = {name: response.body.vendors[i], value: true};
+                    }
+                });
         }
     };
 </script>
 
 <style>
-    .verticalSpace {
-        margin-top: 10%;
-    }
 </style>
 

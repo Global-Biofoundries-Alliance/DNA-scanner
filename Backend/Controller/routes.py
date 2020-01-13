@@ -8,17 +8,19 @@ from .app import app
 from .dataformats import SearchResponse
 from .parser import parse
 
+@app.route('/vendors', methods=['get'])
+def get_vendors():
+    return json.jsonify({'vendors': ['TWIST', 'IDT', 'GenArt']})
 
 @app.route('/upload', methods=['post'])
 def uploadFile():
     # if 'seqfile' not in request.files or request.files['seqfile'] == "":
     #    return json.jsonify({'error': 'No file specified'})
 
-    vendornames = ["Twist DNA", "IDT DNA", "GeneArt"]
-    vendorshorts = ["Twist", "IDT", "GenA"]
+    vendornames = ["TWIST", "IDT"]
     sequencenames = ["Detergent", "Spider Silk", "Smoke Flavor", "Insulin"]
     resp = SearchResponse()
-    for s in range(0, 100):
+    for s in range(0, 10):
         if s > 0:
             resp.result.append({})  # make space for the next result
 
@@ -29,15 +31,13 @@ def uploadFile():
                 }
 
         resp.result[s]['offers'] = []
-        for i in range(0, 10):
-            vendor_id = randint(0, 2)
+        for i in range(0, 2):
+            vendor_id = i
             resp.result[s]['offers'].append({
                 "vendorinformation": {
                     "name": vendornames[vendor_id],
-                    "shortname": vendorshorts[vendor_id],
-                    "key": ""
                 },
-                "price": random(),
+                "price": float(int(random() * 100)) / 100,
                 "turnovertime": randint(1, 20)
             })
             resp.count = resp.count + 1

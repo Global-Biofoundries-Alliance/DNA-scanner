@@ -9,6 +9,10 @@ from .dataformats import SearchResponse
 from .parser import parse
 
 
+@app.route('/ping')
+def hello_world():
+    return 'pong'
+
 @app.route('/upload', methods=['post'])
 def uploadFile():
     #if 'seqfile' not in request.files or request.files['seqfile'] == "":

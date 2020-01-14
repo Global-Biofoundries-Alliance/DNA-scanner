@@ -3,6 +3,9 @@
 version: '3.3'
 services:
     backend:
+        # Backend only direct available in development
+        ports:
+            - "8080:8080"
         # backend will be startet after db
         depends_on:
             - db

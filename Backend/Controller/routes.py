@@ -26,20 +26,6 @@ def uploadFile():
     if 'seqfile' not in request.files or request.files['seqfile'] == "":
         return json.jsonify({'error': 'No file specified'})
 
-    resp = SearchResponse()
-    for i in range(0, 10):
-        vendor_id = randint(0, 1)
-        resp.result[0]['offers'].append({
-            "vendorinformation": {
-                "name": "Twist DNA ..." if vendor_id == 0 else "IDT DNA ...",
-                "shortname": "Twist" if vendor_id == 0 else "IDT",
-                "key": ""
-            },
-            "price": random(),
-            "turnovertime": randint(1, 20)
-        })
-
-
     # Store the input in a temporary file for the parser to process
     tempf, tpath = tempfile.mkstemp('.' + secure_filename(request.files['seqfile'].filename).rsplit('.', 1)[1].lower())
     request.files['seqfile'].save(tpath)

@@ -16,6 +16,8 @@ class TestController(unittest.TestCase):
         pass
 
     def test_api_prefix(self):
+        print("Testing /api/ subdomain routing")
+
         resp = self.client.get('/ping')
         self.assertTrue(b'The page requested does not exist' in resp.data)
 
@@ -35,6 +37,8 @@ class TestController(unittest.TestCase):
         self.assertTrue(b'The page requested does not exist' not in resp.data)
 
     def test_upload(self) -> None:
+        print("Testing file upload")
+
         handle = open('../Example_Sequence_Files/difficult_johannes.fasta', 'rb')
         response = self.client.post('/api/upload', content_type='multipart/form-data', data={'seqfile': handle})
         searchResult = eval(response.data)              #Don't do this in production code, kids! (It's okay here since our own mock data is generally trusted)

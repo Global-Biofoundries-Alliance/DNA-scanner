@@ -1,20 +1,18 @@
 <template>
     <div>
         <br><br>
-        <p style="text-align: center">Your file: {{ file.name }}</p>
-        <p style="text-align: center">Number of Sequences: XY</p>
+        <p style="text-align: center">Your file: {{ fileName }}</p>
         <br><br>
         <v-container fluid>
             <v-row>
                 <v-col>
                     <v-row
-                            :align="alignment"
                             class="grey lighten-5"
                     >
                         <v-card
                             outlined
-                            style="margin-left: 40%"
-                            width="21%"
+                            style="margin-left: 43.2%"
+                            width="240px"
                             >
                             <v-list-item three-line>
                                 <v-list-item-content>
@@ -31,8 +29,8 @@
                         </v-card>
                         <v-card
                                 outlined
-                                style="margin-left: 1%"
-                                width="21%"
+                                style="margin-left: 0.7%"
+                                width="238px"
                         >
                             <v-list-item three-line>
                                 <v-list-item-content>
@@ -55,27 +53,28 @@
             <p>Seq.Nr.</p>
             <p style="margin-left: 2%">Sequence</p>
         </v-row>
+<!--        this is the part where the rows for the results are created -->
         <v-row no-gutters
-                v-for="n in 1"
-                :key="n"
+                v-for="(n,i) in 10"
+                :key="i"
                 style="margin-left: 15%">
-            <v-col cols="4">
+            <v-col cols="4" style="height: 100px;">
                 <v-card
                         style="height: 5%; padding-top: 3% ;padding-bottom: 12.25%"
                         outlined
                         tile
                 >
                     <v-row class="ml-3">
-                        <p style="margin-left: 2.5%">
+                        <p style="margin-left: 2.5%" class="mb-0">
                             {{n}}
                         </p>
-                        <p style="margin-left: 9%">
-                            {{res.sequenceinformation.name}}
+                        <p style="margin-left: 9%" class="mb-0">
+                            {{result[i].sequenceinformation.name}}
                         </p>
                         <v-spacer></v-spacer>
                         <v-col cols="2" sm="6" class="mt-n4">
                             <v-select
-                                    v-model="value"
+                                    v-model="value[i]"
                                     :items="items"
                                     chips
                                     label="Select Merchant"
@@ -94,11 +93,11 @@
                 >
                     <v-row class="ml-2">
                         <p>
-                            {{res.offers[0].turnovertime}}
+                            {{result[i].offers[0].turnovertime}}
                         </p>
                         <v-spacer></v-spacer>
                         <p class="mr-4">
-                            {{res.offers[0].price}}
+                            {{result[i].offers[0].price}}
                         </p>
                     </v-row>
                 </v-card>
@@ -111,11 +110,11 @@
                 >
                     <v-row class="ml-2">
                         <p>
-                            8
+                            {{result[i].offers[1].turnovertime}}
                         </p>
                         <v-spacer></v-spacer>
                         <p class="mr-4">
-                            1.0
+                            {{result[i].offers[1].price}}
                         </p>
                     </v-row>
                 </v-card>
@@ -129,9 +128,9 @@
 
     export default {
         name: "Result",
-        props: ['file', 'res'],
         data() {
             return {
+                fileName: this.$store.state.StoreFile.name,
                 icons: {
                     mdiCurrencyUsd
                 },
@@ -153,6 +152,11 @@
                 ],
                 items: ['TWIST', 'IDT'],
                 value: [],
+            }
+        },
+        computed: {
+            result() {
+                return this.$store.state.StoreResult;
             }
         }
 

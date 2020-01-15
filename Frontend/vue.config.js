@@ -1,8 +1,8 @@
 module.exports = {
-  "transpileDependencies": [
-    "vuetify"
-  ],
-  devServer: {
-    proxy: 'http://dnabackend:8080/'
-  }
+    "transpileDependencies": [
+        "vuetify"
+    ],
+    devServer: {
+        proxy: 'http://localhost'
+    }
 };

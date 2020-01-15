@@ -78,7 +78,7 @@ class CompositePinger(BasePinger):
 
 
     #
-    #   Desc: Returns all Vendor information in an list
+    #   Desc: Returns all Vendor Information in an list
     #   Result-Type: [VendorInformation, ...]
     #
     def getVendors(self):

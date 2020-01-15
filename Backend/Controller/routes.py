@@ -5,8 +5,10 @@ from flask import request, json
 from werkzeug.utils import secure_filename
 
 from .app import app
+from .controllerutils import buildSearchResponseJSON, sequenceInfoFromObjects
 from .dataformats import SearchResponse
 from .parser import parse
+from Pinger.Pinger import *
 
 @app.route('/vendors', methods=['get'])
 def get_vendors():
@@ -18,48 +20,37 @@ def hello_world():
 
 @app.route('/upload', methods=['post'])
 def uploadFile():
-    if not request.files:
-       return json.jsonify({'error': 'File empty'})
     if 'seqfile' not in request.files or request.files['seqfile'] == "":
-       return json.jsonify({'error': 'No file specified'})
+        return json.jsonify({'error': 'No file specified'})
+
+    # Store the input in a temporary file for the parser to process
+    tempf, tpath = tempfile.mkstemp('.' + secure_filename(request.files['seqfile'].filename).rsplit('.', 1)[1].lower())
+    request.files['seqfile'].save(tpath)
+
+    mainPinger = CompositePinger()
+
+    # Begin temporary testing placeholders
+    dummyVendor = VendorInformation()
+    dummyPinger = DummyPinger()
+    mainPinger.registerVendor(dummyVendor, dummyPinger)
+    mainPinger.registerVendor(dummyVendor, dummyPinger)
+    mainPinger.registerVendor(dummyVendor, dummyPinger)
+    mainPinger.registerVendor(dummyVendor, dummyPinger)
+    # End temporary testing placeholders
+
+    try:
+        # Parse sequence file
+        objSequences = parse(tpath)
+
+        # Adapt SeqObject to SequenceInformation
+        sequences = sequenceInfoFromObjects(objSequences)
+
+        # Search and retrieve offers for each sequence
+        mainPinger.searchOffers(sequences)
+        seqoffers = mainPinger.getOffers()
+
+        return buildSearchResponseJSON(seqoffers)
 
 
-    vendornames = ["TWIST", "IDT"]
-    sequencenames = ["Detergent", "Spider Silk", "Smoke Flavor", "Insulin"]
-    resp = SearchResponse()
-    for s in range(0, 10):
-        if s > 0:
-            resp.result.append({})  # make space for the next result
-
-        resp.result[s]["sequenceinformation"] = {
-                    "id": str(randint(0, 9999)) + '-' + str(randint(0, 9999)),
-                    "name": sequencenames[randint(0, len(sequencenames) - 1)],
-                    "sequence": "ACTG"
-                }
-
-        resp.result[s]['offers'] = []
-        for i in range(0, 2):
-            vendor_id = i
-            resp.result[s]['offers'].append({
-                "vendorinformation": {
-                    "name": vendornames[vendor_id],
-                },
-                "price": float(int(random() * 100)) / 100,
-                "turnovertime": randint(1, 20)
-            })
-            resp.count = resp.count + 1
-
-    #
-    #   TODO: Arr, Here be stuff for populating the response object such as file parsing!
-    #
-    #tempf, tpath = tempfile.mkstemp('.' + secure_filename(request.files['seqfile'].filename).rsplit('.', 1)[1].lower())
-
-
-    #request.files['seqfile'].save(tpath)
-
-    #try:
-    #    parse(tpath)
-    #except NameError:
-    #    return json.jsonify({'error': 'File format not supported'})
-
-    return json.jsonify(resp.__dict__)
+    except NameError:
+        return json.jsonify({'error': 'File format not supported'})

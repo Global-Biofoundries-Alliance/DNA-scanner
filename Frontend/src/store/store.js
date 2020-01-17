@@ -14,6 +14,6 @@ export const store = new Vuex.Store({
         DeliveryFilterMax: 1000,
         DeliveryFilterCurrent: 7,
         StoreVendors: [],
-        StoreDialogItem: null
+        StorePermanentElevation: [[]]
     }
 });

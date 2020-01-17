@@ -30,7 +30,7 @@ def buildSearchResponseJSON(seqoffers, vendors):
         resp.data["result"].append(result)
     resp.data["count"] = count
     resp.data["size"] = min(20, count)
-    return json.jsonify(resp.__dict__)
+    return json.jsonify(resp.data)
 
 # Converts a List[SequenceObject] to a List[SequenceInformation]
 def sequenceInfoFromObjects(objSequences):

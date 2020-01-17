@@ -48,11 +48,10 @@ def uploadFile():
     mainPinger = CompositePinger()
 
     # Begin temporary testing placeholders
-    dummyVendor = VendorInformation()
-    dummyPinger = DummyPinger()
-    mainPinger.registerVendor(VendorInformation(0, vendors[0], "TWIST DNA"), dummyPinger)
-    mainPinger.registerVendor(VendorInformation(1, vendors[1], "TWIST DNA"), dummyPinger)
-    mainPinger.registerVendor(VendorInformation(2, vendors[2], "TWIST DNA"), dummyPinger)
+    for id in range(0, len(vendors)):
+        dummyVendor = VendorInformation(vendors[id]["name"], vendors[id]["shortName"], id)
+        mainPinger.registerVendor(dummyVendor, DummyPinger(dummyVendor))
+
     # End temporary testing placeholders
 
     try:

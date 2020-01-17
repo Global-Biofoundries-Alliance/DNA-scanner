@@ -30,7 +30,7 @@
                                             <v-col
                                                     style="height: auto"
                                             >
-                                                <v-checkbox v-for="vendor in vendors" :key="vendor.name"
+                                                <v-checkbox v-for="vendor in this.$store.state.StoreVendors" :key="vendor.name"
                                                             :label="`${vendor.name}`"
                                                             v-model="vendor.value"></v-checkbox>
                                             </v-col>
@@ -127,7 +127,6 @@
                 range: [1, 100],
                 deliveryDays: 7,
                 dialog: false,
-                vendors: [],
                 filter: [],
                 noFile: false
             }
@@ -150,11 +149,9 @@
                         .then(response => {
                             // eslint-disable-next-line no-console
                             console.log(response);
-                            this.$store.state.StoreResult = response.body.result;
+                            this.$store.state.StoreSearchResult = response.body.result;
                             // eslint-disable-next-line no-console
-                            console.log(this.$store.state.StoreResult);
-                            // eslint-disable-next-line no-console
-                            console.log(this.file.length);
+                            console.log(this.$store.state.StoreSearchResult);
                             this.$store.state.StoreFile = this.file;
                             this.$router.push('/result');
                         });
@@ -164,8 +161,8 @@
             },
             reset() {
                 this.dialog = false;
-                for (let i = 0; i < this.vendors.length; i++) {
-                    this.vendors[i].value = true;
+                for (let i = 0; i < this.$store.state.StoreVendors.length; i++) {
+                    this.$store.state.StoreVendors[i].value = true;
                 }
                 this.range = [1, 100];
                 this.deliveryDays = 7;
@@ -180,9 +177,11 @@
                 }
             })
                 .then(response => {
-                    for (let i = 0; i < response.body.vendors.length; i++) {
-                        this.vendors[i] = {name: response.body.vendors[i], value: true};
+                    for(let i = 0; i < response.body.vendors.length; i++) {
+                        this.$store.state.StoreVendors[i] = {name: response.body.vendors[i], value: true};
                     }
+                    // eslint-disable-next-line no-console
+                    console.log(this.$store.state.StoreVendors);
                 });
         }
     };

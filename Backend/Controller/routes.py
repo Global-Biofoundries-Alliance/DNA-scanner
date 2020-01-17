@@ -10,13 +10,31 @@ from .dataformats import SearchResponse
 from .parser import parse
 from Pinger.Pinger import *
 
+vendors = [{"name": "TWIST DNA",
+            "shortName": "TWIST",
+            "key": 0},
+
+           {"name": "IDT DNA",
+            "shortName": "IDT",
+            "key": 1},
+
+           {"name": "GeneArt",
+            "shortName": "GenArt",
+            "key": 2}
+           ]
+
+vendorNames = ['TWIST', 'IDT', 'GenArt']
+
+
 @app.route('/vendors', methods=['get'])
 def get_vendors():
-    return json.jsonify({'vendors': ['TWIST', 'IDT', 'GenArt']})
+    return json.jsonify({'vendors': vendorNames})
+
 
 @app.route('/ping')
 def hello_world():
     return 'pong'
+
 
 @app.route('/upload', methods=['post'])
 def uploadFile():
@@ -32,10 +50,9 @@ def uploadFile():
     # Begin temporary testing placeholders
     dummyVendor = VendorInformation()
     dummyPinger = DummyPinger()
-    mainPinger.registerVendor(dummyVendor, dummyPinger)
-    mainPinger.registerVendor(dummyVendor, dummyPinger)
-    mainPinger.registerVendor(dummyVendor, dummyPinger)
-    mainPinger.registerVendor(dummyVendor, dummyPinger)
+    mainPinger.registerVendor(VendorInformation(0, vendors[0], "TWIST DNA"), dummyPinger)
+    mainPinger.registerVendor(VendorInformation(1, vendors[1], "TWIST DNA"), dummyPinger)
+    mainPinger.registerVendor(VendorInformation(2, vendors[2], "TWIST DNA"), dummyPinger)
     # End temporary testing placeholders
 
     try:
@@ -49,7 +66,7 @@ def uploadFile():
         mainPinger.searchOffers(sequences)
         seqoffers = mainPinger.getOffers()
 
-        return buildSearchResponseJSON(seqoffers)
+        return buildSearchResponseJSON(seqoffers, vendors)
 
 
     except NameError:

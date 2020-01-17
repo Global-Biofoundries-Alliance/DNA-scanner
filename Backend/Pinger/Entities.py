@@ -60,7 +60,7 @@ class SequenceInformation:
 #
 class VendorInformation:
 
-    def __init__(self, name = "", shortName = "", key = ""):
+    def __init__(self, name = "", shortName = "", key = 0):
         # ID of an Vendor. Will be static for every vendor
         self.key = key
 

@@ -152,7 +152,7 @@ class DummyPinger(BasePinger):
 
 
         self.tempOffer = Offer()
-        self.tempOffer.vendorInformation = VendorInformation("dummy", "DummyVendor", "DummyVendor Not Real GmbH")
+        self.tempOffer.vendorInformation = VendorInformation("Dummy", "DummyVendor", 0)
         self.tempOffer.price = Price(currency=Currency.EUR)
         self.tempOffer.price.amount = 120
         self.tempOffer.turnovertime = 14

@@ -9,7 +9,6 @@
 #                                                       #
 #########################################################
 
-import numbers
 from Pinger.Entities import *
 
 class Validator:
@@ -25,7 +24,7 @@ class EntityValidator:
 
     def validate(self, obj):
         if isinstance(obj, VendorInformation):
-            if(not isinstance(obj.key, numbers.Number)):
+            if(not isinstance(obj.key, int)):
                 return self.raiseFalse("key is not a numeric value")
             if(not isinstance(obj.shortName, str)):
                 return self.raiseFalse("shortName is not a String")

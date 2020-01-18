@@ -9,6 +9,7 @@ from .controllerutils import buildSearchResponseJSON, sequenceInfoFromObjects
 from .dataformats import SearchResponse
 from .parser import parse
 from Pinger.Pinger import *
+from Pinger.AdvancedMock import AdvancedMockPinger
 
 vendors = [{"name": "TWIST DNA",
             "shortName": "TWIST",
@@ -50,7 +51,7 @@ def uploadFile():
     # Begin temporary testing placeholders
     for id in range(0, len(vendors)):
         dummyVendor = VendorInformation(vendors[id]["name"], vendors[id]["shortName"], id)
-        mainPinger.registerVendor(dummyVendor, DummyPinger(dummyVendor))
+        mainPinger.registerVendor(dummyVendor, AdvancedMockPinger(dummyVendor))
 
     # End temporary testing placeholders
 

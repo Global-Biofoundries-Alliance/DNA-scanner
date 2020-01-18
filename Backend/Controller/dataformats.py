@@ -62,11 +62,3 @@ class SearchResponse(object):
                 "TWIST API currently unavailable"
             ]
         }
-
-
-#def toDict(resp: SearchResponse):
-#    dictionary = resp.__dict__
-#    for key in dictionary.keys():  # remove all of the keys added by python
-#        if key.startswith("__", 0, len(key)):
-#            del dictionary[key]
-#    return dictionary

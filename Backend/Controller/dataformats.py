@@ -30,8 +30,8 @@ class SearchResponse(object):
     def __init__(self):
         self.data = {
             "size": 10,
-            "count": 150,
-            "offset": 1,
+            "count": 0,
+            "offset": 0,
             "sessionId": "12345-12345-12345",
             "result": [
                 {

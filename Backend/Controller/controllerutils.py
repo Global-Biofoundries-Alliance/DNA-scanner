@@ -8,7 +8,8 @@ def buildSearchResponseJSON(seqoffers, vendors):
     resp = SearchResponse()
     resp.data["result"] = []
     resp.data["globalMessage"] = []
-    count = 0
+    resp.data["count"] = len(seqoffers)
+    resp.data["size"] = min(20, resp.data["count"])
     resp.data["offset"] = 0
     for seqoff in seqoffers:
         result = {
@@ -25,11 +26,10 @@ def buildSearchResponseJSON(seqoffers, vendors):
                     "turnoverTime": offer.turnovertime,
                     "offerMessage": [],
                     "selected": False})
-                count = count + 1
 
         resp.data["result"].append(result)
-    resp.data["count"] = count
-    resp.data["size"] = min(20, count)
+
+
     return json.jsonify(resp.data)
 
 # Converts a List[SequenceObject] to a List[SequenceInformation]

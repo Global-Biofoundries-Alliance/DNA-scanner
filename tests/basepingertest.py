@@ -14,8 +14,8 @@ class TestCompositePinger(unittest.TestCase):
         pingerDummy1 = Pinger.DummyPinger()
         pingerDummy2 = Pinger.DummyPinger()
         p = Pinger.CompositePinger()
-        p.registerVendor(Entities.VendorInformation("Dummy", "Dummy", "D1"), pingerDummy1)
-        p.registerVendor(Entities.VendorInformation("Dummy", "Dummy", "D2"), pingerDummy2)
+        p.registerVendor(Entities.VendorInformation(name="Dummy", shortName="Dummy", key=1), pingerDummy1)
+        p.registerVendor(Entities.VendorInformation(name="Dummy", shortName="Dummy", key=2), pingerDummy2)
 
         # No Pinger is Running
         pingerDummy1.running = False
@@ -49,22 +49,29 @@ class TestCompositePinger(unittest.TestCase):
         self.assertEqual(0, len(p.getVendors()))
 
         # With 1 registered vendor
-        p.registerVendor(Entities.VendorInformation("Dummy", "Dummy", "D1"), pingerDummy1)
+        p.registerVendor(Entities.VendorInformation(name="Dummy", shortName="Dummy", key=1), pingerDummy1)
         self.assertEqual(1, len(p.getVendors()))
         vendor = p.getVendors()[0]
         self.assertEqual(vendor.name, "Dummy")
         self.assertEqual(vendor.shortName, "Dummy")
-        self.assertEqual(vendor.key, "D1")
+        self.assertEqual(vendor.key, 1)
 
         # with 2 registered vendor
-        p.registerVendor(Entities.VendorInformation("Dummy", "Dummy", "D2"), pingerDummy2)
+        p.registerVendor(Entities.VendorInformation(name="Dummy", shortName="Dummy", key=2), pingerDummy2)
         self.assertEqual(2, len(p.getVendors()))
         vendor = p.getVendors()[1]
         self.assertEqual(vendor.name, "Dummy")
         self.assertEqual(vendor.shortName, "Dummy")
-        self.assertEqual(vendor.key, "D2")
+        self.assertEqual(vendor.key, 2)
 
-        # TODO Test with duplicate of keys
+        # Test with duplicate key. Old one should be replaced with the new one
+        p.registerVendor(Entities.VendorInformation(name="DummyDuplicate", shortName="DummyDuplicate", key=2), pingerDummy2)
+        self.assertEqual(2, len(p.getVendors()))
+        vendor = p.getVendors()[1]
+        self.assertEqual(vendor.name, "DummyDuplicate")
+        self.assertEqual(vendor.shortName, "DummyDuplicate")
+        self.assertEqual(vendor.key, 2)
+
 
     # Checks the getorders method
     def test_getorders(self):
@@ -81,7 +88,7 @@ class TestCompositePinger(unittest.TestCase):
         self.assertEqual(0, len(p.getOffers()[0].offers))
 
         # search with 2 sequences and 1 vendor
-        p.registerVendor(Entities.VendorInformation("Dummy", "Dummy", "D1"), pingerDummy1)
+        p.registerVendor(Entities.VendorInformation(name="Dummy", shortName="Dummy", key=1), pingerDummy1)
         p.searchOffers([Entities.SequenceInformation("ACTG", "TestSequence", "ts1"),
                         Entities.SequenceInformation("ACTG", "TestSequence", "ts2")])
         self.assertEqual(2, len(p.getOffers()))
@@ -89,7 +96,7 @@ class TestCompositePinger(unittest.TestCase):
         self.assertEqual(1, len(p.getOffers()[1].offers))
 
         # search with 1 sequence and 2 vendors
-        p.registerVendor(Entities.VendorInformation("Dummy", "Dummy", "D2"), pingerDummy2)
+        p.registerVendor(Entities.VendorInformation(name="Dummy", shortName="Dummy", key=2), pingerDummy2)
         p.searchOffers([Entities.SequenceInformation("ACTG", "TestSequence", "ts1")])
         self.assertEqual(1, len(p.getOffers()))
         self.assertEqual(2, len(p.getOffers()[0].offers))

@@ -1,4 +1,5 @@
 from .Entities import *
+from .Validator import entityValidator as Validator
 
 
 #########################################################
@@ -70,10 +71,33 @@ class CompositePinger(BasePinger):
     #
     #   Desc: Registration of the basepinger handlers of the various vendors
     #
+    #   @param vendorInformation
+    #       Has type VendorInformation (see Entities.py). If vendorInformation already 
+    #       exists, then vendorInformation and vendorPinger overrides the existing one.
+    #   @param vendorPinger
+    #       Has type BasePinger (see above).
+    #
     def registerVendor(self, vendorInformation, vendorPinger):
         if self.vendorHandler is None:
             self.vendorHandler = []
 
+        # Check Input with validator
+        if(isinstance(vendorInformation, VendorInformation)):
+            if(not Validator.validate(vendorInformation)):
+                return
+        if(not isinstance(vendorPinger, BasePinger)):
+            print("Invalid Input: vendorPinger has not type BasePinger")
+            return
+
+        # if vendor-key already exists, then override this vendorhandler
+        if len(self.vendorHandler)>0:
+            for counter in range(0, len(self.vendorHandler)):
+                if (self.vendorHandler[counter].vendor.key == vendorInformation.key):
+                    self.vendorHandler[counter] = VendorHandler(vendorInformation, vendorPinger)
+                    return
+
+        # Vendor-key is a new one. 
+        # Append the new vendorHandler 
         self.vendorHandler.append(VendorHandler(vendorInformation, vendorPinger))
 
 

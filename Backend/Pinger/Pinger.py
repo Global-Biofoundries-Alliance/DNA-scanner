@@ -71,6 +71,7 @@ class BasePinger:
     def clear(self):
         raise NotImplementedError
 
+
 class ManagedPinger:
 
     def __init__(self):
@@ -147,12 +148,6 @@ class CompositePinger(ManagedPinger):
 
     #
     #   see ManagedPinger.registerVendor
-    #
-    #   @param vendorInformation
-    #       Has type VendorInformation (see Entities.py). If vendorInformation already 
-    #       exists, then vendorInformation and vendorPinger overrides the existing one.
-    #   @param vendorPinger
-    #       Has type BasePinger (see above).
     #
     def registerVendor(self, vendorInformation, vendorPinger):
         # Initialize list if necessary

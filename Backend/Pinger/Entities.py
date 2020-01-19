@@ -98,29 +98,52 @@ class Price:
 #
 #   Desc:   Sequence and a list of offers for this sequence
 #
-class SequenceOffers:
+#   @attribute vendorOffers
+#           Type ArrayOf(VendorOffers). A list of VendorOffers, which represent 
+#           a vendor with his offers for the given sequenceInformation.
+#
+#   @attribute sequenceInformation
+#           Type SequenceInformation. A single SequenceInformation represents a 
+#           a sequence. 
+#
+class SequenceVendorOffers:
 
-    def __init__(self, sequenceInformation, offers = []):
+    def __init__(self, sequenceInformation, vendorOffers = []):
 
         # Sequence information
         self.sequenceInformation = sequenceInformation
 
         # Multiple offers for the sequence information
+        self.vendorOffers = vendorOffers
+
+#
+#   Desc:   Represents a list of offers for a specific vendor.
+#
+#   @attribute vendorInformation
+#           Type VendorInformation. Represents the Vendor which offers are listed in 'offers'.
+#
+#   @attribute offers
+#           Type ArrayOf(Offer). The list of offers from the vendor represented from 'vendorInformation'.
+#
+class VendorOffers:
+
+    def __init__(self, vendorInformation, offers = [])
+        self.vendorInformation = vendorInformation
+        
         self.offers = offers
 
 #
 #   Desc:   Representation of a Offer
 #
+#   @attribute price
+#           Type Price. Represents the price of the offer.
+#
+#   @attribute turonvertime
+#           Type int. Turnovertime is the number of days it needs to synthesize the sequence.
+#
 class Offer:
 
-    def __init__(self, vendorInformation = {}, price = {}, messages = [], turnovertime = -1):
-
-        ### Removed for class SequenceOffers
-        # sequence of the offer
-        # sequenceInformation = {}
-
-        # vendor of the offer
-        self.vendorInformation = vendorInformation
+    def __init__(self, price, messages = [], turnovertime):
 
         # price of the offer
         self.price = price

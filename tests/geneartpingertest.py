@@ -118,7 +118,7 @@ class TestGeneArtPinger(unittest.TestCase):
         vendorInformation0 = offers0.vendorInformation
         self.assertEqual(vendorInformation0.name, "Thermo Fisher Scientific - GeneArt")
         self.assertEqual(vendorInformation0.shortName, "GeneArt")
-        self.assertEqual(vendorInformation0.key, "ga")
+        self.assertEqual(vendorInformation0.key, 11880)
         price0 = offers0.price
         self.assertEqual(price0, {})
         messages0 = offers0.messages
@@ -137,7 +137,7 @@ class TestGeneArtPinger(unittest.TestCase):
         vendorInformation1 = offers1.vendorInformation
         self.assertEqual(vendorInformation1.name, "Thermo Fisher Scientific - GeneArt")
         self.assertEqual(vendorInformation1.shortName, "GeneArt")
-        self.assertEqual(vendorInformation1.key, "ga")
+        self.assertEqual(vendorInformation1.key, 11880)
         price1 = offers1.price
         self.assertEqual(price1, {})
         messages1 = offers1.messages
@@ -156,7 +156,7 @@ class TestGeneArtPinger(unittest.TestCase):
         vendorInformation2 = offers2.vendorInformation
         self.assertEqual(vendorInformation2.name, "Thermo Fisher Scientific - GeneArt")
         self.assertEqual(vendorInformation2.shortName, "GeneArt")
-        self.assertEqual(vendorInformation2.key, "ga")
+        self.assertEqual(vendorInformation2.key, 11880)
         price2 = offers2.price
         self.assertEqual(price2, {})
         messages2 = offers2.messages
@@ -175,7 +175,7 @@ class TestGeneArtPinger(unittest.TestCase):
         vendorInformation3 = offers3.vendorInformation
         self.assertEqual(vendorInformation3.name, "Thermo Fisher Scientific - GeneArt")
         self.assertEqual(vendorInformation3.shortName, "GeneArt")
-        self.assertEqual(vendorInformation3.key, "ga")
+        self.assertEqual(vendorInformation3.key, 11880)
         price3 = offers3.price
         self.assertEqual(price3, {})
         messages3 = offers3.messages

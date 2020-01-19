@@ -24,12 +24,9 @@ vendors = [{"name": "TWIST DNA",
             "key": 2}
            ]
 
-vendorNames = ['TWIST', 'IDT', 'GenArt']
-
-
 @app.route('/vendors', methods=['get'])
 def get_vendors():
-    return json.jsonify({'vendors': vendorNames})
+    return json.jsonify({'vendors': vendors})
 
 
 @app.route('/ping')

@@ -14,7 +14,7 @@ def buildSearchResponseJSON(seqoffers, vendors):
     for seqoff in seqoffers:
         result = {
             "sequenceinformation": {"id": seqoff.sequenceInformation.key, "name": seqoff.sequenceInformation.name,
-                                    "sequence": seqoff.sequenceInformation.sequence, "length": len(seqoff.sequenceInformation.sequence)}, "vendors": vendors}
+                                    "sequence": seqoff.sequenceInformation.sequence, "length": len(seqoff.sequenceInformation.sequence)}, "vendors": vendors.copy()}
 
         for vendor in result["vendors"]:
             vendor["offers"] = []

@@ -26,7 +26,7 @@ vendors = [{"name": "TWIST DNA",
 
 @app.route('/vendors', methods=['get'])
 def get_vendors():
-    return json.jsonify({'vendors': vendors})
+    return json.jsonify(vendors)
 
 
 @app.route('/ping')

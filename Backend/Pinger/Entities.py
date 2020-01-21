@@ -18,8 +18,9 @@ class MessageType(Enum):
     # Pinger Internal Error
     INTERNAL_ERROR = 4
 
-
-# Type of the way to make the order
+#
+#   Desc:   Types of the way to make the order.
+#
 class PurchaseType(Enum):
     # By Shopping Card
     SHOPPING_CARD = 0
@@ -28,11 +29,14 @@ class PurchaseType(Enum):
     # By redirect to an specific URL
     URL_REDIRECT = 2
 
-
-# Specific currencies
+#
+#   Desc:   Representation of various currencies
+#
 class Currency(Enum):
     # Euro
     EUR = 0
+    # United States Dollar
+    USD = 1
 
 #########################################################
 #                                                       #
@@ -42,7 +46,16 @@ class Currency(Enum):
 
 
 #
-#   Desc: Representation of a Sequence
+#   Desc:   Representation of a Sequence
+#
+#   @attribute key
+#       Type String. Identifies a specific sequence.
+#
+#   @attribute name
+#       Type String. Gives the sequence an human readable name.
+#
+#   @attribute sequence
+#       Type String. The represented sequence.
 #
 class SequenceInformation:
 
@@ -54,14 +67,16 @@ class SequenceInformation:
         # The sequence
         self.sequence = sequence
 
+        
+
 
 #
-#   Desc: Represantation of a Vendor
+#   Desc:   Represantation of a Vendor
 #
 #   Every VendorInformation needs key, shortName and name. 
 #   
 #   @param key
-#       numeric value. Will be used as identifier
+#       Type Integer. Will be used as identifier
 #   @param shortname
 #       string. Name represent the vendor.
 #   @param name
@@ -80,7 +95,17 @@ class VendorInformation:
         self.shortName = shortName
 
 #
-#   Desc: Representation of a price
+#   Desc:   Representation of a price
+#
+#   @attribute currency
+#           Type Currency. The currency of the amount.
+#
+#   @attribute amount
+#           Numeric Value. The amount of the represented price.
+#
+#   @attribute customerSpecific
+#           Type Boolean. If True the price is specified for the customer.
+#           If False the price is not for the specific customer.
 #
 class Price:
 
@@ -126,7 +151,7 @@ class SequenceVendorOffers:
 #       Type ArrayOf(Offer). Represents the offers for the sequence specified by attribute sequenceInformation.
 #
 class SequenceOffers:
-    def __init__(self, sequenceInformation, offers = [])
+    def __init__(self, sequenceInformation, offers = []):
         self.sequenceInformation = sequenceInformation
         self.offers = offers
 
@@ -141,7 +166,7 @@ class SequenceOffers:
 #
 class VendorOffers:
 
-    def __init__(self, vendorInformation, offers = [])
+    def __init__(self, vendorInformation, offers = []):
         self.vendorInformation = vendorInformation
         
         self.offers = offers
@@ -155,9 +180,13 @@ class VendorOffers:
 #   @attribute turonvertime
 #           Type int. Turnovertime is the number of days it needs to synthesize the sequence.
 #
+#   @attribute messages
+#           Type ArrayOf(Message). Offer specific messages. Can be used to return debug information
+#           or to output errors from the vendor-APIs.
+#
 class Offer:
 
-    def __init__(self, price, messages = [], turnovertime):
+    def __init__(self, price, turnovertime, messages = []):
 
         # price of the offer
         self.price = price

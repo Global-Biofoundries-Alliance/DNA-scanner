@@ -117,6 +117,20 @@ class SequenceVendorOffers:
         self.vendorOffers = vendorOffers
 
 #
+#   Desc:   Represents a list of offers for a specific sequence. 
+#
+#   @attribute sequenceInformation
+#       Type SequenceInformation. Specifies the Sequence of the offers.
+#
+#   @attribute offers
+#       Type ArrayOf(Offer). Represents the offers for the sequence specified by attribute sequenceInformation.
+#
+class SequenceOffers:
+    def __init__(self, sequenceInformation, offers = [])
+        self.sequenceInformation = sequenceInformation
+        self.offers = offers
+
+#
 #   Desc:   Represents a list of offers for a specific vendor.
 #
 #   @attribute vendorInformation

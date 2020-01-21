@@ -8,8 +8,17 @@ from .Validator import entityValidator as Validator
 #                                                       #
 #########################################################
 
+#
+#   Desc:   Class to make tupples of VendorInformations with VendorPingers.
+#
+#   @attribute vendor
+#       Type  VendorInfomation. Defines the vendor represented by the handler.
+#   @attribute handler
+#       Type BasePinger. Handles the communication with the API of the vendor represented by attribute vendor.
+#
 class VendorHandler:
     def __init__(self, vendorInformation, vendorPinger):
+        # TODO Check Types
         self.vendor = vendorInformation
         self.handler = vendorPinger
 
@@ -26,6 +35,9 @@ class VendorHandler:
 #                                                       #
 #########################################################
 
+#
+#   Desc:   Interface representing a Vendor-API with unified methods.
+#
 class BasePinger:
 
     def __init__(self):
@@ -38,7 +50,7 @@ class BasePinger:
     #           Maybe you can get a partial result from getOffers() while running.
     #
     #   @param seqInf
-    #           Type ArrayOf(Entities.SequenceInformation)
+    #           Type ArrayOf(Entities.SequenceInformation). Represent Sequences searching offers for.
     #
     def searchOffers(self, seqInf):
         raise NotImplementedError
@@ -58,7 +70,8 @@ class BasePinger:
     #           get a partial result. After searching is finished isRunning() is False and the result will be complete.
     #           Return an Empty Array, if it was not searching before.
     #
-    #   @result ArrayOf(Entities.SequenceOffers)
+    #   @result 
+    #           Type ArrayOf(Entities.SequenceOffers). 
     #
     def getOffers(self):
         raise NotImplementedError
@@ -71,7 +84,10 @@ class BasePinger:
     def clear(self):
         raise NotImplementedError
 
-
+#
+#   Desc:   Interface for represent a fully Pinger. Fully Pinger means managing multiple vendor (represented by
+#           BasePingers) and add advanced functionalities e.g. search just for specific vendors.
+#
 class ManagedPinger:
 
     def __init__(self):
@@ -98,7 +114,7 @@ class ManagedPinger:
     #           else false.
     #
     #   @result 
-    #           Boolean. True if searching, else false.
+    #           Type Boolean. True if searching, else false.
     #
     def isRunning(self):
         raise NotImplementedError
@@ -108,7 +124,7 @@ class ManagedPinger:
     #           get a partial result. After searching is finished isRunning() is False and the result will be complete.
     #           Return an Empty Array, if it was not searching before.
     #
-    #   @result ArrayOf(Entities.SequenceOffers)
+    #   @result ArrayOf(Entities.SequenceVendorOffers)
     #
     def getOffers(self):
         raise NotImplementedError
@@ -138,7 +154,7 @@ class ManagedPinger:
 
 
 #
-#   Desc: Allows the registration of pingers, forward actions and joins the return-values.
+#   Desc: A simple Implementation of a ManagedPinger
 #
 class CompositePinger(ManagedPinger):
 
@@ -158,6 +174,10 @@ class CompositePinger(ManagedPinger):
         if(isinstance(vendorInformation, VendorInformation)):
             if(not Validator.validate(vendorInformation)):
                 return
+        else:
+            print("Invalid Input: vendorInformation has not type VendorInformation")
+            return
+
         if(not isinstance(vendorPinger, BasePinger)):
             print("Invalid Input: vendorPinger has not type BasePinger")
             return

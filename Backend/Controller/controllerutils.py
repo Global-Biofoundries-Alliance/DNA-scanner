@@ -13,7 +13,7 @@ def buildSearchResponseJSON(seqoffers, vendors):
     resp.data["offset"] = 0
     for seqoff in seqoffers:
         result = {
-            "sequenceinformation": {"id": seqoff.sequenceInformation.key, "name": seqoff.sequenceInformation.name,
+            "sequenceInformation": {"id": seqoff.sequenceInformation.key, "name": seqoff.sequenceInformation.name,
                                     "sequence": seqoff.sequenceInformation.sequence, "length": len(seqoff.sequenceInformation.sequence)}, "vendors": vendors.copy()}
 
         for vendor in result["vendors"]:
@@ -24,8 +24,7 @@ def buildSearchResponseJSON(seqoffers, vendors):
                 result["vendors"][offer.vendorInformation.key]["offers"].append({
                     "price": offer.price.amount,
                     "turnoverTime": offer.turnovertime,
-                    "offerMessage": [],
-                    "selected": False})
+                    "offerMessage": []})
 
         resp.data["result"].append(result)
 

@@ -145,7 +145,6 @@ class EntityValidator:
 
     def raiseFalse(self, text = ""):
         print("Validation Failed:", text)
-        raise NotImplementedError
         return False
 
     def raiseTrue(self, text = ""):

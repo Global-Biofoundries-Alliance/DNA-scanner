@@ -199,6 +199,7 @@ class CompositePinger(ManagedPinger):
     #
     def getVendors(self):
         result = []
+        # TODO musst be update to new definitions
         for vendor in self.vendorHandler:
             result.append(vendor.vendor)
         return result
@@ -207,14 +208,38 @@ class CompositePinger(ManagedPinger):
     #   see ManagedPinger.searchOffers
     #
     def searchOffers(self, seqInf, vendors=[]):
+        # check input: seqInf
+        if(not isinstance(seqInf, list)):
+            print("Parameter seqInf should be a list")
+            return
+        for seq in seqInf:
+            if (not isinstance(seq, SequenceInformation)):
+                print("parameter seqInf contains elements which are not of type SequenceInformation")
+                return
+            if(not Validator.validate(seq)):
+                print("SequenceInformation is invalid")
+                return
+        # check input: vendors
+        if (not isinstance(vendors, list)):
+            print("parameter vendors should be a list")
+            return
+        for vendor in vendors:
+            if(not isinstance(vendor, int)):
+                print("parameter vendors should only contain integers")
+                return
 
+        # TODO SequenceVendorOffers
+        # initialize empty sequenceOffers
         self.sequenceOffers = []
         for s in seqInf:
             self.sequenceOffers.append(SequenceOffers(s))
 
         for vh in self.vendorHandler:
-            if(len(vendors) == 0 || vh.vendor.key in vendors):
+            # Start searching if vendor is accepted by the filter
+            if(len(vendors) == 0 or vh.vendor.key in vendors):
                 vh.handler.searchOffers(seqInf)
+
+            # Clear vendor, if not accepted by the filter
             else:
                 vh.handler.clear()
 
@@ -238,6 +263,7 @@ class CompositePinger(ManagedPinger):
         for s in self.sequenceOffers:
             s.offers = []
 
+        # TODO update to new structure
         # Load offers from Vendor-Pingers
         leafSeqOffers = []
         for vh in self.vendorHandler:

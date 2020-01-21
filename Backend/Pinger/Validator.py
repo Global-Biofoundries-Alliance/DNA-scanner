@@ -35,7 +35,7 @@ class EntityValidator:
                 return self.raiseFalse("name is not a String")
 
         # SequenceInformation
-        if isinstance(obj, SequenceInformation):
+        elif isinstance(obj, SequenceInformation):
             # Check Types
             if(not isinstance(obj.key, str)):
                 return self.raiseFalse("key is not a String")
@@ -45,7 +45,7 @@ class EntityValidator:
                 return self.raiseFalse("sequence is not a String")
 
         # Price
-        if isinstance(obj, Price):
+        elif isinstance(obj, Price):
             # Check Types
             if(not isinstance(obj.currency, Currency)):
                 return self.raiseFalse("currency is not of type Currency")
@@ -55,7 +55,7 @@ class EntityValidator:
                 return self.raiseFalse("customerSpecific is not a boolean")
 
         # SequenceVendorOffers
-        if isinstance(obj, SequenceVendorOffers):
+        elif isinstance(obj, SequenceVendorOffers):
             if isinstance(obj.sequenceInformation, SequenceInformation):
                 if (not self.validate(obj.sequenceInformation)):
                     return raiseFalse("SequenceVendorOffers contains invalid SequenceInformation")
@@ -68,7 +68,7 @@ class EntityValidator:
                 return raiseFalse("vendorOffers is not of type VendorOffers")
 
         # SequenceOffers
-        if isinstance(obj, SequenceOffers):
+        elif isinstance(obj, SequenceOffers):
             if isinstance(obj.sequenceInformation, SequenceInformation):
                 if (not self.validate(obj.sequenceInformation)):
                     return raiseFalse("SequenceOffers contains invalid SequenceInformation")
@@ -85,7 +85,7 @@ class EntityValidator:
                 return raiseFalse("offers is not of type List")
 
         # VendorOffers
-        if isinstance(obj, VendorOffers):
+        elif isinstance(obj, VendorOffers):
             if isinstance(obj.vendorInformation, vendorInformation):
                 if (not self.validate(obj.vendorInformation)):
                     return raiseFalse("VendorOffers contains invalid VendorInformation")
@@ -102,7 +102,7 @@ class EntityValidator:
                 return raiseFalse("offers is not of type List")
         
         # Offer
-        if isinstance(obj, Offer):
+        elif isinstance(obj, Offer):
             # price
             if (not isinstance(obj.price, Price)):
                 return raiseFalse("Attribute price is not of type Price")
@@ -126,14 +126,14 @@ class EntityValidator:
 
         # TODO change after merge with other issue
         # Message
-        if isinstance(obj, Message):
+        elif isinstance(obj, Message):
             if(not isinstance(obj.type, MessageType)):
                 return raiseFalse("attribute type of Message has not type MessageType")
             if(not isinstance(obj.text, str)):
                 return raiseFalse("text is not of type String")
 
         # List
-        if isinstance(obj, list):
+        elif isinstance(obj, list):
             for elem in obj:
                 if (not self.validate(elem)):
                     return raiseFalse("List contains invalid elements")
@@ -145,6 +145,7 @@ class EntityValidator:
 
     def raiseFalse(self, text = ""):
         print("Validation Failed:", text)
+        raise NotImplementedError
         return False
 
     def raiseTrue(self, text = ""):

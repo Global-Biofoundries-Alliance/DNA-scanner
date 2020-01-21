@@ -172,13 +172,16 @@ class VendorOffers:
         self.offers = offers
 
 #
-#   Desc:   Representation of a Offer
+#   Desc:   Representation of a Offer. A Offer can also only represent a error, when it contains a
+#           message with an error type.
 #
 #   @attribute price
-#           Type Price. Represents the price of the offer.
+#           Type Price. Represents the price of the offer. If less then 0, then no price is available 
+#           or price is unknown.
 #
 #   @attribute turonvertime
-#           Type int. Turnovertime is the number of days it needs to synthesize the sequence.
+#           Type int. Turnovertime is the number of days it needs to synthesize the sequence. If less then 
+#           0, then no turnovertime is available or turnovertime is unknown.
 #
 #   @attribute messages
 #           Type ArrayOf(Message). Offer specific messages. Can be used to return debug information
@@ -186,7 +189,7 @@ class VendorOffers:
 #
 class Offer:
 
-    def __init__(self, price, turnovertime, messages = []):
+    def __init__(self, price=-1, turnovertime=-1, messages = []):
 
         # price of the offer
         self.price = price

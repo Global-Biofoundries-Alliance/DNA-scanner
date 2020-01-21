@@ -18,7 +18,6 @@ from .Validator import entityValidator as Validator
 #
 class VendorHandler:
     def __init__(self, vendorInformation, vendorPinger):
-        # TODO Check Types
         self.vendor = vendorInformation
         self.handler = vendorPinger
 
@@ -160,7 +159,7 @@ class CompositePinger(ManagedPinger):
 
     def __init__(self):
         self.vendorHandler = []
-        self.sequenceOffers = []
+        self.sequenceVendorOffers = []
 
     #
     #   see ManagedPinger.registerVendor
@@ -199,7 +198,6 @@ class CompositePinger(ManagedPinger):
     #
     def getVendors(self):
         result = []
-        # TODO musst be update to new definitions
         for vendor in self.vendorHandler:
             result.append(vendor.vendor)
         return result
@@ -228,11 +226,10 @@ class CompositePinger(ManagedPinger):
                 print("parameter vendors should only contain integers")
                 return
 
-        # TODO SequenceVendorOffers
         # initialize empty sequenceOffers
-        self.sequenceOffers = []
+        self.sequenceVendorOffers = []
         for s in seqInf:
-            self.sequenceOffers.append(SequenceOffers(s))
+            self.sequenceVendorOffers.append(SequenceVendorOffers(s))
 
         for vh in self.vendorHandler:
             # Start searching if vendor is accepted by the filter
@@ -260,28 +257,34 @@ class CompositePinger(ManagedPinger):
     def getOffers(self):
 
         # Clear offers
-        for s in self.sequenceOffers:
-            s.offers = []
+        for s in self.sequenceVendorOffers:
+            s.vendorOffers = []
 
-        # TODO update to new structure
         # Load offers from Vendor-Pingers
-        leafSeqOffers = []
+        #leafSeqOffers = []
         for vh in self.vendorHandler:
-            vOffers = vh.handler.getOffers()
-            leafSeqOffers.extend(vOffers)
+            seqOffers = vh.handler.getOffers()
+            #leafSeqOffers.extend(vOffers)
+
+            for newSO in seqOffers:
+                # TODO Maybe Validate Offers
+
+                for curSO in self.sequenceVendorOffers:
+                    if newSO.sequenceInformation.key == curSO.sequenceInformation.key:
+                        curSO.vendorOffers.append(VendorOffers(vendorInformation=vh.vendor, offers=newSO.offers))
 
         # For every SequenceOffer from Leaf
-        for leafSeqOffer in leafSeqOffers:
-            # ... get the Key of the SequenceInformation
-            seqKey = leafSeqOffer.sequenceInformation.key
+        #for leafSeqOffer in leafSeqOffers:
+        #    # ... get the Key of the SequenceInformation
+        #    seqKey = leafSeqOffer.sequenceInformation.key
 
             # ... and for every local SequenceOffer ...
-            for seqOffer in self.sequenceOffers:
+        #    for seqOffer in self.sequenceOffers:
                 # append Offers from leaf to local if SequenceKeys are equal
-                if seqOffer.sequenceInformation.key == seqKey:
-                    seqOffer.offers.append(leafSeqOffer.offers)
+        #        if seqOffer.sequenceInformation.key == seqKey:
+        #            seqOffer.offers.append(leafSeqOffer.offers)
 
-        return self.sequenceOffers
+        return self.sequenceVendorOffers
 
 #
 #   The Dummy Pinger is for testing.
@@ -293,11 +296,7 @@ class DummyPinger(BasePinger):
         self.running = False
 
 
-        self.tempOffer = Offer()
-        self.tempOffer.vendorInformation = VendorInformation("dummy", "DummyVendor", "DummyVendor Not Real GmbH")
-        self.tempOffer.price = Price(currency=Currency.EUR)
-        self.tempOffer.price.amount = 120
-        self.tempOffer.turnovertime = 14
+        self.tempOffer = Offer(price=Price(currency=Currency.EUR,amount=120),turnovertime=14)
         self.tempOffer.messages.append(Message(MessageType.DEBUG, "This offer is created from Dummy"))
         self.offers = []
 

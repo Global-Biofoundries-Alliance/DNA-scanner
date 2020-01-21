@@ -70,7 +70,10 @@ class BasePinger:
     #           Return an Empty Array, if it was not searching before.
     #
     #   @result 
-    #           Type ArrayOf(Entities.SequenceOffers). 
+    #           Type ArrayOf(Entities.SequenceOffers). Number of SequenceOffers are equal to the number
+    #           of sequences from the last call of searchOffers(seqInf). For every sequenceInformation from 
+    #           the last searchOffers(seqInf) call exists exactly one SequenceOffer. SequenceOffers must be available, 
+    #           even if there is no offer for the sequence.
     #
     def getOffers(self):
         raise NotImplementedError
@@ -124,7 +127,9 @@ class ManagedPinger:
     #           get a partial result. After searching is finished isRunning() is False and the result will be complete.
     #           Return an Empty Array, if it was not searching before.
     #
-    #   @result ArrayOf(Entities.SequenceVendorOffers)
+    #   @result ArrayOf(Entities.SequenceVendorOffers). For each sequence passed in the seachOffer(seqInf, vendor) call,
+    #       there is exactly one SequenceVendorOffer-Object in the array. Each of there SequenceVendorOffers contains 
+    #       only VendorOffers for vendors who have offers. 
     #
     def getOffers(self):
         raise NotImplementedError
@@ -147,7 +152,8 @@ class ManagedPinger:
     #   Desc:   Returns all registered vendors.
     #
     #   @return
-    #       Type ArrayOf(VendorInformation). List of all registered vendors.
+    #           Type ArrayOf(VendorInformation). List of all registered vendors. If there is no registered vendor it returns
+    #           a empty list [].
     #
     def getVendors(self):
         raise NotImplementedError

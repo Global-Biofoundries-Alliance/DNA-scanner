@@ -129,7 +129,7 @@ class ManagedPinger:
     #
     #   @result ArrayOf(Entities.SequenceVendorOffers). For each sequence passed in the seachOffer(seqInf, vendor) call,
     #       there is exactly one SequenceVendorOffer-Object in the array. Each of there SequenceVendorOffers contains 
-    #       only VendorOffers for vendors who have offers. 
+    #       only VendorOffers for vendors which have objects in the Offers-List. 
     #
     def getOffers(self):
         raise NotImplementedError
@@ -279,8 +279,14 @@ class CompositePinger(ManagedPinger):
             seqOffers = vh.handler.getOffers()
             #leafSeqOffers.extend(vOffers)
 
+            # If output if the VendorPinger is invalid, then ignore and continue
+            if (not isinstance(seqOffers, list)):
+                print("Vendor", vh.vendor.name, "returns", type(seqOffers), "instead of list")
+            if (not Validator.validate(seqOffers)):
+                print("Vendor", vh.vendor.name, "returns invalid SequenceOffers after call getOffers()")
+                continue
+
             for newSO in seqOffers:
-                # TODO Maybe Validate Offers
 
                 for curSO in self.sequenceVendorOffers:
                     if newSO.sequenceInformation.key == curSO.sequenceInformation.key:
@@ -322,7 +328,7 @@ class DummyPinger(BasePinger):
     def searchOffers(self, seqInf):
         self.offers = []
         for s in seqInf:
-            self.offers.append(SequenceOffers(s, [self.tempOffer]))
+            self.offers.append(SequenceOffers(sequenceInformation=s, offers=[self.tempOffer]))
         self.running = True
 
     #

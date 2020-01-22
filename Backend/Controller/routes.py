@@ -11,6 +11,7 @@ from .parser import parse
 from Pinger.Pinger import *
 from Pinger.AdvancedMock import AdvancedMockPinger
 
+# All vendors known to the service
 vendors = [{"name": "TWIST DNA",
             "shortName": "TWIST",
             "key": 0},
@@ -24,6 +25,9 @@ vendors = [{"name": "TWIST DNA",
             "key": 2}
            ]
 
+#
+#   Provides clients with a complete list of vendors available
+#
 @app.route('/vendors', methods=['get'])
 def get_vendors():
     return json.jsonify(vendors)

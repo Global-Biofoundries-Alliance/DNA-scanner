@@ -208,7 +208,7 @@ class GeneArt(BasePinger):
     #
     def searchOffers(self, seqInf):
         self.running = True
-        vendorInformation = VendorInformation(name = "Thermo Fisher Scientific - GeneArt", shortName = "GeneArt", key = "ga") # Vendor Information
+        vendorInformation = VendorInformation(name = "Thermo Fisher Scientific - GeneArt", shortName = "GeneArt", key = 11880) # Vendor Information
         offers = [] # Empty Offers List
         for product in "dnaStrings", "hqDnaStrings": # Two possible Product Types. 
             try:

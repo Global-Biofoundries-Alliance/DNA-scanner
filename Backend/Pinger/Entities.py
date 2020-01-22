@@ -58,9 +58,18 @@ class SequenceInformation:
 #
 #   Desc: Represantation of a Vendor
 #
+#   Every VendorInformation needs key, shortName and name. 
+#   
+#   @param key
+#       numeric value. Will be used as identifier
+#   @param shortname
+#       string. Name represent the vendor.
+#   @param name
+#       string. Fully-Name of the vendor. Can be equal to shortname.
+#
 class VendorInformation:
 
-    def __init__(self, name = "", shortName = "", key = 0):
+    def __init__(self, name, shortName, key):
         # ID of an Vendor. Will be static for every vendor
         self.key = key
 

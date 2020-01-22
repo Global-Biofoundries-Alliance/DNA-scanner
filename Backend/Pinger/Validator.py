@@ -106,7 +106,7 @@ class EntityValidator:
             # price
             if (not isinstance(obj.price, Price)):
                 return raiseFalse("Attribute price is not of type Price")
-            if (not validate(obj.price)):
+            if (not self.validate(obj.price)):
                 return raiseFalse("Attribute price is invalid")
             
             #turnovertime
@@ -136,7 +136,7 @@ class EntityValidator:
         elif isinstance(obj, list):
             for elem in obj:
                 if (not self.validate(elem)):
-                    return raiseFalse("List contains invalid elements")
+                    return self.raiseFalse("List contains invalid elements")
 
         else:
             return self.raiseFalse("The object to validate has a not supported type")

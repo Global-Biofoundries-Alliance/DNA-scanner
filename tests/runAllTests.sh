@@ -9,6 +9,6 @@ echo "Install dependencies"
 
 echo "run tests"
 venv/bin/python3 validatortest.py
-venv/bin/python3 basepingertest.py
+venv/bin/python3 compositepingertest.py
 venv/bin/python3 geneartclienttest.py
 venv/bin/python3 geneartpingertest.py

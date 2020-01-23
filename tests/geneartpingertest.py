@@ -1,5 +1,6 @@
 import unittest
 import json
+import yaml
 from Pinger import Pinger, Entities, GeneArt
 
 # Test file which can be successfully valideted by the API.
@@ -13,8 +14,11 @@ for seq in data:
     example_list.append(seqInfo)
 
 # Log-In Credentials
-username_real = "YOUR_USERNAME_HERE"
-token_real = "YOUR_TOKEN_HERE"
+with open("config.yml", 'r') as ymlfile:
+        cfg = yaml.load(ymlfile, Loader=yaml.BaseLoader)
+username_real = cfg['geneart']['username']
+token_real = cfg['geneart']['token']
+
     
 class TestGeneArtPinger(unittest.TestCase):
 
@@ -115,12 +119,8 @@ class TestGeneArtPinger(unittest.TestCase):
         self.assertEqual(sequence0.sequence, listOfSequences[0].sequence)
         self.assertEqual(len(sequenceOffer0.offers), 1)
         offers0 = sequenceOffer0.offers[0]
-        vendorInformation0 = offers0.vendorInformation
-        self.assertEqual(vendorInformation0.name, "Thermo Fisher Scientific - GeneArt")
-        self.assertEqual(vendorInformation0.shortName, "GeneArt")
-        self.assertEqual(vendorInformation0.key, 11880)
         price0 = offers0.price
-        self.assertEqual(price0, {})
+        self.assertEqual(price0, -1)
         messages0 = offers0.messages
         self.assertEqual(len(messages0), 1)
         self.assertEqual(messages0[0].type, 2)
@@ -134,12 +134,8 @@ class TestGeneArtPinger(unittest.TestCase):
         self.assertEqual(sequence1.sequence, listOfSequences[1].sequence)
         self.assertEqual(len(sequenceOffer1.offers), 1)        
         offers1 = sequenceOffer1.offers[0]
-        vendorInformation1 = offers1.vendorInformation
-        self.assertEqual(vendorInformation1.name, "Thermo Fisher Scientific - GeneArt")
-        self.assertEqual(vendorInformation1.shortName, "GeneArt")
-        self.assertEqual(vendorInformation1.key, 11880)
         price1 = offers1.price
-        self.assertEqual(price1, {})
+        self.assertEqual(price1, -1)
         messages1 = offers1.messages
         self.assertEqual(len(messages1), 1)
         self.assertEqual(messages1[0].type, 2)
@@ -153,12 +149,8 @@ class TestGeneArtPinger(unittest.TestCase):
         self.assertEqual(sequence2.sequence, listOfSequences[0].sequence)
         self.assertEqual(len(sequenceOffer2.offers), 1)
         offers2 = sequenceOffer2.offers[0]
-        vendorInformation2 = offers2.vendorInformation
-        self.assertEqual(vendorInformation2.name, "Thermo Fisher Scientific - GeneArt")
-        self.assertEqual(vendorInformation2.shortName, "GeneArt")
-        self.assertEqual(vendorInformation2.key, 11880)
         price2 = offers2.price
-        self.assertEqual(price2, {})
+        self.assertEqual(price2, -1)
         messages2 = offers2.messages
         self.assertEqual(len(messages2), 1)
         self.assertEqual(messages2[0].type, 0)
@@ -172,12 +164,8 @@ class TestGeneArtPinger(unittest.TestCase):
         self.assertEqual(sequence3.sequence, listOfSequences[1].sequence)
         self.assertEqual(len(sequenceOffer3.offers), 1)
         offers3 = sequenceOffer3.offers[0]
-        vendorInformation3 = offers3.vendorInformation
-        self.assertEqual(vendorInformation3.name, "Thermo Fisher Scientific - GeneArt")
-        self.assertEqual(vendorInformation3.shortName, "GeneArt")
-        self.assertEqual(vendorInformation3.key, 11880)
         price3 = offers3.price
-        self.assertEqual(price3, {})
+        self.assertEqual(price3, -1)
         messages3 = offers3.messages
         self.assertEqual(len(messages3), 1)
         self.assertEqual(messages3[0].type, 0)

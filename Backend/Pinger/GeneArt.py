@@ -208,13 +208,12 @@ class GeneArt(BasePinger):
     #
     def searchOffers(self, seqInf):
         self.running = True
-        vendorInformation = VendorInformation(name = "Thermo Fisher Scientific - GeneArt", shortName = "GeneArt", key = 11880) # Vendor Information
         offers = [] # Empty Offers List
         for product in "dnaStrings", "hqDnaStrings": # Two possible Product Types. 
             try:
                 response = self.projectValidate(seqInf, product)
             except requests.ConnectionError:  # If request timeout             
-                offers.append(SequenceOffers(None, [Offer(vendorInformation = vendorInformation, messages = [Message(1, "GeneArt API is not available")])]))
+                offers.append(SequenceOffers(None, [Offer(messages = [Message(1, "GeneArt API is not available")])]))
                 break
             count = 0 # Count the sequences
             for seq in seqInf:
@@ -230,7 +229,7 @@ class GeneArt(BasePinger):
                         messageText = messageText + str(reason) + "."
                     message = Message(messageType, messageText)
 
-                seqOffer = SequenceOffers(seq, [Offer(vendorInformation = vendorInformation, messages = [message])])
+                seqOffer = SequenceOffers(seq, [Offer(messages = [message])])
                 offers.append(seqOffer)
                 count = count + 1
         self.offers = offers
@@ -304,3 +303,13 @@ class GeneArt(BasePinger):
         # Review the status of the project by calling the corresponding method.
         response = self.client.statusReview(projectId)
         return response
+    #
+    #   Desc:   Resets the pinger by
+    #               - stop searching -> isRunning() = false
+    #               - resets the offers to a empty list -> getOffers = []
+    #
+    def clear(self):
+        self.running = False
+        offers = [] # Empty Offers List
+        self.offers = offers
+        

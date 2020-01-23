@@ -1,11 +1,15 @@
 import unittest
 import json
+import yaml
 
 from Pinger import GeneArt
 
 # Log-In Credentials
-username_real = "YOUR_USERNAME_HERE"
-token_real = "YOUR_TOKEN_HERE"
+with open("config.yml", 'r') as ymlfile:
+        cfg = yaml.load(ymlfile, Loader=yaml.BaseLoader)
+
+username_real = cfg['geneart']['username']
+token_real = cfg['geneart']['token']
 
 # Test file which can be successfully valideted by the API.
 with open('./examples/projectValidate_successful.json') as json_file:

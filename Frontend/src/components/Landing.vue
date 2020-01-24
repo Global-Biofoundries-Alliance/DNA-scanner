@@ -149,7 +149,7 @@
                         .then(response => {
                             // eslint-disable-next-line no-console
                             console.log(response);
-                            this.$store.state.StoreSearchResult = response.body.result;
+                            this.$store.state.StoreSearchResult = response.body;
                             // eslint-disable-next-line no-console
                             console.log(this.$store.state.StoreSearchResult);
                             this.$store.state.StoreFile = this.file;

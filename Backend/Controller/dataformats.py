@@ -46,6 +46,7 @@ class SearchResponse(object):
                             "name": "TWIST DNA ...",
                             "shortName": "TWIST",
                             "key": "",
+                            "dialog": False,
                             "offers": [
                                 {
                                     "price": 0.0,

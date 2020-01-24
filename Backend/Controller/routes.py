@@ -1,12 +1,12 @@
 import tempfile
 from random import random, randint
 
-from flask import request, json
+from flask import request, json, session
 from werkzeug.utils import secure_filename
 
 from .app import app
 from .controllerutils import buildSearchResponseJSON, sequenceInfoFromObjects
-from .dataformats import SearchResponse
+from .dataformats import Filter
 from .parser import parse
 from Pinger.Pinger import *
 from Pinger.AdvancedMock import AdvancedMockPinger
@@ -24,6 +24,7 @@ vendors = [{"name": "TWIST DNA",
             "shortName": "GenArt",
             "key": 2}
            ]
+
 
 #
 #   Provides clients with a complete list of vendors available
@@ -47,28 +48,63 @@ def uploadFile():
     tempf, tpath = tempfile.mkstemp('.' + secure_filename(request.files['seqfile'].filename).rsplit('.', 1)[1].lower())
     request.files['seqfile'].save(tpath)
 
-    mainPinger = CompositePinger()
+    try:
+        # Parse sequence file
+        objSequences = parse(tpath)
 
+        # Convert [SeqObject] to [SequenceInformation] and store them in the session
+        sequences = []
+        for seqInfo in sequenceInfoFromObjects(objSequences):
+            sequences.append({"key": seqInfo.key, "name": seqInfo.name, "sequence": seqInfo.sequence})
+        session["sequences"] = sequences
+
+    except NameError:
+        return json.jsonify({'error': 'File format not supported'})
+
+    return ''
+
+
+@app.route('/filter', methods=['POST'])
+def filterResults():
+    if not request.is_json:
+        return {'error': 'Invalid filter request: Data must be in JSON format'}
+
+    previousVendors = set()
+    if 'filter' in session:
+        previousVendors = set(session['filter']['vendors'])
+
+    request_json = request.get_json()
+    session['filter'] = request_json['filter']
+    currentVendors = set(session['filter']['vendors'])
+
+    for vendor in previousVendors - currentVendors:
+        pass  # TODO: Remove filtered out vendor pingers
+
+    for vendor in currentVendors - previousVendors:
+        pass  # TODO: Add newly added vendor pingers
+
+    return ''
+
+
+@app.route('/results', methods=['GET'])
+def getSearchResults():
+    if 'sequences' not in session:
+        return {'error': 'No sequences available'}
+
+    mainPinger = CompositePinger()
     # Begin temporary testing placeholders
     for id in range(0, len(vendors)):
         dummyVendor = VendorInformation(vendors[id]["name"], vendors[id]["shortName"], id)
         mainPinger.registerVendor(dummyVendor, AdvancedMockPinger(dummyVendor))
 
+        sequences = []
+        for seq in session['sequences']:
+            sequences.append(SequenceInformation(key=seq["key"], name=seq["name"], sequence=seq["sequence"]))
+
+    # Search and retrieve offers for each sequence
+    mainPinger.searchOffers(sequences)
+    seqoffers = mainPinger.getOffers()
+
+    return buildSearchResponseJSON(seqoffers, vendors)
+
     # End temporary testing placeholders
-
-    try:
-        # Parse sequence file
-        objSequences = parse(tpath)
-
-        # Adapt SeqObject to SequenceInformation
-        sequences = sequenceInfoFromObjects(objSequences)
-
-        # Search and retrieve offers for each sequence
-        mainPinger.searchOffers(sequences)
-        seqoffers = mainPinger.getOffers()
-
-        return buildSearchResponseJSON(seqoffers, vendors)
-
-
-    except NameError:
-        return json.jsonify({'error': 'File format not supported'})

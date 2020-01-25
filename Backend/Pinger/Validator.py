@@ -124,10 +124,9 @@ class EntityValidator:
             else:
                 return raiseFalse("messages is not of type List")
 
-        # TODO change after merge with other issue
         # Message
         elif isinstance(obj, Message):
-            if(not isinstance(obj.type, MessageType)):
+            if(not isinstance(obj.messageType, MessageType)):
                 return raiseFalse("attribute type of Message has not type MessageType")
             if(not isinstance(obj.text, str)):
                 return raiseFalse("text is not of type String")

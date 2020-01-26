@@ -157,6 +157,12 @@
                         });
                     // this.filter = [this.vendors, this.range, this.deliveryDays];
                     // this.$http.post('/api/filter', this.filter);
+
+                    var resData = new FormData();
+                    resData.append('size', 15);
+                    resData.append('offset', 0);
+
+                    this.$http.get('/api/results', resData)
                 }
             },
             reset() {

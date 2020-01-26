@@ -71,7 +71,7 @@
                                     >
 
                                         <v-icon class="ml-3" size="22px"
-                                                @click="result[i].vendors[j].offers[0].dialog = true">
+                                                @click="dialogShow(i, j)">
                                             mdi-dots-horizontal
                                         </v-icon>
 
@@ -90,45 +90,46 @@
                                         </v-icon>
                                     </div>
                                 </v-expand-transition>
-
-<!--                                <v-dialog v-model="dialog[i][j]" scrollable max-width="300px">-->
-<!--                                    <v-card>-->
-<!--                                        <v-card-title>Select Offer</v-card-title>-->
-<!--                                        <v-divider></v-divider>-->
-<!--                                        <v-card-text style="height: 300px" class="pl-0 pr-0 pt-3">-->
-<!--                                            <v-card-actions class="pl-12 pr-12">-->
-<!--                                                <v-icon class="mr-3" medium>{{icons.mdiCurrencyUsd}}</v-icon>-->
-<!--                                                <v-spacer></v-spacer>-->
-<!--                                                <v-icon class="ml-3" size="22px">mdi-watch</v-icon>-->
-<!--                                            </v-card-actions>-->
-<!--                                            <v-list rounded>-->
-<!--                                                <v-list-item-group v-model="dialogItem">-->
-<!--                                                    <v-list-item v-for="(n, k) in result[i].vendors[j].offers" :key="k">-->
-<!--                                                        <v-list-item-content>-->
-<!--                                                            <v-card-actions class="pl-8 pr-8">-->
-<!--                                                                <span>{{n.price}}</span>-->
-<!--                                                                <v-spacer></v-spacer>-->
-<!--                                                                <span>{{n.turnoverTime}}</span>-->
-<!--                                                            </v-card-actions>-->
-<!--                                                        </v-list-item-content>-->
-<!--                                                    </v-list-item>-->
-<!--                                                </v-list-item-group>-->
-<!--                                            </v-list>-->
-<!--                                        </v-card-text>-->
-<!--                                        <v-divider></v-divider>-->
-<!--                                        <v-card-actions>-->
-<!--                                            <v-btn color="blue darken-1" text-->
-<!--                                                   @click="dialog[i][j] = false">Close-->
-<!--                                            </v-btn>-->
-<!--                                            <v-btn color="blue darken-1" text-->
-<!--                                                   @click="dialogSave(i, j)">Save-->
-<!--                                            </v-btn>-->
-<!--                                        </v-card-actions>-->
-<!--                                    </v-card>-->
-<!--                                </v-dialog>-->
                             </v-card>
                         </v-hover>
                     </v-row>
+
+                    <v-dialog v-model="dialog" scrollable max-width="300px">
+                        <v-card>
+                            <v-card-title>Select Offer</v-card-title>
+                            <v-divider></v-divider>
+                            <v-card-text style="height: 300px" class="pl-0 pr-0 pt-3">
+                                <v-card-actions class="pl-12 pr-12">
+                                    <v-icon class="mr-3" medium>{{icons.mdiCurrencyUsd}}</v-icon>
+                                    <v-spacer></v-spacer>
+                                    <v-icon class="ml-3" size="22px">mdi-watch</v-icon>
+                                </v-card-actions>
+                                <v-list rounded>
+                                    <v-list-item-group v-model="dialogItem">
+                                        <v-list-item v-for="(n, k) in dialogList" :key="k">
+                                            <v-list-item-content>
+                                                <v-card-actions class="pl-8 pr-8">
+                                                    <span>{{n.price}}</span>
+                                                    <v-spacer></v-spacer>
+                                                    <span>{{n.turnoverTime}}</span>
+                                                </v-card-actions>
+                                            </v-list-item-content>
+                                        </v-list-item>
+                                    </v-list-item-group>
+                                </v-list>
+                            </v-card-text>
+                            <v-divider></v-divider>
+                            <v-card-actions>
+                                <v-btn color="blue darken-1" text
+                                       @click="dialogClose()">Close
+                                </v-btn>
+                                <v-btn color="blue darken-1" text
+                                       @click="dialogSave()">Save
+                                </v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-dialog>
+
                 </v-col>
                 <p>{{dialogItem}}</p>
             </v-row>
@@ -148,7 +149,8 @@
                     mdiCurrencyUsd
                 },
                 dialogItem: null,
-                dialog: []
+                dialog: false,
+                dialogList: []
             }
         },
         computed: {
@@ -166,9 +168,18 @@
             }
         },
         methods: {
-            dialogSave(i, j) {
-                this.dialog[i][j] = false;
-                this.$store.state.StoreSearchResult.result[i].vendors[j].offers[this.dialogItem].selected = true;
+            dialogShow(i, j) {
+                this.dialog = true;
+                this.dialogList = this.$store.state.StoreSearchResult.result[i].vendors[j].offers
+            },
+            dialogSave() {
+                this.dialog = false;
+                this.dialogList[this.dialogItem].selected = true;
+                this.dialogItem = null
+            },
+            dialogClose() {
+                this.dialog = false;
+                this.dialogItem = null
             }
         }
 

@@ -115,6 +115,8 @@ def getSearchResults():
     mainPinger.searchOffers(sequences[offset: min(offset + size, len(sequences))])
     seqoffers = mainPinger.getOffers()
 
-    return buildSearchResponseJSON(seqoffers, vendors)
+    result = buildSearchResponseJSON(seqoffers, vendors, offset)
+
+    return result
 
     # End temporary testing placeholders

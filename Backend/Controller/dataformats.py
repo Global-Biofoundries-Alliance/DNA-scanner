@@ -14,14 +14,13 @@ class SearchResponse(object):
                     },
                     "vendors": [
                         {
-                            "name": "TWIST DNA ...",
-                            "shortName": "TWIST",
-                            "key": "",
+                            "key": 0,
                             "offers": [
                                 {
                                     "price": 0.0,
                                     "turnoverTime": 0,
-                                    "offerMessage": []
+                                    "offerMessage": [],
+                                    "selected": False
                                 },
                             ]
                         }

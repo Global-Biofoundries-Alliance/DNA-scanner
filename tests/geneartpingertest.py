@@ -16,6 +16,7 @@ for seq in data:
 # Log-In Credentials
 with open("config.yml", 'r') as ymlfile:
         cfg = yaml.load(ymlfile, Loader=yaml.BaseLoader)
+
 username_real = cfg['geneart']['username']
 token_real = cfg['geneart']['token']
 

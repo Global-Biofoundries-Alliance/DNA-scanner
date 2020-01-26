@@ -24,7 +24,9 @@ def buildSearchResponseJSON(seqoffers, vendors):
                 result["vendors"][offer.vendorInformation.key]["offers"].append({
                     "price": offer.price.amount,
                     "turnoverTime": offer.turnovertime,
-                    "offerMessage": []})
+                    "offerMessage": [],
+                    "selected": False})
+                count = count + 1
 
         resp.data["result"].append(result)
 

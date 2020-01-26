@@ -30,7 +30,8 @@
                                             <v-col
                                                     style="height: auto"
                                             >
-                                                <v-checkbox v-for="vendor in this.$store.state.StoreVendors" :key="vendor.name"
+                                                <v-checkbox v-for="vendor in this.$store.state.StoreVendors"
+                                                            :key="vendor.name"
                                                             :label="`${vendor.name}`"
                                                             v-model="vendor.value"></v-checkbox>
                                             </v-col>
@@ -145,6 +146,20 @@
                             'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE, PUT',
                             'Access-Control-Allow-Headers': 'append,delete,entries,foreach,get,has,keys,set,values,Authorization',
                         }
+                    });
+                    // this.filter = [this.vendors, this.range, this.deliveryDays];
+                    // this.$http.post('/api/filter', this.filter);
+
+                    var resData = new FormData();
+                    resData.append('size', 15);
+                    resData.append('offset', 0);
+
+                    this.$http.get('/api/results', resData, {
+                        headers: {
+                            'Access-Control-Allow-Origin': '*',
+                            'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE, PUT',
+                            'Access-Control-Allow-Headers': 'append,delete,entries,foreach,get,has,keys,set,values,Authorization',
+                        }
                     })
                         .then(response => {
                             // eslint-disable-next-line no-console
@@ -155,14 +170,7 @@
                             this.$store.state.StoreFile = this.file;
                             this.$router.push('/result');
                         });
-                    // this.filter = [this.vendors, this.range, this.deliveryDays];
-                    // this.$http.post('/api/filter', this.filter);
 
-                    var resData = new FormData();
-                    resData.append('size', 15);
-                    resData.append('offset', 0);
-
-                    this.$http.get('/api/results', resData)
                 }
             },
             reset() {
@@ -183,7 +191,7 @@
                 }
             })
                 .then(response => {
-                    for(let i = 0; i < response.body.vendors.length; i++) {
+                    for (let i = 0; i < response.body.vendors.length; i++) {
                         this.$store.state.StoreVendors[i] = {name: response.body.vendors[i], value: true};
                     }
                     // eslint-disable-next-line no-console

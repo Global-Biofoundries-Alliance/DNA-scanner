@@ -13,10 +13,10 @@
                     </v-row>
                     <v-row v-for="(n,i) in resultBody.count" :key="i">
                         <v-card width="110px" tile outlined class="pa-2" style="border-right: 0">
-                            {{result[i].sequenceinformation.id}}
+                            {{result[i].sequenceInformation.id}}
                         </v-card>
                         <v-card width="150px" tile outlined class="pa-2" style="border-left: 0">
-                            {{result[i].sequenceinformation.name}}
+                            {{result[i].sequenceInformation.name}}
                         </v-card>
                     </v-row>
                 </v-col>

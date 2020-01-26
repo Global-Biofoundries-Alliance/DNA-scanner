@@ -61,7 +61,7 @@ def uploadFile():
     except NameError:
         return json.jsonify({'error': 'File format not supported'})
 
-    return ''
+    return 'upload successful'
 
 
 @app.route('/filter', methods=['POST'])
@@ -83,7 +83,7 @@ def filterResults():
     for vendor in currentVendors - previousVendors:
         pass  # TODO: Add newly added vendor pingers
 
-    return ''
+    return 'filter submission successful'
 
 
 @app.route('/results', methods=['GET'])

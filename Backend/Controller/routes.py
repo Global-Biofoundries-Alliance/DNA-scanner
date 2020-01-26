@@ -101,8 +101,18 @@ def getSearchResults():
         for seq in session['sequences']:
             sequences.append(SequenceInformation(key=seq["key"], name=seq["name"], sequence=seq["sequence"]))
 
+    size = len(sequences)
+    offset = 0
+    if request.is_json:
+        reqData = request.get_json()
+        if 'size' in reqData:
+            size = reqData['size']
+
+        if 'offset' in reqData:
+            offset = reqData['offset']
+
     # Search and retrieve offers for each sequence
-    mainPinger.searchOffers(sequences)
+    mainPinger.searchOffers(sequences[offset: min(offset + size, len(sequences))])
     seqoffers = mainPinger.getOffers()
 
     return buildSearchResponseJSON(seqoffers, vendors)

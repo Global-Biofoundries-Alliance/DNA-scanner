@@ -14,10 +14,10 @@ def buildSearchResponseJSON(seqoffers, vendors):
     for seqoff in seqoffers:
         result = {
             "sequenceInformation": {"id": seqoff.sequenceInformation.key, "name": seqoff.sequenceInformation.name,
-                                    "sequence": seqoff.sequenceInformation.sequence, "length": len(seqoff.sequenceInformation.sequence)}, "vendors": vendors.copy()}
+                                    "sequence": seqoff.sequenceInformation.sequence, "length": len(seqoff.sequenceInformation.sequence)}, "vendors": []}
 
-        for vendor in result["vendors"]:
-            vendor["offers"] = []
+        for vendor in vendors:
+            result["vendors"].append({"key": vendor["key"], "offers": []})
 
         for offerlist in seqoff.offers:
             for offer in offerlist:
@@ -38,3 +38,6 @@ def sequenceInfoFromObjects(objSequences):
         seq = SequenceInformation(seqobj.sequence, seqobj.name, seqobj.idN)
         sequences.append(seq)
     return sequences
+
+def filterOffers(filter, offers):
+    pass

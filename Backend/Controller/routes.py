@@ -5,7 +5,7 @@ from flask import request, json, session
 from werkzeug.utils import secure_filename
 
 from .app import app
-from .controllerutils import buildSearchResponseJSON, sequenceInfoFromObjects
+from .controllerutils import buildSearchResponseJSON, sequenceInfoFromObjects, filterOffers
 from .dataformats import Filter
 from .parser import parse
 from Pinger.Pinger import *
@@ -86,37 +86,37 @@ def filterResults():
     return 'filter submission successful'
 
 
-@app.route('/results', methods=['GET'])
+@app.route('/results', methods=['POST'])
 def getSearchResults():
     if 'sequences' not in session:
         return {'error': 'No sequences available'}
 
+    # Check if the results must be acquired from the vendors first
     mainPinger = CompositePinger()
     # Begin temporary testing placeholders
     for id in range(0, len(vendors)):
         dummyVendor = VendorInformation(vendors[id]["name"], vendors[id]["shortName"], id)
         mainPinger.registerVendor(dummyVendor, AdvancedMockPinger(dummyVendor))
+    # End temporary testing placeholders
 
-        sequences = []
-        for seq in session['sequences']:
-            sequences.append(SequenceInformation(key=seq["key"], name=seq["name"], sequence=seq["sequence"]))
-
-    size = len(sequences)
-    offset = 0
-    if request.is_json:
-        reqData = request.get_json()
-        if 'size' in reqData:
-            size = reqData['size']
-
-        if 'offset' in reqData:
-            offset = reqData['offset']
+    sequences = []
+    for seq in session['sequences']:
+        sequences.append(SequenceInformation(key=seq["key"], name=seq["name"], sequence=seq["sequence"]))
 
     # Search and retrieve offers for each sequence
-    mainPinger.searchOffers(sequences[offset: min(offset + size, len(sequences))])
+    mainPinger.searchOffers(sequences)
     seqoffers = mainPinger.getOffers()
 
-    result = buildSearchResponseJSON(seqoffers, vendors, offset)
+
+    # Get size and offset fields if available and set them to default otherwise
+    size = len(sequences)
+    offset = 0
+    if request.form.get('size'):
+        size = int(request.form.get('size'))
+    if request.form.get('offset'):
+         offset = int(request.form.get('offset'))
+
+    # build response from offers stored in the session
+    result = buildSearchResponseJSON(filterOffers(session["filter"], seqoffers), vendors, offset, size)
 
     return result
-
-    # End temporary testing placeholders

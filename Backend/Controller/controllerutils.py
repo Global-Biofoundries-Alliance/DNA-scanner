@@ -1,17 +1,17 @@
 from flask import json
 
 from Controller.dataformats import SearchResponse
-from Pinger.Entities import SequenceInformation
+from Pinger.Entities import SequenceInformation, SequenceOffers
 
 # Builds a search response in JSON format from a list of offers.
-def buildSearchResponseJSON(seqoffers, vendors, offset = 0):
+def buildSearchResponseJSON(seqoffers, vendors, offset = 0, size = 99999):
     resp = SearchResponse()
     resp.data["result"] = []
     resp.data["globalMessage"] = []
     resp.data["count"] = len(seqoffers)
-    resp.data["size"] = min(20, resp.data["count"])
+    resp.data["size"] = min(size, len(seqoffers))
     resp.data["offset"] = offset
-    for seqoff in seqoffers:
+    for seqoff in seqoffers[offset: min(offset + size, len(seqoffers))]:
         result = {
             "sequenceInformation": {"id": seqoff.sequenceInformation.key, "name": seqoff.sequenceInformation.name,
                                     "sequence": seqoff.sequenceInformation.sequence, "length": len(seqoff.sequenceInformation.sequence)}, "vendors": []}
@@ -39,5 +39,17 @@ def sequenceInfoFromObjects(objSequences):
         sequences.append(seq)
     return sequences
 
-def filterOffers(filter, offers):
-    pass
+def filterOffers(filter, seqoffers):
+    filteredOffers = []
+    for seqoffer in seqoffers:
+        filteredSeqOffer = SequenceOffers(seqoffer.sequenceInformation, [])
+        for offerlist in seqoffer.offers:
+            filteredOfferList = []
+            for offer in offerlist:
+                if offer.vendorInformation.key in filter["vendors"]:
+                    if offer.price.amount >= filter["price"][0] and offer.price.amount <= filter["price"][1]:
+                        if offer.turnovertime <= filter["deliveryDays"]:
+                           filteredOfferList.append(offer)
+            filteredSeqOffer.offers.append(filteredOfferList)
+        filteredOffers.append(filteredSeqOffer)
+    return filteredOffers

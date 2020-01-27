@@ -4,28 +4,32 @@ from Controller.dataformats import SearchResponse
 from Pinger.Entities import SequenceInformation
 
 # Builds a search response in JSON format from a list of offers.
-def buildSearchResponseJSON(seqoffers):
+def buildSearchResponseJSON(seqoffers, vendors):
     resp = SearchResponse()
-    resp.result = []
-    resp.message = []
-    resp.count = 0
-    resp.offset = 0
+    resp.data["result"] = []
+    resp.data["globalMessage"] = []
+    resp.data["count"] = len(seqoffers)
+    resp.data["size"] = min(20, resp.data["count"])
+    resp.data["offset"] = 0
     for seqoff in seqoffers:
         result = {
-            "sequenceinformation": {"id": seqoff.sequenceInformation.key, "name": seqoff.sequenceInformation.name,
-                                    "sequence": seqoff.sequenceInformation.sequence}, "offers": []}
+            "sequenceInformation": {"id": seqoff.sequenceInformation.key, "name": seqoff.sequenceInformation.name,
+                                    "sequence": seqoff.sequenceInformation.sequence, "length": len(seqoff.sequenceInformation.sequence)}, "vendors": vendors.copy()}
+
+        for vendor in result["vendors"]:
+            vendor["offers"] = []
 
         for offerlist in seqoff.offers:
             for offer in offerlist:
-                result["offers"].append(dict(
-                    vendorinformation={"key": offer.vendorInformation.key, "name": offer.vendorInformation.name,
-                                       "shortname": offer.vendorInformation.shortName}, price=offer.price.amount,
-                    turnovertime=offer.turnovertime))
-                resp.count = resp.count + 1
+                result["vendors"][offer.vendorInformation.key]["offers"].append({
+                    "price": offer.price.amount,
+                    "turnoverTime": offer.turnovertime,
+                    "offerMessage": []})
 
-        resp.result.append(result)
-    resp.size = min(20, resp.count)
-    return json.jsonify(resp.__dict__)
+        resp.data["result"].append(result)
+
+
+    return json.jsonify(resp.data)
 
 # Converts a List[SequenceObject] to a List[SequenceInformation]
 def sequenceInfoFromObjects(objSequences):

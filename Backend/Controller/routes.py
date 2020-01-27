@@ -9,14 +9,34 @@ from .controllerutils import buildSearchResponseJSON, sequenceInfoFromObjects
 from .dataformats import SearchResponse
 from .parser import parse
 from Pinger.Pinger import *
+from Pinger.AdvancedMock import AdvancedMockPinger
 
+# All vendors known to the service
+vendors = [{"name": "TWIST DNA",
+            "shortName": "TWIST",
+            "key": 0},
+
+           {"name": "IDT DNA",
+            "shortName": "IDT",
+            "key": 1},
+
+           {"name": "GeneArt",
+            "shortName": "GenArt",
+            "key": 2}
+           ]
+
+#
+#   Provides clients with a complete list of vendors available
+#
 @app.route('/vendors', methods=['get'])
 def get_vendors():
-    return json.jsonify({'vendors': ['TWIST', 'IDT', 'GenArt']})
+    return json.jsonify(vendors)
+
 
 @app.route('/ping')
 def hello_world():
     return 'pong'
+
 
 @app.route('/upload', methods=['post'])
 def uploadFile():
@@ -30,12 +50,10 @@ def uploadFile():
     mainPinger = CompositePinger()
 
     # Begin temporary testing placeholders
-    dummyVendor = VendorInformation()
-    dummyPinger = DummyPinger()
-    mainPinger.registerVendor(dummyVendor, dummyPinger)
-    mainPinger.registerVendor(dummyVendor, dummyPinger)
-    mainPinger.registerVendor(dummyVendor, dummyPinger)
-    mainPinger.registerVendor(dummyVendor, dummyPinger)
+    for id in range(0, len(vendors)):
+        dummyVendor = VendorInformation(vendors[id]["name"], vendors[id]["shortName"], id)
+        mainPinger.registerVendor(dummyVendor, AdvancedMockPinger(dummyVendor))
+
     # End temporary testing placeholders
 
     try:
@@ -49,7 +67,7 @@ def uploadFile():
         mainPinger.searchOffers(sequences)
         seqoffers = mainPinger.getOffers()
 
-        return buildSearchResponseJSON(seqoffers)
+        return buildSearchResponseJSON(seqoffers, vendors)
 
 
     except NameError:

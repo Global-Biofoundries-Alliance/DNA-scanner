@@ -7,16 +7,74 @@ from enum import Enum
 #########################################################
 
 class MessageType(Enum):
-    # Vendor can not synthesize the sequence
-    SYNTHESIS_ERROR = 0
-    # For Example: Vendor API is currently unavailable
-    VENDOR_ERROR = 1
-    # Just informational message
-    INFO = 2
-    # Message for debugging
-    DEBUG = 3
-    # Pinger Internal Error
-    INTERNAL_ERROR = 4
+    #
+    #   1xxx - Synthesis Errors
+    #
+    #   Desc:   Errors why a vendor can not produce the Sequence
+    #
+
+    # General Synthesis Error
+    SYNTHESIS_ERROR = 1000
+    # Sequence is not valid
+    INVALID_SEQUENCE = 1001
+    # Extreme high/low GC in some regions or invalid GC Content
+    GC_PROBLEM = 1002
+    # Sequence has invalid length
+    INVALID_LENGTH = 1003
+    # Sequence is too short
+    SEQUENCE_TOO_SHORT = 1004
+    # Sequence is too long
+    SEQUENCE_TOO_LONG = 1005
+    # Sequence is good, but vendor is unable to produce (maybe it works with optimization)
+    UNABLE_TO_PRODUCE = 1006
+    # Too many repeats in the sequence
+    TOO_MANY_REPEATS = 1007
+
+    #
+    #   2xxx - Vendor Error
+    #
+    #   Desc:   Errors that are not related to the sequence. Mostly technical Error with
+    #           the vendor API.
+    #
+    
+    # General Vendor Error
+    VENDOR_ERROR = 2000
+    # Vendor-API is currently unavailable
+    API_CURRENTLY_UNAVAILABLE = 2001
+    
+    #
+    #   3xxx - Internal Error
+    #
+    #   Desc:   Error in the use of the Pinger. Maybe wrong configured.
+    #
+
+    # General Internal Error
+    INTERNAL_ERROR = 3000
+    # Wrong Credentials configured
+    WRONG_CREDENTIALS = 3001
+    # Not Allowed. Credentials are ok, but not allowed to request something.
+    NOT_ALLOWED = 3002
+
+    #
+    #   4xxx - Info
+    #
+    #   Desc: Just for Information. Maybe not necessary to look inside.
+    #
+
+    # General Info
+    INFO = 4000
+    # Additional Information from the vendor
+    VENDOR_INFO = 4001
+
+    #
+    #   5xxx - Debug
+    #
+    #   Desc:   Used for debug messges. Maybe interesting while development.
+    #
+    
+    # General Debug Message
+    DEBUG = 5000
+
 
 #
 #   Desc:   Types of the way to make the order.
@@ -201,12 +259,17 @@ class Offer:
         self.messages = messages
 
 #
-#   Desc:   Messages with specific type and text
+#   Desc:   Messages with specific type and text.
+#
+#   @attribute type
+#           Type MessgageType (Enum). Specified the type of the message. By default it is DEBUG.
+#   @attribute text
+#           Type str. Can contain text additional to the MessageType. By default it is a empty string.
 #
 class Message:
 
-    def __init__(self, type = MessageType.DEBUG, text = ""):
-        self.type = type
+    def __init__(self, messageType = MessageType.DEBUG, text = ""):
+        self.messageType = messageType
         self.text = text
 
 

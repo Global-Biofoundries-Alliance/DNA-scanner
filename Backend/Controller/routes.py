@@ -117,6 +117,9 @@ def getSearchResults():
          offset = int(request.form.get('offset'))
 
     # build response from offers stored in the session
-    result = buildSearchResponseJSON(filterOffers(session["filter"], seqoffers), vendors, offset, size)
+    if "filter" in session:
+        result = buildSearchResponseJSON(filterOffers(session["filter"], seqoffers), vendors, offset, size)
+    else:
+        result = buildSearchResponseJSON(seqoffers, vendors, offset, size)
 
     return result

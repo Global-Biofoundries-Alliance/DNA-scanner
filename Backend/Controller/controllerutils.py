@@ -4,12 +4,12 @@ from Controller.dataformats import SearchResponse
 from Pinger.Entities import SequenceInformation, SequenceOffers
 
 # Builds a search response in JSON format from a list of offers.
-def buildSearchResponseJSON(seqoffers, vendors, offset = 0, size = 99999):
+def buildSearchResponseJSON(seqoffers, vendors, offset = 0, size = 10):
     resp = SearchResponse()
     resp.data["result"] = []
     resp.data["globalMessage"] = []
     resp.data["count"] = len(seqoffers)
-    resp.data["size"] = min(size, len(seqoffers))
+    resp.data["size"] = min(size, len(seqoffers) - offset)
     resp.data["offset"] = offset
     for seqoff in seqoffers[offset: min(offset + size, len(seqoffers))]:
         result = {

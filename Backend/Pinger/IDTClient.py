@@ -35,7 +35,6 @@ class IDTClient:
                 "Sequence": construct["sequence"],
               }
             constructsList.append(sequence)
-        print(constructsList)
         resp = requests.post(self.screening_server,
                   headers={'Authorization': 'Bearer {}'.format(self.token), 'Content-Type': 'application/json; charset=utf-8'}, json=constructsList, timeout = self.timeout)
         result = resp.json()

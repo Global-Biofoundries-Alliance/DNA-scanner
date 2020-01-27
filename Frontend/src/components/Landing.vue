@@ -146,19 +146,25 @@
                             'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE, PUT',
                             'Access-Control-Allow-Headers': 'append,delete,entries,foreach,get,has,keys,set,values,Authorization',
                         }
-                    });
+                    })
+                        .then(response => {
+                            // eslint-disable-next-line no-console
+                            console.log(response);
+                        });
                     // this.filter = [this.vendors, this.range, this.deliveryDays];
                     // this.$http.post('/api/filter', this.filter);
 
                     var resData = new FormData();
-                    resData.append('size', 15);
+                    resData.append('size', 2);
                     resData.append('offset', 0);
 
-                    this.$http.get('/api/results', resData, {
+
+                    this.$http.post('/api/results', resData, {
                         headers: {
                             'Access-Control-Allow-Origin': '*',
                             'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE, PUT',
                             'Access-Control-Allow-Headers': 'append,delete,entries,foreach,get,has,keys,set,values,Authorization',
+                            'Content-Type': 'application/json;charset=utf-8'
                         }
                     })
                         .then(response => {
@@ -191,8 +197,8 @@
                 }
             })
                 .then(response => {
-                    for (let i = 0; i < response.body.vendors.length; i++) {
-                        this.$store.state.StoreVendors[i] = {name: response.body.vendors[i], value: true};
+                    for (let i = 0; i < response.body.length; i++) {
+                        this.$store.state.StoreVendors[i] = {name: response.body[i].shortName, value: true};
                     }
                     // eslint-disable-next-line no-console
                     console.log(this.$store.state.StoreVendors);

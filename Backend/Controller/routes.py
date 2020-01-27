@@ -86,7 +86,7 @@ def filterResults():
     return 'filter submission successful'
 
 
-@app.route('/results', methods=['GET'])
+@app.route('/results', methods=['POST'])
 def getSearchResults():
     if 'sequences' not in session:
         return {'error': 'No sequences available'}
@@ -103,13 +103,11 @@ def getSearchResults():
 
     size = len(sequences)
     offset = 0
-    if request.is_json:
-        reqData = request.get_json()
-        if 'size' in reqData:
-            size = reqData['size']
+    if request.form.get('size'):
+        size = int(request.form.get('size'))
 
-        if 'offset' in reqData:
-            offset = reqData['offset']
+    if request.form.get('offset'):
+        offset = int(request.form.get('offset'))
 
     # Search and retrieve offers for each sequence
     mainPinger.searchOffers(sequences[offset: min(offset + size, len(sequences))])

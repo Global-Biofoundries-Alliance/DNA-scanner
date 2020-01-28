@@ -4,7 +4,7 @@ import sbol
 
 # Object representing a sequence
 class SeqObject():
-    def SeqObject(idN, name, sequence):
+    def __init__(self, idN, name, sequence):
         self.idN = idN
         self.name = name
         self.sequence = sequence

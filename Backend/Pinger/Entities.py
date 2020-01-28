@@ -7,19 +7,78 @@ from enum import Enum
 #########################################################
 
 class MessageType(Enum):
-    # Vendor can not synthesize the sequence
-    SYNTHESIS_ERROR = 0
-    # For Example: Vendor API is currently unavailable
-    VENDOR_ERROR = 1
-    # Just informational message
-    INFO = 2
-    # Message for debugging
-    DEBUG = 3
-    # Pinger Internal Error
-    INTERNAL_ERROR = 4
+    #
+    #   1xxx - Synthesis Errors
+    #
+    #   Desc:   Errors why a vendor can not produce the Sequence
+    #
+
+    # General Synthesis Error
+    SYNTHESIS_ERROR = 1000
+    # Sequence is not valid
+    INVALID_SEQUENCE = 1001
+    # Extreme high/low GC in some regions or invalid GC Content
+    GC_PROBLEM = 1002
+    # Sequence has invalid length
+    INVALID_LENGTH = 1003
+    # Sequence is too short
+    SEQUENCE_TOO_SHORT = 1004
+    # Sequence is too long
+    SEQUENCE_TOO_LONG = 1005
+    # Sequence is good, but vendor is unable to produce (maybe it works with optimization)
+    UNABLE_TO_PRODUCE = 1006
+    # Too many repeats in the sequence
+    TOO_MANY_REPEATS = 1007
+
+    #
+    #   2xxx - Vendor Error
+    #
+    #   Desc:   Errors that are not related to the sequence. Mostly technical Error with
+    #           the vendor API.
+    #
+    
+    # General Vendor Error
+    VENDOR_ERROR = 2000
+    # Vendor-API is currently unavailable
+    API_CURRENTLY_UNAVAILABLE = 2001
+    
+    #
+    #   3xxx - Internal Error
+    #
+    #   Desc:   Error in the use of the Pinger. Maybe wrong configured.
+    #
+
+    # General Internal Error
+    INTERNAL_ERROR = 3000
+    # Wrong Credentials configured
+    WRONG_CREDENTIALS = 3001
+    # Not Allowed. Credentials are ok, but not allowed to request something.
+    NOT_ALLOWED = 3002
+
+    #
+    #   4xxx - Info
+    #
+    #   Desc: Just for Information. Maybe not necessary to look inside.
+    #
+
+    # General Info
+    INFO = 4000
+    # Additional Information from the vendor
+    VENDOR_INFO = 4001
+
+    #
+    #   5xxx - Debug
+    #
+    #   Desc:   Used for debug messges. Maybe interesting while development.
+    #
+    
+    # General Debug Message
+    DEBUG = 5000
 
 
-# Type of the way to make the order
+#
+#   Desc:   Types of the way to make the order.
+#
 class PurchaseType(Enum):
     # By Shopping Card
     SHOPPING_CARD = 0
@@ -28,11 +87,14 @@ class PurchaseType(Enum):
     # By redirect to an specific URL
     URL_REDIRECT = 2
 
-
-# Specific currencies
+#
+#   Desc:   Representation of various currencies
+#
 class Currency(Enum):
     # Euro
     EUR = 0
+    # United States Dollar
+    USD = 1
 
 #########################################################
 #                                                       #
@@ -42,7 +104,16 @@ class Currency(Enum):
 
 
 #
-#   Desc: Representation of a Sequence
+#   Desc:   Representation of a Sequence
+#
+#   @attribute key
+#       Type String. Identifies a specific sequence.
+#
+#   @attribute name
+#       Type String. Gives the sequence an human readable name.
+#
+#   @attribute sequence
+#       Type String. The represented sequence.
 #
 class SequenceInformation:
 
@@ -54,13 +125,24 @@ class SequenceInformation:
         # The sequence
         self.sequence = sequence
 
+        
+
 
 #
-#   Desc: Represantation of a Vendor
+#   Desc:   Represantation of a Vendor
+#
+#   Every VendorInformation needs key, shortName and name. 
+#   
+#   @param key
+#       Type Integer. Will be used as identifier
+#   @param shortname
+#       string. Name represent the vendor.
+#   @param name
+#       string. Fully-Name of the vendor. Can be equal to shortname.
 #
 class VendorInformation:
 
-    def __init__(self, name = "", shortName = "", key = ""):
+    def __init__(self, name, shortName, key):
         # ID of an Vendor. Will be static for every vendor
         self.key = key
 
@@ -71,7 +153,17 @@ class VendorInformation:
         self.shortName = shortName
 
 #
-#   Desc: Representation of a price
+#   Desc:   Representation of a price
+#
+#   @attribute currency
+#           Type Currency. The currency of the amount.
+#
+#   @attribute amount
+#           Numeric Value. The amount of the represented price.
+#
+#   @attribute customerSpecific
+#           Type Boolean. If True the price is specified for the customer.
+#           If False the price is not for the specific customer.
 #
 class Price:
 
@@ -89,29 +181,73 @@ class Price:
 #
 #   Desc:   Sequence and a list of offers for this sequence
 #
-class SequenceOffers:
+#   @attribute vendorOffers
+#           Type ArrayOf(VendorOffers). A list of VendorOffers, which represent 
+#           a vendor with his offers for the given sequenceInformation.
+#
+#   @attribute sequenceInformation
+#           Type SequenceInformation. A single SequenceInformation represents a 
+#           a sequence. 
+#
+class SequenceVendorOffers:
 
-    def __init__(self, sequenceInformation, offers = []):
+    def __init__(self, sequenceInformation, vendorOffers = []):
 
         # Sequence information
         self.sequenceInformation = sequenceInformation
 
         # Multiple offers for the sequence information
+        self.vendorOffers = vendorOffers
+
+#
+#   Desc:   Represents a list of offers for a specific sequence. 
+#
+#   @attribute sequenceInformation
+#       Type SequenceInformation. Specifies the Sequence of the offers.
+#
+#   @attribute offers
+#       Type ArrayOf(Offer). Represents the offers for the sequence specified by attribute sequenceInformation.
+#
+class SequenceOffers:
+    def __init__(self, sequenceInformation, offers = []):
+        self.sequenceInformation = sequenceInformation
         self.offers = offers
 
 #
-#   Desc:   Representation of a Offer
+#   Desc:   Represents a list of offers for a specific vendor.
+#
+#   @attribute vendorInformation
+#           Type VendorInformation. Represents the Vendor which offers are listed in 'offers'.
+#
+#   @attribute offers
+#           Type ArrayOf(Offer). The list of offers from the vendor represented from 'vendorInformation'.
+#
+class VendorOffers:
+
+    def __init__(self, vendorInformation, offers = []):
+        self.vendorInformation = vendorInformation
+        
+        self.offers = offers
+
+#
+#   Desc:   Representation of a Offer. A Offer can also only represent a error, when it contains a
+#           message with an error type.
+#
+#   @attribute price
+#           Type Price. Represents the price of the offer. If less then 0, then no price is available 
+#           or price is unknown.
+#
+#   @attribute turonvertime
+#           Type int. Turnovertime is the number of days it needs to synthesize the sequence. If less then 
+#           0, then no turnovertime is available or turnovertime is unknown.
+#
+#   @attribute messages
+#           Type ArrayOf(Message). Offer specific messages. Can be used to return debug information
+#           or to output errors from the vendor-APIs.
 #
 class Offer:
 
-    def __init__(self, vendorInformation = {}, price = {}, messages = [], turnovertime = -1):
-
-        ### Removed for class SequenceOffers
-        # sequence of the offer
-        # sequenceInformation = {}
-
-        # vendor of the offer
-        self.vendorInformation = vendorInformation
+    def __init__(self, price=-1, turnovertime=-1, messages = []):
 
         # price of the offer
         self.price = price
@@ -123,12 +259,17 @@ class Offer:
         self.messages = messages
 
 #
-#   Desc:   Messages with specific type and text
+#   Desc:   Messages with specific type and text.
+#
+#   @attribute type
+#           Type MessgageType (Enum). Specified the type of the message. By default it is DEBUG.
+#   @attribute text
+#           Type str. Can contain text additional to the MessageType. By default it is a empty string.
 #
 class Message:
 
-    def __init__(self, type = MessageType.DEBUG, text = ""):
-        self.type = type
+    def __init__(self, messageType = MessageType.DEBUG, text = ""):
+        self.messageType = messageType
         self.text = text
 
 

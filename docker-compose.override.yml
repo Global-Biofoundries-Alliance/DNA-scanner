@@ -3,6 +3,9 @@
 version: '3.3'
 services:
     backend:
+        # Backend only direct available in development
+        ports:
+            - "8080:8080"
         # backend will be startet after db
         depends_on:
             - db
@@ -17,8 +20,8 @@ services:
         image: mariadb
         container_name: review
         volumes:
-            - /srv/dnascanner/db:/var/lib/mysql
-            - /etc/localtime:/etc/localtime:ro
+             - /srv/dnascanner/db:/var/lib/mysql
+             - /etc/localtime:/etc/localtime:ro
         environment:
             - MYSQL_ROOT_PASSWORD=81OtNwdKcYdV4SEeki9SgotiW8GotF
             - MYSQL_PASSWORD=z0uo6nK3l5thpph4uXykbMpwur6zgA

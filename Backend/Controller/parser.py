@@ -43,6 +43,7 @@ def parseFastaGB(inputFile, fileFormat):
         sequence.name = seq_record.name
         sequence.sequence = str(seq_record.seq).upper()
         returnList.append(sequence)
+        i = i + 1
     return returnList
 
     # Parses only SBOL files

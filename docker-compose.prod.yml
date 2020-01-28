@@ -3,3 +3,9 @@
 version: '3.3'
 services:
     backend:
+    frontend:
+        ports:
+            - "443:443"
+        volumes:
+            - /srv/dnascanner/cert:/etc/ssl/dna
+            - /srv/dnascanner/nginx:/etc/nginx/conf.d

@@ -1,0 +1,211 @@
+LOCUS       PBAD                     331 bp    DNA     linear   UNA 14-AUG-2017
+DEFINITION  Promoter sequence.
+ACCESSION   urn.local.tzo.32-7xlvtuw
+VERSION     urn.local.tzo.32-7xlvtuw
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+     promoter        1..331
+                     /created_by="tzo"
+                     /label="PBAD"
+ORIGIN      
+        1 acttttcata ctcccgccat tcagagaaga aaccaattgt ccatattgca tcagacattg
+       61 ccgtcactgc gtcttttact ggctcttctc gctaaccaaa ccggtaaccc cgcttattaa
+      121 aagcattctg taacaaagcg ggaccaaagc catgacaaaa acgcgtaaca aaagtgtcta
+      181 taatcacggc agaaaagtcc acattgatta tttgcacggc gtcacacttt gctatgccat
+      241 agcattttta tccataagat tagcggatcc tacctgacgc tttttatcgc aactctctac
+      301 tgtttctcca tacccgtttt tttgggctag c
+//
+LOCUS       TEF1-Promotor-Region_(Ashbya_gossypii)         282 bp    DNA     linear   UNA 04-MAY-2017
+DEFINITION  YALI0E06479_Transketolase_(TK)_TZO.
+ACCESSION   urn.local.tzo.2pr-7x2ctzf
+VERSION     urn.local.tzo.2pr-7x2ctzf
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+     misc_feature    1..282
+                     /Original_Bases="GGATAGCAATACTCACCAGTGAACCTCATTGAATACTACAA
+                     ATTTATTTTTCTGGTTTTTCCCCCGTTACTAGGAAATTTCCCCTTGCAGAAATGTTCG
+                     TCAGCATTCGACACCCCATGCATTAAGTCTGCGCGCGTGCATATATAGCAACGCACTC
+                     AAACCTTGGACTTGTACTTGTTTTCTCATCACCTCGTTACAGC"
+                     /label="GGATAGCAATACTCACCAGTGAACCTCATTGAATACTACAAATTTATTTT
+                     TCTGGTTTTTCCCCCGTTACTAGGAAATTTCCCCTTGCAGAAATGTTCGTCAGCATTC
+                     GACACCCCATGCATTAAGTCTGCGCGCGTGCATATATAGCAACGCACTCAAACCTTGG
+                     ACTTGTACTTGTTTTCTCATCACCTCGTTACAGC"
+                     /note="Geneious type: Editing History Replacement"
+     promoter        1..282
+                     /created_by="User"
+                     /modified_by="User"
+                     /label="TEF1-Promotor-Region (Ashbya gossypii)"
+     misc_feature    <1..>282
+                     /created_by="User"
+                     /modified_by="User"
+                     /label="TAR 3#6"
+ORIGIN      
+        1 tgtgactgtc gcccgtacat ttagcccata catccccatg tataatcatt tgcatccata
+       61 cattttgatg gccgcacggc gcgaagcaaa aattacggct cctcgctgca gacctgcgag
+      121 cagggaaacg ctcccctcac agacgcgttg aattgtcccc acgccgcgcc cctgtagaga
+      181 aatataaaag gttaggattt gccactgagg ttcttctttc atatacttcc ttttaaaatc
+      241 ttgctaggat acagttctca catcacatcc gaacataaac aa
+//
+LOCUS       P_hrpL                   235 bp    DNA     linear   UNA 15-MAR-2018
+DEFINITION  Promoter of HrpL Sigma Factor of Pseudomonas syringae pv. tomato
+            str. DC3000.
+ACCESSION
+VERSION     .
+KEYWORDS    .
+SOURCE      synthetic DNA construct
+  ORGANISM  synthetic DNA construct
+            .
+FEATURES             Location/Qualifiers
+     source          <1..>235
+                     /organism="synthetic DNA construct"
+                     /mol_type="other DNA"
+                     /label="source synthetic DNA construct"
+     promoter        1..235
+                     /created_by="tzo"
+                     /label="P_HrpL"
+ORIGIN      
+        1 gccggattat gtccgctgag tgggtcacgg tcccggatca gttcccttgc gaagctgacc
+       61 gatgtttttg tgccaaaagc tgttgtggca aaaaacggtt tgcgcaaagt tttgtattac
+      121 aaagaatttc acattttaaa atatctttat aaatcaatca gttatttcta tttttaagct
+      181 ggcatggtta tcgctatagg gcttgtacta ctagagtcac acaggaaagt actag
+//
+LOCUS       P_Cat1                    98 bp    DNA     linear   UNA 12-MAR-2018
+DEFINITION  Citrobacter freundii 33587_Promoter of Cat1 gene.
+ACCESSION   urn.local.tzo.1bs-8rnlhz6
+VERSION     urn.local.tzo.1bs-8rnlhz6
+KEYWORDS    .
+SOURCE      synthetic DNA construct (synthetic DNA construct.)
+  ORGANISM  synthetic DNA construct
+            .
+FEATURES             Location/Qualifiers
+     Marker          1..>98
+                     /modified_by="tzo"
+                     /Transferred_From="CmR"
+                     /Transferred_Similarity="100.00%"
+                     /label="CmR(EcoRI-KO) Cassette"
+     promoter        1..98
+                     /created_by="tzo"
+                     /modified_by="tzo"
+                     /label="P_Cat1"
+ORIGIN      
+        1 ggcacgtaag aggttccaac tttcaccata atgaaataag atcactaccg ggcgtatttt
+       61 ttgagttatc gagattttca ggagctaagg aagctaaa
+//
+LOCUS       PSrpR                     82 bp    DNA     linear   UNA 14-AUG-2017
+DEFINITION  Promoter sequence.
+ACCESSION   urn.local.tzo.3o-7xlvu3r
+VERSION     urn.local.tzo.3o-7xlvu3r
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+     PromotorSpacer  1..15
+                     /created_by="tzo"
+                     /label="UpstreamPromoterSpacer"
+     promoter        16..82
+                     /created_by="tzo"
+                     /label="PSrpR"
+ORIGIN      
+        1 tctatgattg gtccagattc gttaccaatt gacagctagc tcagtcctag gtatatacat
+       61 acatgcttgt ttgtttgtaa ac
+//
+LOCUS       PLacI                     82 bp    DNA     linear   UNA 14-AUG-2017
+DEFINITION  Promoter sequence.
+ACCESSION   urn.local.tzo.3c-7xlvtz0
+VERSION     urn.local.tzo.3c-7xlvtz0
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+     promoter        1..82
+                     /created_by="tzo"
+                     /modified_by="tzo"
+                     /label="PLacI"
+ORIGIN      
+        1 gcggcgcgcc atcgaatggc gcaaaacctt tcgcggtatg gcatgatagc gcccggaaga
+       61 gagtcaattc agggtggtga at
+//
+LOCUS       PLmrA                     78 bp    DNA     linear   UNA 14-AUG-2017
+DEFINITION  Promoter sequence.
+ACCESSION   urn.local.tzo.3g-7xlvu0k
+VERSION     urn.local.tzo.3g-7xlvu0k
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+     PromotorSpacer  1..15
+                     /created_by="tzo"
+                     /label="UpstreamPromoterSpacer"
+     promoter        16..78
+                     /created_by="tzo"
+                     /label="PLmrA"
+ORIGIN      
+        1 cgctcattca ctaggtctga ttcgttacca attgacaact ggtggtcgaa tcaagataat
+       61 agaccagtca ctatattt
+//
+LOCUS       PQacR                     77 bp    DNA     linear   UNA 14-AUG-2017
+DEFINITION  Promoter sequence.
+ACCESSION   urn.local.tzo.3m-7xlvu2z
+VERSION     urn.local.tzo.3m-7xlvu2z
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+     PromotorSpacer  1..15
+                     /created_by="tzo"
+                     /label="UpstreamPromoterSpacer"
+     promoter        16..77
+                     /created_by="tzo"
+                     /label="PQacR"
+ORIGIN      
+        1 ggtatggaag ctatacgtta ccaattgaca gctagctcag tcctacttta gtatatagac
+       61 cgtgcgatcg gtctata
+//
+LOCUS       PTet                      74 bp    DNA     linear   UNA 14-AUG-2017
+DEFINITION  Promoter sequence.
+ACCESSION   urn.local.tzo.3s-7xlvu5b
+VERSION     urn.local.tzo.3s-7xlvu5b
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+     PromotorSpacer  1..15
+                     /created_by="tzo"
+                     /label="UpstreamPromoterSpacer"
+     promoter        16..74
+                     /created_by="tzo"
+                     /label="PTet"
+ORIGIN      
+        1 tactccaccg ttggcttttt tccctatcag tgatagagat tgacatccct atcagtgata
+       61 gagataatga gcac
+//
+LOCUS       PTac                      71 bp    DNA     linear   UNA 14-AUG-2017
+DEFINITION  Promoter sequence.
+ACCESSION   urn.local.tzo.3q-7xlvu4i
+VERSION     urn.local.tzo.3q-7xlvu4i
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+     PromotorSpacer  1..15
+                     /created_by="tzo"
+                     /label="UpstreamPromoterSpacer"
+     promoter        16..71
+                     /created_by="tzo"
+                     /label="PTac"
+ORIGIN      
+        1 aacgatcgtt ggctgtgttg acaattaatc atcggctcgt ataatgtgtg gaattgtgag
+       61 cgctcacaat t
+//

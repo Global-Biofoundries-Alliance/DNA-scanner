@@ -3,7 +3,6 @@ import json
 import sbol
 
 # Object representing a sequence
-<<<<<<< HEAD
 class SeqObject():
     def SeqObject(idN, name, sequence):
         self.idN = idN

@@ -213,21 +213,36 @@ class GeneArt(BasePinger):
             try:
                 response = self.projectValidate(seqInf, product)
             except requests.ConnectionError:  # If request timeout             
-                offers.append(SequenceOffers(None, [Offer(messages = [Message(1, "GeneArt API is not available")])]))
+                offers.append(SequenceOffers(None, [Offer(messages = [Message(2001, "GeneArt API is not available")])]))
                 break
             count = 0 # Count the sequences
             for seq in seqInf:
                 accepted = response["constructs"][count]["accepted"] # See if the API accepted the sequence
                 if accepted == True:
-                    messageType = 2 # Just informational message (INFO)
+                    messageType = 4000 # Just informational message (INFO)
                     messageText = product + "_" + "accepted"
                     message = Message(messageType, messageText)
                 else:
-                    messageType = 0 # Vendor can not synthesize the sequence (SYNTHESIS_ERROR)
-                    messageText = product + "_" + "rejected_"
-                    for reason in response["constructs"][count]["reasons"]:
-                        messageText = messageText + str(reason) + "."
-                    message = Message(messageType, messageText)
+                    if(len(response["constructs"][count]["reasons"]) == 1):
+                        reason = response["constructs"][count]["reasons"][0]
+                        if (reason == "length"):
+                            messageType = 1003 # Invalid length (INVALID_LENGTH)
+                            messageText = product + "_" + "rejected_" + str(reason) + "."
+                            message = Message(messageType, messageText)
+                        if (reason == "homology"):
+                            messageType = 1008 # Homology (HOMOLOGY)
+                            messageText = product + "_" + "rejected_" + str(reason) + "."
+                            message = Message(messageType, messageText)
+                        if (reason == "problems"):
+                            messageType = 1003 # Synthesis error (SYNTHESIS_ERROR)
+                            messageText = product + "_" + "rejected_" + str(reason) + "."
+                            message = Message(messageType, messageText)
+                    else:
+                        messageType = 1000 # Vendor can not synthesize the sequence (SYNTHESIS_ERROR)
+                        messageText = product + "_" + "rejected_"
+                        for reason in response["constructs"][count]["reasons"]:
+                            messageText = messageText + str(reason) + "."
+                        message = Message(messageType, messageText)
 
                 seqOffer = SequenceOffers(seq, [Offer(messages = [message])])
                 offers.append(seqOffer)

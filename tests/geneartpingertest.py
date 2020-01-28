@@ -123,7 +123,7 @@ class TestGeneArtPinger(unittest.TestCase):
         self.assertEqual(price0, -1)
         messages0 = offers0.messages
         self.assertEqual(len(messages0), 1)
-        self.assertEqual(messages0[0].type, 2)
+        self.assertEqual(messages0[0].messageType, 4000)
         self.assertEqual(messages0[0].text, "dnaStrings_accepted")
         self.assertEqual(offers0.turnovertime, -1)
         
@@ -138,7 +138,7 @@ class TestGeneArtPinger(unittest.TestCase):
         self.assertEqual(price1, -1)
         messages1 = offers1.messages
         self.assertEqual(len(messages1), 1)
-        self.assertEqual(messages1[0].type, 2)
+        self.assertEqual(messages1[0].messageType, 4000)
         self.assertEqual(messages1[0].text, "dnaStrings_accepted")
         self.assertEqual(offers1.turnovertime, -1)
 
@@ -153,7 +153,7 @@ class TestGeneArtPinger(unittest.TestCase):
         self.assertEqual(price2, -1)
         messages2 = offers2.messages
         self.assertEqual(len(messages2), 1)
-        self.assertEqual(messages2[0].type, 0)
+        self.assertEqual(messages2[0].messageType, 1008)
         self.assertEqual(messages2[0].text, "hqDnaStrings_rejected_homology.")
         self.assertEqual(offers2.turnovertime, -1)
 
@@ -168,7 +168,7 @@ class TestGeneArtPinger(unittest.TestCase):
         self.assertEqual(price3, -1)
         messages3 = offers3.messages
         self.assertEqual(len(messages3), 1)
-        self.assertEqual(messages3[0].type, 0)
+        self.assertEqual(messages3[0].messageType, 1008)
         self.assertEqual(messages3[0].text, "hqDnaStrings_rejected_homology.")
         self.assertEqual(offers3.turnovertime, -1)
 

@@ -62,12 +62,7 @@ def parseFastaGB(inputFile, fileFormat):
 def parseSBOL(inputFile):
     i = 0
     doc = sbol.Document()
-    try:
-        doc.read(inputFile)
-    except RuntimeError:
-        print("Not a valid SBOL2 file")
-    except:
-        print("Parsing of the file failed.")
+    doc.read(inputFile)
     returnList = []
     for a in doc.sequences:
         sequence = SeqObject(idN = a.displayId, name = "Sequence " + str(i), sequence = str(a.elements).upper())

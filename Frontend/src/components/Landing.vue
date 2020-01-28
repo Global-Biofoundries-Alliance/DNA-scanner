@@ -155,7 +155,7 @@
                     // this.$http.post('/api/filter', this.filter);
 
                     var resData = new FormData();
-                    resData.append('size', 2);
+                    resData.append('size', this.$store.state.StoreSize);
                     resData.append('offset', 0);
 
 
@@ -203,6 +203,7 @@
                     // eslint-disable-next-line no-console
                     console.log(this.$store.state.StoreVendors);
                 });
+
         }
     };
 </script>

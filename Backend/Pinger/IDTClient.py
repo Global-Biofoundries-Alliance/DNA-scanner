@@ -1,7 +1,7 @@
 import requests
 import json
 class IDTClient: 
-    # Constructur for a IDTClient ()
+    # Constructor for a IDTClient ()
     # Takes as input the configuration's parameters 
     
     def __init__(self, token_server, screening_server, idt_username, idt_password, client_id, client_secret, scope, token = "", timeout = 60):
@@ -17,7 +17,8 @@ class IDTClient:
         if(self.token == ""):
             self.getToken()
            
-    # Get Token
+    # This method is used to generate an access token from the API. This token is later used to access the other endpoints this API offers.
+    # The token expires in one hour.
     def getToken(self):
         data = {'grant_type': 'password', 'username': self.idt_username, 'password': self.idt_password, 'scope': self.scope}
         r = requests.post(self.token_server, data, auth=requests.auth.HTTPBasicAuth(self.client_id, self.client_secret), timeout = self.timeout)
@@ -26,7 +27,7 @@ class IDTClient:
         access_token = r.json()['access_token']
         self.token = access_token
         
-    # Use API-Endpoint
+    # This method takes as input a listOfSequences and it is used to send a HTTP-Request to the API endpoint to test its complexity. 
     def screening(self, listOfSequences):
         constructsList = []
         for construct in listOfSequences:
@@ -36,6 +37,9 @@ class IDTClient:
               }
             constructsList.append(sequence)
         resp = requests.post(self.screening_server,
-                  headers={'Authorization': 'Bearer {}'.format(self.token), 'Content-Type': 'application/json; charset=utf-8'}, json=constructsList, timeout = self.timeout)
+                  headers={'Authorization': 'Bearer {}'.format(self.token), 
+                  'Content-Type': 'application/json; charset=utf-8'}, 
+                  json=constructsList, 
+                  timeout = self.timeout)
         result = resp.json()
         return result

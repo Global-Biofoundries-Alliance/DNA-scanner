@@ -86,6 +86,20 @@ class BasePinger:
     def clear(self):
         raise NotImplementedError
 
+    #
+    #   Desc:   Create an request to trigger an order.
+    #
+    #   @param seqInf
+    #           Type ArrayOf(Entities.SequenceInformation). Representation of the sequences you want to order.
+    #
+    #   @result
+    #           Type Order. Representation of the order.
+    #
+    def order(self, seqInf):
+        raise NotImplementedError
+
+
+
 #
 #   Desc:   Interface for represent a fully Pinger. Fully Pinger means managing multiple vendor (represented by
 #           BasePingers) and add advanced functionalities e.g. search just for specific vendors.
@@ -155,6 +169,21 @@ class ManagedPinger:
     #           a empty list [].
     #
     def getVendors(self):
+        raise NotImplementedError
+
+    #
+    #   Desc:   Create an request to trigger an order with an specific vendor.
+    #
+    #   @param seqInf
+    #           Type ArrayOf(Entities.SequenceInformation). Representation of the sequences you want to order.
+    #
+    #   @param vendorInf
+    #           Type Entities.VendorInformation. Representation of the vendor where you want to do the order.
+    #
+    #   @result
+    #           Type Order. Representation of the order.
+    #
+    def order(self, seqInf, vendorInf):
         raise NotImplementedError
 
 
@@ -284,17 +313,6 @@ class CompositePinger(ManagedPinger):
                 for curSO in self.sequenceVendorOffers:
                     if newSO.sequenceInformation.key == curSO.sequenceInformation.key:
                         curSO.vendorOffers.append(VendorOffers(vendorInformation=vh.vendor, offers=newSO.offers))
-
-        # For every SequenceOffer from Leaf
-        #for leafSeqOffer in leafSeqOffers:
-        #    # ... get the Key of the SequenceInformation
-        #    seqKey = leafSeqOffer.sequenceInformation.key
-
-            # ... and for every local SequenceOffer ...
-        #    for seqOffer in self.sequenceOffers:
-                # append Offers from leaf to local if SequenceKeys are equal
-        #        if seqOffer.sequenceInformation.key == seqKey:
-        #            seqOffer.offers.append(leafSeqOffer.offers)
 
         return self.sequenceVendorOffers
 

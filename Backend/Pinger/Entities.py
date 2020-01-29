@@ -77,17 +77,6 @@ class MessageType(Enum):
 
 
 #
-#   Desc:   Types of the way to make the order.
-#
-class PurchaseType(Enum):
-    # By Shopping Card
-    SHOPPING_CARD = 0
-    # Not supported
-    NOT_SUPPORTED = 1
-    # By redirect to an specific URL
-    URL_REDIRECT = 2
-
-#
 #   Desc:   Representation of various currencies
 #
 class Currency(Enum):
@@ -273,4 +262,70 @@ class Message:
         self.text = text
 
 
+#####################################################
+#                                                   #
+#   Entities for Ordering                           #
+#                                                   #
+#   OrderType: Contains the different types         #
+#   a order could be.                               #
+#                                                   #
+#   Order: Description of the generall Data-        #
+#   Format equal for every OrderType                #
+#                                                   #
+#   Concrete Orders are Type specific.              #
+#   The dataformat are equal to the order           #
+#   and extended by values, that are specific       #
+#   needed for that type.                           #
+#                                                   #
+#####################################################
+
+#
+#   Desc:   Types of the way to make the order.
+#
+class OrderType(Enum):
+    # Not supported
+    NOT_SUPPORTED = 1
+    # By redirect to an specific URL
+    URL_REDIRECT = 2
+
+#
+#   Desc:   General interface for orders.
+#
+#   @attribute seqInf
+#
+#   @attribute orderType
+#           Type OrderType. The type of the concrete order.
+#
+class Order:
+
+    def __init__(self, seqInf, orderType = OrderType.NOT_SUPPORTED):
+        self.orderType = orderType
+        self.seqInf = seqInf
+
+    #
+    #   Desc:   Returns the type of the concrete order.
+    #
+    #   @result
+    #           Type OrderType
+    #
+    def getType(self):
+        return self.orderType
+
+#
+#   Desc:   Finish the order by redirect to a specific url.
+#
+#   @attribute url
+#           Type String. The redirect url to make the order.
+#
+class UrlRedirectOrder(Order):
+
+    #
+    #   Desc:   Constructor.
+    #
+    #   @param url
+    #           Type String. The redirect url to make the order.
+    #
+    def __init__(self, url, seqInf):
+        Order(seqInf=seqInf, orderType=OrderType.URL_REDIRECT)
+        self.url = url
 

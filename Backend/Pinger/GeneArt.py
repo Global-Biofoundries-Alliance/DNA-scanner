@@ -196,14 +196,17 @@ class GeneArt(BasePinger):
     #       Returns True if the authentication was successful and False otherwise.
     #
     def authenticate(self):
+
         # Authenticate by calling the corresponding method.
-        try: 
-			response = self.client.authenticate()
-		except: 
-			messageType = 3001 # Wrong Credentials (WRONG_CREDENTIALS)
-			messageText = "Wrong Credentials"
-			return Message(messageType, messageText)
-        return response
+        response = {}
+        try:
+            response = self.client.authenticate()
+        except:
+            messageType = 3001  # Wrong Credentials (WRONG_CREDENTIALS)
+            messageText = 'Wrong Credentials'
+            return Message(messageType, messageText)
+        else:
+            return response
         
     #
     #   After:

@@ -33,7 +33,7 @@ class TestGeneArtPinger(unittest.TestCase):
         self.assertEqual(True, auth_result)
         
         # Give dummy username and token
-        with self.assertRaises(Exception): Pinger.GeneArt("USERNAME", "TOKEN")
+        with self.assertRaises(Exception): GeneArt.GeneArt("USERNAME", "TOKEN")
     
     # Check the projectValidate method by checking the keys and their values returned by the API.    
     def test_projectValidate(self):

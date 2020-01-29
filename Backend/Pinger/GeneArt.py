@@ -197,7 +197,12 @@ class GeneArt(BasePinger):
     #
     def authenticate(self):
         # Authenticate by calling the corresponding method.
-        response = self.client.authenticate()
+        try: 
+			response = self.client.authenticate()
+		except: 
+			messageType = 3001 # Wrong Credentials (WRONG_CREDENTIALS)
+			messageText = "Wrong Credentials"
+			return Message(messageType, messageText)
         return response
         
     #
@@ -325,6 +330,5 @@ class GeneArt(BasePinger):
     #
     def clear(self):
         self.running = False
-        offers = [] # Empty Offers List
-        self.offers = offers
+        self.offers = [] # Empty Offers List
         

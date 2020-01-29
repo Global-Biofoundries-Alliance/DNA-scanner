@@ -29,7 +29,7 @@ class MessageType(Enum):
     UNABLE_TO_PRODUCE = 1006
     # Too many repeats in the sequence
     TOO_MANY_REPEATS = 1007
-    # Homology
+    # Homology is the existence of shared ancestry between a pair of structures, or genes
     HOMOLOGY = 1008
 
     #

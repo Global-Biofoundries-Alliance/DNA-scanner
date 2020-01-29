@@ -154,11 +154,11 @@
                     // this.filter = [this.vendors, this.range, this.deliveryDays];
                     // this.$http.post('/api/filter', this.filter);
 
-                    var resData = new FormData();
-                    resData.append('size', 15);
-                    resData.append('offset', 0);
+                    // var resData = new FormData();
+                    // resData.append('size', 5);
+                    // resData.append('offset', 0);
 
-                    this.$http.get('/api/results', resData, {
+                    this.$http.post('/api/results', {
                         headers: {
                             'Access-Control-Allow-Origin': '*',
                             'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE, PUT',

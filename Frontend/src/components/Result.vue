@@ -134,11 +134,14 @@
                     <p>{{dialogItem}}</p>
                 </v-row>
         </v-container>
-        <v-row align="bottum">
+        <v-row>
             <v-pagination
                     v-model="page"
-                    :length="6"
-                    style="margin-top: 30%"
+                    :length="Math.round(this.$store.state.StoreCount / this.$store.state.StoreSize)"
+                    style="alignment: bottom"
+                    @next="next"
+                    @previous="previous"
+                    @input="input"
             ></v-pagination>
         </v-row>
     </div>
@@ -188,6 +191,82 @@
             dialogClose() {
                 this.dialog = false;
                 this.dialogItem = null
+            },
+            next() {
+                this.$store.state.StoreOffset += this.$store.state.StoreSize;
+                var resData = new FormData();
+                resData.append('size', this.$store.state.StoreSize);
+                resData.append('offset', this.$store.state.StoreOffset);
+
+
+                this.$http.post('/api/results', resData, {
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE, PUT',
+                        'Access-Control-Allow-Headers': 'append,delete,entries,foreach,get,has,keys,set,values,Authorization',
+                    }
+                })
+                    .then(response => {
+                        // eslint-disable-next-line no-console
+                        console.log(response);
+                        this.$store.state.StoreSearchResult = response.body;
+                        // eslint-disable-next-line no-console
+                        console.log(this.$store.state.StoreSearchResult);
+                        this.$store.state.StoreFile = this.file;
+                        this.$store.state.StoreCount = response.body.count;
+                        this.$router.push('/result/' + `${this.page}`);
+                    });
+
+            },
+            previous() {
+                this.$store.state.StoreOffset -= this.$store.state.StoreSize;
+                var resData = new FormData();
+                resData.append('size', this.$store.state.StoreSize);
+                resData.append('offset', this.$store.state.StoreOffset);
+
+
+                this.$http.post('/api/results', resData, {
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE, PUT',
+                        'Access-Control-Allow-Headers': 'append,delete,entries,foreach,get,has,keys,set,values,Authorization',
+                    }
+                })
+                    .then(response => {
+                        // eslint-disable-next-line no-console
+                        console.log(response);
+                        this.$store.state.StoreSearchResult = response.body;
+                        // eslint-disable-next-line no-console
+                        console.log(this.$store.state.StoreSearchResult);
+                        this.$store.state.StoreFile = this.file;
+                        this.$store.state.StoreCount = response.body.count;
+                        this.$router.push('/result/' + `${this.page}`);
+                    });
+            },
+            input() {
+                this.$store.state.StoreOffset = this.$store.state.StoreSize * (this.page - 1);
+                var resData = new FormData();
+                resData.append('size', this.$store.state.StoreSize);
+                resData.append('offset', this.$store.state.StoreOffset);
+
+
+                this.$http.post('/api/results', resData, {
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE, PUT',
+                        'Access-Control-Allow-Headers': 'append,delete,entries,foreach,get,has,keys,set,values,Authorization',
+                    }
+                })
+                    .then(response => {
+                        // eslint-disable-next-line no-console
+                        console.log(response);
+                        this.$store.state.StoreSearchResult = response.body;
+                        // eslint-disable-next-line no-console
+                        console.log(this.$store.state.StoreSearchResult);
+                        this.$store.state.StoreFile = this.file;
+                        this.$store.state.StoreCount = response.body.count;
+                        this.$router.push('/result/' + `${this.page}`);
+                    });
             }
         }
 

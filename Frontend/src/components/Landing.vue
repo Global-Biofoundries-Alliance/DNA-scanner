@@ -154,11 +154,12 @@
                     // this.filter = [this.vendors, this.range, this.deliveryDays];
                     // this.$http.post('/api/filter', this.filter);
 
-                    // var resData = new FormData();
-                    // resData.append('size', 5);
-                    // resData.append('offset', 0);
+                    var resData = new FormData();
+                    resData.append('size', this.$store.state.StoreSize);
+                    resData.append('offset', this.$store.state.StoreOffset);
 
-                    this.$http.post('/api/results', {
+
+                    this.$http.post('/api/results', resData, {
                         headers: {
                             'Access-Control-Allow-Origin': '*',
                             'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE, PUT',
@@ -172,7 +173,8 @@
                             // eslint-disable-next-line no-console
                             console.log(this.$store.state.StoreSearchResult);
                             this.$store.state.StoreFile = this.file;
-                            this.$router.push('/result');
+                            this.$store.state.StoreCount = response.body.count;
+                            this.$router.push('/result/1');
                         });
                 }
             },

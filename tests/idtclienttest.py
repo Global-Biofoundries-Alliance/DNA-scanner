@@ -1,7 +1,7 @@
 import unittest
 import json
 import yaml
-from Pinger import IDTClient
+from Pinger import IDT
 
 # Log-In Credentials
 with open("config.yml", 'r') as ymlfile:
@@ -28,7 +28,7 @@ class TestIDTClient(unittest.TestCase):
     timeout = 60
 
     # Object of type GeneArtClient used in these tests to communicate with the API.
-    idt = IDTClient.IDTClient(token_server, screening_server, idt_username, idt_password, client_id, client_secret, scope, token, timeout)
+    idt = IDT.IDTClient(token_server, screening_server, idt_username, idt_password, client_id, client_secret, scope, token, timeout)
 
     # Checks the authentication.
     def test_getToken(self):
@@ -39,7 +39,7 @@ class TestIDTClient(unittest.TestCase):
         client_id_dummy = "ID"
         client_secret = "SECRET"
         scope = "SCOPE"
-        with self.assertRaises(KeyError): IDTClient.IDTClient(TestIDTClient.token_server, TestIDTClient.screening_server, username_dummy, password_dummy, client_id, client_secret, scope)
+        with self.assertRaises(KeyError): IDT.IDTClient(TestIDTClient.token_server, TestIDTClient.screening_server, username_dummy, password_dummy, client_id, client_secret, scope)
         
         self.assertEqual(True, self.idt.token != "")
         

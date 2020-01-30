@@ -20,6 +20,7 @@ class AdvancedMockPinger(BasePinger):
     #
     def searchOffers(self, seqInf):
         self.offers = []
+        counter = 0
         for s in seqInf:
             numOffers = randint(0, 10)
             tempOffers = []
@@ -28,6 +29,8 @@ class AdvancedMockPinger(BasePinger):
                 tempOffer.vendorInformation = self.vendorInformation
                 tempOffer.price = Price(currency=Currency.EUR, amount=float(int(random() * 100)) / 100)
                 tempOffer.turnovertime = randint(0, 20)
+                tempOffer.messages = ["Message " + counter + " from  mock pinger"]
+                counter = counter + 1
                 tempOffers.append(tempOffer)
             self.offers.append(SequenceOffers(s, tempOffers))
         self.running = True

@@ -58,7 +58,7 @@ def uploadFile():
             sequences.append({"key": seqInfo.key, "name": seqInfo.name, "sequence": seqInfo.sequence})
         session["sequences"] = sequences
 
-    except NameError:
+    except:
         return json.jsonify({'error': 'File format not supported'})
 
     return 'upload successful'

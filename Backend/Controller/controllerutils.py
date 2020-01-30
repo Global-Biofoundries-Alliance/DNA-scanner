@@ -21,10 +21,14 @@ def buildSearchResponseJSON(seqoffers, vendors, offset = 0, size = 10):
 
         for offerlist in seqoff.offers:
             for offer in offerlist:
+                messages = []
+                for message in offer.messages:
+                    messages.append(message.text)
+
                 result["vendors"][offer.vendorInformation.key]["offers"].append({
                     "price": offer.price.amount,
                     "turnoverTime": offer.turnovertime,
-                    "offerMessage": []})
+                    "offerMessage": messages})
 
         resp.data["result"].append(result)
 

@@ -47,7 +47,7 @@
                                         </v-card-text>
                                     </v-card-actions>
 
-                                    <v-card-actions v-if="result[i].vendors[j].offers[0].offerMessage.length === 0" style="padding-top: 2px; padding-bottom: 2px" :class="{'grey lighten-1': plus}">
+                                    <v-card-actions v-if="result[i].vendors[j].offers[0].offerMessage.length === 0" style="padding-top: 2px; padding-bottom: 2px" :class="{'grey lighten-1': result[i].vendors[j].offers[0].selected === true}">
                                         <v-card-text class="ml-2 pa-0" style="font-size: 20px">
                                             {{result[i].vendors[j].offers[0].price}}
                                         </v-card-text>
@@ -145,11 +145,14 @@
                     v-model="page"
                     :length="Math.round(this.$store.state.StoreCount / this.$store.state.StoreSize)"
                     style="alignment: bottom"
+                    circle
                     @next="next"
                     @previous="previous"
                     @input="input"
             ></v-pagination>
         </v-row>
+        <p>{{this.$store.state.StoreOffset}}</p>
+        <p>{{this.$store.state.StoreSize}}</p>
     </div>
 </template>
 
@@ -208,7 +211,7 @@
                 this.dialogItem = null
             },
             next() {
-                this.$store.state.StoreOffset += this.$store.state.StoreSize;
+                this.$store.state.StoreOffset = this.$store.state.StoreSize * (this.page - 1);
                 var resData = new FormData();
                 resData.append('size', this.$store.state.StoreSize);
                 resData.append('offset', this.$store.state.StoreOffset);
@@ -234,7 +237,7 @@
 
             },
             previous() {
-                this.$store.state.StoreOffset -= this.$store.state.StoreSize;
+                this.$store.state.StoreOffset = this.$store.state.StoreSize * (this.page - 1);
                 var resData = new FormData();
                 resData.append('size', this.$store.state.StoreSize);
                 resData.append('offset', this.$store.state.StoreOffset);

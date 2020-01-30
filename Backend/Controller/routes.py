@@ -107,7 +107,7 @@ def getSearchResults():
         dummyVendor = VendorInformation(vendors[id]["name"], vendors[id]["shortName"], id)
         if id == 2:
             # TODO Init Geneart-Pinger by config
-            pinger = GeneArt(username = 'insert username', token = 'insert token')
+            pinger = GeneArt(username = 'username', token = 'token')
             mainPinger.registerVendor(dummyVendor, pinger)
         else:
             mainPinger.registerVendor(dummyVendor, AdvancedMockPinger(dummyVendor))

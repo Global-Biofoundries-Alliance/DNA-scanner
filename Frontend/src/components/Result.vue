@@ -42,7 +42,7 @@
                                 <v-card width="200px" class="pt-2 pb-2" tile outlined
                                         :elevation="(hover || result[i].vendors[j].offers[0].selected) ? 16 : 0">
                                     <v-card-actions v-if="result[i].vendors[j].offers[0].offerMessage.length !== 0" style="padding-top: 2px; padding-bottom: 2px" class="red lighten-4">
-                                        <v-card-text class="ml-2 pa-0" style="font-size: 20px">
+                                        <v-card-text class="ml-2 pa-0" style="font-size: 12px">
                                             {{result[i].vendors[j].offers[0].offerMessage[0].text}}
                                         </v-card-text>
                                     </v-card-actions>

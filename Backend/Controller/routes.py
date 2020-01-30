@@ -136,3 +136,4 @@ def getSearchResults():
         result = buildSearchResponseJSON(seqoffers, vendors, offset, size)
 
     return result
+

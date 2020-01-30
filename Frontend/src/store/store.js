@@ -3,10 +3,20 @@ import Vuex from 'vuex';
 
 Vue.use(Vuex);
 
-// the constant store stores data which should be available globally. To achieve that store is exported and added in main.js
 export const store = new Vuex.Store({
     state: {
         StoreFile: [],
-        StoreResult: []
+        StoreSearchResult: [],
+        PriceFilterMin: 1,
+        PriceFilterMax: 1000,
+        PriceFilterCurrentRange: [1, 100],
+        DeliveryFilterMin: 1,
+        DeliveryFilterMax: 1000,
+        DeliveryFilterCurrent: 7,
+        StoreVendors: [],
+        StoreDialogItem: null,
+        StoreSize: 2,
+        StoreOffset: 0,
+        StoreLength: 0
     }
 });

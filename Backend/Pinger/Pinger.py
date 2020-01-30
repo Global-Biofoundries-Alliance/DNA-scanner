@@ -87,13 +87,13 @@ class BasePinger:
         raise NotImplementedError
 
     #
-    #   Desc:   Create an request to trigger an order.
+    #   Desc:   Create a request to trigger an order.
     #
     #   @param seqInf
     #           Type ArrayOf(Entities.SequenceInformation). Representation of the sequences you want to order.
     #
     #   @result
-    #           Type Order. Representation of the order.
+    #           Type Entities.Order. Representation of the order.
     #
     def order(self, seqInf):
         raise NotImplementedError
@@ -172,7 +172,7 @@ class ManagedPinger:
         raise NotImplementedError
 
     #
-    #   Desc:   Create an request to trigger an order with an specific vendor.
+    #   Desc:   Create a request to trigger an order with an specific vendor.
     #
     #   @param seqInf
     #           Type ArrayOf(Entities.SequenceInformation). Representation of the sequences you want to order.
@@ -181,7 +181,7 @@ class ManagedPinger:
     #           Type Entities.VendorInformation. Representation of the vendor where you want to do the order.
     #
     #   @result
-    #           Type Order. Representation of the order.
+    #           Type Entities.Order. Representation of the order.
     #
     def order(self, seqInf, vendorInf):
         raise NotImplementedError
@@ -296,10 +296,8 @@ class CompositePinger(ManagedPinger):
             s.vendorOffers = []
 
         # Load offers from Vendor-Pingers
-        #leafSeqOffers = []
         for vh in self.vendorHandler:
             seqOffers = vh.handler.getOffers()
-            #leafSeqOffers.extend(vOffers)
 
             # If output if the VendorPinger is invalid, then ignore and continue
             if (not isinstance(seqOffers, list)):

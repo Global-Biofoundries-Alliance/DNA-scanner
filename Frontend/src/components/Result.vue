@@ -41,7 +41,13 @@
                             <v-hover v-slot:default="{ hover }" v-for="(k,j) in vendors.length" :key="j">
                                 <v-card width="200px" class="pt-2 pb-2" tile outlined
                                         :elevation="(hover || result[i].vendors[j].offers[0].selected) ? 16 : 0">
-                                    <v-card-actions style="padding-top: 2px; padding-bottom: 2px">
+                                    <v-card-actions v-if="result[i].vendors[j].offers[0].offerMessage.length !== 0" style="padding-top: 2px; padding-bottom: 2px" class="red lighten-4">
+                                        <v-card-text class="ml-2 pa-0" style="font-size: 20px">
+                                            {{result[i].vendors[j].offers[0].offerMessage[0].text}}
+                                        </v-card-text>
+                                    </v-card-actions>
+
+                                    <v-card-actions v-if="result[i].vendors[j].offers[0].offerMessage.length === 0" style="padding-top: 2px; padding-bottom: 2px" :class="{'grey lighten-1': plus}">
                                         <v-card-text class="ml-2 pa-0" style="font-size: 20px">
                                             {{result[i].vendors[j].offers[0].price}}
                                         </v-card-text>
@@ -58,13 +64,13 @@
                                                 style="height: 100%; width: 100%"
                                         >
                                             <v-icon class="ml-3" size="22px"
-                                                    @click="result[i].vendors[j].offers[0].selected = false">
+                                                    @click="minusBtn(i, j)">
                                                 mdi-minus
                                             </v-icon>
                                         </div>
                                     </v-expand-transition>
 
-                                    <v-expand-transition v-else-if="result[i].vendors[j].offers.length > 1">
+                                    <v-expand-transition v-else-if="result[i].vendors[j].offers.length > 1 && result[i].vendors[j].offers[0].offerMessage.length === 0">
                                         <div
                                                 v-if="hover"
                                                 class="d-flex transition-fast-in-fast-out grey lighten-2 v-card--reveal display-3"
@@ -79,14 +85,14 @@
                                         </div>
                                     </v-expand-transition>
 
-                                    <v-expand-transition v-else>
+                                    <v-expand-transition v-else-if="result[i].vendors[j].offers[0].offerMessage.length === 0">
                                         <div
                                                 v-if="hover"
                                                 class="d-flex transition-fast-in-fast-out grey lighten-2 v-card--reveal display-3"
                                                 style="height: 100%; width: 100%"
                                         >
                                             <v-icon class="ml-3" size="22px"
-                                                    @click="result[i].vendors[j].offers[0].selected = true">
+                                                    @click="plusBtn(i, j)">
                                                 mdi-plus
                                             </v-icon>
                                         </div>
@@ -161,7 +167,8 @@
                 dialogItem: null,
                 dialog: false,
                 dialogList: [],
-                page: 1
+                page: 1,
+                plus: false
             }
         },
         computed: {
@@ -179,6 +186,14 @@
             }
         },
         methods: {
+            plusBtn(i, j) {
+                this.$store.state.StoreSearchResult.result[i].vendors[j].offers[0].selected = true;
+                this.plus = true;
+            },
+            minusBtn(i,j) {
+                this.$store.state.StoreSearchResult.result[i].vendors[j].offers[0].selected = false;
+                this.plus = false;
+            },
             dialogShow(i, j) {
                 this.dialog = true;
                 this.dialogList = this.$store.state.StoreSearchResult.result[i].vendors[j].offers

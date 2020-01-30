@@ -69,11 +69,20 @@ def filterResults():
     if not request.is_json:
         return {'error': 'Invalid filter request: Data must be in JSON format'}
 
+    request_json = request.get_json()
+    if 'filter' not in request_json:
+        return {'error': 'Request is missing filter attribute'}
+
+    # check if all keys are in the request
+    if any(key not in request_json['filter'] for key in
+           {'vendors', 'price', 'deliveryDays',\
+            'preselectByPrice', 'preselectByDeliveryDays'}):
+        return {'error': 'Malformed filter'}
+
     previousVendors = set()
     if 'filter' in session:
         previousVendors = set(session['filter']['vendors'])
 
-    request_json = request.get_json()
     session['filter'] = request_json['filter']
     currentVendors = set(session['filter']['vendors'])
 
@@ -91,7 +100,6 @@ def getSearchResults():
     if 'sequences' not in session:
         return {'error': 'No sequences available'}
 
-    # Check if the results must be acquired from the vendors first
     mainPinger = CompositePinger()
     # Begin temporary testing placeholders
     for id in range(0, len(vendors)):
@@ -107,14 +115,13 @@ def getSearchResults():
     mainPinger.searchOffers(sequences)
     seqoffers = mainPinger.getOffers()
 
-
     # Get size and offset fields if available and set them to default otherwise
     size = len(sequences)
     offset = 0
     if request.form.get('size'):
         size = int(request.form.get('size'))
     if request.form.get('offset'):
-         offset = int(request.form.get('offset'))
+        offset = int(request.form.get('offset'))
 
     # build response from offers stored in the session
     if "filter" in session:

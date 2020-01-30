@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Initialize virtual Environment"
+echo "Initialize virtual Environment" 
 python3 -m venv venv
 
 echo "Install dependencies"
@@ -10,7 +10,5 @@ echo "Install dependencies"
 echo "run tests"
 venv/bin/python3 validatortest.py
 venv/bin/python3 compositepingertest.py
-#venv/bin/python3 geneartclienttest.py
-#venv/bin/python3 geneartpingertest.py
-venv/bin/python3 idtclienttest.py
-venv/bin/python3 idtpingertest.py
+venv/bin/python3 geneartclienttest.py
+venv/bin/python3 geneartpingertest.py

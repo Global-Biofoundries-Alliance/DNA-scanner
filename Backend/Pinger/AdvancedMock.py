@@ -29,7 +29,7 @@ class AdvancedMockPinger(BasePinger):
                 tempOffer.vendorInformation = self.vendorInformation
                 tempOffer.price = Price(currency=Currency.EUR, amount=float(int(random() * 100)) / 100)
                 tempOffer.turnovertime = randint(0, 20)
-                tempOffer.messages = ["Message " + counter + " from  mock pinger"]
+                tempOffer.messages = [Message(text="Message " + str(counter) + " from  mock pinger")]
                 counter = counter + 1
                 tempOffers.append(tempOffer)
             self.offers.append(SequenceOffers(s, tempOffers))

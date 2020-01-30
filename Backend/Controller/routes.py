@@ -89,75 +89,39 @@ def filterResults():
 @app.route('/results', methods=['POST'])
 def getSearchResults():
 
-    return {
-               "count": 5,
-               "globalMessage": [],
-               "offset": 0,
-               "result": [
-                   {
-                       "sequenceInformation": {
-                           "id": "B0012",
-                           "length": 6,
-                           "name": "Sequence 0",
-                           "sequence": "ATTCGA"
-                       },
-                       "vendors": [
-                           {
-                               "key": 0,
-                               "offers": []
-                           },
-                           {
-                               "key": 1,
-                               "offers": [
-                                   {
-                                       "offerMessage": [{"messageType": 1005, "text": "Sequence too long"}],
-                                       "price": 0.0,
-                                       "selected": False,
-                                       "turnoverTime": 3
-                                   },
-                                   {
-                                       "offerMessage": [],
-                                       "price": 0.46,
-                                       "selected": False,
-                                       "turnoverTime": 4
-                                   }
-                               ]
-                           },
-                           {
-                               "key": 2,
-                               "offers": []
-                           }
-                       ]
-                   },
-                   {
-                       "sequenceInformation": {
-                           "id": "B0032",
-                           "length": 11,
-                           "name": "Sequence 1",
-                           "sequence": "AATTATATAAA"
-                       },
-                       "vendors": [
-                           {
-                               "key": 0,
-                               "offers": []
-                           },
-                           {
-                               "key": 1,
-                               "offers": [
-                                   {
-                                       "offerMessage": [],
-                                       "price": 0.1,
-                                       "selected": False,
-                                       "turnoverTime": 1
-                                   }
-                               ]
-                           },
-                           {
-                               "key": 2,
-                               "offers": []
-                           }
-                       ]
-                   }
-               ],
-               "size": 2
-           }
+        if 'sequences' not in session:
+            return {'error': 'No sequences available'}
+
+        # Check if the results must be acquired from the vendors first
+        mainPinger = CompositePinger()
+        # Begin temporary testing placeholders
+        for id in range(0, len(vendors)):
+            dummyVendor = VendorInformation(vendors[id]["name"], vendors[id]["shortName"], id)
+            mainPinger.registerVendor(dummyVendor, AdvancedMockPinger(dummyVendor))
+        # End temporary testing placeholders
+
+        sequences = []
+        for seq in session['sequences']:
+            sequences.append(SequenceInformation(key=seq["key"], name=seq["name"], sequence=seq["sequence"]))
+
+        # Search and retrieve offers for each sequence
+        mainPinger.searchOffers(sequences)
+        seqoffers = mainPinger.getOffers()
+
+
+        # Get size and offset fields if available and set them to default otherwise
+        size = len(sequences)
+        offset = 0
+        if request.form.get('size'):
+            size = int(request.form.get('size'))
+        if request.form.get('offset'):
+             offset = int(request.form.get('offset'))
+
+        # build response from offers stored in the session
+        if "filter" in session:
+            result = buildSearchResponseJSON(filterOffers(session["filter"], seqoffers), vendors, offset, size)
+        else:
+            result = buildSearchResponseJSON(seqoffers, vendors, offset, size)
+
+        return result
+

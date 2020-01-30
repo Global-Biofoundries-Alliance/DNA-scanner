@@ -169,7 +169,7 @@ class VendorInformation:
 #
 class Price:
 
-    def __init__(self, amount=0, currency=Currency.EUR, customerSpecific=False):
+    def __init__(self, amount=-1, currency=Currency.EUR, customerSpecific=False):
 
         # the currency of the price
         self.currency = currency
@@ -249,7 +249,7 @@ class VendorOffers:
 #
 class Offer:
 
-    def __init__(self, price=-1, turnovertime=-1, messages = []):
+    def __init__(self, price=Price(), turnovertime=-1, messages = []):
 
         # price of the offer
         self.price = price

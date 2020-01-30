@@ -10,6 +10,7 @@ from .dataformats import Filter
 from .parser import parse
 from Pinger.Pinger import *
 from Pinger.AdvancedMock import AdvancedMockPinger
+from Pinger.GeneArt import GeneArt
 
 # All vendors known to the service
 vendors = [{"name": "TWIST DNA",
@@ -104,7 +105,12 @@ def getSearchResults():
     # Begin temporary testing placeholders
     for id in range(0, len(vendors)):
         dummyVendor = VendorInformation(vendors[id]["name"], vendors[id]["shortName"], id)
-        mainPinger.registerVendor(dummyVendor, AdvancedMockPinger(dummyVendor))
+        if id == 2:
+            # TODO Init Geneart-Pinger by config
+            pinger = GeneArt(username = 'insert username', token = 'insert token')
+            mainPinger.registerVendor(dummyVendor, pinger)
+        else:
+            mainPinger.registerVendor(dummyVendor, AdvancedMockPinger(dummyVendor))
     # End temporary testing placeholders
 
     sequences = []

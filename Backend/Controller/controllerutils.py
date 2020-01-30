@@ -4,28 +4,29 @@ from Controller.dataformats import SearchResponse
 from Pinger.Entities import SequenceInformation, SequenceOffers
 
 # Builds a search response in JSON format from a list of offers.
-def buildSearchResponseJSON(seqoffers, vendors, offset = 0, size = 10):
+def buildSearchResponseJSON(seqvendoffers, vendors, offset = 0, size = 10):
     resp = SearchResponse()
     resp.data["result"] = []
     resp.data["globalMessage"] = []
-    resp.data["count"] = len(seqoffers)
-    resp.data["size"] = min(size, len(seqoffers) - offset)
+    resp.data["count"] = len(seqvendoffers)
+    resp.data["size"] = min(size, len(seqvendoffers) - offset)
     resp.data["offset"] = offset
-    for seqoff in seqoffers[offset: min(offset + size, len(seqoffers))]:
+    for seqvendoff in seqvendoffers[offset: min(offset + size, len(seqvendoffers))]:
         result = {
-            "sequenceInformation": {"id": seqoff.sequenceInformation.key, "name": seqoff.sequenceInformation.name,
-                                    "sequence": seqoff.sequenceInformation.sequence, "length": len(seqoff.sequenceInformation.sequence)}, "vendors": []}
+            "sequenceInformation": {"id": seqvendoff.sequenceInformation.key, "name": seqvendoff.sequenceInformation.name,
+                                    "sequence": seqvendoff.sequenceInformation.sequence, "length": len(seqvendoff.sequenceInformation.sequence)}, "vendors": []}
 
         for vendor in vendors:
             result["vendors"].append({"key": vendor["key"], "offers": []})
 
-        for offerlist in seqoff.offers:
-            for offer in offerlist:
+        for vendoff in seqvendoff.vendorOffers:
+            for offer in vendoff.offers:
                 messages = []
                 for message in offer.messages:
-                    messages.append({"text": message.text, "messageType": message.type.value})
+                    if message.messageType.value in range(1000, 1999):
+                        messages.append({"text": message.text, "messageType": message.messageType.value})
 
-                result["vendors"][offer.vendorInformation.key]["offers"].append({
+                result["vendors"][vendoff.vendorInformation.key]["offers"].append({
                     "price": offer.price.amount,
                     "turnoverTime": offer.turnovertime,
                     "offerMessage": messages})

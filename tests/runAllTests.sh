@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Initialize virtual Environment" 
+echo "Initialize virtual Environment"
 python3 -m venv venv
 
 echo "Install dependencies"

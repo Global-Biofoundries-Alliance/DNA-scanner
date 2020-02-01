@@ -17,7 +17,7 @@ token = cfg['idt']['token']
 
 
 # Test file which can be successfully valideted by the API.
-with open('./examples/idt_test_sequence.json') as json_file:
+with open('./examples/idt_clienttest_sequence.json') as json_file:
     data = json.load(json_file)
 
 class TestIDTClient(unittest.TestCase):

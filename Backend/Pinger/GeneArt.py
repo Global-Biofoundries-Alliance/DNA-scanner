@@ -196,9 +196,16 @@ class GeneArt(BasePinger):
     #       Returns True if the authentication was successful and False otherwise.
     #
     def authenticate(self):
+
         # Authenticate by calling the corresponding method.
-        response = self.client.authenticate()
-        return response
+        response = {}
+        try:
+            response = self.client.authenticate()
+        except:
+            messageText = 'Wrong Credentials'
+            return Message(MessageType.WRONG_CREDENTIALS, messageText)
+        else:
+            return response
         
     #
     #   After:
@@ -208,29 +215,38 @@ class GeneArt(BasePinger):
     #
     def searchOffers(self, seqInf):
         self.running = True
-        vendorInformation = VendorInformation(name = "Thermo Fisher Scientific - GeneArt", shortName = "GeneArt", key = "ga") # Vendor Information
         offers = [] # Empty Offers List
         for product in "dnaStrings", "hqDnaStrings": # Two possible Product Types. 
             try:
                 response = self.projectValidate(seqInf, product)
             except requests.ConnectionError:  # If request timeout             
-                offers.append(SequenceOffers(None, [Offer(vendorInformation = vendorInformation, messages = [Message(1, "GeneArt API is not available")])]))
+                offers.append(SequenceOffers(None, [Offer(messages = [Message(MessageType.API_CURRENTLY_UNAVAILABLE, "GeneArt API is not available")])]))
                 break
             count = 0 # Count the sequences
             for seq in seqInf:
                 accepted = response["constructs"][count]["accepted"] # See if the API accepted the sequence
                 if accepted == True:
-                    messageType = 2 # Just informational message (INFO)
                     messageText = product + "_" + "accepted"
-                    message = Message(messageType, messageText)
+                    message = Message(MessageType.INFO, messageText)
                 else:
-                    messageType = 0 # Vendor can not synthesize the sequence (SYNTHESIS_ERROR)
-                    messageText = product + "_" + "rejected_"
-                    for reason in response["constructs"][count]["reasons"]:
-                        messageText = messageText + str(reason) + "."
-                    message = Message(messageType, messageText)
+                    if(len(response["constructs"][count]["reasons"]) == 1):
+                        reason = response["constructs"][count]["reasons"][0]
+                        if (reason == "length"):
+                            messageText = product + "_" + "rejected_" + str(reason) + "."
+                            message = Message(MessageType.INVALID_LENGTH, messageText)
+                        if (reason == "homology"):
+                            messageText = product + "_" + "rejected_" + str(reason) + "."
+                            message = Message(MessageType.HOMOLOGY, messageText)
+                        if (reason == "problems"):
+                            messageText = product + "_" + "rejected_" + str(reason) + "."
+                            message = Message(MessageType.INVALID_LENGTH, messageText)
+                    else:
+                        messageText = product + "_" + "rejected_"
+                        for reason in response["constructs"][count]["reasons"]:
+                            messageText = messageText + str(reason) + "."
+                        message = Message(MessageType.SYNTHESIS_ERROR, messageText)
 
-                seqOffer = SequenceOffers(seq, [Offer(vendorInformation = vendorInformation, messages = [message])])
+                seqOffer = SequenceOffers(seq, [Offer(messages = [message])])
                 offers.append(seqOffer)
                 count = count + 1
         self.offers = offers
@@ -304,3 +320,12 @@ class GeneArt(BasePinger):
         # Review the status of the project by calling the corresponding method.
         response = self.client.statusReview(projectId)
         return response
+    #
+    #   Desc:   Resets the pinger by
+    #               - stop searching -> isRunning() = false
+    #               - resets the offers to a empty list -> getOffers = []
+    #
+    def clear(self):
+        self.running = False
+        self.offers = [] # Empty Offers List
+        

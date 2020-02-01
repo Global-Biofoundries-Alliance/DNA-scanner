@@ -3,15 +3,15 @@ import json
 import sbol
 
 # Object representing a sequence
-class SeqObject:
-    idN = ""
-    name = ""
-    sequence = ""
+class SeqObject():
+    def __init__(self, idN, name, sequence):
+        self.idN = idN
+        self.name = name
+        self.sequence = sequence
     
     # Converts the SeqObject into a JSON-Object
     def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__, 
-            sort_keys=True, indent=4)
+        return {"idN": self.idN, "name": self.name, "sequence": self.sequence}
 
     # Parse File based on inputFileName
 def parse(inputFileName):
@@ -23,10 +23,20 @@ def parse(inputFileName):
     
     # Returns the file format based on the file ending
 def getFileType(inputFileName):
+    f = open(inputFileName)
+    line = f.readline()
+    f.close()
+    words = line.split()
     if(inputFileName.endswith('.gb') or inputFileName.endswith('.gbk')):
-        return 'genbank'
+        if(words[0] == "LOCUS"):
+            return 'genbank'
+        else:
+            raise RuntimeError("Not a valid GenBank file.")
     elif(inputFileName.endswith('.fasta') or inputFileName.endswith('.fna') or inputFileName.endswith('.faa')):
-        return 'fasta'
+        if(words[0][0] == ">"):
+            return 'fasta'
+        else:
+            raise RuntimeError("Not a valid Fasta file.")
     elif(inputFileName.endswith('.xml') or inputFileName.endswith('.rdf')):
         return 'sbol'
     else:
@@ -37,11 +47,12 @@ def getFileType(inputFileName):
 def parseFastaGB(inputFile, fileFormat):
     i = 0
     returnList = []
-    for seq_record in SeqIO.parse(inputFile, fileFormat):
-        sequence = SeqObject()
-        sequence.idN = seq_record.id
-        sequence.name = seq_record.name
-        sequence.sequence = str(seq_record.seq).upper()
+    try:
+        parsed = SeqIO.parse(inputFile, fileFormat)
+    except:
+        print("Parsing of the file failed.")    
+    for seq_record in parsed:
+        sequence = SeqObject(idN = seq_record.id, name = seq_record.name, sequence = str(seq_record.seq).upper())
         returnList.append(sequence)
         i = i + 1
     return returnList
@@ -54,10 +65,7 @@ def parseSBOL(inputFile):
     doc.read(inputFile)
     returnList = []
     for a in doc.sequences:
-        sequence = SeqObject()
-        sequence.idN = a.displayId
-        sequence.name = "Sequence " + str(i)
-        sequence.sequence = str(a.elements).upper()
+        sequence = SeqObject(idN = a.displayId, name = "Sequence " + str(i), sequence = str(a.elements).upper())
         returnList.append(sequence)
         i = i + 1
     return returnList

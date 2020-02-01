@@ -1,125 +1,158 @@
 <template>
     <div>
-        <br><br>
-        <p style="text-align: center">Your file: {{ fileName }}</p>
-        <br><br>
-        <v-container fluid>
-            <v-row>
-                <v-col>
-                    <v-row
-                            class="grey lighten-5"
-                    >
-                        <v-card
-                            outlined
-                            style="margin-left: 43.2%"
-                            width="240px"
-                            >
-                            <v-list-item three-line>
-                                <v-list-item-content>
-                                    <v-list-item-title class="headline mb-1" style="text-align: center">TWIST
-                                    </v-list-item-title>
-                                </v-list-item-content>
-                            </v-list-item>
+        <v-container>
 
-                            <v-card-actions>
-                                <v-icon class="ml-3">mdi-watch</v-icon>
-                                <v-spacer></v-spacer>
-                                <v-icon class="mr-3">{{icons.mdiCurrencyUsd}}</v-icon>
-                            </v-card-actions>
-                        </v-card>
-                        <v-card
-                                outlined
-                                style="margin-left: 0.7%"
-                                width="238px"
-                        >
-                            <v-list-item three-line>
-                                <v-list-item-content>
-                                    <v-list-item-title class="headline mb-1" style="text-align: center">IDT
-                                    </v-list-item-title>
-                                </v-list-item-content>
-                            </v-list-item>
+                <v-row>
+                    <v-col cols="4" style="margin-top: 100px">
+                        <v-row class="mb-4">
+                            <v-card width="110px" tile outlined class="pa-2" style="border-right: 0">
+                                ID
+                            </v-card>
+                            <v-card width="150px" tile outlined class="pa-2" style="border-left: 0">
+                                Name
+                            </v-card>
+                        </v-row>
+                        <v-row v-for="(n,i) in resultBody.size" :key="i">
+                            <v-card width="110px" tile outlined class="pa-2" style="border-right: 0">
+                                {{result[i].sequenceInformation.id}}
+                            </v-card>
+                            <v-card width="150px" tile outlined class="pa-2" style="border-left: 0">
+                                {{result[i].sequenceInformation.name}}
+                            </v-card>
+                        </v-row>
+                    </v-col>
+                    <v-col cols="8">
+                        <v-row>
+                            <v-card width="200px" style="text-align: center" tile outlined class="pa-6"
+                                    v-for="vendor in vendors" :key="vendor.name">
+                                {{vendor.name}}
+                            </v-card>
+                        </v-row>
+                        <v-row class="mb-4">
+                            <v-card width="200px" tile outlined class="mt-6" v-for="i in vendors.length" :key="i">
+                                <v-card-actions>
+                                    <v-icon class="mr-3" medium>{{icons.mdiCurrencyUsd}}</v-icon>
+                                    <v-spacer></v-spacer>
+                                    <v-icon class="ml-3" size="22px">mdi-watch</v-icon>
+                                </v-card-actions>
+                            </v-card>
+                        </v-row>
+                        <v-row v-for="(n,i) in resultBody.size" :key="i">
+                            <v-hover v-slot:default="{ hover }" v-for="(k,j) in vendors.length" :key="j">
+                                <v-card width="200px" class="pt-2 pb-2" tile outlined
+                                        :elevation="(hover || result[i].vendors[j].offers[0].selected) ? 16 : 0">
+                                    <v-card-actions v-if="result[i].vendors[j].offers[0].offerMessage.length !== 0" style="padding-top: 2px; padding-bottom: 2px" class="red lighten-4">
+                                        <v-card-text class="ml-2 pa-0" style="font-size: 12px">
+                                            {{result[i].vendors[j].offers[0].offerMessage[0].text}}
+                                        </v-card-text>
+                                    </v-card-actions>
 
-                            <v-card-actions>
-                                <v-icon class="ml-3">mdi-watch</v-icon>
-                                <v-spacer></v-spacer>
-                                <v-icon class="mr-3">{{icons.mdiCurrencyUsd}}</v-icon>
-                            </v-card-actions>
-                        </v-card>
-                    </v-row>
-                </v-col>
-            </v-row>
+                                    <v-card-actions v-if="result[i].vendors[j].offers[0].offerMessage.length === 0" style="padding-top: 2px; padding-bottom: 2px" :class="{'grey lighten-1': result[i].vendors[j].offers[0].selected === true}">
+                                        <v-card-text class="ml-2 pa-0" style="font-size: 20px">
+                                            {{result[i].vendors[j].offers[0].price}}
+                                        </v-card-text>
+                                        <v-spacer></v-spacer>
+                                        <v-card-text class="mr-1 pa-0" style="text-align: right; font-size: 20px">
+                                            {{result[i].vendors[j].offers[0].turnoverTime}}
+                                        </v-card-text>
+                                    </v-card-actions>
+
+                                    <v-expand-transition v-if="result[i].vendors[j].offers[0].selected === true">
+                                        <div
+                                                v-if="hover"
+                                                class="d-flex transition-fast-in-fast-out grey lighten-2 v-card--reveal display-3"
+                                                style="height: 100%; width: 100%"
+                                        >
+                                            <v-icon class="ml-3" size="22px"
+                                                    @click="minusBtn(i, j)">
+                                                mdi-minus
+                                            </v-icon>
+                                        </div>
+                                    </v-expand-transition>
+
+                                    <v-expand-transition v-else-if="result[i].vendors[j].offers.length > 1 && result[i].vendors[j].offers[0].offerMessage.length === 0">
+                                        <div
+                                                v-if="hover"
+                                                class="d-flex transition-fast-in-fast-out grey lighten-2 v-card--reveal display-3"
+                                                style="height: 100%; width: 100%"
+                                        >
+
+                                            <v-icon class="ml-3" size="22px"
+                                                    @click="dialogShow(i, j)">
+                                                mdi-dots-horizontal
+                                            </v-icon>
+
+                                        </div>
+                                    </v-expand-transition>
+
+                                    <v-expand-transition v-else-if="result[i].vendors[j].offers[0].offerMessage.length === 0">
+                                        <div
+                                                v-if="hover"
+                                                class="d-flex transition-fast-in-fast-out grey lighten-2 v-card--reveal display-3"
+                                                style="height: 100%; width: 100%"
+                                        >
+                                            <v-icon class="ml-3" size="22px"
+                                                    @click="plusBtn(i, j)">
+                                                mdi-plus
+                                            </v-icon>
+                                        </div>
+                                    </v-expand-transition>
+                                </v-card>
+                            </v-hover>
+                        </v-row>
+
+                        <v-dialog v-model="dialog" scrollable max-width="300px">
+                            <v-card>
+                                <v-card-title>Select Offer</v-card-title>
+                                <v-divider></v-divider>
+                                <v-card-text style="height: 300px" class="pl-0 pr-0 pt-3">
+                                    <v-card-actions class="pl-12 pr-12">
+                                        <v-icon class="mr-3" medium>{{icons.mdiCurrencyUsd}}</v-icon>
+                                        <v-spacer></v-spacer>
+                                        <v-icon class="ml-3" size="22px">mdi-watch</v-icon>
+                                    </v-card-actions>
+                                    <v-list rounded>
+                                        <v-list-item-group v-model="dialogItem">
+                                            <v-list-item v-for="(n, k) in dialogList" :key="k">
+                                                <v-list-item-content>
+                                                    <v-card-actions class="pl-8 pr-8">
+                                                        <span>{{n.price}}</span>
+                                                        <v-spacer></v-spacer>
+                                                        <span>{{n.turnoverTime}}</span>
+                                                    </v-card-actions>
+                                                </v-list-item-content>
+                                            </v-list-item>
+                                        </v-list-item-group>
+                                    </v-list>
+                                </v-card-text>
+                                <v-divider></v-divider>
+                                <v-card-actions>
+                                    <v-btn color="blue darken-1" text
+                                           @click="dialogClose()">Close
+                                    </v-btn>
+                                    <v-btn color="blue darken-1" text
+                                           @click="dialogSave()">Save
+                                    </v-btn>
+                                </v-card-actions>
+                            </v-card>
+                        </v-dialog>
+                    </v-col>
+                    <p>{{dialogItem}}</p>
+                </v-row>
         </v-container>
-        <v-row style="margin-left: 15.5%">
-            <p>Seq.Nr.</p>
-            <p style="margin-left: 2%">Sequence</p>
+        <v-row>
+            <v-pagination
+                    v-model="page"
+                    :length="Math.round(this.$store.state.StoreCount / this.$store.state.StoreSize)"
+                    style="alignment: bottom"
+                    circle
+                    @next="next"
+                    @previous="previous"
+                    @input="input"
+            ></v-pagination>
         </v-row>
-<!--        this is the part where the rows for the results are created -->
-        <v-row no-gutters
-                v-for="(n,i) in 10"
-                :key="i"
-                style="margin-left: 15%">
-            <v-col cols="4" style="height: 100px;">
-                <v-card
-                        style="height: 5%; padding-top: 3% ;padding-bottom: 12.25%"
-                        outlined
-                        tile
-                >
-                    <v-row class="ml-3">
-                        <p style="margin-left: 2.5%" class="mb-0">
-                            {{n}}
-                        </p>
-                        <p style="margin-left: 9%" class="mb-0">
-                            {{result[i].sequenceinformation.name}}
-                        </p>
-                        <v-spacer></v-spacer>
-                        <v-col cols="2" sm="6" class="mt-n4">
-                            <v-select
-                                    v-model="value[i]"
-                                    :items="items"
-                                    chips
-                                    label="Select Merchant"
-                                    multiple
-                                    solo
-                            ></v-select>
-                        </v-col>
-                    </v-row>
-                </v-card>
-            </v-col>
-            <v-col :cols="2">
-                <v-card
-                        class="pa-4"
-                        outlined
-                        tile
-                >
-                    <v-row class="ml-2">
-                        <p>
-                            {{result[i].offers[0].turnovertime}}
-                        </p>
-                        <v-spacer></v-spacer>
-                        <p class="mr-4">
-                            {{result[i].offers[0].price}}
-                        </p>
-                    </v-row>
-                </v-card>
-            </v-col>
-            <v-col :cols="2" class="ml-3">
-                <v-card
-                        class="pa-4"
-                        outlined
-                        tile
-                >
-                    <v-row class="ml-2">
-                        <p>
-                            {{result[i].offers[1].turnovertime}}
-                        </p>
-                        <v-spacer></v-spacer>
-                        <p class="mr-4">
-                            {{result[i].offers[1].price}}
-                        </p>
-                    </v-row>
-                </v-card>
-            </v-col>
-        </v-row>
+        <p>{{this.$store.state.StoreOffset}}</p>
+        <p>{{this.$store.state.StoreSize}}</p>
     </div>
 </template>
 
@@ -134,29 +167,124 @@
                 icons: {
                     mdiCurrencyUsd
                 },
-                alignmentsAvailable: [
-                    'start',
-                    'center',
-                    'end',
-                    'baseline',
-                    'stretch',
-                ],
-                alignment: 'right',
-                dense: false,
-                justifyAvailable: [
-                    'start',
-                    'center',
-                    'end',
-                    'space-around',
-                    'space-between',
-                ],
-                items: ['TWIST', 'IDT'],
-                value: [],
+                dialogItem: null,
+                dialog: false,
+                dialogList: [],
+                page: 1,
+                plus: false
             }
         },
         computed: {
             result() {
-                return this.$store.state.StoreResult;
+                return this.$store.state.StoreSearchResult.result;
+            },
+            resultBody() {
+                return this.$store.state.StoreSearchResult;
+            },
+            vendors() {
+                return this.$store.state.StoreVendors;
+            },
+            permanentElevation() {
+                return this.$store.state.StorePermanentElevation;
+            }
+        },
+        methods: {
+            plusBtn(i, j) {
+                this.$store.state.StoreSearchResult.result[i].vendors[j].offers[0].selected = true;
+                this.plus = true;
+            },
+            minusBtn(i,j) {
+                this.$store.state.StoreSearchResult.result[i].vendors[j].offers[0].selected = false;
+                this.plus = false;
+            },
+            dialogShow(i, j) {
+                this.dialog = true;
+                this.dialogList = this.$store.state.StoreSearchResult.result[i].vendors[j].offers
+            },
+            dialogSave() {
+                this.dialog = false;
+                this.dialogList[this.dialogItem].selected = true;
+                this.dialogItem = null
+            },
+            dialogClose() {
+                this.dialog = false;
+                this.dialogItem = null
+            },
+            next() {
+                this.$store.state.StoreOffset = this.$store.state.StoreSize * (this.page - 1);
+                var resData = new FormData();
+                resData.append('size', this.$store.state.StoreSize);
+                resData.append('offset', this.$store.state.StoreOffset);
+
+
+                this.$http.post('/api/results', resData, {
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE, PUT',
+                        'Access-Control-Allow-Headers': 'append,delete,entries,foreach,get,has,keys,set,values,Authorization',
+                    }
+                })
+                    .then(response => {
+                        // eslint-disable-next-line no-console
+                        console.log(response);
+                        this.$store.state.StoreSearchResult = response.body;
+                        // eslint-disable-next-line no-console
+                        console.log(this.$store.state.StoreSearchResult);
+                        this.$store.state.StoreFile = this.file;
+                        this.$store.state.StoreCount = response.body.count;
+                        this.$router.push('/result/' + `${this.page}`);
+                    });
+
+            },
+            previous() {
+                this.$store.state.StoreOffset = this.$store.state.StoreSize * (this.page - 1);
+                var resData = new FormData();
+                resData.append('size', this.$store.state.StoreSize);
+                resData.append('offset', this.$store.state.StoreOffset);
+
+
+                this.$http.post('/api/results', resData, {
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE, PUT',
+                        'Access-Control-Allow-Headers': 'append,delete,entries,foreach,get,has,keys,set,values,Authorization',
+                    }
+                })
+                    .then(response => {
+                        // eslint-disable-next-line no-console
+                        console.log(response);
+                        this.$store.state.StoreSearchResult = response.body;
+                        // eslint-disable-next-line no-console
+                        console.log(this.$store.state.StoreSearchResult);
+                        this.$store.state.StoreFile = this.file;
+                        this.$store.state.StoreCount = response.body.count;
+                        this.$router.push('/result/' + `${this.page}`);
+                    });
+            },
+            input() {
+                this.$store.state.StoreOffset = this.$store.state.StoreSize * (this.page - 1);
+                var resData = new FormData();
+                resData.append('size', this.$store.state.StoreSize);
+                resData.append('offset', this.$store.state.StoreOffset);
+
+
+                this.$http.post('/api/results', resData, {
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE, PUT',
+                        'Access-Control-Allow-Headers': 'append,delete,entries,foreach,get,has,keys,set,values,Authorization',
+                    }
+                })
+                    .then(response => {
+                        // eslint-disable-next-line no-console
+                        console.log(response);
+                        this.$store.state.StoreSearchResult = response.body;
+                        // eslint-disable-next-line no-console
+                        console.log(this.$store.state.StoreSearchResult);
+                        this.$store.state.StoreFile = this.file;
+                        this.$store.state.StoreCount = response.body.count;
+                        this.$router.push('/result/' + `${this.page}`);
+                    });
             }
         }
 
@@ -164,5 +292,12 @@
 </script>
 
 <style scoped>
-
+    .v-card--reveal {
+        align-items: center;
+        bottom: 0;
+        justify-content: center;
+        opacity: .5;
+        position: absolute;
+        width: 100%;
+    }
 </style>

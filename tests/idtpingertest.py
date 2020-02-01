@@ -32,23 +32,26 @@ class TestIDTPinger(unittest.TestCase):
     # Pinger Object used for theses tests.
     pinger_example = IDT.IDT(idt_username = idt_username_real, idt_password = idt_password_real, client_id = client_id_real, client_secret = client_secret_real, token = token_real)
     
-    # Checks the authentication.
+    # Checks the getToken method.
     def test_getToken(self):
-        getToken_result = self.pinger_example.getToken()
-        self.assertEqual(32, len(getToken_result))
-        self.assertEqual(True, self.pinger_example.checkToken())
+        print ("Start test for the methods getToken and checkToken of " + self.name + ".")
+        getToken_result = self.pinger_example.getToken() # The generated token
+        self.assertEqual(32, len(getToken_result)) # The tokens are 32 characters long
+        self.assertEqual(True, self.pinger_example.checkToken()) # Check if the token is working
        
         self.pinger_example.token = "DUMMY_TOKEN"
         self.pinger_example.client.token = "DUMMY_TOKEN"
-        self.assertEqual(False, self.pinger_example.checkToken())
+        self.assertEqual(False, self.pinger_example.checkToken()) # Check the invalidity of a dummy token.
         self.pinger_example.token = getToken_result
-        self.pinger_example.client.token = getToken_result
+        self.pinger_example.client.token = getToken_result # After checking change the token to the real token that was previously generated.
     
     # Checks the screening method.
     def test_screening(self):
-
+        print ("Start test for the method screening of " + self.name + ".")
         listOfSequences = example_list
         response = self.pinger_example.screening(listOfSequences)
+        
+        # Check the response of the API-Server
         self.assertIsInstance(response, list)        
         self.assertEqual(3, len(response))
         self.assertIsInstance(response[0], list)        
@@ -70,17 +73,18 @@ class TestIDTPinger(unittest.TestCase):
 
     # Check the BasePinger Functions methods.
     def test_pingerFunctions(self):
-        print ("Start test for the methods searchOffers and getOffers of " + self.name + ".")
+        print ("Start test for the methods searchOffers, getOffers and clear of " + self.name + ".")
         listOfSequences = example_list
-        self.assertEqual([], self.pinger_example.getOffers())
-        response = self.pinger_example.searchOffers(listOfSequences)
+        self.assertEqual([], self.pinger_example.getOffers()) # Check if the newly created pinger has an empty list of offers.
+        response = self.pinger_example.searchOffers(listOfSequences) # Search offers
         i = 0
         while(self.pinger_example.isRunning()):
             i = i + 1
             if i == 10000000:
                 raise RuntimeError('Waiting Error. API is not responding')
         print("Turns waited: " + str(i))
-        offers = self.pinger_example.getOffers()
+        offers = self.pinger_example.getOffers() # Get the new offers after the search.
+        # Check the result if it is as expected.
         self.assertEqual(len(offers), 3)
         for i in range (3):
             self.assertEqual(offers[i].sequenceInformation.key, listOfSequences[i].key)
@@ -97,6 +101,10 @@ class TestIDTPinger(unittest.TestCase):
 
         self.assertEqual(Entities.MessageType.SYNTHESIS_ERROR, offers[2].offers[0].messages[0].messageType)
         self.assertEqual("Example_Name_2_rejected_Overall Repeat.Repeat Length.Single Repeat Overall Bases.Single Repeat Percentage.Windowed Repeat Percentage.SSA Repeat 3'.SSA Low GC 3'.", offers[2].offers[0].messages[0].text)
+        
+        self.pinger_example.clear()
+        self.assertEqual([], self.pinger_example.getOffers())
+
 
 if __name__ == '__main__':
     unittest.main()

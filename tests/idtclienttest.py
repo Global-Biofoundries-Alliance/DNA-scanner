@@ -21,7 +21,7 @@ with open('./examples/idt_clienttest_sequence.json') as json_file:
     data = json.load(json_file)
 
 class TestIDTClient(unittest.TestCase):
-
+    name = "IDTClient"
     # The configuration's parameters 
     token_server = "https://eu.idtdna.com/Identityserver/connect/token"
     screening_server = "https://eu.idtdna.com/api/complexities/screengBlockSequences"
@@ -32,7 +32,7 @@ class TestIDTClient(unittest.TestCase):
 
     # Checks the authentication.
     def test_getToken(self):
-        print ("Start test for getToken method")
+        print ("Start test for the method getToken of " + self.name + ".")
         # Give dummy credentials
         username_dummy = "USERNAME"
         password_dummy = "PASSWORD"
@@ -41,11 +41,11 @@ class TestIDTClient(unittest.TestCase):
         scope = "SCOPE"
         with self.assertRaises(KeyError): IDT.IDTClient(TestIDTClient.token_server, TestIDTClient.screening_server, username_dummy, password_dummy, client_id, client_secret, scope)
         
-        self.assertEqual(True, self.idt.token != "")
+        self.assertEqual(32, len(self.idt.token))
         
-    # Check the projectValidate method by checking the keys and their values returned by the API.
+    # Check the screening method by checking the length of the response parts
     def test_screening(self):
-        print ("Start test for screening method")
+        print ("Start test for the method screening of " + self.name + ".")
         listOfSequences = data
         response = self.idt.screening(listOfSequences)
         # Expected Response Lengths

@@ -178,6 +178,8 @@ class GeneArt(BasePinger):
                       self.upload, 
                       self.username, self.token, 
                       self.dnaStrings, self.hqDnaStrings, self.timeout)
+
+        self.offers = []
     
 
     #

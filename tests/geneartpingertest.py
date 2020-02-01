@@ -44,10 +44,11 @@ class TestGeneArtPinger(unittest.TestCase):
         # Expected Response Keys
         responseKeys = ['name','constructs']
         # Expected Keys under response['constructs']
-        consKeys = ['name','product','accepted','reasons']
+        consKeys = ['name','product','accepted','reasons', 'eComInfo']
         self.assertEqual(True, responseKeys == list(response.keys()))
         for cons in response['constructs']:
             # Check the value of each key included in the response['constructs']
+            print(list(cons.keys()))
             self.assertEqual(True, consKeys == list(cons.keys()))
             self.assertEqual(True, cons['product'] == 'dnaStrings')
             self.assertEqual(True, cons['accepted'])
@@ -68,10 +69,11 @@ class TestGeneArtPinger(unittest.TestCase):
         projectId = response['project']['projectId']
         responseKeys = ['project']
         projectKeys =['projectId','name','constructs']
-        consKeys = ['constructId','name','sequence','product','comment']
+        consKeys = ['constructId','name','sequence','product','details']
         self.assertEqual(True, responseKeys == list(response.keys()))
         self.assertEqual(True, projectKeys == list(response['project'].keys()))
         for cons in response['project']['constructs']:
+            print(list(cons.keys()))
             self.assertEqual(True, consKeys == list(cons.keys()))
             self.assertEqual(True, cons['product'] == 'dnaStrings')
         
@@ -101,6 +103,7 @@ class TestGeneArtPinger(unittest.TestCase):
     # Check the BasePinger Functions methods.
     def test_pingerFunctions(self):
         print ("Start test for the methods searchOffers and getOffers of " + self.name + ".")
+        self.assertEqual([], self.pinger_example.getOffers())
         listOfSequences = example_list
         response = self.pinger_example.searchOffers(listOfSequences)
         i = 0
@@ -119,11 +122,11 @@ class TestGeneArtPinger(unittest.TestCase):
         self.assertEqual(sequence0.sequence, listOfSequences[0].sequence)
         self.assertEqual(len(sequenceOffer0.offers), 1)
         offers0 = sequenceOffer0.offers[0]
-        price0 = offers0.price
+        price0 = offers0.price.amount
         self.assertEqual(price0, -1)
         messages0 = offers0.messages
         self.assertEqual(len(messages0), 1)
-        self.assertEqual(messages0[0].messageType, 4000)
+        self.assertEqual(messages0[0].messageType, Entities.MessageType.INFO)
         self.assertEqual(messages0[0].text, "dnaStrings_accepted")
         self.assertEqual(offers0.turnovertime, -1)
         
@@ -134,11 +137,11 @@ class TestGeneArtPinger(unittest.TestCase):
         self.assertEqual(sequence1.sequence, listOfSequences[1].sequence)
         self.assertEqual(len(sequenceOffer1.offers), 1)        
         offers1 = sequenceOffer1.offers[0]
-        price1 = offers1.price
+        price1 = offers1.price.amount
         self.assertEqual(price1, -1)
         messages1 = offers1.messages
         self.assertEqual(len(messages1), 1)
-        self.assertEqual(messages1[0].messageType, 4000)
+        self.assertEqual(messages1[0].messageType, Entities.MessageType.INFO)
         self.assertEqual(messages1[0].text, "dnaStrings_accepted")
         self.assertEqual(offers1.turnovertime, -1)
 
@@ -149,11 +152,11 @@ class TestGeneArtPinger(unittest.TestCase):
         self.assertEqual(sequence2.sequence, listOfSequences[0].sequence)
         self.assertEqual(len(sequenceOffer2.offers), 1)
         offers2 = sequenceOffer2.offers[0]
-        price2 = offers2.price
+        price2 = offers2.price.amount
         self.assertEqual(price2, -1)
         messages2 = offers2.messages
         self.assertEqual(len(messages2), 1)
-        self.assertEqual(messages2[0].messageType, 1008)
+        self.assertEqual(messages2[0].messageType, Entities.MessageType.HOMOLOGY)
         self.assertEqual(messages2[0].text, "hqDnaStrings_rejected_homology.")
         self.assertEqual(offers2.turnovertime, -1)
 
@@ -164,11 +167,11 @@ class TestGeneArtPinger(unittest.TestCase):
         self.assertEqual(sequence3.sequence, listOfSequences[1].sequence)
         self.assertEqual(len(sequenceOffer3.offers), 1)
         offers3 = sequenceOffer3.offers[0]
-        price3 = offers3.price
+        price3 = offers3.price.amount
         self.assertEqual(price3, -1)
         messages3 = offers3.messages
         self.assertEqual(len(messages3), 1)
-        self.assertEqual(messages3[0].messageType, 1008)
+        self.assertEqual(messages3[0].messageType, Entities.MessageType.HOMOLOGY)
         self.assertEqual(messages3[0].text, "hqDnaStrings_rejected_homology.")
         self.assertEqual(offers3.turnovertime, -1)
 

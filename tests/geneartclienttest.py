@@ -50,10 +50,11 @@ class TestGeneArtClient(unittest.TestCase):
         # Expected Response Keys
         responseKeys = ['name','constructs']
         # Expected Keys under response['constructs']
-        consKeys = ['name','product','accepted','reasons']
+        consKeys = ['name','product','accepted','reasons', 'eComInfo']
         self.assertEqual(True, responseKeys == list(response.keys()))
         for cons in response['constructs']:
             # Check the value of each key included in the response['constructs']
+            print(list(cons.keys()))
             self.assertEqual(True, consKeys == list(cons.keys()))
             self.assertEqual(True, cons['product'] == 'dnaStrings')
             self.assertEqual(True, cons['accepted'])
@@ -76,10 +77,11 @@ class TestGeneArtClient(unittest.TestCase):
         projectId = response['project']['projectId']
         responseKeys = ['project']
         projectKeys =['projectId','name','constructs']
-        consKeys = ['constructId','name','sequence','product','comment']
+        consKeys = ['constructId','name','sequence','product','details']
         self.assertEqual(True, responseKeys == list(response.keys()))
         self.assertEqual(True, projectKeys == list(response['project'].keys()))
         for cons in response['project']['constructs']:
+            print(list(cons.keys()))            
             self.assertEqual(True, consKeys == list(cons.keys()))
             self.assertEqual(True, cons['product'] == 'dnaStrings')
         

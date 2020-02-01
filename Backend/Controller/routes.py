@@ -5,12 +5,21 @@ from flask import request, json, session
 from werkzeug.utils import secure_filename
 
 from .app import app
-from .controllerutils import buildSearchResponseJSON, sequenceInfoFromObjects, filterOffers
+from .transformation import buildSearchResponseJSON, sequenceInfoFromObjects, filterOffers
 from .dataformats import Filter
 from .parser import parse
 from Pinger.Pinger import *
 from Pinger.AdvancedMock import AdvancedMockPinger
 from Pinger.GeneArt import GeneArt
+
+from .service import DefaultComparisonService as Service
+from .configurator import YmlConfigurator as Configurator
+from .session import InMemmorySessionManager as SessionManager
+
+# TODO Set string to point on Yml file
+# TODO Set SessionId
+# TODO use service in endpoints
+service = Service(Configurator("Path to Yaml Configuration"), SessionManager("Meine SessionId")) 
 
 # All vendors known to the service
 vendors = [{"name": "TWIST DNA",

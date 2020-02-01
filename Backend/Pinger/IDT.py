@@ -88,14 +88,14 @@ class IDT(BasePinger):
         self.client_secret = client_secret
         self.scope = scope
         self.timeout = timeout
-        self.token = token
+        self.token = token # Set the token (Token may or may not be valid)
         self.client = IDTClient(self.token_server, 
                       self.screening_server, self.idt_username, self.idt_password,
                       self.client_id, 
                       self.client_secret, self.scope, 
                       self.token, self.timeout)
-        self.token = self.client.token
-    
+        self.token = self.client.token # Set the token (Token is now valid because it was generated using the client)
+        self.offers = []
 
     #
     #   Encodes a 'SequenceInformation' object into JSON-Format with fields readable by the GeneArtClient.
@@ -144,14 +144,14 @@ class IDT(BasePinger):
         response = self.screening(seqInf)
         for i in range(len(seqInf)):
             if len(response[i]) == 0: # Empty List, means there are no problems found
-                messageText = seqInf[i]["name"] + "_" + "accepted"
+                messageText = seqInf[i].name + "_" + "accepted"
                 message = Message(MessageType.INFO, messageText)
             if len(response[i]) != 0: # Not an empty List, means there are some problems
-                messageText = seqInf[i]["name"] + "_" + "rejected_"
+                messageText = seqInf[i].name + "_" + "rejected_"
                 for j in range(len(response[i])):
                     messageText = messageText + response[i][j]["Name"] + "."
                 message = Message(MessageType.SYNTHESIS_ERROR, messageText)            
-            seqOffer = SequenceOffers(seq, [Offer(messages = [message])])
+            seqOffer = SequenceOffers(seqInf[i], [Offer(messages = [message])])
             offers.append(seqOffer)
         self.offers = offers
         self.running = False
@@ -177,4 +177,20 @@ class IDT(BasePinger):
     def clear(self):
         self.running = False
         self.offers = [] # Empty Offers List
+
+    #    
+    #   Screening-API
+    #       Takes as input a list of 'SequenceInformation' objects
+    #       Returns the API-Response     
+    #
+    def screening(self, seqInf):
+        # Sequences in JSON-Format with fields readable by the GeneArtClient. At first is empty.
+        idtSequences  = []
+        for s in seqInf:
+            # Encode each element in JSON-Format with fields readable by the GeneArtClient and add it to the list.
+            seq = self.encode_sequence(s)
+            idtSequences.append(seq)
+        # Validate the project by calling the corresponding method.
+        response = self.client.screening(idtSequences)
+        return response
         

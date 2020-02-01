@@ -6,8 +6,8 @@ twist:
     username: YOUR_USERNAME
     token: YOUR_TOKEN
 idt:
-    idt_username: YOUR_IDT_USERNAME
-    idt_password: YOUR_IDT_PASSWORD
+    idt_username: YOUR_USERNAME
+    idt_password: YOUR_PASSWORD
     client_id: YOUR_CLIENT_ID
     client_secret: YOUR_CLIENT_SECRET
     scope: YOUR_SCOPE

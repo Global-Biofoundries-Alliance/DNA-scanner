@@ -39,6 +39,18 @@ class VendorHandler:
 #
 class BasePinger:
 
+
+    #
+    #   Desc:   Contrurctor
+    #
+    #   @throws AuthenticationException
+    #           if credentials are not available, wrong or does not allow access.
+    #
+    #   TODO Wie soll der Controller anzeigen, dass der Vendor nicht verfügbar ist? Meldung vom Configurator?
+    #   @throws UnavailableException
+    #           if authentication response not matches pattern or not received.
+    #           Maybe the base url of the API is wrong?
+    #
     def __init__(self):
         raise NotImplementedError
 
@@ -49,7 +61,14 @@ class BasePinger:
     #           Maybe you can get a partial result from getOffers() while running.
     #
     #   @param seqInf
-    #           Type ArrayOf(Entities.SequenceInformation). Represent Sequences searching offers for.
+    #           Type ArrayOf(Entities.SequenceInformation). Represent Sequences searching offers for. Sequence-Keys must be unique.
+    #
+    #   @throws InvalidInputException
+    #           if input parameter are not like expected (see parameter definition above).
+    #
+    #   TODO Ja oder Nein?
+    #   @throws RunningException
+    #           if the Pinger is already running. You have to wait until it is finished.
     #
     def searchOffers(self, seqInf):
         raise NotImplementedError
@@ -67,13 +86,12 @@ class BasePinger:
     #
     #   Desc:   Returns the current offers. If isRunning() is True, then searching is not finished and maybe you can
     #           get a partial result. After searching is finished isRunning() is False and the result will be complete.
-    #           Return an Empty Array, if it was not searching before.
     #
     #   @result 
     #           Type ArrayOf(Entities.SequenceOffers). Number of SequenceOffers are equal to the number
     #           of sequences from the last call of searchOffers(seqInf). For every sequenceInformation from 
     #           the last searchOffers(seqInf) call exists exactly one SequenceOffer. SequenceOffers must be available, 
-    #           even if there is no offer for the sequence.
+    #           even if there is no offer for the sequence. Empty Array, if it was not searching before.
     #
     def getOffers(self):
         raise NotImplementedError
@@ -83,6 +101,8 @@ class BasePinger:
     #               - stop searching -> isRunning() = false
     #               - resets the offers to a empty list -> getOffers = []
     #
+    #   TODO Kann ein Run abgebrochen werden?
+    #
     def clear(self):
         raise NotImplementedError
 
@@ -91,9 +111,13 @@ class BasePinger:
     #
     #   @param seqInf
     #           Type ArrayOf(Entities.SequenceInformation). Representation of the sequences you want to order.
+    #           Sequence-Keys must be unique.
     #
-    #   @result
+    #   @results
     #           Type Entities.Order. Representation of the order.
+    #
+    #   @throws InvalidInputException
+    #           if input parameter are not like expected (see parameter definition above).
     #
     def order(self, seqInf):
         raise NotImplementedError
@@ -116,11 +140,18 @@ class ManagedPinger:
     #           Maybe you can get a partial result from getOffers() while running.
     #
     #   @param seqInf
-    #           Type ArrayOf(Entities.SequenceInformation)
+    #           Type ArrayOf(Entities.SequenceInformation). Representation of the sequences you want offers for.
+    #           Sequence-Keys must be unique.
     #
     #   @param vendors
     #           Type ArrayOf(int). Search will be started only for vendors, which VendorInformation.key exists in given list. If 
-    #           the list is empty, then searching for every vendor.
+    #           the list is empty, then searching for every vendor. Vendor-Keys must be unique.
+    #   TODO Was passiert, wenn vendors übergeben werden die nicht bekannt sind --> Testen!
+    #
+    #   @throws InvalidInputException
+    #           if input parameter are not like expected (see parameter definition above).
+    #
+    #   TODO Already Running Exception like at BasePinger?
     #
     def searchOffers(self, seqInf, vendors=[]):
         raise NotImplementedError
@@ -141,8 +172,8 @@ class ManagedPinger:
     #           Return an Empty Array, if it was not searching before.
     #
     #   @result ArrayOf(Entities.SequenceVendorOffers). For each sequence passed in the seachOffer(seqInf, vendor) call,
-    #       there is exactly one SequenceVendorOffer-Object in the array. Each of there SequenceVendorOffers contains 
-    #       only VendorOffers for vendors which have objects in the Offers-List. 
+    #           there is exactly one SequenceVendorOffer-Object in the array. Each of there SequenceVendorOffers contains 
+    #           only VendorOffers for vendors which have objects in the Offers-List. 
     #
     def getOffers(self):
         raise NotImplementedError
@@ -157,6 +188,9 @@ class ManagedPinger:
     #
     #   @param vendorPinger 
     #           Type BasePinger. The Pinger handling the actions for the vendor.
+    #
+    #   @throws InvalidInputException
+    #           if input parameter are not like expected (see parameter definition above).
     #
     def registerVendor(self, vendorInformation, vendorPinger):
         raise NotImplementedError
@@ -176,6 +210,7 @@ class ManagedPinger:
     #
     #   @param seqInf
     #           Type ArrayOf(Entities.SequenceInformation). Representation of the sequences you want to order.
+    #           Sequence-Keys must be unique.
     #
     #   @param vendorInf
     #           Type Entities.VendorInformation. Representation of the vendor where you want to do the order.

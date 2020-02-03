@@ -1,10 +1,11 @@
 from flask import json
 
 from Controller.dataformats import SearchResponse
-from Pinger.Entities import SequenceInformation, SequenceOffers
+from Pinger.Entities import SequenceInformation, SequenceOffers, VendorOffers, SequenceVendorOffers
+
 
 # Builds a search response in JSON format from a list of offers.
-def buildSearchResponseJSON(seqvendoffers, vendors, offset = 0, size = 10):
+def buildSearchResponseJSON(seqvendoffers, vendors, offset=0, size=10):
     resp = SearchResponse()
     resp.data["result"] = []
     resp.data["globalMessage"] = []
@@ -13,8 +14,10 @@ def buildSearchResponseJSON(seqvendoffers, vendors, offset = 0, size = 10):
     resp.data["offset"] = offset
     for seqvendoff in seqvendoffers[offset: min(offset + size, len(seqvendoffers))]:
         result = {
-            "sequenceInformation": {"id": seqvendoff.sequenceInformation.key, "name": seqvendoff.sequenceInformation.name,
-                                    "sequence": seqvendoff.sequenceInformation.sequence, "length": len(seqvendoff.sequenceInformation.sequence)}, "vendors": []}
+            "sequenceInformation": {"id": seqvendoff.sequenceInformation.key,
+                                    "name": seqvendoff.sequenceInformation.name,
+                                    "sequence": seqvendoff.sequenceInformation.sequence,
+                                    "length": len(seqvendoff.sequenceInformation.sequence)}, "vendors": []}
 
         for vendor in vendors:
             result["vendors"].append({"key": vendor["key"], "offers": []})
@@ -33,8 +36,8 @@ def buildSearchResponseJSON(seqvendoffers, vendors, offset = 0, size = 10):
 
         resp.data["result"].append(result)
 
-
     return json.jsonify(resp.data)
+
 
 # Converts a List[SequenceObject] to a List[SequenceInformation]
 def sequenceInfoFromObjects(objSequences):
@@ -44,17 +47,24 @@ def sequenceInfoFromObjects(objSequences):
         sequences.append(seq)
     return sequences
 
-def filterOffers(filter, seqoffers):
+
+def filterOffers(filter, seqvendoffers):
     filteredOffers = []
-    for seqoffer in seqoffers:
-        filteredSeqOffer = SequenceOffers(seqoffer.sequenceInformation, [])
-        for offerlist in seqoffer.offers:
-            filteredOfferList = []
-            for offer in offerlist:
-                if offer.vendorInformation.key in filter["vendors"]:
-                    if offer.price.amount >= filter["price"][0] and offer.price.amount <= filter["price"][1]:
-                        if offer.turnovertime <= filter["deliveryDays"]:
-                           filteredOfferList.append(offer)
-            filteredSeqOffer.offers.append(filteredOfferList)
-        filteredOffers.append(filteredSeqOffer)
+    for seqvendoff in seqvendoffers:
+        filteredSeqVendOff = SequenceVendorOffers(seqvendoff.sequenceInformation)
+        for vendoff in seqvendoff.vendorOffers:
+            filteredVendOff = VendorOffers(vendoff.vendorInformation)
+            if "vendors" not in filter or \
+                    vendoff.vendorInformation.key in filter["vendors"]:
+                for offer in vendoff.offers:
+                    if "price" not in filter or \
+                            offer.price.amount >= filter["price"][0] and offer.price.amount <= filter["price"][1]:
+                        if "deliveryDays" not in filter or \
+                                offer.turnovertime <= filter["deliveryDays"]:
+                            filteredVendOff.offers.append(offer)
+
+            # Only append structures that actually contain something
+            if filteredVendOff.offers:
+                filteredSeqVendOff.vendorOffers.append(filteredVendOff)
+
     return filteredOffers

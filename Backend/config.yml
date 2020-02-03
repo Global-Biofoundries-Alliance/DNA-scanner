@@ -15,6 +15,24 @@ pinger:
         username: YOUR_USERNAME
         token: YOUR_TOKEN
 controller:
+    vendors:
+        [
+        {
+            name: Twist Bioscience,
+            shortName: Twist,
+            pinger: PINGER_MOCK
+        },
+        {
+            name: IDT DNA,
+            shortName: IDT,
+            pinger: PINGER_MOCK
+        },
+        {
+            name: ThermoFisher Scientific GeneArt,
+            shortName: GeneArt,
+            pinger: PINGER_MOCK
+        }
+        ]
 
 review:
     db: 

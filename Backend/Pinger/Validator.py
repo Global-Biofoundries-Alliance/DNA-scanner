@@ -20,8 +20,10 @@ class Validator:
         raise NotImplementedError
 
 class EntityValidator:
-    def __init__(self):
-        pass
+    def __init__(self, raiseError=False, errorClass=Exception, printError=False):
+        self.raiseError = raiseError
+        self.errorClass = errorClass
+        self.printError = printError
 
     def validate(self, obj):
         # VendorInformation
@@ -143,10 +145,17 @@ class EntityValidator:
         return self.raiseTrue()
 
     def raiseFalse(self, text = ""):
-        print("Validation Failed:", text)
+        if self.printError:
+            print("Validation Failed:", text)
+        if self.raiseError:
+            raise errorClass("Validation Failed: ", text)
         return False
 
     def raiseTrue(self, text = ""):
         return True
 
+class InvalidInputError(Exception):
+    pass
+
+entityValidatorThrowing = EntityValidator(raiseError=True, errorClass=InvalidInputError)
 entityValidator = EntityValidator()

@@ -51,9 +51,9 @@ def sequenceInfoFromObjects(objSequences):
 def filterOffers(filter, seqvendoffers):
     filteredOffers = []
     for seqvendoff in seqvendoffers:
-        filteredSeqVendOff = SequenceVendorOffers(seqvendoff.sequenceInformation)
+        filteredSeqVendOff = SequenceVendorOffers(seqvendoff.sequenceInformation, [])
         for vendoff in seqvendoff.vendorOffers:
-            filteredVendOff = VendorOffers(vendoff.vendorInformation)
+            filteredVendOff = VendorOffers(vendoff.vendorInformation, [])
             if "vendors" not in filter or \
                     vendoff.vendorInformation.key in filter["vendors"]:
                 for offer in vendoff.offers:
@@ -66,5 +66,5 @@ def filterOffers(filter, seqvendoffers):
             # Only append structures that actually contain something
             if filteredVendOff.offers:
                 filteredSeqVendOff.vendorOffers.append(filteredVendOff)
-
+        filteredOffers.append(filteredSeqVendOff)
     return filteredOffers

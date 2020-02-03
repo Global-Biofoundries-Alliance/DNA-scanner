@@ -1,18 +1,17 @@
 # python imports
-import tempfile
 import os
+import tempfile
 
+from Pinger.AdvancedMock import AdvancedMockPinger
+from Pinger.Entities import *
+from Pinger.Pinger import *
 # library imports
 from flask import json, session
 from werkzeug.utils import secure_filename
 
+from .parser import parse
 # project imports
 from .transformation import buildSearchResponseJSON, sequenceInfoFromObjects, filterOffers
-from .parser import parse
-from Pinger.Pinger import *
-from Pinger.AdvancedMock import AdvancedMockPinger
-from Pinger.GeneArt import GeneArt
-from Pinger.Entities import *
 
 # All vendors known to the service
 # TODO Incorporate this into the config and then remove this
@@ -28,6 +27,7 @@ vendors = [{"name": "TWIST DNA",
             "shortName": "GenArt",
             "key": 2}
            ]
+
 
 #
 #   Der ComparisonService ist das allgemeine Interface. Es geht darum hier Prozessfälle abzudecken,
@@ -50,6 +50,9 @@ class ComparisonService:
     def __init__(self, configurator, sessionManager):
         raise NotImplementedError
 
+    def setSequencesFromFile(self, seqfile):
+        raise NotImplementedError
+
     def setSequences(self, sequences):
         raise NotImplementedError
 
@@ -62,7 +65,6 @@ class ComparisonService:
 
 # TODO implement
 class DefaultComparisonService(ComparisonService):
-
 
     def __init__(self, configurator, sessionManager):
         self.config = configurator
@@ -96,12 +98,10 @@ class DefaultComparisonService(ComparisonService):
 
         return 'upload successful'
 
-
     # Stores an explicit list of sequences in the session (INPUT CHECK!!!)
     def setSequences(self, sequences):
         # TODO use session manager
         self.session.storeSequences(sequences)
-
 
     #
     def setFilter(self, filter):
@@ -123,17 +123,19 @@ class DefaultComparisonService(ComparisonService):
         if not self.session.loadSequences():
             return {'error': 'No sequences available'}
 
-        mainPinger = CompositePinger()
+        #mainPinger = CompositePinger()
         # Begin temporary testing placeholders
-        for id in range(0, len(vendors)):
-            dummyVendor = VendorInformation(vendors[id]["name"], vendors[id]["shortName"], id)
-            #if id == 2:
+        #for id in range(0, len(vendors)):
+            #dummyVendor = VendorInformation(vendors[id]["name"], vendors[id]["shortName"], id)
+            # if id == 2:
             #    # TODO Init Geneart-Pinger by config
             #    pinger = GeneArt(username='username', token='token')
             #    mainPinger.registerVendor(dummyVendor, pinger)
-            #else:
-            mainPinger.registerVendor(dummyVendor, AdvancedMockPinger(dummyVendor))
+            # else:
+            #mainPinger.registerVendor(dummyVendor, AdvancedMockPinger(dummyVendor))
         # End temporary testing placeholders
+
+        mainPinger = self.config.pinger
 
         sequences = []
         for seq in self.session.loadSequences():
@@ -143,13 +145,11 @@ class DefaultComparisonService(ComparisonService):
         mainPinger.searchOffers(sequences)
         seqoffers = mainPinger.getOffers()
 
-
-
         # build response from offers stored in the session
         result = buildSearchResponseJSON(filterOffers(self.session.loadFilter(), seqoffers), vendors, offset, size)
+        #result = buildSearchResponseJSON(seqoffers, self.config.vendors, offset, size)
 
         return result
 
     def getVendors(self):
         return vendors
-

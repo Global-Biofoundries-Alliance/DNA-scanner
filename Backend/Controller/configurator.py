@@ -1,12 +1,14 @@
 # python imports
-import yaml
 import os
+
+import yaml
+
 
 # project imports
 from Pinger.Pinger import BasePinger, CompositePinger
-from Pinger.AdvancedMock import AdvancedMockPinger
-from Pinger.GeneArt import GeneArt
 from Pinger.Entities import *
+from Pinger.GeneArt import GeneArt
+from Pinger.AdvancedMock import AdvancedMockPinger
 
 
 #
@@ -52,23 +54,26 @@ class YmlConfigurator(Configurator):
     def __init__(self, filename) -> None:
         self.vendors = []
         self.pinger = CompositePinger()
+        self.cfg = None
 
         if not os.path.isfile(filename):
             raise FileNotFoundError
-
-        all_cfg = yaml.safe_load(open(filename, "r"))
-        if "controller" not in all_cfg:
+        handle = open(filename, "r")
+        self.cfg = yaml.safe_load(handle)
+        handle.close()
+        if "controller" not in self.cfg:
             raise KeyError
-        cfg = all_cfg["controller"]
+        cfg_controller = self.cfg["controller"]
 
-        if "vendors" in cfg:
+        if "vendors" in cfg_controller:
             key = 0
             pingerIDTuples = []
-            for vendor in cfg["vendors"]:
+            for vendor in cfg_controller["vendors"]:
                 vendorInfo = VendorInformation(name=vendor["name"], shortName=vendor["shortName"], key=key)
-                self.vendors.append(vendorInfo)
+                self.vendors.append({"name": vendor["name"], "shortName": vendor["shortName"], "key": key})
                 pingerIDTuples.append((vendorInfo, vendor["pinger"]))
                 key = key + 1
+            self.initializePinger(pingerIDTuples)
 
     #
     #   see Configurator.initializePinger
@@ -79,20 +84,19 @@ class YmlConfigurator(Configurator):
     def initializePinger(self, pingers=[]) -> None:
         for pingerInfo in pingers:
             newPinger = self.getPingerFromKey(pingerInfo[1])
-            if newPinger:
-                self.pinger.registerVendor(pingerInfo[0], newPinger)
+            self.pinger.registerVendor(vendorInformation=pingerInfo[0], vendorPinger=newPinger)
 
-        # TODO implement
-        raise NotImplementedError
-
-    def getPingerFromKey(x):
-        return {
-            "PINGER_TWIST":
-                BasePinger(),
-            "PINGER_IDT":
-                BasePinger(),
-            "PINGER_GENEART":
-                BasePinger(),
-            "PINGER_MOCK":
-                AdvancedMockPinger()
-        }.get(x, None)
+    # Put pinger specific initialization here
+    def getPingerFromKey(self, x) -> BasePinger:
+        cfg_pinger = self.cfg["pinger"]
+        if x == "PINGER_TWIST":
+            return BasePinger()
+        if x == "PINGER_IDT":
+            return BasePinger()
+        if x == "PINGER_GENEART":
+            return GeneArt(cfg_pinger["geneart"]["username"], cfg_pinger["geneart"]["token"]),
+        if x == "PINGER_MOCK":
+            return AdvancedMockPinger()
+        else:
+            #TODO Invalid-Contact-Your-Admin-Pinger here
+            return None

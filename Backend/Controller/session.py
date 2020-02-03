@@ -74,8 +74,9 @@ class SessionManager:
 class SingleSession(SessionManager):
 
     def __init__(self):
+        self.sequences = []
         self.pinger = None
-        pass
+        self.filter = {}
 
     #
     #   Desc:   Loades the Pinger out of the session-store

@@ -16,13 +16,12 @@ class IDTClient:
         self.scope = scope
         self.timeout = timeout
         if(self.token == "YOUR_TOKEN"):
-            a = self.getToken()
             self.token = self.getToken()
         else:
             if(self.checkToken() == "False"):
                 self.token = self.getToken()
            
-    # This method is used to generate an access token from the API. This token is later used to access the other endpoints this API offers.
+    # This method is used to check if the access is still valid.
     # The token expires in one hour.
     def checkToken(self):
         exampleList = [{"Name": "ExampleSeq", "Sequence": "ATCG"}]
@@ -103,10 +102,11 @@ class IDT(BasePinger):
     #
     def encode_sequence(self, seqInf):
         if isinstance(seqInf, SequenceInformation):
-            return { "idN": seqInf.key, "name": seqInf.name, "sequence": seqInf.sequence}
+            if Validator.validate(seqInf):
+                return { "idN": seqInf.key, "name": seqInf.name, "sequence": seqInf.sequence}
         else:
             type_name = seqInf.__class__.__name__
-            raise TypeError(f"Object of type '{type_name}' is not JSON serializable")
+            raise TypeError(f"Parameter must be of type SequenceInformation but is of type '{type_name}'.")
     
     #
     #   Sends a request to the server to generate a token
@@ -150,8 +150,10 @@ class IDT(BasePinger):
                 messageText = seqInf[i].name + "_" + "rejected_"
                 for j in range(len(response[i])):
                     messageText = messageText + response[i][j]["Name"] + "."
-                message = Message(MessageType.SYNTHESIS_ERROR, messageText)            
+                message = Message(MessageType.SYNTHESIS_ERROR, messageText)
+                validity = Validator.validate(message)           
             seqOffer = SequenceOffers(seqInf[i], [Offer(messages = [message])])
+            validity = Validator.validate(seqOffer)
             offers.append(seqOffer)
         self.offers = offers
         self.running = False

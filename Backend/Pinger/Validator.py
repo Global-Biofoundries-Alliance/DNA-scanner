@@ -148,7 +148,7 @@ class EntityValidator:
         if self.printError:
             print("Validation Failed:", text)
         if self.raiseError:
-            raise errorClass("Validation Failed: ", text)
+            raise self.errorClass(text)
         return False
 
     def raiseTrue(self, text = ""):

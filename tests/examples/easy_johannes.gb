@@ -1,0 +1,31 @@
+LOCUS       R_oryzae_lipase_noSP_KB-P61872        1146 bp    DNA     linear   UNA 12-NOV-2019
+DEFINITION  pTwist Amp Medium Copy.
+ACCESSION   urn.local.jfk.3f-b6sbnj0
+VERSION     urn.local.jfk.3f-b6sbnj0
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 atggtgccag tgagcgggaa atcaggcagt tcaaacacgg ctgtatcagc gagtgacaac
+       61 gctgcattgc cgccgctgat atcatcacgt tgtgcacccc catcaaacaa gggttcaaag
+      121 tctgacttgc aggcagagcc gtacaacatg cagaagaata ctgaatggta cgaatctcac
+      181 ggtggtaatt taacctcgat tggaaagagg gatgataacc tggttggtgg catgactctt
+      241 gacttacctt ctgacgcccc gccaatctct ttatcttcat ctacgaattc agcatcagac
+      301 ggtggaaagg tcgtcgccgc aaccactgct cagatacagg agttcacgaa gtacgccgga
+      361 atcgcggcga cggcgtactg tcgcagtgtt gtccctggga acaagtggga ttgcgtccag
+      421 tgtcagaagt gggtgccaga cggcaagatc atcacgacgt tcactagcct tctttctgac
+      481 actaacggtt atgtgctgcg ttcagacaag cagaagacaa tatacctggt gtttaggggt
+      541 acgaacagct tcaggtccgc catcacagac atcgtattta actttagcga ttacaagccg
+      601 gtaaagggag caaaagtgca tgccggtttt ctgagctcat atgagcaggt cgtgaacgat
+      661 tacttcccgg ttgtccagga gcaactgacc gctcatccga catacaaggt cattgttact
+      721 ggacactctt tgggcggtgc ccaggctttg ttagcaggga tggacttgta ccaaagagaa
+      781 ccaagactga gccctaagaa tttgtcgata tttaccgtcg gtggccccag ggtgggcaac
+      841 cctactttcg cgtactatgt agagtcaaca ggaatacctt tccagaggac tgtccacaag
+      901 agagatatag tcccccacgt cccgccacag tccttcggat tcttacatcc tggggttgag
+      961 tcttggatca agtcgggaac gtcaaatgta cagatttgta cttcagagat tgagactaag
+     1021 gactgctcaa acagcatcgt tcctttcact tcaatcttgg accacttatc ttacttcgac
+     1081 ataaacgaag ggtcctgttt ggaagcggcc gcgaaagagg ctgcggcgaa agaagccgcc
+     1141 gcgaaa
+//

@@ -1,0 +1,14 @@
+geneart:
+    username: YOUR_USERNAME
+    token: YOUR_TOKEN
+twist:
+    email: YOUR_EMAIL
+    username: YOUR_USERNAME
+    token: YOUR_TOKEN
+idt:
+    idt_username: YOUR_IDT_USERNAME
+    idt_password: YOUR_IDT_PASSWORD
+    client_id: YOUR_CLIENT_ID
+    client_secret: YOUR_CLIENT_SECRET
+    scope: YOUR_SCOPE
+    token:

@@ -9,7 +9,7 @@ class AdvancedMockPinger(BasePinger):
 
     def __init__(self, vendorInformation=VendorInformation(name="DummyVendor", shortName="Dummy", key=0)):
         self.running = False
-
+        self.offers = []
         self.vendorInformation = vendorInformation
 
     #
@@ -49,5 +49,9 @@ class AdvancedMockPinger(BasePinger):
     def getOffers(self):
         self.running = False
         return self.offers
+
+    def clear(self):
+        self.offers = []
+        self.running = False
 
 

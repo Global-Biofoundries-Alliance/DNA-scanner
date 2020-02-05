@@ -20,7 +20,7 @@ def buildSearchResponseJSON(seqvendoffers, vendors, offset=0, size=10):
                                     "length": len(seqvendoff.sequenceInformation.sequence)}, "vendors": []}
 
         for vendor in vendors:
-            result["vendors"].append({"key": vendor["key"], "offers": []})
+            result["vendors"].append({"key": vendor.key, "offers": []})
 
         for vendoff in seqvendoff.vendorOffers:
             for offer in vendoff.offers:
@@ -47,7 +47,13 @@ def sequenceInfoFromObjects(objSequences):
         sequences.append(seq)
     return sequences
 
-
+#
+#   Receives a filter and a list of SequenceVendorOffers and returns a subset of them that match the filter's criteria
+#
+#   @param filter the filter settings
+#   @param seqvendoffers the offers to filter
+#   @result list of the results matching filter
+#
 def filterOffers(filter, seqvendoffers):
     filteredOffers = []
     for seqvendoff in seqvendoffers:

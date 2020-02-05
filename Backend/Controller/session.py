@@ -3,7 +3,7 @@
 #
 from typing import List, Dict, Any
 
-from Pinger.Entities import SequenceVendorOffers
+from Pinger.Entities import SequenceInformation, SequenceVendorOffers
 from Pinger.Pinger import ManagedPinger
 
 
@@ -17,6 +17,7 @@ class SessionManager:
         self.sequences = []
         self.pinger = None
         self.filter = {}
+        self.results = []
 
     #
     #   Desc:   Loades the Pinger out of the session-store
@@ -39,25 +40,37 @@ class SessionManager:
     #
     #   Desc:   Loads the sequences out of the session-store.
     #
-    def loadSequences(self) -> List[SequenceVendorOffers]:
+    def loadSequences(self) -> List[SequenceInformation]:
         raise NotImplementedError
 
     #
     #   Desc:   Loads the sequences out of the session-store
     #
-    def storeSequences(self, sequences: List[SequenceVendorOffers]) -> None:
+    def storeSequences(self, sequences: List[SequenceInformation]) -> None:
         raise NotImplementedError
 
     #
     #   Desc: Loads the session's filter settings
     #
-    def loadFilter(self) -> Dict[str, Any]:
+    def loadFilter(self) -> dict:
         raise NotImplementedError
 
     #
     #   Desc: Stores filter settings in the session
     #
-    def storeFilter(self, filter: Dict[str, Any]) -> None:
+    def storeFilter(self, filter: dict) -> None:
+        raise NotImplementedError
+
+    #
+    #   Desc: Loads search results from the session
+    #
+    def loadResults(self) -> List[SequenceVendorOffers]:
+        raise NotImplementedError
+
+    #
+    #   Desc: Stores a list of search results for later use
+    #
+    def storeResults(self, results: List[SequenceVendorOffers]) -> None:
         raise NotImplementedError
 
     #
@@ -77,6 +90,7 @@ class SingleSession(SessionManager):
         self.sequences = []
         self.pinger = None
         self.filter = {}
+        self.results = []
 
     #
     #   Desc:   Loades the Pinger out of the session-store
@@ -99,31 +113,44 @@ class SingleSession(SessionManager):
     #
     #   Desc:   Loads the sequences out of the session-store
     #
-    def storeSequences(self, sequences: List[SequenceVendorOffers]) -> None:
+    def storeSequences(self, sequences: List[SequenceInformation]) -> None:
         self.sequences = sequences
 
     #
     #   Desc:   Loads the sequences out of the session-store.
     #
-    def loadSequences(self) -> List[SequenceVendorOffers]:
+    def loadSequences(self) -> List[SequenceInformation]:
         return self.sequences
 
     #
     #   Desc: Loads the session's filter settings
     #
-    def loadFilter(self) -> Dict[str, Any]:
+    def loadFilter(self) -> dict:
         return self.filter
 
     #
     #   Desc: Stores filter settings in the session
     #
-    def storeFilter(self, filter: Dict[str, Any]) -> None:
+    def storeFilter(self, filter: dict) -> None:
         self.filter = filter
 
-    # TODO implement other functions
+    #
+    #   Desc: Loads search results from the session
+    #
+    def loadResults(self) -> List[SequenceVendorOffers]:
+        return self.results
+
+    #
+    #   Desc: Stores a list of search results for later use
+    #
+    def storeResults(self, results: List[SequenceVendorOffers]) -> None:
+        self.results = results
 
     def free(self):
+        self.sequences = []
         self.pinger = None
+        self.filter = {}
+        self.results = []
 
 
 class InMemorySessionManager(SessionManager):
@@ -161,29 +188,43 @@ class InMemorySessionManager(SessionManager):
     #
     #   Desc:   Loads the sequences out of the session-store.
     #
-    def loadSequences(self) -> List[SequenceVendorOffers]:
+    def loadSequences(self) -> List[SequenceInformation]:
         return self.session.loadSequences()
 
     #
     #   Desc:   Loads the sequences out of the session-store
     #
-    def storeSequences(self, sequences: List[SequenceVendorOffers]) -> None:
+    def storeSequences(self, sequences: List[SequenceInformation]) -> None:
         self.session.storeSequences(sequences)
 
     #
     #   Desc: Loads the session's filter settings
     #
-    def loadFilter(self) -> Dict[str, Any]:
+    def loadFilter(self) -> dict:
         return self.session.loadFilter()
 
     #
     #   Desc: Stores filter settings in the session
     #
-    def storeFilter(self, filter: Dict[str, Any]) -> None:
+    def storeFilter(self, filter: dict) -> None:
         self.session.storeFilter(filter)
 
-    # TODO implement other functions
+    #
+    #   Desc: Loads search results from the session
+    #
+    def loadResults(self) -> List[SequenceVendorOffers]:
+        return self.session.loadResults()
 
+    #
+    #   Desc: Stores a list of search results for later use
+    #
+    def storeResults(self, results: List[SequenceVendorOffers]) -> None:
+        self.session.storeResults(results)
+
+    #
+    #   Desc: Frees all sessions
+    #
     def free(self):
-        # TODO
-        raise NotImplementedError
+        for session in self.sessions:
+            session.free()
+        sessions = []

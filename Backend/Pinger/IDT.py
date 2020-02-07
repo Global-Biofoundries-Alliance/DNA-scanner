@@ -1,10 +1,10 @@
 import requests
 from .Pinger import *
+from .Validator import *
 import json
 class IDTClient: 
     # Constructor for a IDTClient ()
     # Takes as input the configuration's parameters 
-    
     def __init__(self, token_server, screening_server, idt_username, idt_password, client_id, client_secret, scope, token = "YOUR_TOKEN", timeout = 60):
         self.token_server = token_server
         self.screening_server = screening_server
@@ -72,7 +72,6 @@ class IDT(BasePinger):
     token_default = "YOUR_TOKEN"
     scope_default = "test"
     timeout_default = 60
-
     #
     # Constructur for an IDT-Pinger
     # Takes as input the log-in parameters.
@@ -95,6 +94,7 @@ class IDT(BasePinger):
                       self.token, self.timeout)
         self.token = self.client.token # Set the token (Token is now valid because it was generated using the client)
         self.offers = []
+        self.validator = EntityValidator(raiseError=True)
 
     #
     #   Encodes a 'SequenceInformation' object into JSON-Format with fields readable by the GeneArtClient.
@@ -102,7 +102,7 @@ class IDT(BasePinger):
     #
     def encode_sequence(self, seqInf):
         if isinstance(seqInf, SequenceInformation):
-            if Validator.validate(seqInf):
+            if self.validator.validate(seqInf):
                 return { "idN": seqInf.key, "name": seqInf.name, "sequence": seqInf.sequence}
         else:
             type_name = seqInf.__class__.__name__
@@ -151,9 +151,9 @@ class IDT(BasePinger):
                 for j in range(len(response[i])):
                     messageText = messageText + response[i][j]["Name"] + "."
                 message = Message(MessageType.SYNTHESIS_ERROR, messageText)
-                validity = Validator.validate(message)           
+                validity = self.validator.validate(message)           
             seqOffer = SequenceOffers(seqInf[i], [Offer(messages = [message])])
-            validity = Validator.validate(seqOffer)
+            validity = self.validator.validate(seqOffer)
             offers.append(seqOffer)
         self.offers = offers
         self.running = False
@@ -196,3 +196,4 @@ class IDT(BasePinger):
         response = self.client.screening(idtSequences)
         return response
         
+

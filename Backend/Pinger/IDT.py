@@ -151,9 +151,9 @@ class IDT(BasePinger):
                 for j in range(len(response[i])):
                     messageText = messageText + response[i][j]["Name"] + "."
                 message = Message(MessageType.SYNTHESIS_ERROR, messageText)
-                validity = self.validator.validate(message)           
+                self.validator.validate(message)           
             seqOffer = SequenceOffers(seqInf[i], [Offer(messages = [message])])
-            validity = self.validator.validate(seqOffer)
+            self.validator.validate(seqOffer)
             offers.append(seqOffer)
         self.offers = offers
         self.running = False

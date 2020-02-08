@@ -15,5 +15,3 @@ venv/bin/python3 geneartpingertest.py
 venv/bin/python3 idtclienttest.py
 venv/bin/python3 idtpingertest.py
 venv/bin/python3 controllertest.py
-venv/bin/python3 idtclienttest.py
-venv/bin/python3 idtpingertest.py

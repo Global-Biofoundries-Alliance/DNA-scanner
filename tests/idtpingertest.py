@@ -1,9 +1,9 @@
 import unittest
 import json
 import yaml
-from Pinger import Pinger, Entities, IDT
+from Pinger import Pinger, Entities, IDT, Validator
 
-# Test file which can be successfully valideted by the API.
+# Test file which can be successfully validated by the API.
 with open('./examples/idt_pingertest_sequence.json') as json_file:
     data = json.load(json_file)
 example_list = []
@@ -87,6 +87,7 @@ class TestIDTPinger(unittest.TestCase):
         # Check the result if it is as expected.
         self.assertEqual(len(offers), 3)
         for i in range (3):
+            Validator.EntityValidator(raiseError=True).validate(offers[i])
             self.assertEqual(offers[i].sequenceInformation.key, listOfSequences[i].key)
             self.assertEqual(offers[i].sequenceInformation.name, listOfSequences[i].name)            
             self.assertEqual(offers[i].sequenceInformation.sequence, listOfSequences[i].sequence)            

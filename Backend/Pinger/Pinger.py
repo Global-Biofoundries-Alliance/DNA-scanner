@@ -41,15 +41,16 @@ class BasePinger:
 
 
     #
-    #   Desc:   Contrurctor
+    #   Desc:   Contructor.
+    #           The constructor of implemented BasePinger will have specfic parameters. For Example baseUrl and Credentials.
     #
-    #   @throws AuthenticationException
+    #   @throws AuthenticationError
     #           if credentials are not available, wrong or does not allow access.
     #
-    #   TODO Wie soll der Controller anzeigen, dass der Vendor nicht verfügbar ist? Meldung vom Configurator?
-    #   @throws UnavailableException
+    #   @throws UnavailableError
     #           if authentication response not matches pattern or not received.
-    #           Maybe the base url of the API is wrong?
+    #           Maybe the base url of the API is wrong? API could be only temporary
+    #           unavailable.
     #
     def __init__(self):
         raise NotImplementedError
@@ -63,11 +64,10 @@ class BasePinger:
     #   @param seqInf
     #           Type ArrayOf(Entities.SequenceInformation). Represent Sequences searching offers for. Sequence-Keys must be unique.
     #
-    #   @throws InvalidInputException
+    #   @throws InvalidInputError
     #           if input parameter are not like expected (see parameter definition above).
     #
-    #   TODO Ja oder Nein?
-    #   @throws RunningException
+    #   @throws IsRunningError
     #           if the Pinger is already running. You have to wait until it is finished.
     #
     def searchOffers(self, seqInf):
@@ -100,8 +100,7 @@ class BasePinger:
     #   Desc:   Resets the pinger by
     #               - stop searching -> isRunning() = false
     #               - resets the offers to a empty list -> getOffers = []
-    #
-    #   TODO Kann ein Run abgebrochen werden?
+    #           Dependent on the method of parallelism it is maybe just waiting for finish running.
     #
     def clear(self):
         raise NotImplementedError
@@ -116,8 +115,11 @@ class BasePinger:
     #   @results
     #           Type Entities.Order. Representation of the order.
     #
-    #   @throws InvalidInputException
+    #   @throws InvalidInputError
     #           if input parameter are not like expected (see parameter definition above).
+    #
+    #   @throws IsRunningError
+    #           if the Pinger is already running. You have to wait until it is finished.
     #
     def order(self, seqInf):
         raise NotImplementedError
@@ -145,13 +147,14 @@ class ManagedPinger:
     #
     #   @param vendors
     #           Type ArrayOf(int). Search will be started only for vendors, which VendorInformation.key exists in given list. If 
-    #           the list is empty, then searching for every vendor. Vendor-Keys must be unique.
-    #   TODO Was passiert, wenn vendors übergeben werden die nicht bekannt sind --> Testen!
+    #           the list is empty, then searching for every vendor. Vendor-Keys must be unique. If vendor is not registered it 
+    #           will be ignored.
     #
-    #   @throws InvalidInputException
+    #   @throws InvalidInputError
     #           if input parameter are not like expected (see parameter definition above).
     #
-    #   TODO Already Running Exception like at BasePinger?
+    #   @throws IsRunningError
+    #           if the Pinger is already running. You have to wait until it is finished.
     #
     def searchOffers(self, seqInf, vendors=[]):
         raise NotImplementedError
@@ -189,7 +192,7 @@ class ManagedPinger:
     #   @param vendorPinger 
     #           Type BasePinger. The Pinger handling the actions for the vendor.
     #
-    #   @throws InvalidInputException
+    #   @throws InvalidInputError
     #           if input parameter are not like expected (see parameter definition above).
     #
     def registerVendor(self, vendorInformation, vendorPinger):
@@ -217,6 +220,12 @@ class ManagedPinger:
     #
     #   @result
     #           Type Entities.Order. Representation of the order.
+    #
+    #   @throws InvalidInputError
+    #           if input parameter are not like expected (see parameter definition above).
+    #
+    #   @throws IsRunningError
+    #           if the Pinger is already running. You have to wait until it is finished.
     #
     def order(self, seqInf, vendorInf):
         raise NotImplementedError

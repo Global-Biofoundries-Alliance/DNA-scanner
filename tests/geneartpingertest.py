@@ -1,7 +1,7 @@
 import unittest
 import json
 import yaml
-from Pinger import Pinger, Entities, GeneArt
+from Pinger import Pinger, Entities, GeneArt, Validator
 
 # Test file which can be successfully valideted by the API.
 with open('./examples/seqinf_geneart.json') as json_file:
@@ -114,6 +114,7 @@ class TestGeneArtPinger(unittest.TestCase):
         self.assertEqual(len(offers), 4)
 
         sequenceOffer0 = offers[0]
+        Validator.EntityValidator(raiseError=True).validate(sequenceOffer0)
         sequence0 = sequenceOffer0.sequenceInformation
         self.assertEqual(sequence0.key, listOfSequences[0].key)        
         self.assertEqual(sequence0.name, listOfSequences[0].name)
@@ -121,14 +122,15 @@ class TestGeneArtPinger(unittest.TestCase):
         self.assertEqual(len(sequenceOffer0.offers), 1)
         offers0 = sequenceOffer0.offers[0]
         price0 = offers0.price.amount
-        self.assertEqual(price0, -1)
+        self.assertEqual(price0, 182.0)
         messages0 = offers0.messages
         self.assertEqual(len(messages0), 1)
         self.assertEqual(messages0[0].messageType, Entities.MessageType.INFO)
         self.assertEqual(messages0[0].text, "dnaStrings_accepted")
-        self.assertEqual(offers0.turnovertime, -1)
+        self.assertEqual(offers0.turnovertime, 6)
         
         sequenceOffer1 = offers[1]
+        Validator.EntityValidator(raiseError=True).validate(sequenceOffer1)
         sequence1 = sequenceOffer1.sequenceInformation
         self.assertEqual(sequence1.key, listOfSequences[1].key)        
         self.assertEqual(sequence1.name, listOfSequences[1].name)
@@ -136,14 +138,15 @@ class TestGeneArtPinger(unittest.TestCase):
         self.assertEqual(len(sequenceOffer1.offers), 1)        
         offers1 = sequenceOffer1.offers[0]
         price1 = offers1.price.amount
-        self.assertEqual(price1, -1)
+        self.assertEqual(price1, 182.0)
         messages1 = offers1.messages
         self.assertEqual(len(messages1), 1)
         self.assertEqual(messages1[0].messageType, Entities.MessageType.INFO)
         self.assertEqual(messages1[0].text, "dnaStrings_accepted")
-        self.assertEqual(offers1.turnovertime, -1)
+        self.assertEqual(offers1.turnovertime, 6)
 
         sequenceOffer2 = offers[2]
+        Validator.EntityValidator(raiseError=True).validate(sequenceOffer2)
         sequence2 = sequenceOffer2.sequenceInformation
         self.assertEqual(sequence2.key, listOfSequences[0].key)        
         self.assertEqual(sequence2.name, listOfSequences[0].name)
@@ -159,6 +162,7 @@ class TestGeneArtPinger(unittest.TestCase):
         self.assertEqual(offers2.turnovertime, -1)
 
         sequenceOffer3 = offers[3]
+        Validator.EntityValidator(raiseError=True).validate(sequenceOffer3)
         sequence3 = sequenceOffer3.sequenceInformation
         self.assertEqual(sequence3.key, listOfSequences[1].key)        
         self.assertEqual(sequence3.name, listOfSequences[1].name)

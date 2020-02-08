@@ -3,6 +3,7 @@ import re
 from datetime import datetime
 import requests
 from .Pinger import *
+from .Validator import *
 
 class GeneArtClient: 
     # Constructur for a GeneArtClient ()
@@ -180,6 +181,8 @@ class GeneArt(BasePinger):
                       self.dnaStrings, self.hqDnaStrings, self.timeout)
 
         self.offers = []
+        self.products = {"815010DE": 89.00,"815020DE": 109.00, "815030DE": 119.00, "815040DE": 182.00}
+        self.validator = EntityValidator(raiseError=True)
     
 
     #
@@ -188,10 +191,11 @@ class GeneArt(BasePinger):
     #
     def encode_sequence(self, seqInf):
         if isinstance(seqInf, SequenceInformation):
-            return { "idN": seqInf.key, "name": seqInf.name, "sequence": seqInf.sequence}
+            if self.validator.validate(seqInf):
+                return { "idN": seqInf.key, "name": seqInf.name, "sequence": seqInf.sequence}
         else:
             type_name = seqInf.__class__.__name__
-            raise TypeError(f"Object of type '{type_name}' is not JSON serializable")
+            raise TypeError(f"Parameter must be of type SequenceInformation but is of type '{type_name}'.")
     
     #
     #   Authenticates the instance
@@ -230,7 +234,12 @@ class GeneArt(BasePinger):
                 if accepted == True:
                     messageText = product + "_" + "accepted"
                     message = Message(MessageType.INFO, messageText)
+                    turnOverTime = response["constructs"][count]["eComInfo"]["productionDaysEstimated"]
+                    productCode = response["constructs"][count]["eComInfo"]["lineItems"][0]["sku"]
+                    price = Price(amount = self.products[productCode], customerSpecific=True)
                 else:
+                    turnOverTime = -1
+                    price = Price()
                     if(len(response["constructs"][count]["reasons"]) == 1):
                         reason = response["constructs"][count]["reasons"][0]
                         if (reason == "length"):
@@ -247,8 +256,10 @@ class GeneArt(BasePinger):
                         for reason in response["constructs"][count]["reasons"]:
                             messageText = messageText + str(reason) + "."
                         message = Message(MessageType.SYNTHESIS_ERROR, messageText)
+                        self.validator.validate(message)
 
-                seqOffer = SequenceOffers(seq, [Offer(messages = [message])])
+                seqOffer = SequenceOffers(seq, [Offer(price = price, turnovertime = turnOverTime, messages = [message])])
+                self.validator.validate(seqOffer)
                 offers.append(seqOffer)
                 count = count + 1
         self.offers = offers

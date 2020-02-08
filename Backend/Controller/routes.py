@@ -17,12 +17,15 @@ service = Service(Configurator("config.yml"), SessionManager("Meine SessionId"))
 #
 @app.route('/vendors', methods=['get'])
 def get_vendors():
-    # Convert vendors into form used by frontend
-    vendors = []
-    for vendor in service.getVendors():
-        vendors.append({"name": vendor.name, "shortName": vendor.shortName, "key": vendor.key})
+    try:
+        # Convert vendors into form used by frontend
+        vendors = []
+        for vendor in service.getVendors():
+            vendors.append({"name": vendor.name, "shortName": vendor.shortName, "key": vendor.key})
 
-    return json.jsonify(vendors)
+        return json.jsonify(vendors)
+    except:
+        return {"error": "Encountered error while getting vendors"}
 
 
 #
@@ -39,12 +42,15 @@ def hello_world():
 #
 @app.route('/upload', methods=['post'])
 def uploadFile():
-    # Input checking
-    if 'seqfile' not in request.files or request.files['seqfile'] == "":
-        return json.jsonify({'error': 'No file specified'})
+    try:
+        # Input checking
+        if 'seqfile' not in request.files or request.files['seqfile'] == "":
+            return json.jsonify({'error': 'No file specified'})
 
-    # Actually parse the file and save the sequences
-    return service.setSequencesFromFile(request.files["seqfile"])
+        # Actually parse the file and save the sequences
+        return service.setSequencesFromFile(request.files["seqfile"])
+    except:
+        return {"error": "Encountered error during file upload"}
 
 
 #
@@ -53,25 +59,28 @@ def uploadFile():
 #
 @app.route('/filter', methods=['POST'])
 def filterResults():
-    # Check correct request format
-    if not request.is_json:
-        return {'error': 'Invalid filter request: Data must be in JSON format'}
+    try:
+        # Check correct request format
+        if not request.is_json:
+            return {'error': 'Invalid filter request: Data must be in JSON format'}
 
-    # Check if there is even a filter present
-    request_json = request.get_json()
-    if 'filter' not in request_json:
-        return {'error': 'Request is missing filter attribute'}
+        # Check if there is even a filter present
+        request_json = request.get_json()
+        if 'filter' not in request_json:
+            return {'error': 'Request is missing filter attribute'}
 
-    # Check if all keys are in the request
-    if any(key not in request_json['filter'] for key in
-           {'vendors', 'price', 'deliveryDays',
-            'preselectByPrice', 'preselectByDeliveryDays'}):
-        return {'error': 'Malformed filter'}
+        # Check if all keys are in the request
+        if any(key not in request_json['filter'] for key in
+               {'vendors', 'price', 'deliveryDays',
+                'preselectByPrice', 'preselectByDeliveryDays'}):
+            return {'error': 'Malformed filter'}
 
-    # Store the filter
-    service.setFilter(request_json["filter"])
+        # Store the filter
+        service.setFilter(request_json["filter"])
 
-    return 'filter submission successful'
+        return 'filter submission successful'
+    except:
+        return {"error": "Encountered error setting filter"}
 
 
 #
@@ -83,13 +92,16 @@ def filterResults():
 #
 @app.route('/results', methods=['POST'])
 def getSearchResults():
-    # Get size and offset fields if available and set them to default otherwise
-    size = 10000000     # Nobody has plates this large
-    offset = 0
-    if request.form.get('size'):
-        size = int(request.form.get('size'))
-    if request.form.get('offset'):
-        offset = int(request.form.get('offset'))
+    try:
+        # Get size and offset fields if available and set them to default otherwise
+        size = 10000000  # Nobody has plates this large
+        offset = 0
+        if request.form.get('size'):
+            size = int(request.form.get('size'))
+        if request.form.get('offset'):
+            offset = int(request.form.get('offset'))
 
-    # Get the results from the service
-    return service.getResults(size=size, offset=offset)
+        # Get the results from the service
+        return service.getResults(size=size, offset=offset)
+    except:
+        return {"error": "Encountered error while fetching search results"}

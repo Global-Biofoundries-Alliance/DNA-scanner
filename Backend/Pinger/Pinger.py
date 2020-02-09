@@ -1,5 +1,5 @@
 from .Entities import *
-from .Validator import entityValidator as Validator
+from .Validator import entityValidatorThrowing as Validator
 
 
 #########################################################
@@ -70,6 +70,11 @@ class BasePinger:
     #   @throws IsRunningError
     #           if the Pinger is already running. You have to wait until it is finished.
     #
+    #   @throws UnavailableError
+    #           if authentication response not matches pattern or not received.
+    #           Maybe the base url of the API is wrong? API could be only temporary
+    #           unavailable.
+    #
     def searchOffers(self, seqInf):
         raise NotImplementedError
 
@@ -92,6 +97,11 @@ class BasePinger:
     #           of sequences from the last call of searchOffers(seqInf). For every sequenceInformation from 
     #           the last searchOffers(seqInf) call exists exactly one SequenceOffer. SequenceOffers must be available, 
     #           even if there is no offer for the sequence. Empty Array, if it was not searching before.
+    #
+    #   @throws UnavailableError
+    #           if authentication response not matches pattern or not received.
+    #           Maybe the base url of the API is wrong? API could be only temporary
+    #           unavailable.
     #
     def getOffers(self):
         raise NotImplementedError
@@ -120,6 +130,11 @@ class BasePinger:
     #
     #   @throws IsRunningError
     #           if the Pinger is already running. You have to wait until it is finished.
+    #
+    #   @throws UnavailableError
+    #           if authentication response not matches pattern or not received.
+    #           Maybe the base url of the API is wrong? API could be only temporary
+    #           unavailable.
     #
     def order(self, seqInf):
         raise NotImplementedError
@@ -216,7 +231,7 @@ class ManagedPinger:
     #           Sequence-Keys must be unique.
     #
     #   @param vendorInf
-    #           Type Entities.VendorInformation. Representation of the vendor where you want to do the order.
+    #           Type int. The key (VendorInformatin.Key) of the vendor where you want to do the order.
     #
     #   @result
     #           Type Entities.Order. Representation of the order.
@@ -250,15 +265,12 @@ class CompositePinger(ManagedPinger):
 
         # Check Input with validator
         if(isinstance(vendorInformation, VendorInformation)):
-            if(not Validator.validate(vendorInformation)):
-                return
+            Validator.validate(vendorInformation)):
         else:
-            print("Invalid Input: vendorInformation has not type VendorInformation")
-            return
+            raise InvalidInputError("Invalid Input: vendorInformation has not type VendorInformation")
 
         if(not isinstance(vendorPinger, BasePinger)):
-            print("Invalid Input: vendorPinger has not type BasePinger")
-            return
+            raise InvalidInputError("Invalid Input: vendorPinger has not type BasePinger")
 
         # if vendor-key already exists, then override this vendorhandler
         if len(self.vendorHandler)>0:
@@ -285,25 +297,22 @@ class CompositePinger(ManagedPinger):
     #   see ManagedPinger.searchOffers
     #
     def searchOffers(self, seqInf, vendors=[]):
+        # Check pinger is not running
+        if(isRunning()):
+            raise IsRunningError("Pinger is currently running and can not perform a other action")
+
         # check input: seqInf
         if(not isinstance(seqInf, list)):
-            print("Parameter seqInf should be a list")
-            return
+            Validator.validate(seqInf)
         for seq in seqInf:
             if (not isinstance(seq, SequenceInformation)):
-                print("parameter seqInf contains elements which are not of type SequenceInformation")
-                return
-            if(not Validator.validate(seq)):
-                print("SequenceInformation is invalid")
-                return
+                raise InvalidInputError("parameter seqInf contains elements which are not of type SequenceInformation")
         # check input: vendors
         if (not isinstance(vendors, list)):
-            print("parameter vendors should be a list")
-            return
+            raise InvalidInputError("parameter vendors should be a list")
         for vendor in vendors:
             if(not isinstance(vendor, int)):
-                print("parameter vendors should only contain integers")
-                return
+                raise InvalidInputError("parameter vendors should only contain integers")
 
         # initialize empty sequenceOffers
         self.sequenceVendorOffers = []
@@ -324,10 +333,12 @@ class CompositePinger(ManagedPinger):
     #
     def isRunning(self):
 
+        # If one or more vendors are running, then CompositePinger is running
         for vh in self.vendorHandler:
             if vh.handler.isRunning():
                 return True
 
+        # No vendor is running
         return False
 
     #
@@ -357,6 +368,33 @@ class CompositePinger(ManagedPinger):
                         curSO.vendorOffers.append(VendorOffers(vendorInformation=vh.vendor, offers=newSO.offers))
 
         return self.sequenceVendorOffers
+
+    #
+    #   see ManagedPinger.order
+    #
+    def order(self, seqInf, vendor):
+        # Check pinger is not running
+        if(isRunning()):
+            raise IsRunningError("Pinger is currently running and can not perform a other action")
+
+        # check input: seqInf
+        if(not isinstance(seqInf, list)):
+            Validator.validate(seqInf)
+        for seq in seqInf:
+            if (not isinstance(seq, SequenceInformation)):
+                raise InvalidInputError("parameter seqInf contains elements which are not of type SequenceInformation")
+        # check input: vendors
+        if(not isinstance(vendor, int)):
+                raise InvalidInputError("parameter vendor should be a integer")
+
+        # find VendorPinger and call order
+        for vh in self.vendorHandler:
+            # Start searching if vendor is accepted by the filter
+            if(vh.vendor.key == vendor):
+                return vh.handler.order(seqInf)
+
+        # TODO What is returned if vendor not found?
+        return None
 
 #
 #   The Dummy Pinger is for testing.

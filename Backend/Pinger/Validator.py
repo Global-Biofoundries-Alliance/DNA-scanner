@@ -135,6 +135,7 @@ class EntityValidator:
 
         # List
         elif isinstance(obj, list):
+            # TODO Check that all elements in the list have the same time and that keys are unique
             for elem in obj:
                 if (not self.validate(elem)):
                     return self.raiseFalse("List contains invalid elements")
@@ -153,9 +154,6 @@ class EntityValidator:
 
     def raiseTrue(self, text = ""):
         return True
-
-class InvalidInputError(Exception):
-    pass
 
 entityValidatorThrowing = EntityValidator(raiseError=True, errorClass=InvalidInputError)
 entityValidator = EntityValidator()

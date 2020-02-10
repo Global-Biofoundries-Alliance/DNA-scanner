@@ -1,5 +1,6 @@
 from .Pinger import *
 from random import randint, random
+import random as rand
 
 #
 #   The Dummy Pinger is for testing.
@@ -19,6 +20,15 @@ class AdvancedMockPinger(BasePinger):
     #                           SequenceOffer(seqInf[n], self.tempOffer)]
     #
     def searchOffers(self, seqInf):
+        messages = [Message(MessageType.SYNTHESIS_ERROR, "Could not synthesize the sequence"),
+                    Message(MessageType.INVALID_SEQUENCE, "Invalid sequence"),
+                    Message(MessageType.GC_PROBLEM, "Problematic GC"),
+                    Message(MessageType.INVALID_LENGTH, "Sequence length invalid"),
+                    Message(MessageType.SEQUENCE_TOO_SHORT, "Sequence too short"),
+                    Message(MessageType.SEQUENCE_TOO_LONG, "Sequence too long"),
+                    Message(MessageType.UNABLE_TO_PRODUCE, "This vendor cannot synthesize this sequence"),
+                    Message(MessageType.HOMOLOGY, "Homology problem")]
+
         self.offers = []
         counter = 0
         for s in seqInf:
@@ -30,6 +40,8 @@ class AdvancedMockPinger(BasePinger):
                 tempOffer.price = Price(currency=Currency.EUR, amount=float(int(random() * 100)) / 100)
                 tempOffer.turnovertime = randint(0, 20)
                 tempOffer.messages = []
+                if random() > 0.5:
+                    tempOffer.messages.append(rand.choice(messages))
                 counter = counter + 1
                 tempOffers.append(tempOffer)
             self.offers.append(SequenceOffers(s, tempOffers))

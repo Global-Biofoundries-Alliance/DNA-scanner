@@ -132,6 +132,7 @@ class DefaultComparisonService(ComparisonService):
 
         filter = self.session.loadFilter()
 
+        #TODO implement lazy search
         if not seqoffers:
             vendorsToSearch = []
             for vendor in self.config.vendors:

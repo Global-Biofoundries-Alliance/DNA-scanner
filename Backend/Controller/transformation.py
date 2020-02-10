@@ -1,11 +1,12 @@
-from flask import json
+from sys import maxsize
 
 from Controller.dataformats import SearchResponse
-from Pinger.Entities import SequenceInformation, SequenceOffers, VendorOffers, SequenceVendorOffers
+from Pinger.Entities import SequenceInformation, VendorOffers, SequenceVendorOffers
+from flask import json
 
 
 # Builds a search response in JSON format from a list of offers.
-def buildSearchResponseJSON(seqvendoffers, vendors, offset=0, size=10):
+def buildSearchResponseJSON(seqvendoffers, vendors, selector, offset=0, size=10):
     resp = SearchResponse()
     resp.data["result"] = []
     resp.data["globalMessage"] = []
@@ -22,6 +23,8 @@ def buildSearchResponseJSON(seqvendoffers, vendors, offset=0, size=10):
         for vendor in vendors:
             result["vendors"].append({"key": vendor.key, "offers": []})
 
+        # Abysmal starting offer so the first offer will get selected right away
+        selectedResult = {"price": maxsize, "turnoverTime": maxsize, "offerMessages": [], "selected": False}
         for vendoff in seqvendoff.vendorOffers:
             for offer in vendoff.offers:
                 messages = []
@@ -32,7 +35,13 @@ def buildSearchResponseJSON(seqvendoffers, vendors, offset=0, size=10):
                 result["vendors"][vendoff.vendorInformation.key]["offers"].append({
                     "price": offer.price.amount,
                     "turnoverTime": offer.turnovertime,
-                    "offerMessage": messages})
+                    "offerMessage": messages,
+                    "selected": False})
+
+                # Sets the currently selected offer if it is better than the old selected one
+                selectedResult = selector(result["vendors"][vendoff.vendorInformation.key]["offers"][-1],
+                                          selectedResult)
+        selectedResult["selected"] = True
 
         resp.data["result"].append(result)
 
@@ -46,6 +55,7 @@ def sequenceInfoFromObjects(objSequences):
         seq = SequenceInformation(seqobj.sequence, seqobj.name, seqobj.idN)
         sequences.append(seq)
     return sequences
+
 
 #
 #   Receives a filter and a list of SequenceVendorOffers and returns a subset of them that match the filter's criteria

@@ -132,7 +132,7 @@ class DefaultComparisonService(ComparisonService):
 
         filter = self.session.loadFilter()
 
-        #TODO implement lazy search
+        # TODO implement lazy search
         if not seqoffers:
             vendorsToSearch = []
             for vendor in self.config.vendors:
@@ -144,8 +144,14 @@ class DefaultComparisonService(ComparisonService):
 
             self.session.storeResults(seqoffers)
 
+        # selection criterion; Default is selection by price
+        selector = \
+            (lambda a, b: a if a["turnoverTime"] < b["turnoverTime"] else b) \
+                if "preselectByDeliveryDays" in filter and filter["preselectByDeliveryDays"] else \
+                (lambda a, b: a if a["price"] < b["price"] else b)
+
         # build response from offers stored in the session
-        result = buildSearchResponseJSON(filterOffers(self.session.loadFilter(), seqoffers), self.config.vendors,
+        result = buildSearchResponseJSON(filterOffers(filter, seqoffers), self.config.vendors, selector,
                                          offset, size)
 
         return result

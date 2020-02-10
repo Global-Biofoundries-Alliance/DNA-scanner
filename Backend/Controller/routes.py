@@ -12,7 +12,6 @@ from .session import InMemorySessionManager as SessionManager
 # TODO use service in endpoints
 service = Service(Configurator("config.yml"), SessionManager("Meine SessionId"))
 
-
 #
 #   Provides clients with a complete list of vendors available
 #
@@ -23,10 +22,9 @@ def get_vendors():
         vendors = []
         for vendor in service.getVendors():
             vendors.append({"name": vendor.name, "shortName": vendor.shortName, "key": vendor.key})
-
         return json.jsonify(vendors)
     except:
-        return {"error": "Encountered error while getting vendors\n" + traceback.format_exc()}
+        return {"error": "Encountered error while getting vendors\n" + (traceback.format_exc() if __debug__ else "")}
 
 
 #
@@ -51,7 +49,7 @@ def uploadFile():
         # Actually parse the file and save the sequences
         return service.setSequencesFromFile(request.files["seqfile"])
     except:
-        return {"error": "Encountered error during file upload\n" + traceback.format_exc()}
+        return {"error": "Encountered error during file upload\n" + (traceback.format_exc() if __debug__ else "")}
 
 
 #
@@ -81,7 +79,7 @@ def filterResults():
 
         return 'filter submission successful'
     except:
-        return {"error": "Encountered error setting filter\n" + traceback.format_exc()}
+        return {"error": "Encountered error setting filter\n" + (traceback.format_exc() if __debug__ else "")}
 
 
 #
@@ -105,4 +103,4 @@ def getSearchResults():
         # Get the results from the service
         return service.getResults(size=size, offset=offset)
     except Exception as error:
-        return {"error": "Encountered error while fetching search results\n" + traceback.format_exc()}
+        return {"error": "Encountered error while fetching search results\n" + (traceback.format_exc() if __debug__ else "")}

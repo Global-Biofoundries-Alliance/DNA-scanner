@@ -41,7 +41,7 @@ class IDTClient:
         data = {'grant_type': 'password', 'username': self.idt_username, 'password': self.idt_password, 'scope': self.scope}
         r = requests.post(self.token_server, data, auth=requests.auth.HTTPBasicAuth(self.client_id, self.client_secret), timeout = self.timeout)
         if(not('access_token' in r.json())):
-            raise KeyError("Access token could not be generated. Check your credentials.")
+            raise AuthenticationError("Access token could not be generated. Check your credentials.")
         access_token = r.json()['access_token']
         return access_token
         
@@ -106,7 +106,7 @@ class IDT(BasePinger):
                 return { "idN": seqInf.key, "name": seqInf.name, "sequence": seqInf.sequence}
         else:
             type_name = seqInf.__class__.__name__
-            raise TypeError(f"Parameter must be of type SequenceInformation but is of type '{type_name}'.")
+            raise InvalidInputError(f"Parameter must be of type SequenceInformation but is of type '{type_name}'.")
     
     #
     #   Sends a request to the server to generate a token
@@ -117,9 +117,10 @@ class IDT(BasePinger):
         # Authenticate by calling the corresponding method.
         try:
             access_token = self.client.getToken()
+        except requests.exceptions.RequestException as err:
+            raise UnavailableError("Request got timeout") from err
         except:
-            messageText = 'Wrong Credentials'
-            return Message(MessageType.WRONG_CREDENTIALS, messageText)
+            raise AuthenticationError("Wrong Credentials")
         return access_token
 
     #
@@ -139,24 +140,38 @@ class IDT(BasePinger):
     #                           SequenceOffer(seqInf[n], self.tempOffer)]
     #
     def searchOffers(self, seqInf):
-        self.running = True
-        offers = [] # Empty Offers List
-        response = self.screening(seqInf)
-        for i in range(len(seqInf)):
-            if len(response[i]) == 0: # Empty List, means there are no problems found
-                messageText = seqInf[i].name + "_" + "accepted"
-                message = Message(MessageType.INFO, messageText)
-            if len(response[i]) != 0: # Not an empty List, means there are some problems
-                messageText = seqInf[i].name + "_" + "rejected_"
-                for j in range(len(response[i])):
-                    messageText = messageText + response[i][j]["Name"] + "."
-                message = Message(MessageType.SYNTHESIS_ERROR, messageText)
-                self.validator.validate(message)           
-            seqOffer = SequenceOffers(seqInf[i], [Offer(messages = [message])])
-            self.validator.validate(seqOffer)
-            offers.append(seqOffer)
-        self.offers = offers
-        self.running = False
+        # Check pinger is not running
+        if(self.isRunning()):
+            raise IsRunningError("Pinger is currently running and can not perform a other action")
+
+        try:
+            self.running = True
+            offers = [] # Empty Offers List
+            response = self.screening(seqInf)
+            for i in range(len(seqInf)):
+                if len(response[i]) == 0: # Empty List, means there are no problems found
+                    messageText = seqInf[i].name + "_" + "accepted"
+                    message = Message(MessageType.INFO, messageText)
+                if len(response[i]) != 0: # Not an empty List, means there are some problems
+                    messageText = seqInf[i].name + "_" + "rejected_"
+                    for j in range(len(response[i])):
+                        messageText = messageText + response[i][j]["Name"] + "."
+                    message = Message(MessageType.SYNTHESIS_ERROR, messageText)
+                    self.validator.validate(message)           
+                seqOffer = SequenceOffers(seqInf[i], [Offer(messages = [message])])
+                self.validator.validate(seqOffer)
+                offers.append(seqOffer)
+            self.offers = offers
+            self.running = False
+        except InvalidInputError as err:
+            self.running = False
+            raise InvalidInputError from err
+        except UnavailableError as err:
+            self.running = False
+            raise UnavailableError from err
+        except Exception as err:
+            self.running = False
+            raise UnavailableError from err
         
     #
     #   Checks if the Pinger is Running.

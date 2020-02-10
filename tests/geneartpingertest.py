@@ -33,7 +33,7 @@ class TestGeneArtPinger(unittest.TestCase):
         self.assertEqual(True, auth_result)
         
         # Give dummy username and token
-        with self.assertRaises(Exception): GeneArt.GeneArt("USERNAME", "TOKEN")
+        with self.assertRaises(Entities.AuthenticationError): GeneArt.GeneArt("USERNAME", "TOKEN")
     
     # Check the projectValidate method by checking the keys and their values returned by the API.    
     def test_projectValidate(self):
@@ -101,6 +101,9 @@ class TestGeneArtPinger(unittest.TestCase):
     # Check the BasePinger Functions methods.
     def test_pingerFunctions(self):
         print ("Start test for the methods searchOffers and getOffers of " + self.name + ".")
+
+        with self.assertRaises(Entities.InvalidInputError): self.pinger_example.searchOffers([1])
+
         self.assertEqual([], self.pinger_example.getOffers())
         listOfSequences = example_list
         response = self.pinger_example.searchOffers(listOfSequences)

@@ -230,14 +230,15 @@ class ManagedPinger:
     #           Type ArrayOf(Entities.SequenceInformation). Representation of the sequences you want to order.
     #           Sequence-Keys must be unique.
     #
-    #   @param vendorInf
+    #   @param vendor
     #           Type int. The key (VendorInformatin.Key) of the vendor where you want to do the order.
     #
     #   @result
     #           Type Entities.Order. Representation of the order.
     #
     #   @throws InvalidInputError
-    #           if input parameter are not like expected (see parameter definition above).
+    #           if input parameter are not like expected (see parameter definition above)
+    #           or if parameter vendor does not match any key of registered vendors.
     #
     #   @throws IsRunningError
     #           if the Pinger is already running. You have to wait until it is finished.
@@ -265,7 +266,7 @@ class CompositePinger(ManagedPinger):
 
         # Check Input with validator
         if(isinstance(vendorInformation, VendorInformation)):
-            Validator.validate(vendorInformation)):
+            Validator.validate(vendorInformation)
         else:
             raise InvalidInputError("Invalid Input: vendorInformation has not type VendorInformation")
 
@@ -298,7 +299,7 @@ class CompositePinger(ManagedPinger):
     #
     def searchOffers(self, seqInf, vendors=[]):
         # Check pinger is not running
-        if(isRunning()):
+        if(self.isRunning()):
             raise IsRunningError("Pinger is currently running and can not perform a other action")
 
         # check input: seqInf
@@ -322,7 +323,15 @@ class CompositePinger(ManagedPinger):
         for vh in self.vendorHandler:
             # Start searching if vendor is accepted by the filter
             if(len(vendors) == 0 or vh.vendor.key in vendors):
-                vh.handler.searchOffers(seqInf)
+                try:
+                    vh.handler.searchOffers(seqInf)
+                except InvalidInputError:
+                    # TODO store Message and return at getOffers()
+                    pass
+                except UnavailableError:
+                    pass
+                except IsRunningError:
+                    pass
 
             # Clear vendor, if not accepted by the filter
             else:
@@ -356,16 +365,19 @@ class CompositePinger(ManagedPinger):
 
             # If output if the VendorPinger is invalid, then ignore and continue
             if (not isinstance(seqOffers, list)):
-                print("Vendor", vh.vendor.name, "returns", type(seqOffers), "instead of list")
-            if (not Validator.validate(seqOffers)):
-                print("Vendor", vh.vendor.name, "returns invalid SequenceOffers after call getOffers()")
+                raise InvalidInputError("Vendor", vh.vendor.name, "returns", type(seqOffers), "instead of list")
+            
+            try:
+                Validator.validate(seqOffers)
+
+                for newSO in seqOffers:
+
+                    for curSO in self.sequenceVendorOffers:
+                        if newSO.sequenceInformation.key == curSO.sequenceInformation.key:
+                            curSO.vendorOffers.append(VendorOffers(vendorInformation=vh.vendor, offers=newSO.offers))
+            except InvalidInputError:
+                print("Vendor", vh.vendor.name, "returns invalid offers")
                 continue
-
-            for newSO in seqOffers:
-
-                for curSO in self.sequenceVendorOffers:
-                    if newSO.sequenceInformation.key == curSO.sequenceInformation.key:
-                        curSO.vendorOffers.append(VendorOffers(vendorInformation=vh.vendor, offers=newSO.offers))
 
         return self.sequenceVendorOffers
 
@@ -374,7 +386,7 @@ class CompositePinger(ManagedPinger):
     #
     def order(self, seqInf, vendor):
         # Check pinger is not running
-        if(isRunning()):
+        if(self.isRunning()):
             raise IsRunningError("Pinger is currently running and can not perform a other action")
 
         # check input: seqInf
@@ -391,11 +403,13 @@ class CompositePinger(ManagedPinger):
         for vh in self.vendorHandler:
             # Start searching if vendor is accepted by the filter
             if(vh.vendor.key == vendor):
-                return vh.handler.order(seqInf)
+                try:
+                    return vh.handler.order(seqInf)
+                except Exception:
+                    # TODO What should happen?
+                    pass
 
-        # TODO What is returned if vendor not found?
-        return None
-
+        raise InvalidInputError("Parameter vendor does not match any key of a registered vendor")
 #
 #   The Dummy Pinger is for testing.
 #

@@ -23,7 +23,7 @@ class GeneArtClient:
         self.timeout = timeout
         self.validAcc = self.authenticate()
         if(self.validAcc == False):
-            raise Exception('User Credentials are wrong')
+            raise AuthenticationError('User Credentials are wrong')
         
     # Defines the destination address for the action defined in the parameter     
     def destination(self, action):
@@ -173,12 +173,16 @@ class GeneArt(BasePinger):
         self.dnaStrings = dnaStrings 
         self.hqDnaStrings = hqDnaStrings
         self.timeout = timeout
-        
-        self.client = GeneArtClient(self.server, 
+       
+        try:
+            self.client = GeneArtClient(self.server, 
                       self.validate, self.status, self.addToCart,
                       self.upload, 
                       self.username, self.token, 
                       self.dnaStrings, self.hqDnaStrings, self.timeout)
+        except requests.exceptions.RequestException as err:
+            raise UnavailableError("Request got timeout") from err
+
 
         self.offers = []
         self.products = {"815010DE": 89.00,"815020DE": 109.00, "815030DE": 119.00, "815040DE": 182.00}
@@ -195,7 +199,7 @@ class GeneArt(BasePinger):
                 return { "idN": seqInf.key, "name": seqInf.name, "sequence": seqInf.sequence}
         else:
             type_name = seqInf.__class__.__name__
-            raise TypeError(f"Parameter must be of type SequenceInformation but is of type '{type_name}'.")
+            raise InvalidInputError(f"Parameter must be of type SequenceInformation but is of type '{type_name}'.")
     
     #
     #   Authenticates the instance
@@ -207,6 +211,8 @@ class GeneArt(BasePinger):
         response = {}
         try:
             response = self.client.authenticate()
+        except requests.exceptions.RequestException as err:
+            raise UnavailableError("Request got timeout") from err
         except:
             messageText = 'Wrong Credentials'
             return Message(MessageType.WRONG_CREDENTIALS, messageText)
@@ -220,14 +226,23 @@ class GeneArt(BasePinger):
     #                           SequenceOffer(seqInf[n], self.tempOffer)]
     #
     def searchOffers(self, seqInf):
+
+        # Check pinger is not running
+        if(self.isRunning()):
+            raise IsRunningError("Pinger is currently running and can not perform a other action")
+
         self.running = True
         offers = [] # Empty Offers List
         for product in "dnaStrings", "hqDnaStrings": # Two possible Product Types. 
             try:
                 response = self.projectValidate(seqInf, product)
-            except requests.ConnectionError:  # If request timeout             
-                offers.append(SequenceOffers(None, [Offer(messages = [Message(MessageType.API_CURRENTLY_UNAVAILABLE, "GeneArt API is not available")])]))
-                break
+            except requests.exceptions.RequestException as err:  # If request timeout             
+                self.running = False
+                raise UnavailableError from err
+            except InvalidInputError as  err:
+                self.running = False
+                raise InvalidInputError from err
+
             count = 0 # Count the sequences
             for seq in seqInf:
                 accepted = response["constructs"][count]["accepted"] # See if the API accepted the sequence
@@ -256,10 +271,8 @@ class GeneArt(BasePinger):
                         for reason in response["constructs"][count]["reasons"]:
                             messageText = messageText + str(reason) + "."
                         message = Message(MessageType.SYNTHESIS_ERROR, messageText)
-                        self.validator.validate(message)
 
                 seqOffer = SequenceOffers(seq, [Offer(price = price, turnovertime = turnOverTime, messages = [message])])
-                self.validator.validate(seqOffer)
                 offers.append(seqOffer)
                 count = count + 1
         self.offers = offers
@@ -321,7 +334,11 @@ class GeneArt(BasePinger):
     #
     def toCart(self, projectId):
         # Add the project to cart by calling the corresponding method.
-        response = self.client.toCart(projectId)
+        try:
+            response = self.client.toCart(projectId)
+        except requests.exceptions.RequestException as err:
+            raise UnavailableError("Request got Timeout") from err
+
         return response
         
     #
@@ -331,7 +348,11 @@ class GeneArt(BasePinger):
     #
     def statusReview(self, projectId):
         # Review the status of the project by calling the corresponding method.
-        response = self.client.statusReview(projectId)
+        try:
+            response = self.client.statusReview(projectId)
+        except requests.exceptions.RequestException as err:
+            raise UnavailableError("Request got timeout") from err
+
         return response
     #
     #   Desc:   Resets the pinger by

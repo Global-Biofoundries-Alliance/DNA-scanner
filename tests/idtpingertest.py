@@ -74,6 +74,10 @@ class TestIDTPinger(unittest.TestCase):
     # Check the BasePinger Functions methods.
     def test_pingerFunctions(self):
         print ("Start test for the methods searchOffers, getOffers and clear of " + self.name + ".")
+
+        with self.assertRaises(Entities.AuthenticationError): IDT.IDT(idt_username = "test", idt_password = "test", client_id = "test", client_secret = "test")
+        with self.assertRaises(Entities.InvalidInputError): self.pinger_example.searchOffers([1])
+
         listOfSequences = example_list
         self.assertEqual([], self.pinger_example.getOffers()) # Check if the newly created pinger has an empty list of offers.
         response = self.pinger_example.searchOffers(listOfSequences) # Search offers

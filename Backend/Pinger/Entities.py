@@ -362,3 +362,9 @@ class UnavailableError(Exception):
 #
 class IsRunningError(Exception):
     pass
+
+#
+#   Desc:   Authentication failed. Credentials are wrong or has not enough rights.
+#
+class AuthenticationError(Exception):
+    pass

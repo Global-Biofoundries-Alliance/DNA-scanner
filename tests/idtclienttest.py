@@ -28,7 +28,7 @@ class TestIDTClient(unittest.TestCase):
     timeout = 60
 
     # Object of type GeneArtClient used in these tests to communicate with the API.
-    idt = IDT.IDTClient(token_server, screening_server, idt_username, idt_password, client_id, client_secret, scope, token, timeout)
+    idt = IDT.IDTClient(token_server, screening_server, idt_username, idt_password, client_id, client_secret, scope, timeout = timeout)
 
     # Checks the authentication.
     def test_getToken(self):

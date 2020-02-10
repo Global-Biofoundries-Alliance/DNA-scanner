@@ -1,14 +1,11 @@
 # python imports
-import os
 
 import yaml
-
-
-# project imports
-from Pinger.Pinger import BasePinger, CompositePinger
+from Pinger.AdvancedMock import AdvancedMockPinger
 from Pinger.Entities import *
 from Pinger.GeneArt import GeneArt
-from Pinger.AdvancedMock import AdvancedMockPinger
+# project imports
+from Pinger.Pinger import BasePinger, CompositePinger
 
 
 #
@@ -93,15 +90,29 @@ class YmlConfigurator(Configurator):
     #   @result A pinger of type as specified by id and configured to the capacity of the config
     #
     def getPingerFromKey(self, id: str) -> BasePinger:
-        cfg_pinger = self.cfg["pinger"]
-        if id == "PINGER_TWIST":
-            return BasePinger()
-        if id == "PINGER_IDT":
-            return BasePinger()
-        if id == "PINGER_GENEART":
-            return GeneArt(cfg_pinger["geneart"]["username"], cfg_pinger["geneart"]["token"]),
-        if id == "PINGER_MOCK":
-            return AdvancedMockPinger()
-        else:
-            #TODO Invalid-Contact-Your-Admin-Pinger here
+        try:
+            cfg_pinger = self.cfg["pinger"]
+            if id == "PINGER_TWIST":
+                return BasePinger()
+            if id == "PINGER_IDT":
+                return BasePinger()
+            if id == "PINGER_GENEART":
+                cfg_geneart = cfg_pinger["geneart"]
+                return GeneArt(username=cfg_geneart["username"],
+                               token=cfg_geneart["token"],
+                               server=cfg_geneart["server"],
+                               validate=cfg_geneart["validate"],
+                               status=cfg_geneart["status"],
+                               addToCart=cfg_geneart["addToCart"],
+                               upload=cfg_geneart["upload"],
+                               dnaStrings=cfg_geneart["dnaStrings"],
+                               hqDnaStrings=cfg_geneart["hqDnaStrings"],
+                               timeout=cfg_geneart["timeout"])
+            if id == "PINGER_MOCK":
+                return AdvancedMockPinger()
+            else:
+                # TODO Invalid-Contact-Your-Admin-Pinger here
+                return None
+        except:
+            # TODO Invalid-Contact-Your-Admin-Pinger here
             return None

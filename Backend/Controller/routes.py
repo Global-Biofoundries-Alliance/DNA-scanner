@@ -1,5 +1,6 @@
 from Pinger.Pinger import *
 from flask import request, json
+import traceback
 
 from .app import app
 from .configurator import YmlConfigurator as Configurator
@@ -25,7 +26,7 @@ def get_vendors():
 
         return json.jsonify(vendors)
     except:
-        return {"error": "Encountered error while getting vendors"}
+        return {"error": "Encountered error while getting vendors\n" + traceback.format_exc()}
 
 
 #
@@ -50,7 +51,7 @@ def uploadFile():
         # Actually parse the file and save the sequences
         return service.setSequencesFromFile(request.files["seqfile"])
     except:
-        return {"error": "Encountered error during file upload"}
+        return {"error": "Encountered error during file upload\n" + traceback.format_exc()}
 
 
 #
@@ -80,7 +81,7 @@ def filterResults():
 
         return 'filter submission successful'
     except:
-        return {"error": "Encountered error setting filter"}
+        return {"error": "Encountered error setting filter\n" + traceback.format_exc()}
 
 
 #
@@ -103,5 +104,5 @@ def getSearchResults():
 
         # Get the results from the service
         return service.getResults(size=size, offset=offset)
-    except:
-        return {"error": "Encountered error while fetching search results"}
+    except Exception as error:
+        return {"error": "Encountered error while fetching search results\n" + traceback.format_exc()}

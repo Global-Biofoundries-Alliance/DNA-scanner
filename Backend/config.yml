@@ -1,3 +1,4 @@
+
 pinger:
     geneart:
         server: https://www.thermofisher.com/order/gene-design-ordering/api
@@ -7,6 +8,7 @@ pinger:
         upload: /upload/v1
         dnaStrings: enabled
         hqDnaStrings: enabled
+        timeout: 60
         username: YOUR_USERNAME
         token: YOUR_TOKEN
     twist:

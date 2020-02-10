@@ -118,12 +118,7 @@ class DefaultComparisonService(ComparisonService):
     # Sets the filter settings
     #
     def setFilter(self, filter: dict):
-        previousVendors = set()
-        if self.session.loadFilter():
-            previousVendors = set(self.session.loadFilter()['vendors'])
-
         self.session.storeFilter(filter)
-        currentVendors = set(filter['vendors'])
 
     #
     #   Returns all search results packed into a JSON response
@@ -135,27 +130,18 @@ class DefaultComparisonService(ComparisonService):
         sequences = self.session.loadSequences()
         seqoffers = self.session.loadResults()
 
-        vendorsToSearch = []
-        if "vendors" in self.session.loadFilter():
-            # Remove vendors for which results are already present
-            vendorsToSearch = set(self.session.loadFilter()["vendors"])
+        filter = self.session.loadFilter()
 
-            for seqoffer in seqoffers:
-                for vendoffer in seqoffer.vendorOffers:
-                    if vendoffer.offers:
-                        vendorsToSearch.remove(vendoffer.vendorInformation.key)
-        else:
+        if not seqoffers:
+            vendorsToSearch = []
             for vendor in self.config.vendors:
                 vendorsToSearch.append(vendor.key)
 
+            mainPinger = self.config.pinger
+            mainPinger.searchOffers(seqInf=sequences, vendors=vendorsToSearch)
+            seqoffers = mainPinger.getOffers()
 
-
-        # Search and retrieve offers for each sequence
-        mainPinger = self.config.pinger
-        mainPinger.searchOffers(seqInf=sequences, vendors=list(vendorsToSearch))
-        seqoffers.extend(mainPinger.getOffers())
-
-        self.session.storeResults(seqoffers)
+            self.session.storeResults(seqoffers)
 
         # build response from offers stored in the session
         result = buildSearchResponseJSON(filterOffers(self.session.loadFilter(), seqoffers), self.config.vendors,

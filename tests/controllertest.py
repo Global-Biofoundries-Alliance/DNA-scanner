@@ -102,10 +102,10 @@ class TestController(unittest.TestCase):
         self.client.post('/api/upload', content_type='multipart/form-data', data={'seqfile': handle})
         filter = '{"filter": {"vendors": [1],"price": [0, 10],"deliveryDays": 5,"preselectByPrice": True,"preselectByDeliveryDays": False}}'
         self.client.post('/api/filter', data=filter)
-        response = self.client.post('/api/results', content_type='multipart/form-data',
-                                    data={'size': 1000, 'offset': 0})
-        searchResult = eval(
-            response.data)  # Don't do this in production code, kids! (It's okay here since our own mock data is generally trusted)
+        searchResult = self.client.post('/api/results', content_type='multipart/form-data',
+                                    data={'size': 1000, 'offset': 0}).get_json()
+        #searchResult = eval(
+        #    response.data)  # Don't do this in production code, kids! (It's okay here since our own mock data is generally trusted)
         expectedCount = 0
         self.assertIn("size", searchResult.keys())
         self.assertIn("count", searchResult.keys())

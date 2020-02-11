@@ -1,5 +1,6 @@
 import os
 import tempfile
+from secrets import token_urlsafe
 from typing import List
 
 from Pinger.Entities import *
@@ -12,6 +13,7 @@ from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
 
 from .parser import parse
+from .session import InMemorySessionManager as SessionManager
 from .transformation import buildSearchResponseJSON, sequenceInfoFromObjects, filterOffers
 
 # This doesn't actually hold state so it can be global
@@ -30,7 +32,7 @@ validator = EntityValidator()
 #
 class ComparisonService:
 
-    def __init__(self, configurator, sessionManager):
+    def __init__(self, configurator):
         raise NotImplementedError
 
     #
@@ -66,10 +68,8 @@ class ComparisonService:
 
 class DefaultComparisonService(ComparisonService):
 
-    def __init__(self, configurator, sessionManager):
+    def __init__(self, configurator):
         self.config = configurator
-        self.session = sessionManager
-        self.session.storePinger(self.config.initializePinger())
 
     #
     # Parses an uploaded sequence file and stores the sequences in the session
@@ -95,8 +95,7 @@ class DefaultComparisonService(ComparisonService):
             # Cleanup
             os.remove(tpath)
 
-        # Clear results
-        self.session.storeResults([])
+
 
         return 'upload successful'
 
@@ -104,6 +103,8 @@ class DefaultComparisonService(ComparisonService):
     # Stores an explicit list of sequences in the session
     #
     def setSequences(self, sequences: List[SequenceInformation]):
+        session = self.getSession()
+
         # Input check
         realSequences = []
         for seq in sequences:
@@ -114,25 +115,31 @@ class DefaultComparisonService(ComparisonService):
                 continue
             realSequences.append(seq)
 
-        self.session.storeSequences(sequences)
+        session.storeSequences(sequences)
+
+        # Clear results
+        session.storeResults([])
 
     #
     # Sets the filter settings
     #
     def setFilter(self, filter: dict):
-        self.session.storeFilter(filter)
+        session = self.getSession()
+        session.storeFilter(filter)
 
     #
     #   Returns all search results packed into a JSON response
     #
     def getResults(self, size: int, offset: int):
-        if not self.session.loadSequences():
+        session = self.getSession()
+
+        if not session.loadSequences():
             return {'error': 'No sequences available'}
 
-        sequences = self.session.loadSequences()
-        seqoffers = self.session.loadResults()
+        sequences = session.loadSequences()
+        seqoffers = session.loadResults()
 
-        filter = self.session.loadFilter()
+        filter = session.loadFilter()
 
         # TODO implement lazy search
         if not seqoffers:
@@ -140,14 +147,14 @@ class DefaultComparisonService(ComparisonService):
             for vendor in self.config.vendors:
                 vendorsToSearch.append(vendor.key)
 
-            mainPinger = self.session.loadPinger()
+            mainPinger = session.loadPinger()
             mainPinger.searchOffers(seqInf=sequences, vendors=vendorsToSearch)
             # Wait for the pinger to finish the search
             while mainPinger.isRunning():
                 pass
             seqoffers = mainPinger.getOffers()
 
-            self.session.storeResults(seqoffers)
+            session.storeResults(seqoffers)
 
         # selection criterion; Default is selection by price
         selector = \
@@ -170,3 +177,15 @@ class DefaultComparisonService(ComparisonService):
     #
     def getVendors(self):
         return self.config.vendors
+
+    #
+    #   Returns the current session or creates it if it hasn't been already.
+    #
+    def getSession(self) -> SessionManager:
+        if "sessionKey" not in session_cookie:
+            session_cookie["sessionKey"] = token_urlsafe(64)
+        session = SessionManager(session_cookie["sessionKey"])
+
+        if not session.loadPinger():  # This indicates that the session is new
+            session.storePinger(self.config.initializePinger())
+        return session

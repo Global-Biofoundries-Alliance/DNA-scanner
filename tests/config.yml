@@ -1,3 +1,51 @@
+pinger:
+    geneart:
+        username: YOUR_USERNAME
+        token: YOUR_TOKEN
+    twist:
+        email: YOUR_EMAIL
+        username: YOUR_USERNAME
+        token: YOUR_TOKEN
+    idt:
+        idt_username: YOUR_USERNAME
+        idt_password: YOUR_PASSWORD
+        client_id: YOUR_CLIENT_ID
+        client_secret: YOUR_CLIENT_SECRET
+        scope: YOUR_SCOPE
+        token: YOUR_TOKEN
+
+controller:
+    vendors:
+        [
+        {
+            name: Twist Bioscience,
+            shortName: Twist,
+            pinger: PINGER_MOCK
+        },
+        {
+            name: IDT DNA,
+            shortName: IDT,
+            pinger: PINGER_MOCK
+        },
+        {
+            name: ThermoFisher Scientific GeneArt,
+            shortName: GeneArt,
+            pinger: PINGER_MOCK
+        }
+        ]
+
+review:
+    db: 
+        # https://docs.sqlalchemy.org/en/13/core/engines.html
+        dialect: mysql 
+        driver: 
+        username: KeBqDrxA8ScfD9l7x1QhSprU9LjZVL
+        password: z0uo6nK3l5thpph4uXykbMpwur6zgA
+        host: db
+        port: 3306
+        database: review
+
+# TODO: Remove after pinger tests on all branches deal with something else
 geneart:
     username: YOUR_USERNAME
     token: YOUR_TOKEN

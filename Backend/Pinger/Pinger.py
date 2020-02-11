@@ -213,7 +213,7 @@ class CompositePinger(ManagedPinger):
             return
 
         if(not isinstance(vendorPinger, BasePinger)):
-            print("Invalid Input: vendorPinger has not type BasePinger")
+            print("Invalid Input: vendorPinger has not type BasePinger but " + str(type(vendorPinger)))
             return
 
         # if vendor-key already exists, then override this vendorhandler

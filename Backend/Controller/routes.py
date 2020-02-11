@@ -1,139 +1,106 @@
-import tempfile
-from random import random, randint
-
-from flask import request, json, session
-from werkzeug.utils import secure_filename
+from Pinger.Pinger import *
+from flask import request, json
+import traceback
 
 from .app import app
-from .controllerutils import buildSearchResponseJSON, sequenceInfoFromObjects, filterOffers
-from .dataformats import Filter
-from .parser import parse
-from Pinger.Pinger import *
-from Pinger.AdvancedMock import AdvancedMockPinger
-from Pinger.GeneArt import GeneArt
+from .configurator import YmlConfigurator as Configurator
+from .service import DefaultComparisonService as Service
+from .session import InMemorySessionManager as SessionManager
 
-# All vendors known to the service
-vendors = [{"name": "TWIST DNA",
-            "shortName": "TWIST",
-            "key": 0},
-
-           {"name": "IDT DNA",
-            "shortName": "IDT",
-            "key": 1},
-
-           {"name": "GeneArt",
-            "shortName": "GenArt",
-            "key": 2}
-           ]
-
+# TODO Set string to point on Yml file
+# TODO Set SessionId
+# TODO use service in endpoints
+service = Service(Configurator("config.yml"), SessionManager("Meine SessionId"))
 
 #
 #   Provides clients with a complete list of vendors available
 #
 @app.route('/vendors', methods=['get'])
 def get_vendors():
-    return json.jsonify(vendors)
+    try:
+        # Convert vendors into form used by frontend
+        vendors = []
+        for vendor in service.getVendors():
+            vendors.append({"name": vendor.name, "shortName": vendor.shortName, "key": vendor.key})
+        return json.jsonify(vendors)
+    except:
+        return {"error": "Encountered error while getting vendors\n" + (traceback.format_exc() if __debug__ else "")}
 
 
+#
+#   Very simple endpoint to see if the service is up
+#
 @app.route('/ping')
 def hello_world():
     return 'pong'
 
 
+#
+#   Upload a sequence file to this endpoint.
+#   Currently supported formats are FASTA, GenBank and SBOL2.
+#
 @app.route('/upload', methods=['post'])
 def uploadFile():
-    if 'seqfile' not in request.files or request.files['seqfile'] == "":
-        return json.jsonify({'error': 'No file specified'})
-
-    # Store the input in a temporary file for the parser to process
-    tempf, tpath = tempfile.mkstemp('.' + secure_filename(request.files['seqfile'].filename).rsplit('.', 1)[1].lower())
-    request.files['seqfile'].save(tpath)
-
     try:
-        # Parse sequence file
-        objSequences = parse(tpath)
+        # Input checking
+        if 'seqfile' not in request.files or request.files['seqfile'] == "":
+            return json.jsonify({'error': 'No file specified'})
 
-        # Convert [SeqObject] to [SequenceInformation] and store them in the session
-        sequences = []
-        for seqInfo in sequenceInfoFromObjects(objSequences):
-            sequences.append({"key": seqInfo.key, "name": seqInfo.name, "sequence": seqInfo.sequence})
-        session["sequences"] = sequences
-
+        # Actually parse the file and save the sequences
+        return service.setSequencesFromFile(request.files["seqfile"])
     except:
-        return json.jsonify({'error': 'File format not supported'})
-
-    return 'upload successful'
+        return {"error": "Encountered error during file upload\n" + (traceback.format_exc() if __debug__ else "")}
 
 
+#
+#   Submit a filter as JSON here.
+#   See documentation for filter format
+#
 @app.route('/filter', methods=['POST'])
 def filterResults():
-    if not request.is_json:
-        return {'error': 'Invalid filter request: Data must be in JSON format'}
+    try:
+        # Check correct request format
+        if not request.is_json:
+            return {'error': 'Invalid filter request: Data must be in JSON format'}
 
-    request_json = request.get_json()
-    if 'filter' not in request_json:
-        return {'error': 'Request is missing filter attribute'}
+        # Check if there is even a filter present
+        request_json = request.get_json()
+        if 'filter' not in request_json:
+            return {'error': 'Request is missing filter attribute'}
 
-    # check if all keys are in the request
-    if any(key not in request_json['filter'] for key in
-           {'vendors', 'price', 'deliveryDays',\
-            'preselectByPrice', 'preselectByDeliveryDays'}):
-        return {'error': 'Malformed filter'}
+        # Check if all keys are in the request
+        if any(key not in request_json['filter'] for key in
+               {'vendors', 'price', 'deliveryDays',
+                'preselectByPrice', 'preselectByDeliveryDays'}):
+            return {'error': 'Malformed filter'}
 
-    previousVendors = set()
-    if 'filter' in session:
-        previousVendors = set(session['filter']['vendors'])
+        # Store the filter
+        service.setFilter(request_json["filter"])
 
-    session['filter'] = request_json['filter']
-    currentVendors = set(session['filter']['vendors'])
-
-    for vendor in previousVendors - currentVendors:
-        pass  # TODO: Remove filtered out vendor pingers
-
-    for vendor in currentVendors - previousVendors:
-        pass  # TODO: Add newly added vendor pingers
-
-    return 'filter submission successful'
+        return 'filter submission successful'
+    except:
+        return {"error": "Encountered error setting filter\n" + (traceback.format_exc() if __debug__ else "")}
 
 
+#
+#   call this route to receive the results gathered.
+#
+#   parameters per form data:
+#       size: The number of results to be shown (note that there might be less available
+#       offset: The index of the offer to start at (starting at 0)
+#
 @app.route('/results', methods=['POST'])
 def getSearchResults():
-    if 'sequences' not in session:
-        return {'error': 'No sequences available'}
+    try:
+        # Get size and offset fields if available and set them to default otherwise
+        size = 10000000  # Nobody has plates this large
+        offset = 0
+        if request.form.get('size'):
+            size = int(request.form.get('size'))
+        if request.form.get('offset'):
+            offset = int(request.form.get('offset'))
 
-    mainPinger = CompositePinger()
-    # Begin temporary testing placeholders
-    for id in range(0, len(vendors)):
-        dummyVendor = VendorInformation(vendors[id]["name"], vendors[id]["shortName"], id)
-        if id == 2:
-            # TODO Init Geneart-Pinger by config
-            pinger = GeneArt(username = 'username', token = 'token')
-            mainPinger.registerVendor(dummyVendor, pinger)
-        else:
-            mainPinger.registerVendor(dummyVendor, AdvancedMockPinger(dummyVendor))
-    # End temporary testing placeholders
-
-    sequences = []
-    for seq in session['sequences']:
-        sequences.append(SequenceInformation(key=seq["key"], name=seq["name"], sequence=seq["sequence"]))
-
-    # Search and retrieve offers for each sequence
-    mainPinger.searchOffers(sequences)
-    seqoffers = mainPinger.getOffers()
-
-    # Get size and offset fields if available and set them to default otherwise
-    size = len(sequences)
-    offset = 0
-    if request.form.get('size'):
-        size = int(request.form.get('size'))
-    if request.form.get('offset'):
-        offset = int(request.form.get('offset'))
-
-    # build response from offers stored in the session
-    if "filter" in session:
-        result = buildSearchResponseJSON(filterOffers(session["filter"], seqoffers), vendors, offset, size)
-    else:
-        result = buildSearchResponseJSON(seqoffers, vendors, offset, size)
-
-    return result
-
+        # Get the results from the service
+        return service.getResults(size=size, offset=offset)
+    except Exception as error:
+        return {"error": "Encountered error while fetching search results\n" + (traceback.format_exc() if __debug__ else "")}

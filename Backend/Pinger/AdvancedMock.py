@@ -20,6 +20,7 @@ class AdvancedMockPinger(BasePinger):
     #                           SequenceOffer(seqInf[n], self.tempOffer)]
     #
     def searchOffers(self, seqInf):
+
         messages = [Message(MessageType.SYNTHESIS_ERROR, "Could not synthesize the sequence"),
                     Message(MessageType.INVALID_SEQUENCE, "Invalid sequence"),
                     Message(MessageType.GC_PROBLEM, "Problematic GC"),
@@ -29,6 +30,7 @@ class AdvancedMockPinger(BasePinger):
                     Message(MessageType.UNABLE_TO_PRODUCE, "This vendor cannot synthesize this sequence"),
                     Message(MessageType.HOMOLOGY, "Homology problem")]
 
+        self.running = True
         self.offers = []
         counter = 0
         for s in seqInf:
@@ -45,11 +47,10 @@ class AdvancedMockPinger(BasePinger):
                 counter = counter + 1
                 tempOffers.append(tempOffer)
             self.offers.append(SequenceOffers(s, tempOffers))
-        self.running = True
+        self.running = False
 
     #
-    #   True if searchOffers called last
-    #   False if getOffers called last
+    # True iff a search is still running
     #
     def isRunning(self):
         return self.running
@@ -59,7 +60,6 @@ class AdvancedMockPinger(BasePinger):
     #   Every SequenceOffer contains the same offers. Default 1 see self.tempOffer and self.offers.
     #
     def getOffers(self):
-        self.running = False
         return self.offers
 
     def clear(self):

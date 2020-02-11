@@ -1,5 +1,6 @@
 from Pinger.Pinger import *
 from flask import request, json
+from flask import session as session_cookie
 import traceback
 
 from .app import app

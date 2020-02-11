@@ -7,6 +7,7 @@ from Pinger.Entities import VendorInformation, SequenceInformation
 from Pinger.Pinger import *
 from Pinger.Validator import EntityValidator
 from flask import json
+from flask import session as session_cookie
 from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
 
@@ -141,6 +142,9 @@ class DefaultComparisonService(ComparisonService):
 
             mainPinger = self.session.loadPinger()
             mainPinger.searchOffers(seqInf=sequences, vendors=vendorsToSearch)
+            # Wait for the pinger to finish the search
+            while mainPinger.isRunning():
+                pass
             seqoffers = mainPinger.getOffers()
 
             self.session.storeResults(seqoffers)

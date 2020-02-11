@@ -111,8 +111,6 @@ class TestController(unittest.TestCase):
             self.client.post('/api/filter', data=filter)
             searchResult = self.client.post('/api/results', content_type='multipart/form-data',
                                             data={'size': 1000, 'offset': 0}).get_json()
-            # searchResult = eval(
-            #    response.data)  # Don't do this in production code, kids! (It's okay here since our own mock data is generally trusted)
             expectedCount = 0
             self.assertIn("size", searchResult.keys())
             self.assertIn("count", searchResult.keys())

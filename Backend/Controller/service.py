@@ -68,6 +68,7 @@ class DefaultComparisonService(ComparisonService):
     def __init__(self, configurator, sessionManager):
         self.config = configurator
         self.session = sessionManager
+        self.session.storePinger(self.config.initializePinger())
 
     #
     # Parses an uploaded sequence file and stores the sequences in the session
@@ -138,7 +139,7 @@ class DefaultComparisonService(ComparisonService):
             for vendor in self.config.vendors:
                 vendorsToSearch.append(vendor.key)
 
-            mainPinger = self.config.pinger
+            mainPinger = self.session.loadPinger()
             mainPinger.searchOffers(seqInf=sequences, vendors=vendorsToSearch)
             seqoffers = mainPinger.getOffers()
 

@@ -146,9 +146,13 @@ class DefaultComparisonService(ComparisonService):
 
         # selection criterion; Default is selection by price
         selector = \
-            (lambda a, b: a if a["turnoverTime"] < b["turnoverTime"] else b) \
+            (lambda a, b: a if (a["turnoverTime"] < b["turnoverTime"]) \
+                               or (a["turnoverTime"] == b["turnoverTime"] and a["price"] < b["price"]) \
+                else b) \
                 if "preselectByDeliveryDays" in filter and filter["preselectByDeliveryDays"] else \
-                (lambda a, b: a if a["price"] < b["price"] else b)
+                (lambda a, b: a if (a["price"] < b["price"]) \
+                                   or (a["price"] == b["price"] and a["turnoverTime"] < b["turnoverTime"]) \
+                    else b)
 
         # build response from offers stored in the session
         result = buildSearchResponseJSON(filterOffers(filter, seqoffers), self.config.vendors, selector,

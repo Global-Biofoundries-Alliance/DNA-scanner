@@ -88,11 +88,14 @@ class EntityValidator:
 
         # VendorOffers
         elif isinstance(obj, VendorOffers):
+            # vendorInformation
             if isinstance(obj.vendorInformation, vendorInformation):
                 if (not self.validate(obj.vendorInformation)):
                     return raiseFalse("VendorOffers contains invalid VendorInformation")
             else:
                 return raiseFalse("vendorInformation is not of type VendorInformation")
+
+            # offers
             if isinstance(obj.offers, list):
                 for offer in obj.offers:
                     if isinstance(offer, Offer):
@@ -102,6 +105,17 @@ class EntityValidator:
                         return raiseFalse("one object in offers is not of type Offer")
             else:
                 return raiseFalse("offers is not of type List")
+
+            # messages
+            if isinstance(obj.messages, list):
+                for message in obj.messages:
+                    if isinstance(message, Message):
+                        if (not self.validate(message)):
+                            return raiseFalse("one message in messages is invalid")
+                    else:
+                        return raiseFalse("one object in message is not of type Message")
+            else:
+                return raiseFalse("messages is not of type List")
         
         # Offer
         elif isinstance(obj, Offer):
@@ -135,10 +149,38 @@ class EntityValidator:
 
         # List
         elif isinstance(obj, list):
-            # TODO Check that all elements in the list have the same time and that keys are unique
+            # Check that all elements in the list have the same type and that keys are unique
+            
+            elemType = None
+            firstElem = True
+            keys = []
+
+            # For every element in the list...
             for elem in obj:
+                # ... check that it is valide
                 if (not self.validate(elem)):
                     return self.raiseFalse("List contains invalid elements")
+
+                if firstElem:
+                    # Take the type of the first element to compare with the other types
+                    elemType = type(elem)
+                    firstElem = False
+                elif elemType != type(elem):
+                    # Can be ok because of polymorphism, but currently there is no reason
+                    # Maybe remove this later
+                    return self.raiseFalse("List contains various types")
+
+                # Check that keys are unique for specific types
+                if isinstance(elem, SequenceInformation):
+                    if elem.key in keys:
+                        return self.raiseFalse("Identifier is not unique")
+
+                    keys.append(elem.key)
+                elif isinstance(elem, VendorInformation):
+                    if elem.key in keys:
+                        return self.raiseFalse("Identifier is not unique")
+
+                    keys.append(elem.key)
 
         else:
             return self.raiseFalse("The object to validate has a not supported type")

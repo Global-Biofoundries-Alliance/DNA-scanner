@@ -134,5 +134,7 @@ class TestCompositePinger(unittest.TestCase):
         self.assertEqual(2, len(p.getOffers()))
         self.assertEqual(0, len(p.getOffers()[0].vendorOffers))
 
+# TODO Test Vendor Messages (e.g. Temporary Unavailable)
+
 if __name__ == '__main__':
     unittest.main()

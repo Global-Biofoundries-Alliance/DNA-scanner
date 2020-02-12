@@ -230,54 +230,62 @@ class GeneArt(BasePinger):
         # Check pinger is not running
         if(self.isRunning()):
             raise IsRunningError("Pinger is currently running and can not perform a other action")
-
-        self.running = True
-        offers = [] # Empty Offers List
-        for product in "dnaStrings", "hqDnaStrings": # Two possible Product Types. 
-            try:
-                response = self.projectValidate(seqInf, product)
-            except requests.exceptions.RequestException as err:  # If request timeout             
-                self.running = False
-                raise UnavailableError from err
-            except InvalidInputError as  err:
-                self.running = False
-                raise InvalidInputError from err
-
-            count = 0 # Count the sequences
-            for seq in seqInf:
-                accepted = response["constructs"][count]["accepted"] # See if the API accepted the sequence
-                if accepted == True:
-                    messageText = product + "_" + "accepted"
-                    message = Message(MessageType.INFO, messageText)
-                    turnOverTime = response["constructs"][count]["eComInfo"]["productionDaysEstimated"]
-                    productCode = response["constructs"][count]["eComInfo"]["lineItems"][0]["sku"]
-                    price = Price(amount = self.products[productCode], customerSpecific=True)
-                else:
-                    turnOverTime = -1
-                    price = Price()
-                    if(len(response["constructs"][count]["reasons"]) == 1):
-                        reason = response["constructs"][count]["reasons"][0]
-                        if (reason == "length"):
-                            messageText = product + "_" + "rejected_" + str(reason) + "."
-                            message = Message(MessageType.INVALID_LENGTH, messageText)
-                        if (reason == "homology"):
-                            messageText = product + "_" + "rejected_" + str(reason) + "."
-                            message = Message(MessageType.HOMOLOGY, messageText)
-                        if (reason == "problems"):
-                            messageText = product + "_" + "rejected_" + str(reason) + "."
-                            message = Message(MessageType.INVALID_LENGTH, messageText)
-                    else:
-                        messageText = product + "_" + "rejected_"
-                        for reason in response["constructs"][count]["reasons"]:
-                            messageText = messageText + str(reason) + "."
-                        message = Message(MessageType.SYNTHESIS_ERROR, messageText)
-
-                seqOffer = SequenceOffers(seq, [Offer(price = price, turnovertime = turnOverTime, messages = [message])])
-                offers.append(seqOffer)
-                count = count + 1
-        self.offers = offers
-        self.running = False
         
+        try: 
+            self.running = True
+            offers = [] # Empty Offers List
+            for product in "dnaStrings", "hqDnaStrings": # Two possible Product Types. 
+                try:
+                    response = self.projectValidate(seqInf, product)
+                except requests.exceptions.RequestException as err:  # If request timeout             
+                    self.running = False
+                    raise UnavailableError from err
+    
+                count = 0 # Count the sequences
+                for seq in seqInf:
+                    accepted = response["constructs"][count]["accepted"] # See if the API accepted the sequence
+                    if accepted == True:
+                        messageText = product + "_" + "accepted"
+                        message = Message(MessageType.INFO, messageText)
+                        turnOverTime = response["constructs"][count]["eComInfo"]["productionDaysEstimated"]
+                        productCode = response["constructs"][count]["eComInfo"]["lineItems"][0]["sku"]
+                        price = Price(amount = self.products[productCode], customerSpecific=True)
+                    else:
+                        turnOverTime = -1
+                        price = Price()
+                        if(len(response["constructs"][count]["reasons"]) == 1):
+                            reason = response["constructs"][count]["reasons"][0]
+                            if (reason == "length"):
+                                messageText = product + "_" + "rejected_" + str(reason) + "."
+                                message = Message(MessageType.INVALID_LENGTH, messageText)
+                            if (reason == "homology"):
+                                messageText = product + "_" + "rejected_" + str(reason) + "."
+                                message = Message(MessageType.HOMOLOGY, messageText)
+                            if (reason == "problems"):
+                                messageText = product + "_" + "rejected_" + str(reason) + "."
+                                message = Message(MessageType.INVALID_LENGTH, messageText)
+                        else:
+                            messageText = product + "_" + "rejected_"
+                            for reason in response["constructs"][count]["reasons"]:
+                                messageText = messageText + str(reason) + "."
+                            message = Message(MessageType.SYNTHESIS_ERROR, messageText)
+    
+                    seqOffer = SequenceOffers(seq, [Offer(price = price, turnovertime = turnOverTime, messages = [message])])
+                    offers.append(seqOffer)
+                    count = count + 1
+            self.offers = offers
+            self.running = False
+        except InvalidInputError as err:
+            self.running = False
+            raise InvalidInputError from err
+        except requests.exceptions.RequestException as err:
+            raise UnavailableError("Request got a error") from err
+        except UnavailableError as err:
+            self.running = False
+            raise UnavailableError from err
+        except Exception as err:
+            self.running = False
+            raise UnavailableError from err    
         
     
     # 

@@ -166,6 +166,8 @@ class IDT(BasePinger):
         except InvalidInputError as err:
             self.running = False
             raise InvalidInputError from err
+        except requests.exceptions.RequestException as err:
+            raise UnavailableError("Request got a error") from err
         except UnavailableError as err:
             self.running = False
             raise UnavailableError from err

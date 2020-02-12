@@ -95,8 +95,6 @@ class DefaultComparisonService(ComparisonService):
             # Cleanup
             os.remove(tpath)
 
-
-
         return 'upload successful'
 
     #
@@ -109,16 +107,25 @@ class DefaultComparisonService(ComparisonService):
         realSequences = []
         for seq in sequences:
             if not isinstance(seq, SequenceInformation):
-                print("Invalid input in DefaultComparisionService.setSequences: Type is not SequenceInformation.")
+                print("Invalid input in DefaultComparisonService.setSequences: Type is not SequenceInformation.")
                 continue
             if not validator.validate(seq):
                 continue
             realSequences.append(seq)
 
-        session.storeSequences(sequences)
+        session.storeSequences(realSequences)
+
+        # Prepare template offer list
+        seqoffers = []
+        for seq in realSequences:
+            seqoff = SequenceVendorOffers(seq, [])
+            for vendor in self.config.vendors:
+                 seqoff.vendorOffers.append(VendorOffers(vendor, []))
+            seqoffers.append(seqoff)
 
         # Clear results
-        session.storeResults([])
+        session.storeResults(seqoffers)
+        session.resetSearchedVendors()
 
     #
     # Sets the filter settings
@@ -141,18 +148,35 @@ class DefaultComparisonService(ComparisonService):
 
         filter = session.loadFilter()
 
-        # TODO implement lazy search
-        if not seqoffers:
-            vendorsToSearch = []
+        vendorsToSearch = []
+        if "vendors" in filter:
+            for key in filter["vendors"]:
+                if key not in session.loadSearchedVendors():
+                    vendorsToSearch.append(key)
+        else:
             for vendor in self.config.vendors:
-                vendorsToSearch.append(vendor.key)
+                if vendor.key not in session.loadSearchedVendors():
+                    vendorsToSearch.append(vendor.key)
 
+        if vendorsToSearch:
             mainPinger = session.loadPinger()
             mainPinger.searchOffers(seqInf=sequences, vendors=vendorsToSearch)
             # Wait for the pinger to finish the search
             while mainPinger.isRunning():
                 pass
-            seqoffers = mainPinger.getOffers()
+            newoffers = mainPinger.getOffers()
+            session.addSearchedVendors(vendorsToSearch)
+            # TODO optimize the hell out of this
+            for seqoff in seqoffers:
+                for newseqoff in newoffers:
+                    if seqoff.sequenceInformation.key == newseqoff.sequenceInformation.key:
+                        for vendoff in seqoff.vendorOffers:
+                            if vendoff.vendorInformation.key not in vendorsToSearch:
+                                continue
+                            for newvendoff in newseqoff.vendorOffers:
+                                if vendoff.vendorInformation.key == newvendoff.vendorInformation.key:
+                                    vendoff.offers = newvendoff.offers
+
 
             session.storeResults(seqoffers)
 

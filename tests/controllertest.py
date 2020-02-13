@@ -1,9 +1,12 @@
 import unittest
-from sys import maxsize
 from itertools import combinations
+from sys import maxsize
 
 from Controller.app import app
 from Controller.configurator import YmlConfigurator as Configurator
+from Controller.session import InMemorySessionManager
+from Pinger.Entities import VendorInformation, SequenceInformation, SequenceVendorOffers
+from Pinger.AdvancedMock import AdvancedMockPinger
 from flask import json
 
 
@@ -14,7 +17,6 @@ class TestController(unittest.TestCase):
     def setUp(self) -> None:
         app.config['TESTING'] = True
 
-        #TODO make sure the application to be tested uses the same config
         self.config = Configurator("config.yml")
 
         with app.test_client() as client:
@@ -23,8 +25,6 @@ class TestController(unittest.TestCase):
         self.vendors = []
         for vendor in self.config.vendors:
             self.vendors.append(vendor.key)
-
-
 
     def tearDown(self) -> None:
         pass
@@ -77,8 +77,9 @@ class TestController(unittest.TestCase):
             for r in range(1, len(self.vendors)):
                 for vendorTuple in combinations(self.vendors, r):
                     vendors = list(vendorTuple)
-                    filter = {"filter": {"vendors": vendors, "price": [0, 10], "deliveryDays": 50, "preselectByPrice": True, \
-                                         "preselectByDeliveryDays": False}}
+                    filter = {
+                        "filter": {"vendors": vendors, "price": [0, 10], "deliveryDays": 50, "preselectByPrice": True, \
+                                   "preselectByDeliveryDays": False}}
                     response = self.client.post('/api/filter', content_type='application/json', data=json.dumps(filter))
                     self.assertIn(b"filter submission successful", response.data)
                     response_json = self.client.post('/api/results', content_type='multipart/form-data',
@@ -91,7 +92,8 @@ class TestController(unittest.TestCase):
 
                     # test filtering vendors with redundant and invalid ones
                     tainted_vendors = vendors + vendors + [-872150987209, 666, -1]
-                    filter = {"filter": {"vendors": tainted_vendors, "price": [0, 10], "deliveryDays": 50, "preselectByPrice": True, \
+                    filter = {"filter": {"vendors": tainted_vendors, "price": [0, 10], "deliveryDays": 50,
+                                         "preselectByPrice": True, \
                                          "preselectByDeliveryDays": False}}
                     response = self.client.post('/api/filter', content_type='application/json', data=json.dumps(filter))
                     self.assertIn(b"filter submission successful", response.data)
@@ -101,9 +103,8 @@ class TestController(unittest.TestCase):
                     for res in response_json["result"]:
                         for vendor in res["vendors"]:
                             # Data present implies relevant vendor
-                            self.assertTrue(not vendor["offers"] or vendor["key"] in vendors, "Vendor " + str(vendor["key"]) + " not in " + str(vendors))
-
-
+                            self.assertTrue(not vendor["offers"] or vendor["key"] in vendors,
+                                            "Vendor " + str(vendor["key"]) + " not in " + str(vendors))
 
             # test filtering by price
             filter = {
@@ -223,7 +224,6 @@ class TestController(unittest.TestCase):
                              "\n\nresponse = " + str(response.data) + "\n\n\nresponse2 = " + str(response2.data))
 
             responseDB = {}
-
             for r in range(1, len(self.vendors)):
                 for vendors in combinations(self.vendors, r):
                     filter = {
@@ -275,8 +275,9 @@ class TestController(unittest.TestCase):
                     # Test consistency between subsequent query results without filter change
                     response = self.client.post('/api/results', content_type='multipart/form-data',
                                                 data={'size': 1000, 'offset': 0})
-                    self.assertEqual(responseDB[vendors], response.data, "\n\nresponse:\n" + str(response.data) + "\n\n\nresponse from before:\n" + str(response0.data))
-
+                    self.assertEqual(responseDB[vendors], response.data,
+                                     "\n\nresponse:\n" + str(response.data) + "\n\n\nresponse from before:\n" + str(
+                                         responseDB[vendors]))
 
     def test_preselection(self) -> None:
         print("Testing preselection")
@@ -303,7 +304,7 @@ class TestController(unittest.TestCase):
                 best_secondary = maxsize - 1
                 selected = maxsize
                 selected_secondary = maxsize
-                offersPresent = False           #Since these are fuzzing tests there is no guarantee that there will be offers to preselect
+                offersPresent = False  # Since these are fuzzing tests there is no guarantee that there will be offers to preselect
                 for vendoffers in seqoffer["vendors"]:
                     for offer in vendoffers["offers"]:
                         offersPresent = True
@@ -312,7 +313,8 @@ class TestController(unittest.TestCase):
                                 best = offer["price"]
                                 best_secondary = offer["turnoverTime"]
                         if offer["selected"]:
-                            self.assertEqual(selected, maxsize)     #If this fails there was probably more than one offer selected
+                            self.assertEqual(selected,
+                                             maxsize)  # If this fails there was probably more than one offer selected
                             selected = offer["price"]
                             selected_secondary = offer["turnoverTime"]
                 if offersPresent:
@@ -351,6 +353,89 @@ class TestController(unittest.TestCase):
                             selected_secondary = offer["price"]
                 self.assertEqual(selected, best)
                 self.assertEqual(selected_secondary, best_secondary)
+
+    def test_in_memory_session(self) -> None:
+        print("Testing in-memory session management")
+
+        binary_sequences = [SequenceVendorOffers(SequenceInformation("0", "0", "0"), []),
+                            SequenceVendorOffers(SequenceInformation("1", "1", "1"), [])]
+
+        # Set up a few sessions and store copies for later reference
+        n_sessions = 32
+        sessions = []
+        for i in range(0, n_sessions):
+            session = InMemorySessionManager(i)
+            session.storePinger(AdvancedMockPinger(VendorInformation(str(i), str(i), i)))
+            session.storeSequences([SequenceInformation(str(i), str(i), str(i))])
+            session.storeFilter({"vendors": [i], "price": [0, i], "deliveryDays": i,
+                                 "preselectByPrice": i % 2 == 0,
+                                 "preselectByDeliveryDays": i % 2 == 1})
+            seqoffers = []
+            shifter = i
+            while shifter:
+                seqoffers.append(binary_sequences[shifter & 1])
+                shifter = shifter >> 1
+            session.storeResults(seqoffers)
+            session.addSearchedVendors([i])
+            session.addSearchedVendors([i - 1, i + 1])
+
+            sessions.append(session)
+
+        # Check if the values stored in the sessions are still the same as in the reference sessions
+        for i in range(0, n_sessions):
+            ref_session = sessions[i]
+            session = InMemorySessionManager(i)
+            self.assertTrue(session.loadPinger())
+            self.assertEqual(ref_session.loadPinger(), session.loadPinger())
+
+            self.assertTrue(session.loadSequences())
+            self.assertEqual(ref_session.loadSequences(), session.loadSequences())
+
+            self.assertTrue(session.loadFilter())
+            self.assertEqual(ref_session.loadFilter(), session.loadFilter())
+
+            self.assertEqual(ref_session.loadResults(), session.loadResults())
+
+            self.assertTrue(session.loadSearchedVendors())
+            self.assertEqual(ref_session.loadSearchedVendors(), session.loadSearchedVendors())
+
+        # Check if the values stored in the sessions are actually the ones intended
+        for i in range(0, n_sessions):
+            session = InMemorySessionManager(i)
+            pinger = session.loadPinger()
+            self.assertEqual(pinger.vendorInformation.name, str(i))
+            self.assertEqual(pinger.vendorInformation.shortName, str(i))
+            self.assertEqual(pinger.vendorInformation.key, i)
+
+            sequence = session.loadSequences()[0]
+            self.assertEqual(sequence.key, str(i))
+            self.assertEqual(sequence.name, str(i))
+            self.assertEqual(sequence.sequence, str(i))
+
+
+            filter = session.loadFilter()
+            self.assertEquals(filter, {"vendors": [i], "price": [0, i], "deliveryDays": i,
+                                 "preselectByPrice": i % 2 == 0,
+                                 "preselectByDeliveryDays": i % 2 == 1})
+
+            #The offers are a bit more elaborate since it was i encoded in binary
+            seqoffers = []
+            shifter = i
+            while shifter:
+                seqoffers.append(binary_sequences[shifter & 1])
+                shifter = shifter >> 1
+            self.assertEqual(session.loadResults(), seqoffers)
+
+            searchedVendors = session.loadSearchedVendors()
+            self.assertIn(i - 1, searchedVendors)
+            self.assertIn(i, searchedVendors)
+            self.assertIn(i + 1, searchedVendors)
+
+
+
+
+
+
 
 
 if __name__ == '__main__':

@@ -18,6 +18,7 @@ class SessionManager:
         self.pinger = None
         self.filter = {}
         self.results = []
+        self.searchedVendors = []
 
     #
     #   Desc:   Loades the Pinger out of the session-store
@@ -74,6 +75,24 @@ class SessionManager:
         raise NotImplementedError
 
     #
+    #   Desc: Adds a list of vendors that have already been searched
+    #
+    def addSearchedVendors(self, vendors: List[int]):
+        raise NotImplementedError
+
+    #
+    #   Desc: Returns a list of vendors that have already been searched
+    #
+    def loadSearchedVendors(self) -> List[int]:
+        raise NotImplementedError
+
+    #
+    #   Desc: Sets all vendors to not searched yet
+    #
+    def resetSearchedVendors(self):
+        raise NotImplementedError
+
+    #
     #   Desc:   Free memory by Free all or old sessions. Can
     #           be different for every StoreManager.
     #
@@ -91,6 +110,7 @@ class SingleSession(SessionManager):
         self.pinger = None
         self.filter = {}
         self.results = []
+        self.searchedVendors = []
 
     #
     #   Desc:   Loades the Pinger out of the session-store
@@ -145,6 +165,24 @@ class SingleSession(SessionManager):
     #
     def storeResults(self, results: List[SequenceVendorOffers]) -> None:
         self.results = results
+
+    #
+    #   Desc: Adds a list of vendors that have already been searched
+    #
+    def addSearchedVendors(self, vendors: List[int]):
+        self.searchedVendors.extend(vendors)
+
+    #
+    #   Desc: Returns a list of vendors that have already been searched
+    #
+    def loadSearchedVendors(self) -> List[int]:
+        return self.searchedVendors
+
+    #
+    #   Desc: Sets all vendors to not searched yet
+    #
+    def resetSearchedVendors(self):
+        self.searchedVendors = []
 
     def free(self):
         self.sequences = []
@@ -220,6 +258,24 @@ class InMemorySessionManager(SessionManager):
     #
     def storeResults(self, results: List[SequenceVendorOffers]) -> None:
         self.session.storeResults(results)
+
+    #
+    #   Desc: Adds a list of vendors that have already been searched
+    #
+    def addSearchedVendors(self, vendors: List[int]):
+        self.session.addSearchedVendors(vendors)
+
+    #
+    #   Desc: Returns a list of vendors that have already been searched
+    #
+    def loadSearchedVendors(self) -> List[int]:
+        return self.session.loadSearchedVendors()
+
+    #
+    #   Desc: Sets all vendors to not searched yet
+    #
+    def resetSearchedVendors(self):
+        self.session.resetSearchedVendors()
 
     #
     #   Desc: Frees all sessions

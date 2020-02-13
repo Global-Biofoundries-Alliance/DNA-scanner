@@ -1,16 +1,17 @@
+import traceback
+
 from Pinger.Pinger import *
 from flask import request, json
-import traceback
 
 from .app import app
 from .configurator import YmlConfigurator as Configurator
 from .service import DefaultComparisonService as Service
-from .session import InMemorySessionManager as SessionManager
 
 # TODO Set string to point on Yml file
 # TODO Set SessionId
 # TODO use service in endpoints
-service = Service(Configurator("config.yml"), SessionManager("Meine SessionId"))
+service = Service(Configurator("config.yml"))
+
 
 #
 #   Provides clients with a complete list of vendors available
@@ -103,4 +104,5 @@ def getSearchResults():
         # Get the results from the service
         return service.getResults(size=size, offset=offset)
     except Exception as error:
-        return {"error": "Encountered error while fetching search results\n" + (traceback.format_exc() if __debug__ else "")}
+        return {"error": "Encountered error while fetching search results\n" + (
+            traceback.format_exc() if __debug__ else "")}

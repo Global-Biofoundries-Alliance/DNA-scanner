@@ -5,7 +5,7 @@ from Pinger.AdvancedMock import AdvancedMockPinger
 from Pinger.Entities import *
 from Pinger.GeneArt import GeneArt
 # project imports
-from Pinger.Pinger import BasePinger, CompositePinger
+from Pinger.Pinger import BasePinger, ManagedPinger, CompositePinger
 
 
 #
@@ -24,7 +24,7 @@ class Configurator:
     #   @result
     #           Returns a managedPinger with registered BasePingers.
     #
-    def initializePinger(self):
+    def initializePinger(self) -> ManagedPinger:
         raise NotImplementedError
 
 
@@ -50,7 +50,6 @@ class YmlConfigurator(Configurator):
     #           if the YAML file is invalid
     def __init__(self, filename) -> None:
         self.vendors = []
-        self.pinger = CompositePinger()
         self.cfg = None
 
         # Acquire config from YAML file
@@ -68,18 +67,24 @@ class YmlConfigurator(Configurator):
                 self.vendors.append(vendorInfo)
                 pingerIDTuples.append((vendorInfo, vendor["pinger"]))
                 key = key + 1
-            self.initializePinger(pingerIDTuples)
 
     #
     #   see Configurator.initializePinger
     #
-    #   @param pingers list of pinger configurations; Format: List(Tuple(VendorInformation, string))
-    #                   where string is is a valid pinger identifier
-    #
-    def initializePinger(self, pingers=[]) -> None:
-        for pingerInfo in pingers:
+    def initializePinger(self) -> ManagedPinger:
+        cfg_controller = self.cfg["controller"]
+        pinger = CompositePinger()
+        pingerIDTuples = []
+        key = 0
+        for vendor in cfg_controller["vendors"]:
+            vendorInfo = VendorInformation(name=vendor["name"], shortName=vendor["shortName"], key=key)
+            pingerIDTuples.append((vendorInfo, vendor["pinger"]))
+            key = key + 1
+
+        for pingerInfo in pingerIDTuples:
             newPinger = self.getPingerFromKey(pingerInfo[1])
-            self.pinger.registerVendor(vendorInformation=pingerInfo[0], vendorPinger=newPinger)
+            pinger.registerVendor(vendorInformation=pingerInfo[0], vendorPinger=newPinger)
+        return pinger
 
     #
     #   Gets the right pinger for a given pinger identifier.

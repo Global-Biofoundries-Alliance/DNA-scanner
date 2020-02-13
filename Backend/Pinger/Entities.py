@@ -228,7 +228,7 @@ class VendorOffers:
 #           Type Price. Represents the price of the offer. If less then 0, then no price is available 
 #           or price is unknown.
 #
-#   @attribute turonvertime
+#   @attribute turnovertime
 #           Type int. Turnovertime is the number of days it needs to synthesize the sequence. If less then 
 #           0, then no turnovertime is available or turnovertime is unknown.
 #

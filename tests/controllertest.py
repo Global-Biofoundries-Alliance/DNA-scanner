@@ -1,7 +1,9 @@
 import unittest
 from sys import maxsize
+from itertools import combinations
 
 from Controller.app import app
+from Controller.configurator import YmlConfigurator as Configurator
 from flask import json
 
 
@@ -12,8 +14,17 @@ class TestController(unittest.TestCase):
     def setUp(self) -> None:
         app.config['TESTING'] = True
 
+        #TODO make sure the application to be tested uses the same config
+        self.config = Configurator("config.yml")
+
         with app.test_client() as client:
             self.client = client
+
+        self.vendors = []
+        for vendor in self.config.vendors:
+            self.vendors.append(vendor.key)
+
+
 
     def tearDown(self) -> None:
         pass
@@ -63,17 +74,36 @@ class TestController(unittest.TestCase):
             self.assertIn(b'Invalid filter request: Data must be in JSON format', response.data)
 
             # test filtering vendors
-            filter = {"filter": {"vendors": [1], "price": [0, 10], "deliveryDays": 50, "preselectByPrice": True, \
-                                 "preselectByDeliveryDays": False}}
-            response = self.client.post('/api/filter', content_type='application/json', data=json.dumps(filter))
-            self.assertIn(b"filter submission successful", response.data)
-            response_json = self.client.post('/api/results', content_type='multipart/form-data',
-                                             data={'size': 1000, 'offset': 0}).get_json()
+            for r in range(1, len(self.vendors)):
+                for vendorTuple in combinations(self.vendors, r):
+                    vendors = list(vendorTuple)
+                    filter = {"filter": {"vendors": vendors, "price": [0, 10], "deliveryDays": 50, "preselectByPrice": True, \
+                                         "preselectByDeliveryDays": False}}
+                    response = self.client.post('/api/filter', content_type='application/json', data=json.dumps(filter))
+                    self.assertIn(b"filter submission successful", response.data)
+                    response_json = self.client.post('/api/results', content_type='multipart/form-data',
+                                                     data={'size': 1000, 'offset': 0}).get_json()
 
-            for res in response_json["result"]:
-                for vendor in res["vendors"]:
-                    # Data present implies vendor 1
-                    self.assertTrue(not vendor["offers"] or vendor["key"] == 1)
+                    for res in response_json["result"]:
+                        for vendor in res["vendors"]:
+                            # Data present implies relevant vendor
+                            self.assertTrue(not vendor["offers"] or vendor["key"] in vendors)
+
+                    # test filtering vendors with redundant and invalid ones
+                    tainted_vendors = vendors + vendors + [-872150987209, 666, -1]
+                    filter = {"filter": {"vendors": tainted_vendors, "price": [0, 10], "deliveryDays": 50, "preselectByPrice": True, \
+                                         "preselectByDeliveryDays": False}}
+                    response = self.client.post('/api/filter', content_type='application/json', data=json.dumps(filter))
+                    self.assertIn(b"filter submission successful", response.data)
+                    response_json = self.client.post('/api/results', content_type='multipart/form-data',
+                                                     data={'size': 1000, 'offset': 0}).get_json()
+
+                    for res in response_json["result"]:
+                        for vendor in res["vendors"]:
+                            # Data present implies relevant vendor
+                            self.assertTrue(not vendor["offers"] or vendor["key"] in vendors, "Vendor " + str(vendor["key"]) + " not in " + str(vendors))
+
+
 
             # test filtering by price
             filter = {
@@ -192,103 +222,61 @@ class TestController(unittest.TestCase):
             self.assertEqual(response.data, response2.data,
                              "\n\nresponse = " + str(response.data) + "\n\n\nresponse2 = " + str(response2.data))
 
-            # Create data results containing exactly one vendor
-            filter = {"filter": {"vendors": [0], "price": [0, 10], "deliveryDays": 100, "preselectByPrice": True,
-                                 "preselectByDeliveryDays": False}}
-            filter_response = self.client.post('/api/filter', content_type='application/json', data=json.dumps(filter))
-            self.assertIn(b"filter submission successful", filter_response.data)
-            response0 = self.client.post('/api/results', content_type='multipart/form-data',
-                                         data={'size': 1000, 'offset': 0})
+            responseDB = {}
 
-            filter = {"filter": {"vendors": [1], "price": [0, 10], "deliveryDays": 100, "preselectByPrice": True,
-                                 "preselectByDeliveryDays": False}}
-            filter_response = self.client.post('/api/filter', content_type='application/json', data=json.dumps(filter))
-            self.assertIn(b"filter submission successful", filter_response.data)
-            response1 = self.client.post('/api/results', content_type='multipart/form-data',
-                                         data={'size': 1000, 'offset': 0})
+            for r in range(1, len(self.vendors)):
+                for vendors in combinations(self.vendors, r):
+                    filter = {
+                        "filter": {"vendors": [1, 2], "price": [0, 10], "deliveryDays": 100, "preselectByPrice": True,
+                                   "preselectByDeliveryDays": False}}
+                    filter_response = self.client.post('/api/filter', content_type='application/json',
+                                                       data=json.dumps(filter))
+                    self.assertIn(b"filter submission successful", filter_response.data)
 
-            filter = {"filter": {"vendors": [2], "price": [0, 10], "deliveryDays": 100, "preselectByPrice": True,
-                                 "preselectByDeliveryDays": False}}
-            filter_response = self.client.post('/api/filter', content_type='application/json', data=json.dumps(filter))
-            self.assertIn(b"filter submission successful", filter_response.data)
-            response2 = self.client.post('/api/results', content_type='multipart/form-data',
-                                         data={'size': 1000, 'offset': 0})
-
-            # Test if the response is still consistent to what it was before
-            filter = {"filter": {"vendors": [0], "price": [0, 10], "deliveryDays": 100, "preselectByPrice": True,
-                                 "preselectByDeliveryDays": False}}
-            filter_response = self.client.post('/api/filter', content_type='application/json', data=json.dumps(filter))
-            self.assertIn(b"filter submission successful", filter_response.data)
-            response = self.client.post('/api/results', content_type='multipart/form-data',
-                                        data={'size': 1000, 'offset': 0})
-            self.assertEqual(response.data, response0.data,
-                             "\n\nresponse = " + str(response.data) + "\n\n\nresponse0 = " + str(response0.data))
-
-            filter = {"filter": {"vendors": [1], "price": [0, 10], "deliveryDays": 100, "preselectByPrice": True,
-                                 "preselectByDeliveryDays": False}}
-            filter_response = self.client.post('/api/filter', content_type='application/json', data=json.dumps(filter))
-            self.assertIn(b"filter submission successful", filter_response.data)
-            response = self.client.post('/api/results', content_type='multipart/form-data',
-                                        data={'size': 1000, 'offset': 0})
-            self.assertEqual(response.data, response1.data,
-                             "\n\nresponse = " + str(response.data) + "\n\n\nresponse1 = " + str(response1.data))
-
-            filter = {"filter": {"vendors": [2], "price": [0, 10], "deliveryDays": 100, "preselectByPrice": True,
-                                 "preselectByDeliveryDays": False}}
-            filter_response = self.client.post('/api/filter', content_type='application/json', data=json.dumps(filter))
-            self.assertIn(b"filter submission successful", filter_response.data)
-            response = self.client.post('/api/results', content_type='multipart/form-data',
-                                        data={'size': 1000, 'offset': 0})
-            self.assertEqual(response.data, response2.data,
-                             "\n\nresponse = " + str(response.data) + "\n\n\nresponse2 = " + str(response2.data))
+                    # Test consistency between subsequent query results without filter change
+                    response = self.client.post('/api/results', content_type='multipart/form-data',
+                                                data={'size': 1000, 'offset': 0})
+                    responseDB[vendors] = response.data
 
             # Try to confuse the server with empty, full and invalid vendor lists
             filter = {"filter": {"vendors": [], "price": [0, 10], "deliveryDays": 100, "preselectByPrice": True,
                                  "preselectByDeliveryDays": False}}
-            filter_response = self.client.post('/api/filter', content_type='application/json', data=json.dumps(filter))
+            filter_response = self.client.post('/api/filter', content_type='application/json',
+                                               data=json.dumps(filter))
             self.assertIn(b"filter submission successful", filter_response.data)
             response = self.client.post('/api/results', content_type='multipart/form-data',
                                         data={'size': 1000, 'offset': 0})
-            filter = {"filter": {"vendors": [0, 1, 2], "price": [0, 10], "deliveryDays": 100, "preselectByPrice": True,
+            filter = {"filter": {"vendors": [0, 1, 2], "price": [0, 10], "deliveryDays": 100,
+                                 "preselectByPrice": True,
                                  "preselectByDeliveryDays": False}}
-            filter_response = self.client.post('/api/filter', content_type='application/json', data=json.dumps(filter))
+            filter_response = self.client.post('/api/filter', content_type='application/json',
+                                               data=json.dumps(filter))
             self.assertIn(b"filter submission successful", filter_response.data)
             response = self.client.post('/api/results', content_type='multipart/form-data',
                                         data={'size': 1000, 'offset': 0})
             filter = {"filter": {"vendors": [666, -42, 0, 0, 0, 0], "price": [0, 10], "deliveryDays": 100,
                                  "preselectByPrice": True, "preselectByDeliveryDays": False}}
-            filter_response = self.client.post('/api/filter', content_type='application/json', data=json.dumps(filter))
+            filter_response = self.client.post('/api/filter', content_type='application/json',
+                                               data=json.dumps(filter))
             self.assertIn(b"filter submission successful", filter_response.data)
             response = self.client.post('/api/results', content_type='multipart/form-data',
                                         data={'size': 1000, 'offset': 0})
 
-            # Test if the response is still consistent to what it was before after the confusion effort
-            filter = {"filter": {"vendors": [0], "price": [0, 10], "deliveryDays": 100, "preselectByPrice": True,
-                                 "preselectByDeliveryDays": False}}
-            filter_response = self.client.post('/api/filter', content_type='application/json', data=json.dumps(filter))
-            self.assertIn(b"filter submission successful", filter_response.data)
-            response = self.client.post('/api/results', content_type='multipart/form-data',
-                                        data={'size': 1000, 'offset': 0})
-            self.assertEqual(response.data, response0.data,
-                             "\n\nresponse = " + str(response.data) + "\n\n\nresponse0 = " + str(response0.data))
+            # Test if the response is still consistent to what it was before
+            for r in range(1, len(self.vendors)):
+                for vendors in combinations(self.vendors, r):
+                    filter = {
+                        "filter": {"vendors": [1, 2], "price": [0, 10], "deliveryDays": 100, "preselectByPrice": True,
+                                   "preselectByDeliveryDays": False}}
+                    filter_response = self.client.post('/api/filter', content_type='application/json',
+                                                       data=json.dumps(filter))
+                    self.assertIn(b"filter submission successful", filter_response.data)
 
-            filter = {"filter": {"vendors": [1], "price": [0, 10], "deliveryDays": 100, "preselectByPrice": True,
-                                 "preselectByDeliveryDays": False}}
-            filter_response = self.client.post('/api/filter', content_type='application/json', data=json.dumps(filter))
-            self.assertIn(b"filter submission successful", filter_response.data)
-            response = self.client.post('/api/results', content_type='multipart/form-data',
-                                        data={'size': 1000, 'offset': 0})
-            self.assertEqual(response.data, response1.data,
-                             "\n\nresponse = " + str(response.data) + "\n\n\nresponse1 = " + str(response1.data))
+                    # Test consistency between subsequent query results without filter change
+                    response = self.client.post('/api/results', content_type='multipart/form-data',
+                                                data={'size': 1000, 'offset': 0})
+                    self.assertEqual(responseDB[vendors], response.data, "\n\nresponse:\n" + str(response.data) + "\n\n\nresponse from before:\n" + str(response0.data))
 
-            filter = {"filter": {"vendors": [2], "price": [0, 10], "deliveryDays": 100, "preselectByPrice": True,
-                                 "preselectByDeliveryDays": False}}
-            filter_response = self.client.post('/api/filter', content_type='application/json', data=json.dumps(filter))
-            self.assertIn(b"filter submission successful", filter_response.data)
-            response = self.client.post('/api/results', content_type='multipart/form-data',
-                                        data={'size': 1000, 'offset': 0})
-            self.assertEqual(response.data, response2.data,
-                             "\n\nresponse = " + str(response.data) + "\n\n\nresponse2 = " + str(response2.data))
 
     def test_preselection(self) -> None:
         print("Testing preselection")
@@ -301,7 +289,7 @@ class TestController(unittest.TestCase):
 
             # Test preselection by price
             filter = {
-                "filter": {"vendors": [0, 1, 2], "price": [0, 10], "deliveryDays": 100, "preselectByPrice": True,
+                "filter": {"vendors": self.vendors, "price": [0, 10], "deliveryDays": 100, "preselectByPrice": True,
                            "preselectByDeliveryDays": False}}
             filter_response = self.client.post('/api/filter', content_type='application/json',
                                                data=json.dumps(filter))
@@ -315,8 +303,10 @@ class TestController(unittest.TestCase):
                 best_secondary = maxsize - 1
                 selected = maxsize
                 selected_secondary = maxsize
+                offersPresent = False           #Since these are fuzzing tests there is no guarantee that there will be offers to preselect
                 for vendoffers in seqoffer["vendors"]:
                     for offer in vendoffers["offers"]:
+                        offersPresent = True
                         if offer["price"] <= best:
                             if offer["price"] < best or offer["turnoverTime"] < best_secondary:
                                 best = offer["price"]
@@ -325,8 +315,9 @@ class TestController(unittest.TestCase):
                             self.assertEqual(selected, maxsize)     #If this fails there was probably more than one offer selected
                             selected = offer["price"]
                             selected_secondary = offer["turnoverTime"]
-                self.assertEqual(selected, best)
-                self.assertEqual(selected_secondary, best_secondary)
+                if offersPresent:
+                    self.assertEqual(selected, best)
+                    self.assertEqual(selected_secondary, best_secondary)
 
             # Test preselection by delivery days
             filter = {
@@ -345,8 +336,10 @@ class TestController(unittest.TestCase):
                 best_secondary = maxsize - 1
                 selected = maxsize
                 selected_secondary = maxsize
+                offersPresent = False  # Since these are fuzzing tests there is no guarantee that there will be offers to preselect
                 for vendoffers in seqoffer["vendors"]:
                     for offer in vendoffers["offers"]:
+                        offersPresent = True
                         if offer["turnoverTime"] <= best:
                             if offer["turnoverTime"] < best or offer["price"] < best_secondary:
                                 best = offer["turnoverTime"]

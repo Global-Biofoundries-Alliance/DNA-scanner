@@ -318,8 +318,8 @@ class TestController(unittest.TestCase):
                             selected = offer["price"]
                             selected_secondary = offer["turnoverTime"]
                 if offersPresent:
-                    self.assertEqual(selected, best)
-                    self.assertEqual(selected_secondary, best_secondary)
+                    self.assertEqual(selected, best, "Preselection failed for:" + str(seqoffer))
+                    self.assertEqual(selected_secondary, best_secondary, "Preselection failed for:" + str(seqoffer))
 
             # Test preselection by delivery days
             filter = {
@@ -351,8 +351,9 @@ class TestController(unittest.TestCase):
                                              maxsize)  # If this fails there was probably more than one offer selected
                             selected = offer["turnoverTime"]
                             selected_secondary = offer["price"]
-                self.assertEqual(selected, best)
-                self.assertEqual(selected_secondary, best_secondary)
+                if offersPresent:
+                    self.assertEqual(selected, best, "Preselection failed for:" + str(seqoffer))
+                    self.assertEqual(selected_secondary, best_secondary, "Preselection failed for:" + str(seqoffer))
 
     def test_in_memory_session(self) -> None:
         print("Testing in-memory session management")
@@ -380,6 +381,12 @@ class TestController(unittest.TestCase):
             session.addSearchedVendors([i - 1, i + 1])
 
             sessions.append(session)
+
+        # Check if the session manager can correctly tell whether an ID is already taken
+        for i in range(0, n_sessions):
+            session = InMemorySessionManager(0)
+            self.assertTrue(session.hasSession(i))
+            self.assertFalse(session.hasSession(n_sessions + i + 1))
 
         # Check if the values stored in the sessions are still the same as in the reference sessions
         for i in range(0, n_sessions):
@@ -414,7 +421,7 @@ class TestController(unittest.TestCase):
 
 
             filter = session.loadFilter()
-            self.assertEquals(filter, {"vendors": [i], "price": [0, i], "deliveryDays": i,
+            self.assertEqual(filter, {"vendors": [i], "price": [0, i], "deliveryDays": i,
                                  "preselectByPrice": i % 2 == 0,
                                  "preselectByDeliveryDays": i % 2 == 1})
 

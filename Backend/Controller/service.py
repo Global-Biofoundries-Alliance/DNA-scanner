@@ -79,6 +79,7 @@ class DefaultComparisonService(ComparisonService):
         tempf, tpath = tempfile.mkstemp(
             '.' + secure_filename(seqfile.filename).rsplit('.', 1)[1].lower())
         seqfile.save(tpath)
+        seqfile.close()
 
         try:
             # Parse sequence file
@@ -93,6 +94,7 @@ class DefaultComparisonService(ComparisonService):
 
         finally:
             # Cleanup
+            os.close(tempf)
             os.remove(tpath)
 
         return 'upload successful'

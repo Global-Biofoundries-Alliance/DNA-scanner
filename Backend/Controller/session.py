@@ -205,6 +205,22 @@ class InMemorySessionManager(SessionManager):
             self.session = SingleSession()
             InMemorySessionManager.sessions.append((sessionId, self.session))
 
+
+    #
+    #   Desc: Returns whether a session ID is already present
+    #
+    #   @param id
+    #       The session ID to check for
+    #
+    #   @result
+    #       True if the ID is already taken, False otherwise
+    #
+    def hasSession(self, id):
+        for (sid, sm) in InMemorySessionManager.sessions:
+            if sid == id:
+                return True
+        return False
+
     #
     #   Desc:   Loades the Pinger out of the session-store
     #

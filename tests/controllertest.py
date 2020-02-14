@@ -6,7 +6,7 @@ from Controller.app import app
 from Controller.configurator import YmlConfigurator as Configurator
 from Controller.session import InMemorySessionManager
 from Pinger.Entities import VendorInformation, SequenceInformation, SequenceVendorOffers
-from Pinger.AdvancedMock import AdvancedMockPinger
+from Pinger.Pinger import CompositePinger
 from flask import json
 
 
@@ -366,7 +366,7 @@ class TestController(unittest.TestCase):
         sessions = []
         for i in range(0, n_sessions):
             session = InMemorySessionManager(i)
-            session.storePinger(AdvancedMockPinger(VendorInformation(str(i), str(i), i)))
+            session.storePinger(CompositePinger())
             session.storeSequences([SequenceInformation(str(i), str(i), str(i))])
             session.storeFilter({"vendors": [i], "price": [0, i], "deliveryDays": i,
                                  "preselectByPrice": i % 2 == 0,
@@ -409,10 +409,6 @@ class TestController(unittest.TestCase):
         # Check if the values stored in the sessions are actually the ones intended
         for i in range(0, n_sessions):
             session = InMemorySessionManager(i)
-            pinger = session.loadPinger()
-            self.assertEqual(pinger.vendorInformation.name, str(i))
-            self.assertEqual(pinger.vendorInformation.shortName, str(i))
-            self.assertEqual(pinger.vendorInformation.key, i)
 
             sequence = session.loadSequences()[0]
             self.assertEqual(sequence.key, str(i))
@@ -437,6 +433,12 @@ class TestController(unittest.TestCase):
             self.assertIn(i - 1, searchedVendors)
             self.assertIn(i, searchedVendors)
             self.assertIn(i + 1, searchedVendors)
+
+        # Finally, test session freeing
+        session = InMemorySessionManager(0)
+        session.free()
+        for i in range(0, n_sessions):
+            self.assertFalse(session.hasSession(i))
 
 
 

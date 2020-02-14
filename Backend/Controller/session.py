@@ -1,12 +1,13 @@
 #
 #   A collection of classes related to session handling
 #
-from typing import List, Dict, Any
+from typing import List
 
 from Pinger.Entities import SequenceInformation, SequenceVendorOffers
 from Pinger.Pinger import ManagedPinger
+from Pinger.Validator import EntityValidator
 
-
+validator = EntityValidator()
 
 #
 #   Desc:   Interface for handling of sessions.
@@ -127,13 +128,24 @@ class SingleSession(SessionManager):
     #   @param pinger
     #           Type ManagedPinger. The pinger to store.
     #
+    #   @raises TypeError if the object to store is of the wrong type
+    #
     def storePinger(self, pinger: ManagedPinger) -> None:
+        if not isinstance(pinger, ManagedPinger):
+            raise TypeError
         self.pinger = pinger
 
     #
     #   Desc:   Loads the sequences out of the session-store
     #
+    #   @raises TypeError if there is a malformed sequence in the list
+    #
     def storeSequences(self, sequences: List[SequenceInformation]) -> None:
+        for seq in sequences:
+            if not isinstance(seq, SequenceInformation):
+                raise TypeError
+        if not validator.validate(sequences):
+            raise TypeError
         self.sequences = sequences
 
     #
@@ -143,16 +155,16 @@ class SingleSession(SessionManager):
         return self.sequences
 
     #
-    #   Desc: Loads the session's filter settings
-    #
-    def loadFilter(self) -> dict:
-        return self.filter
-
-    #
     #   Desc: Stores filter settings in the session
     #
     def storeFilter(self, filter: dict) -> None:
         self.filter = filter
+
+    #
+    #   Desc: Loads the session's filter settings
+    #
+    def loadFilter(self) -> dict:
+        return self.filter
 
     #
     #   Desc: Loads search results from the session
@@ -163,13 +175,25 @@ class SingleSession(SessionManager):
     #
     #   Desc: Stores a list of search results for later use
     #
+    #   @raises TypeError if one the objects to store is of the wrong type
+    #
     def storeResults(self, results: List[SequenceVendorOffers]) -> None:
+        for res in results:
+            if not isinstance(res, SequenceVendorOffers):
+                raise TypeError
+        if not validator.validate(results):
+            raise TypeError
         self.results = results
 
     #
     #   Desc: Adds a list of vendors that have already been searched
     #
+    #   @raises TypeError if one of the vendor IDs is not int
+    #
     def addSearchedVendors(self, vendors: List[int]):
+        for vendor in vendors:
+            if not isinstance(vendor, int):
+                raise TypeError
         self.searchedVendors.extend(vendors)
 
     #
@@ -204,7 +228,6 @@ class InMemorySessionManager(SessionManager):
         if (self.session == None):
             self.session = SingleSession()
             InMemorySessionManager.sessions.append((sessionId, self.session))
-
 
     #
     #   Desc: Returns whether a session ID is already present
@@ -297,6 +320,6 @@ class InMemorySessionManager(SessionManager):
     #   Desc: Frees all sessions
     #
     def free(self):
-        for session in self.sessions:
-            session.free()
-        sessions = []
+        for (sid, sm) in InMemorySessionManager.sessions:
+            sm.free()
+        InMemorySessionManager.sessions = []

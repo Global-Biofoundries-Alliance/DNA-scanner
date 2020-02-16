@@ -176,6 +176,10 @@ class TestGeneArtPinger(unittest.TestCase):
         self.assertEqual(messages3[0].messageType, Entities.MessageType.HOMOLOGY)
         self.assertEqual(messages3[0].text, "hqDnaStrings_rejected_homology.")
         self.assertEqual(offers3.turnovertime, -1)
+    
+        # Test the method order. All the sequences in listOfSequences can be synthesised as dnaStrings
+        messageorder = self.pinger_example.order(listOfSequences)
+        self.assertEqual(messageorder.messageType, Entities.MessageType.INFO)
 
 if __name__ == '__main__':
     unittest.main()

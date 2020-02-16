@@ -291,7 +291,6 @@ class TestController(unittest.TestCase):
             response = self.client.post('/api/upload', content_type='multipart/form-data', data={'seqfile': handle})
             self.assertIn(b"upload successful", response.data)
 
-            # Test sorting by delivery days
             filter = {
                 "filter": {"vendors": [0, 1, 2], "price": [0, 10], "deliveryDays": 100,
                            "preselectByPrice": True,
@@ -314,9 +313,9 @@ class TestController(unittest.TestCase):
                     prev_offer = (-1, -1)
                     for offer in vendoffers["offers"]:
                         offer_criteria = (offer[selector[0]], offer[selector[1]])
-                        self.assertLessEqual(prev_offer, offer_criteria, "\n\nSorting failed for: \n" + str(vendoffers["offers"]))
+                        self.assertLessEqual(prev_offer, offer_criteria,
+                                             "\n\nSorting failed for: \n" + str(vendoffers["offers"]))
                         prev_offer = offer_criteria
-
 
             # Test sorting by delivery days
             filter = {
@@ -339,7 +338,8 @@ class TestController(unittest.TestCase):
                     prev_offer = (-1, -1)
                     for offer in vendoffers["offers"]:
                         offer_criteria = (offer[selector[0]], offer[selector[1]])
-                        self.assertLessEqual(prev_offer, offer_criteria, "\n\nSorting failed for: \n" + str(vendoffers["offers"]))
+                        self.assertLessEqual(prev_offer, offer_criteria,
+                                             "\n\nSorting failed for: \n" + str(vendoffers["offers"]))
                         prev_offer = offer_criteria
 
     def test_preselection(self) -> None:
@@ -382,7 +382,8 @@ class TestController(unittest.TestCase):
                             selected_secondary = offer["turnoverTime"]
                 if offersPresent:
                     self.assertEqual(selected, best, "Preselection failed for:" + str(seqoffer["vendors"]))
-                    self.assertEqual(selected_secondary, best_secondary, "Preselection failed for:" + str(seqoffer["vendors"]))
+                    self.assertEqual(selected_secondary, best_secondary,
+                                     "Preselection failed for:" + str(seqoffer["vendors"]))
 
             # Test preselection by delivery days
             filter = {

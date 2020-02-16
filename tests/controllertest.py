@@ -291,6 +291,7 @@ class TestController(unittest.TestCase):
             response = self.client.post('/api/upload', content_type='multipart/form-data', data={'seqfile': handle})
             self.assertIn(b"upload successful", response.data)
 
+            # test sorting by price
             filter = {
                 "filter": {"vendors": [0, 1, 2], "price": [0, 10], "deliveryDays": 100,
                            "preselectByPrice": True,
@@ -299,7 +300,6 @@ class TestController(unittest.TestCase):
                                                data=json.dumps(filter))
             self.assertIn(b"filter submission successful", filter_response.data)
 
-            # First test sorting by price which should be the case when no filter was provided
             response_json = self.client.post('/api/results', content_type='multipart/form-data',
                                              data={'size': 1000, 'offset': 0}).get_json()
 

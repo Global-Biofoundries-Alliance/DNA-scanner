@@ -182,12 +182,6 @@ class DefaultComparisonService(ComparisonService):
             session.storeResults(seqoffers)
 
         # selection criterion; Default is selection by price
-        # selector = \
-        #    (lambda a, b: (a["turnoverTime"] < b["turnoverTime"]) \
-        #                       or (a["turnoverTime"] == b["turnoverTime"] and a["price"] < b["price"])) \
-        #        if "preselectByDeliveryDays" in filter and filter["preselectByDeliveryDays"] else \
-        #        (lambda a, b: (a["price"] < b["price"]) \
-        #                           or (a["price"] == b["price"] and a["turnoverTime"] < b["turnoverTime"]))
         selector = (lambda x: (x["turnoverTime"], x["price"])) \
         if "preselectByDeliveryDays" in filter and filter["preselectByDeliveryDays"] else \
             (lambda x: (x["price"], x["turnoverTime"]))

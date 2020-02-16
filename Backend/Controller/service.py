@@ -209,7 +209,10 @@ class DefaultComparisonService(ComparisonService):
     #
     def getSession(self) -> SessionManager:
         if "sessionKey" not in session_cookie:
-            session_cookie["sessionKey"] = token_urlsafe(64)
+            token = token_urlsafe(64)
+            while SessionManager.hasSession(token):
+                token = token_urlsafe(64)
+            session_cookie["sessionKey"] = token
         session = SessionManager(session_cookie["sessionKey"])
 
         if not session.loadPinger():  # This indicates that the session is new

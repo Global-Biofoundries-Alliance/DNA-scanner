@@ -213,7 +213,7 @@ class CompositePinger(ManagedPinger):
             return
 
         if(not isinstance(vendorPinger, BasePinger)):
-            print("Invalid Input: vendorPinger has not type BasePinger")
+            print("Invalid Input: vendorPinger has not type BasePinger but " + str(type(vendorPinger)))
             return
 
         # if vendor-key already exists, then override this vendorhandler
@@ -335,10 +335,11 @@ class DummyPinger(BasePinger):
     #                           SequenceOffer(seqInf[n], self.tempOffer)]
     #
     def searchOffers(self, seqInf):
+        self.running = True
         self.offers = []
         for s in seqInf:
             self.offers.append(SequenceOffers(sequenceInformation=s, offers=[self.tempOffer]))
-        self.running = True
+        self.running = False
 
     #
     #   True if searchOffers called last

@@ -341,4 +341,34 @@ class GeneArt(BasePinger):
     def clear(self):
         self.running = False
         self.offers = [] # Empty Offers List
-        
+
+
+    #
+    #   Desc:   Create a request to trigger an order.
+    #
+    #   @param seqInf
+    #           Type ArrayOf(Entities.SequenceInformation). Representation of the sequences you want to order.
+    #
+    #   @result
+    #           Type Entities.Order. Representation of the order.
+    #
+    def order(self, seqInf):
+        self.running = True
+        constructUpload = self.constUpload(seqInf, "dnaStrings")
+        if(len(constructUpload["project"]["constructs"]) != len(seqInf)):
+            messageText = "The selected sequences cannot be synthesised."
+            message = Message(MessageType.SYNTHESIS_ERROR, messageText)
+            return message            
+            self.running = False
+        else:
+            projectId = constructUpload["project"]["projectId"]
+            toCartResponse = self.toCart(projectId)
+            expectedKeys = ["projectId", "cartId"]
+            if(expectedKeys == list(toCartResponse.keys())):
+                messageText = "Project: " + str(toCartResponse["projectId"]) + "has been successfully added to cart: " + str(toCartResponse["cartId"])
+                message = Message(MessageType.INFO, messageText)
+            else:
+                messageText = "Unable to order sequences at the moment."
+                message = Message(MessageType.API_CURRENTLY_UNAVAILABLE, messageText)
+        return message
+        self.running = False

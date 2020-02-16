@@ -13,8 +13,8 @@ class TestCompositePinger(unittest.TestCase):
     def test_is_running(self):
         print ("--->>> Start test for: " + TestCompositePinger.name + " - isRunning()")
         # Create CompositePinge with 2 registered DummyPinger
-        pingerDummy1 = Pinger.DummyPinger()
-        pingerDummy2 = Pinger.DummyPinger()
+        pingerDummy1 = DummyPinger()
+        pingerDummy2 = DummyPinger()
         p = Pinger.CompositePinger()
         p.registerVendor(Entities.VendorInformation(name="Dummy", shortName="Dummy", key=1), pingerDummy1)
         p.registerVendor(Entities.VendorInformation(name="Dummy", shortName="Dummy", key=2), pingerDummy2)
@@ -43,8 +43,8 @@ class TestCompositePinger(unittest.TestCase):
     def test_get_vendor(self):
         print ("--->>> Start test for: " + TestCompositePinger.name + " - getVendor")
         # Create Dummy Pinger
-        pingerDummy1 = Pinger.DummyPinger()
-        pingerDummy2 = Pinger.DummyPinger()
+        pingerDummy1 = DummyPinger()
+        pingerDummy2 = DummyPinger()
 
         # Without registered vendor/vendorpinger
         p = Pinger.CompositePinger()
@@ -80,8 +80,8 @@ class TestCompositePinger(unittest.TestCase):
         print ("--->>> Start test for: " + TestCompositePinger.name + " - getOrders")
 
         # Intitialize Pinger and DummyPinger
-        pingerDummy1 = Pinger.DummyPinger()
-        pingerDummy2 = Pinger.DummyPinger()
+        pingerDummy1 = DummyPinger()
+        pingerDummy2 = DummyPinger()
         p = Pinger.CompositePinger()
 
         # Without search it should return a empty list

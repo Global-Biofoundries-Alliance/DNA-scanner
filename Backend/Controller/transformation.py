@@ -26,21 +26,24 @@ def buildSearchResponseJSON(seqvendoffers, vendors, selector, offset=0, size=10)
         # Abysmal starting offer so the first offer will get selected right away
         selectedResult = {"price": maxsize, "turnoverTime": maxsize, "offerMessages": [], "selected": False}
         for vendoff in seqvendoff.vendorOffers:
+            resultOffers = []
             for offer in vendoff.offers:
                 messages = []
+
                 for message in offer.messages:
                     if message.messageType.value in range(1000, 1999):
                         messages.append({"text": message.text, "messageType": message.messageType.value})
 
-                result["vendors"][vendoff.vendorInformation.key]["offers"].append({
+                resultOffers.append({
                     "price": offer.price.amount,
                     "turnoverTime": offer.turnovertime,
                     "offerMessage": messages,
                     "selected": False})
 
-                # Sets the currently selected offer if it is better than the old selected one
-                selectedResult = selector(result["vendors"][vendoff.vendorInformation.key]["offers"][-1],
-                                          selectedResult)
+            for offer in  sorted(resultOffers, key=selector):
+                result["vendors"][vendoff.vendorInformation.key]["offers"].append(offer)
+            selectedResult = selectedResult if resultOffers and (selector(selectedResult) <= selector(resultOffers[0])) else resultOffers[0]
+
         selectedResult["selected"] = True
 
         resp.data["result"].append(result)

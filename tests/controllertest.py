@@ -5,7 +5,7 @@ from sys import maxsize
 from Controller.app import app
 from Controller.configurator import YmlConfigurator as Configurator
 from Controller.session import InMemorySessionManager
-from Pinger.Entities import VendorInformation, SequenceInformation, SequenceVendorOffers
+from Pinger.Entities import SequenceInformation, SequenceVendorOffers
 from Pinger.Pinger import CompositePinger
 from flask import json
 
@@ -30,7 +30,7 @@ class TestController(unittest.TestCase):
         pass
 
     def test_api_prefix(self):
-        print(".Testing /api/ subdomain routing")
+        print("\nTesting /api/ subdomain routing")
 
         resp = self.client.get('/ping')
         self.assertTrue(b'The page requested does not exist' in resp.data)
@@ -51,7 +51,7 @@ class TestController(unittest.TestCase):
         self.assertTrue(b'The page requested does not exist' not in resp.data)
 
     def test_upload_endpoint(self) -> None:
-        print("Testing /upload endoint")
+        print("\nTesting /upload endoint")
 
         for i in range(self.iterations):
             handle = open('../Example_Sequence_Files/difficult_johannes.fasta', 'rb')
@@ -59,7 +59,7 @@ class TestController(unittest.TestCase):
             self.assertIn(b"upload successful", response.data)
 
     def test_filter_endpoint(self) -> None:
-        print("Testing /filter endpoint")
+        print("\nTesting /filter endpoint")
 
         for i in range(self.iterations):
             # prepare session
@@ -133,7 +133,7 @@ class TestController(unittest.TestCase):
                         self.assertLessEqual(offer["turnoverTime"], 5)
 
     def test_results_endpoint(self) -> None:
-        print("Testing /results endpoint")
+        print("\nTesting /results endpoint")
 
         for i in range(self.iterations):
             handle = open('../Example_Sequence_Files/difficult_johannes.fasta', 'rb')
@@ -142,6 +142,9 @@ class TestController(unittest.TestCase):
             self.client.post('/api/filter', data=filter)
             searchResult = self.client.post('/api/results', content_type='multipart/form-data',
                                             data={'size': 1000, 'offset': 0}).get_json()
+
+            self.assertNotIn("error", searchResult, "Results endpoint returned error: " + str(searchResult))
+
             expectedCount = 0
             self.assertIn("size", searchResult.keys())
             self.assertIn("count", searchResult.keys())
@@ -175,7 +178,7 @@ class TestController(unittest.TestCase):
                              "Mismatch between declared and actual sequence count!")
 
     def test_vendor_endpoint(self) -> None:
-        print("Testing /vendors endpoint")
+        print("\nTesting /vendors endpoint")
 
         for i in range(self.iterations):
             resp = self.client.get("/api/vendors")
@@ -192,7 +195,7 @@ class TestController(unittest.TestCase):
     # Tests if search results are consistent between queries;
     # especially in regards of changing filter settings in between.
     def test_result_consistency(self) -> None:
-        print("Testing result consistency")
+        print("\nTesting result consistency")
 
         for i in range(self.iterations):
             # upload file
@@ -279,8 +282,59 @@ class TestController(unittest.TestCase):
                                      "\n\nresponse:\n" + str(response.data) + "\n\n\nresponse from before:\n" + str(
                                          responseDB[vendors]))
 
+    def test_sorting(self) -> None:
+        print("\nTesting offer sorting")
+
+        for i in range(self.iterations):
+            # upload file
+            handle = open('../Example_Sequence_Files/difficult_johannes.fasta', 'rb')
+            response = self.client.post('/api/upload', content_type='multipart/form-data', data={'seqfile': handle})
+            self.assertIn(b"upload successful", response.data)
+
+            # First test sorting by price which should be the case when no filter was provided
+            response_json = self.client.post('/api/results', content_type='multipart/form-data',
+                                             data={'size': 1000, 'offset': 0}).get_json()
+
+            # selection criteria by precedence
+            selector = ("price", "turnoverTime")
+
+            for seqoffer in response_json["result"]:
+                # First create a starting condition that will cause a fail and will be overwritten in any sane scenario
+                for vendoffers in seqoffer["vendors"]:
+                    # We can safely use -1 since if we actually get anything less in an offer that would be an error of its own.
+                    prev_offer = (-1, -1)
+                    for offer in vendoffers["offers"]:
+                        offer_criteria = (offer[selector[0]], offer[selector[1]])
+                        self.assertLessEqual(prev_offer, offer_criteria, "\n\nSorting failed for: \n" + str(vendoffers["offers"]))
+                        prev_offer = offer_criteria
+
+
+            # Test sorting by delivery days
+            filter = {
+                "filter": {"vendors": [0, 1, 2], "price": [0, 10], "deliveryDays": 100,
+                           "preselectByPrice": False,
+                           "preselectByDeliveryDays": True}}
+            filter_response = self.client.post('/api/filter', content_type='application/json',
+                                               data=json.dumps(filter))
+            self.assertIn(b"filter submission successful", filter_response.data)
+            response_json = self.client.post('/api/results', content_type='multipart/form-data',
+                                             data={'size': 1000, 'offset': 0}).get_json()
+
+            # selection criteria by precedence
+            selector = ("turnoverTime", "price")
+
+            for seqoffer in response_json["result"]:
+                # First create a starting condition that will cause a fail and will be overwritten in any sane scenario
+                for vendoffers in seqoffer["vendors"]:
+                    # We can safely use -1 since if we actually get anything less in an offer that would be an error of its own.
+                    prev_offer = (-1, -1)
+                    for offer in vendoffers["offers"]:
+                        offer_criteria = (offer[selector[0]], offer[selector[1]])
+                        self.assertLessEqual(prev_offer, offer_criteria, "\n\nSorting failed for: \n" + str(vendoffers["offers"]))
+                        prev_offer = offer_criteria
+
     def test_preselection(self) -> None:
-        print("Testing preselection")
+        print("\nTesting preselection")
 
         for i in range(self.iterations):
             # upload file
@@ -356,7 +410,7 @@ class TestController(unittest.TestCase):
                     self.assertEqual(selected_secondary, best_secondary, "Preselection failed for:" + str(seqoffer))
 
     def test_in_memory_session(self) -> None:
-        print("Testing in-memory session management")
+        print("\nTesting in-memory session management")
 
         binary_sequences = [SequenceVendorOffers(SequenceInformation("0", "0", "0"), []),
                             SequenceVendorOffers(SequenceInformation("1", "1", "1"), [])]
@@ -415,13 +469,12 @@ class TestController(unittest.TestCase):
             self.assertEqual(sequence.name, str(i))
             self.assertEqual(sequence.sequence, str(i))
 
-
             filter = session.loadFilter()
             self.assertEqual(filter, {"vendors": [i], "price": [0, i], "deliveryDays": i,
-                                 "preselectByPrice": i % 2 == 0,
-                                 "preselectByDeliveryDays": i % 2 == 1})
+                                      "preselectByPrice": i % 2 == 0,
+                                      "preselectByDeliveryDays": i % 2 == 1})
 
-            #The offers are a bit more elaborate since it was i encoded in binary
+            # The offers are a bit more elaborate since it was i encoded in binary
             seqoffers = []
             shifter = i
             while shifter:
@@ -439,12 +492,6 @@ class TestController(unittest.TestCase):
         session.free()
         for i in range(0, n_sessions):
             self.assertFalse(session.hasSession(i))
-
-
-
-
-
-
 
 
 if __name__ == '__main__':

@@ -7,9 +7,6 @@ from .app import app
 from .configurator import YmlConfigurator as Configurator
 from .service import DefaultComparisonService as Service
 
-# TODO Set string to point on Yml file
-# TODO Set SessionId
-# TODO use service in endpoints
 service = Service(Configurator("config.yml"))
 
 

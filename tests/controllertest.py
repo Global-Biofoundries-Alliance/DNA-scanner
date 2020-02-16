@@ -291,6 +291,15 @@ class TestController(unittest.TestCase):
             response = self.client.post('/api/upload', content_type='multipart/form-data', data={'seqfile': handle})
             self.assertIn(b"upload successful", response.data)
 
+            # Test sorting by delivery days
+            filter = {
+                "filter": {"vendors": [0, 1, 2], "price": [0, 10], "deliveryDays": 100,
+                           "preselectByPrice": True,
+                           "preselectByDeliveryDays": False}}
+            filter_response = self.client.post('/api/filter', content_type='application/json',
+                                               data=json.dumps(filter))
+            self.assertIn(b"filter submission successful", filter_response.data)
+
             # First test sorting by price which should be the case when no filter was provided
             response_json = self.client.post('/api/results', content_type='multipart/form-data',
                                              data={'size': 1000, 'offset': 0}).get_json()
@@ -372,8 +381,8 @@ class TestController(unittest.TestCase):
                             selected = offer["price"]
                             selected_secondary = offer["turnoverTime"]
                 if offersPresent:
-                    self.assertEqual(selected, best, "Preselection failed for:" + str(seqoffer))
-                    self.assertEqual(selected_secondary, best_secondary, "Preselection failed for:" + str(seqoffer))
+                    self.assertEqual(selected, best, "Preselection failed for:" + str(seqoffer["vendors"]))
+                    self.assertEqual(selected_secondary, best_secondary, "Preselection failed for:" + str(seqoffer["vendors"]))
 
             # Test preselection by delivery days
             filter = {

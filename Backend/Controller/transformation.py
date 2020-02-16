@@ -40,9 +40,10 @@ def buildSearchResponseJSON(seqvendoffers, vendors, selector, offset=0, size=10)
                     "offerMessage": messages,
                     "selected": False})
 
-            for offer in  sorted(resultOffers, key=selector):
+            for offer in sorted(resultOffers, key=selector):
                 result["vendors"][vendoff.vendorInformation.key]["offers"].append(offer)
-            selectedResult = selectedResult if resultOffers and (selector(selectedResult) <= selector(resultOffers[0])) else resultOffers[0]
+            resultList = result["vendors"][vendoff.vendorInformation.key]["offers"]
+            selectedResult = selectedResult if resultOffers and (selector(selectedResult) <= selector(resultList[0])) else resultList[0]
 
         selectedResult["selected"] = True
 

@@ -188,10 +188,9 @@ class DefaultComparisonService(ComparisonService):
         #        if "preselectByDeliveryDays" in filter and filter["preselectByDeliveryDays"] else \
         #        (lambda a, b: (a["price"] < b["price"]) \
         #                           or (a["price"] == b["price"] and a["turnoverTime"] < b["turnoverTime"]))
-        selector = lambda x: (x["price"], x["turnoverTime"])
-        if "preselectByDeliveryDays" in filter and filter["preselectByDeliveryDays"]:
-                selector = (lambda x: (x["turnoverTime"], x["price"]))
-
+        selector = (lambda x: (x["turnoverTime"], x["price"])) \
+        if "preselectByDeliveryDays" in filter and filter["preselectByDeliveryDays"] else \
+            (lambda x: (x["price"], x["turnoverTime"]))
 
         # build response from offers stored in the session
         result = buildSearchResponseJSON(filterOffers(filter, seqoffers), self.config.vendors, selector,

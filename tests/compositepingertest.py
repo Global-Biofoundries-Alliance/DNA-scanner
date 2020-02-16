@@ -1,7 +1,9 @@
 import unittest
 
 from Pinger import Pinger, Entities
-
+from dummy.pinger import DummyPinger
+from dummy.pinger import NotAvailablePinger
+from dummy.pinger import AlwaysRunningPinger
 
 class TestCompositePinger(unittest.TestCase):
 
@@ -126,15 +128,96 @@ class TestCompositePinger(unittest.TestCase):
                         Entities.SequenceInformation("ACTG", "TestSequence", "ts2")])
         pingerDummy2.offers = []
         self.assertEqual(2, len(p.getOffers()))
-        self.assertEqual(1, len(p.getOffers()[0].vendorOffers))
+        self.assertEqual(2, len(p.getOffers()[0].vendorOffers))
         self.assertEqual(1, len(p.getOffers()[0].vendorOffers[0].offers))
+        self.assertEqual(0, len(p.getOffers()[0].vendorOffers[1].offers))
 
         # Test that CompositePinger ignores output of a VendorPinger, if invalid
         pingerDummy1.offers = [1,2,3]
         self.assertEqual(2, len(p.getOffers()))
-        self.assertEqual(0, len(p.getOffers()[0].vendorOffers))
+        self.assertEqual(1, len(p.getOffers()[0].vendorOffers))
 
-# TODO Test Vendor Messages (e.g. Temporary Unavailable)
+
+    #
+    #   Desc:   Test the following szenarios:
+    #           -   VendorPinger are temporary Unavailable
+    #           -   Try to search while Pinger is running
+    #
+    def testVendorOffers(self):
+        # Define Sequences for searchOffers call
+        sequences = [
+                Entities.SequenceInformation("ACTG", "TestSequence", "ts1")
+            ]
+
+        # Define CompositePinger (Object to test)
+        p = Pinger.CompositePinger()
+
+        # Pinger with success response
+        successPinger = DummyPinger()
+        p.registerVendor(Entities.VendorInformation(name="DummySuccess", shortName="DummySucc", key=1), successPinger)
+
+        p.searchOffers(sequences)
+        res = p.getOffers()
+        # 1 Sequence ...
+        self.assertEqual(1, len(res))
+        #   with 1 vendor ...
+        self.assertEqual(1, len(res[0].vendorOffers))
+        #       with 1 offer
+        self.assertEqual(1, len(res[0].vendorOffers[0].offers))
+        #       and 0 messages
+        self.assertEqual(0, len(res[0].vendorOffers[0].messages))
+
+        # register Pinger who is unavailable
+        unavailablePinger = NotAvailablePinger()
+        p.registerVendor(Entities.VendorInformation(name="DummyNotAvailable", shortName="DummyNA", key=2), unavailablePinger)
+
+        p.searchOffers(sequences)
+        res = p.getOffers()
+        # 1 Sequence ...
+        self.assertEqual(1, len(res))
+        #   with 2 vendor ...
+        self.assertEqual(2, len(res[0].vendorOffers))
+
+        # 1 vendor ...
+        #       with 1 offer
+        self.assertEqual(1, len(res[0].vendorOffers[0].offers))
+        #       and 0 messages
+        self.assertEqual(0, len(res[0].vendorOffers[0].messages))
+
+        # 1 vendor ...
+        #       with 0 offer
+        self.assertEqual(1, len(res[0].vendorOffers[0].offers))
+        #       and 1 messages
+        self.assertEqual(1, len(res[0].vendorOffers[1].messages))
+        self.assertEqual(Entities.MessageType.API_CURRENTLY_UNAVAILABLE, res[0].vendorOffers[1].messages[0].messageType)
+        
+        # register Pinger who is always running
+        runningPinger = AlwaysRunningPinger()
+        p.registerVendor(Entities.VendorInformation(name="DummyRunning", shortName="DummyRunning", key=3), runningPinger)
+
+        # Expect IsRunningError
+        with self.assertRaises(Entities.IsRunningError): p.searchOffers(sequences)
+
+    #
+    #   Desc:   Test the following scenarios:
+    #           -   Try to search with different keys with equal keys
+    #
+    def testDuplicatedSequences(self):
+        # Define Sequences for searchOffers call
+        sequences = [
+                Entities.SequenceInformation("ACTG", "TestSequence", "ts1"),
+                Entities.SequenceInformation("ACTG2", "TestSequence2", "ts1")
+            ]
+
+        # Define CompositePinger (Object to test)
+        p = Pinger.CompositePinger()
+
+        # Pinger with success response
+        successPinger = DummyPinger()
+        p.registerVendor(Entities.VendorInformation(name="DummySuccess", shortName="DummySucc", key=1), successPinger)
+
+        # Expect error because auf duplicated keys of sequences
+        with self.assertRaises(Entities.InvalidInputError): p.searchOffers(sequences)
 
 if __name__ == '__main__':
     unittest.main()

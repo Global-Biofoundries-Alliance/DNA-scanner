@@ -190,8 +190,10 @@ class ManagedPinger:
     #           Return an Empty Array, if it was not searching before.
     #
     #   @result ArrayOf(Entities.SequenceVendorOffers). For each sequence passed in the seachOffer(seqInf, vendor) call,
-    #           there is exactly one SequenceVendorOffer-Object in the array. Each of there SequenceVendorOffers contains 
-    #           only VendorOffers for vendors which have objects in the Offers-List. 
+    #           there is exactly one SequenceVendorOffer-Object in the array. It contains one VendorOffer for every vendor
+    #           included in searchOffers. If a VendorPinger raises an Error, then the VendorOffer will contain a 
+    #           ErrorMessage and no offers. 
+    #           Vendors excluded by the filter while calling searchOffers wont have VendorOffer.
     #
     def getOffers(self):
         raise NotImplementedError
@@ -256,6 +258,7 @@ class CompositePinger(ManagedPinger):
         self.vendorHandler = []
         self.sequenceVendorOffers = []
         self.vendorMessages = {}
+        self.curVendors = []
 
     #
     #   see ManagedPinger.registerVendor
@@ -304,8 +307,9 @@ class CompositePinger(ManagedPinger):
             raise IsRunningError("Pinger is currently running and can not perform a other action")
 
         # check input: seqInf
-        if(not isinstance(seqInf, list)):
+        if(isinstance(seqInf, list)):
             Validator.validate(seqInf)
+
         for seq in seqInf:
             if (not isinstance(seq, SequenceInformation)):
                 raise InvalidInputError("parameter seqInf contains elements which are not of type SequenceInformation")
@@ -318,6 +322,7 @@ class CompositePinger(ManagedPinger):
 
         # reset vendorMessages
         self.vendorMessages = {}
+        self.curVendors = vendors
 
         # initialize empty sequenceOffers
         self.sequenceVendorOffers = []
@@ -329,13 +334,13 @@ class CompositePinger(ManagedPinger):
             if(len(vendors) == 0 or vh.vendor.key in vendors):
                 try:
                     vh.handler.searchOffers(seqInf)
-                except InvalidInputError:
+                except InvalidInputError as e:
                     # store Message and return when calling getOffers()
                     self.vendorMessages[vh.vendor.key] = [Message(messageType = MessageType.INTERNAL_ERROR, text = str(e))]
-                except UnavailableError:
-                    self.vendorMessages[vh.vendor.key] = [Message(messageType = MessageType.API_CURRENTLY_UNAVAILABLE, text = str(e)])
-                except IsRunningError:
-                self.vendorMessages[vh.vendor.key] = [Message(messageType = MessageType.INTERNAL_ERROR, text = str(e))]
+                except UnavailableError as e:
+                    self.vendorMessages[vh.vendor.key] = [Message(messageType = MessageType.API_CURRENTLY_UNAVAILABLE, text = str(e))]
+                except IsRunningError as e:
+                    self.vendorMessages[vh.vendor.key] = [Message(messageType = MessageType.INTERNAL_ERROR, text = str(e))]
 
             # Clear vendor, if not accepted by the filter
             else:
@@ -365,17 +370,23 @@ class CompositePinger(ManagedPinger):
 
         # Load offers from Vendor-Pingers
         for vh in self.vendorHandler:
-            seqOffers = vh.handler.getOffers()
-
             vendorMessage = []
+            seqOffers = []
+
             if vh.vendor.key in self.vendorMessages:
                 vendorMessage = self.vendorMessages[vh.vendor.key]
+            else:
+                seqOffers = vh.handler.getOffers()
 
             # If output if the VendorPinger is invalid, then ignore and continue
             if (not isinstance(seqOffers, list)):
                 print("Vendor", vh.vendor.name, "returns", type(seqOffers), "instead of list")
                 continue
             
+            if(len(seqOffers) == 0 and (len(self.curVendors) == 0 or vh.vendor.key in self.curVendors)):
+                for curSO in self.sequenceVendorOffers:
+                    curSO.vendorOffers.append(VendorOffers(vh.vendor, offers=seqOffers, messages = vendorMessage))
+
             try:
                 Validator.validate(seqOffers)
 

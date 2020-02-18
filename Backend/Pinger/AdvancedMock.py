@@ -23,7 +23,7 @@ class AdvancedMockPinger(BasePinger):
 
         messages = [Message(MessageType.SYNTHESIS_ERROR, "Could not synthesize the sequence"),
                     Message(MessageType.INVALID_SEQUENCE, "Invalid sequence"),
-                    Message(MessageType.GC_PROBLEM, "Problematic GC"),
+                    Message(MessageType.GC_PROBLEM, "GC problem"),
                     Message(MessageType.INVALID_LENGTH, "Sequence length invalid"),
                     Message(MessageType.SEQUENCE_TOO_SHORT, "Sequence too short"),
                     Message(MessageType.SEQUENCE_TOO_LONG, "Sequence too long"),

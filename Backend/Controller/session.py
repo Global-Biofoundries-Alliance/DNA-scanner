@@ -3,7 +3,7 @@
 #
 from typing import List
 
-from Pinger.Entities import SequenceInformation, SequenceVendorOffers
+from Pinger.Entities import SequenceInformation, SequenceVendorOffers, Message
 from Pinger.Pinger import ManagedPinger
 from Pinger.Validator import EntityValidator
 
@@ -20,6 +20,7 @@ class SessionManager:
         self.filter = {}
         self.results = []
         self.searchedVendors = []
+        self.globalMessages = []
 
     #
     #   Desc:   Loades the Pinger out of the session-store
@@ -94,6 +95,24 @@ class SessionManager:
         raise NotImplementedError
 
     #
+    #   Desc: Adds a global message to this session
+    #
+    def addGlobalMessages(self, messages: List[Message]):
+        raise NotImplementedError
+
+    #
+    #   Desc: Returns this session's global messages
+    #
+    def loadGlobalMessages(self) -> List[Message]:
+        raise NotImplementedError
+
+    #
+    #   Desc: Deletes all global messages for this session
+    #
+    def clearGlobalMessages(self):
+        raise NotImplementedError
+
+    #
     #   Desc:   Free memory by Free all or old sessions. Can
     #           be different for every StoreManager.
     #
@@ -112,6 +131,7 @@ class SingleSession(SessionManager):
         self.filter = {}
         self.results = []
         self.searchedVendors = []
+        self.globalMessages = []
 
     #
     #   Desc:   Loades the Pinger out of the session-store
@@ -207,6 +227,24 @@ class SingleSession(SessionManager):
     #
     def resetSearchedVendors(self):
         self.searchedVendors = []
+
+    #
+    #   Desc: Adds a global message to this session
+    #
+    def addGlobalMessages(self, messages: List[Message]):
+        self.globalMessages.append(messages)
+
+    #
+    #   Desc: Returns this session's global messages
+    #
+    def loadGlobalMessages(self) -> List[Message]:
+        return self.globalMessages
+
+    #
+    #   Desc: Deletes all global messages for this session
+    #
+    def clearGlobalMessages(self):
+        self.globalMessages = []
 
     def free(self):
         self.sequences = []
@@ -315,6 +353,24 @@ class InMemorySessionManager(SessionManager):
     #
     def resetSearchedVendors(self):
         self.session.resetSearchedVendors()
+
+    #
+    #   Desc: Adds a global message to this session
+    #
+    def addGlobalMessages(self, messages: List[Message]):
+        self.session.addGlobalMessages(messages)
+
+    #
+    #   Desc: Returns this session's global messages
+    #
+    def loadGlobalMessages(self) -> List[Message]:
+        return self.session.loadGlobalMessages()
+
+    #
+    #   Desc: Deletes all global messages for this session
+    #
+    def clearGlobalMessages(self):
+        self.session.clearGlobalMessages()
 
     #
     #   Desc: Frees all sessions

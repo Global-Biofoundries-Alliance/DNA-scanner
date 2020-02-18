@@ -2,6 +2,7 @@ import os
 import tempfile
 from secrets import token_urlsafe
 from typing import List
+from sys import maxsize
 
 from Pinger.Entities import *
 from Pinger.Entities import VendorInformation, SequenceInformation
@@ -182,9 +183,11 @@ class DefaultComparisonService(ComparisonService):
             session.storeResults(seqoffers)
 
         # selection criterion; Default is selection by price
-        selector = (lambda x: (x["turnoverTime"], x["price"])) \
+        # The '% maxsize's are there to ensure that negative numbers wrap around to
+        # very high numbers, making them inferior to offers that provide this information
+        selector = (lambda x: (x["turnoverTime"] % maxsize, x["price"] % maxsize)) \
         if "preselectByDeliveryDays" in filter and filter["preselectByDeliveryDays"] else \
-            (lambda x: (x["price"], x["turnoverTime"]))
+            (lambda x: (x["price"] % maxsize, x["turnoverTime"] % maxsize))
 
         # build response from offers stored in the session
         result = buildSearchResponseJSON(filterOffers(filter, seqoffers), self.config.vendors, selector,

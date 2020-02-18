@@ -24,7 +24,8 @@ def buildSearchResponseJSON(seqvendoffers, vendors, selector, offset=0, size=10)
             result["vendors"].append({"key": vendor.key, "offers": []})
 
         # Abysmal starting offer so the first offer will get selected right away
-        selectedResult = {"price": maxsize, "turnoverTime": maxsize, "offerMessages": [], "selected": False}
+        # NOTE: Do not set this to maxsize! This will break the selection as this uses % maxsize.
+        selectedResult = {"price": maxsize - 1, "turnoverTime": maxsize - 1, "offerMessages": [], "selected": False}
         for vendoff in seqvendoff.vendorOffers:
             resultOffers = []
             for offer in vendoff.offers:
@@ -43,7 +44,8 @@ def buildSearchResponseJSON(seqvendoffers, vendors, selector, offset=0, size=10)
             for offer in sorted(resultOffers, key=selector):
                 result["vendors"][vendoff.vendorInformation.key]["offers"].append(offer)
             resultList = result["vendors"][vendoff.vendorInformation.key]["offers"]
-            selectedResult = selectedResult if resultOffers and (selector(selectedResult) <= selector(resultList[0])) else resultList[0]
+            selectedResult = selectedResult if resultOffers and \
+                                               (selector(selectedResult) <= selector(resultList[0])) else resultList[0]
 
         selectedResult["selected"] = True
 
@@ -77,9 +79,9 @@ def filterOffers(filter, seqvendoffers):
             if "vendors" not in filter or \
                     vendoff.vendorInformation.key in filter["vendors"]:
                 for offer in vendoff.offers:
-                    if "price" not in filter or \
+                    if "price" not in filter or offer.price.amount < 0 or \
                             offer.price.amount >= filter["price"][0] and offer.price.amount <= filter["price"][1]:
-                        if "deliveryDays" not in filter or \
+                        if "deliveryDays" not in filter or offer.turnovertime < 0 or \
                                 offer.turnovertime <= filter["deliveryDays"]:
                             filteredVendOff.offers.append(offer)
 

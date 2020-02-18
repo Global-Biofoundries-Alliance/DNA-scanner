@@ -16,6 +16,7 @@ class TestController(unittest.TestCase):
 
     def setUp(self) -> None:
         app.config['TESTING'] = True
+        self.sequence_path = 'examples/ComponentDefinitionOutput_gl.xml'
 
         self.config = Configurator("config.yml")
 
@@ -54,7 +55,7 @@ class TestController(unittest.TestCase):
         print("\nTesting /upload endoint")
 
         for i in range(self.iterations):
-            handle = open('../Example_Sequence_Files/difficult_johannes.fasta', 'rb')
+            handle = open(self.sequence_path, 'rb')
             response = self.client.post('/api/upload', content_type='multipart/form-data', data={'seqfile': handle})
             self.assertIn(b"upload successful", response.data)
 
@@ -63,7 +64,7 @@ class TestController(unittest.TestCase):
 
         for i in range(self.iterations):
             # prepare session
-            handle = open('../Example_Sequence_Files/difficult_johannes.fasta', 'rb')
+            handle = open(self.sequence_path, 'rb')
             self.client.post('/api/upload', content_type='multipart/form-data', data={'seqfile': handle})
 
             response = self.client.post('/api/filter', data='{"banana": "neigh"}')
@@ -117,8 +118,9 @@ class TestController(unittest.TestCase):
             for res in response_json["result"]:
                 for vendor in res["vendors"]:
                     for offer in vendor["offers"]:
-                        self.assertLessEqual(offer["price"], 0.5)
-                        self.assertGreaterEqual(offer["price"], 0.2)
+                        if (offer["price"] >= 0.0):  # negative values are placeholders and must stay in
+                            self.assertLessEqual(offer["price"], 0.5)
+                            self.assertGreaterEqual(offer["price"], 0.2)
 
             # test filtering by delivery days
             filter = {"filter": {"vendors": [0, 1, 2], "price": [0, 10], "deliveryDays": 5, "preselectByPrice": True, \
@@ -136,7 +138,7 @@ class TestController(unittest.TestCase):
         print("\nTesting /results endpoint")
 
         for i in range(self.iterations):
-            handle = open('../Example_Sequence_Files/difficult_johannes.fasta', 'rb')
+            handle = open(self.sequence_path, 'rb')
             self.client.post('/api/upload', content_type='multipart/form-data', data={'seqfile': handle})
             filter = '{"filter": {"vendors": [1],"price": [0, 10],"deliveryDays": 5,"preselectByPrice": True,"preselectByDeliveryDays": False}}'
             self.client.post('/api/filter', data=filter)
@@ -199,7 +201,7 @@ class TestController(unittest.TestCase):
 
         for i in range(self.iterations):
             # upload file
-            handle = open('../Example_Sequence_Files/difficult_johannes.fasta', 'rb')
+            handle = open(self.sequence_path, 'rb')
             response = self.client.post('/api/upload', content_type='multipart/form-data', data={'seqfile': handle})
             self.assertIn(b"upload successful", response.data)
 
@@ -287,7 +289,7 @@ class TestController(unittest.TestCase):
 
         for i in range(self.iterations):
             # upload file
-            handle = open('../Example_Sequence_Files/difficult_johannes.fasta', 'rb')
+            handle = open(self.sequence_path, 'rb')
             response = self.client.post('/api/upload', content_type='multipart/form-data', data={'seqfile': handle})
             self.assertIn(b"upload successful", response.data)
 
@@ -309,10 +311,9 @@ class TestController(unittest.TestCase):
             for seqoffer in response_json["result"]:
                 # First create a starting condition that will cause a fail and will be overwritten in any sane scenario
                 for vendoffers in seqoffer["vendors"]:
-                    # We can safely use -1 since if we actually get anything less in an offer that would be an error of its own.
-                    prev_offer = (-1, -1)
+                    prev_offer = (0, 0)
                     for offer in vendoffers["offers"]:
-                        offer_criteria = (offer[selector[0]], offer[selector[1]])
+                        offer_criteria = (offer[selector[0]] % maxsize, offer[selector[1]] % maxsize)
                         self.assertLessEqual(prev_offer, offer_criteria,
                                              "\n\nSorting failed for: \n" + str(vendoffers["offers"]))
                         prev_offer = offer_criteria
@@ -334,10 +335,9 @@ class TestController(unittest.TestCase):
             for seqoffer in response_json["result"]:
                 # First create a starting condition that will cause a fail and will be overwritten in any sane scenario
                 for vendoffers in seqoffer["vendors"]:
-                    # We can safely use -1 since if we actually get anything less in an offer that would be an error of its own.
-                    prev_offer = (-1, -1)
+                    prev_offer = (0, 0)
                     for offer in vendoffers["offers"]:
-                        offer_criteria = (offer[selector[0]], offer[selector[1]])
+                        offer_criteria = (offer[selector[0]] % maxsize, offer[selector[1]] % maxsize)
                         self.assertLessEqual(prev_offer, offer_criteria,
                                              "\n\nSorting failed for: \n" + str(vendoffers["offers"]))
                         prev_offer = offer_criteria
@@ -347,7 +347,7 @@ class TestController(unittest.TestCase):
 
         for i in range(self.iterations):
             # upload file
-            handle = open('../Example_Sequence_Files/difficult_johannes.fasta', 'rb')
+            handle = open(self.sequence_path, 'rb')
             response = self.client.post('/api/upload', content_type='multipart/form-data', data={'seqfile': handle})
             self.assertIn(b"upload successful", response.data)
 
@@ -363,24 +363,27 @@ class TestController(unittest.TestCase):
 
             for seqoffer in response_json["result"]:
                 # First create a starting condition that will cause a fail and will be overwritten in any sane scenario
-                best = maxsize - 1
-                best_secondary = maxsize - 1
-                selected = maxsize
-                selected_secondary = maxsize
+                best = maxsize - 2
+                best_secondary = maxsize - 2
+                selected = maxsize - 1
+                selected_secondary = maxsize - 1
+                first_time = True
                 offersPresent = False  # Since these are fuzzing tests there is no guarantee that there will be offers to preselect
                 for vendoffers in seqoffer["vendors"]:
                     for offer in vendoffers["offers"]:
                         offersPresent = True
-                        if offer["price"] <= best:
-                            if offer["price"] < best or offer["turnoverTime"] < best_secondary:
+                        if offer["price"] % maxsize <= best % maxsize or first_time:
+                            if offer["price"] % maxsize < best % maxsize or offer[
+                                "turnoverTime"] % maxsize < best_secondary % maxsize or first_time:
                                 best = offer["price"]
                                 best_secondary = offer["turnoverTime"]
                         if offer["selected"]:
                             self.assertEqual(selected,
-                                             maxsize)  # If this fails there was probably more than one offer selected
+                                             maxsize - 1)  # If this fails there was probably more than one offer selected
                             selected = offer["price"]
                             selected_secondary = offer["turnoverTime"]
-                if offersPresent:
+                        first_time = False
+                if offersPresent and selected != maxsize - 1:  # It is possible that nothing is selected due to everything being negative
                     self.assertEqual(selected, best, "Preselection failed for:" + str(seqoffer["vendors"]))
                     self.assertEqual(selected_secondary, best_secondary,
                                      "Preselection failed for:" + str(seqoffer["vendors"]))
@@ -398,26 +401,30 @@ class TestController(unittest.TestCase):
 
             for seqoffer in response_json["result"]:
                 # First create a starting condition that will cause a fail and will be overwritten in any sane scenario
-                best = maxsize - 1
-                best_secondary = maxsize - 1
-                selected = maxsize
-                selected_secondary = maxsize
+                best = maxsize - 2
+                best_secondary = maxsize - 2
+                selected = maxsize - 1
+                selected_secondary = maxsize - 1
+                first_time = True
                 offersPresent = False  # Since these are fuzzing tests there is no guarantee that there will be offers to preselect
                 for vendoffers in seqoffer["vendors"]:
                     for offer in vendoffers["offers"]:
                         offersPresent = True
-                        if offer["turnoverTime"] <= best:
-                            if offer["turnoverTime"] < best or offer["price"] < best_secondary:
+                        if offer["turnoverTime"] % maxsize <= best % maxsize or first_time:
+                            if offer["turnoverTime"] % maxsize < best % maxsize or offer[
+                                "price"] % maxsize < best_secondary % maxsize or first_time:
                                 best = offer["turnoverTime"]
                                 best_secondary = offer["price"]
                         if offer["selected"]:
                             self.assertEqual(selected,
-                                             maxsize)  # If this fails there was probably more than one offer selected
+                                             maxsize - 1)  # If this fails there was probably more than one offer selected
                             selected = offer["turnoverTime"]
                             selected_secondary = offer["price"]
-                if offersPresent:
-                    self.assertEqual(selected, best, "Preselection failed for:" + str(seqoffer))
-                    self.assertEqual(selected_secondary, best_secondary, "Preselection failed for:" + str(seqoffer))
+                        first_time = False
+                if offersPresent and selected != maxsize - 1:  # It is possible that nothing is selected due to everything being negative
+                    self.assertEqual(selected, best, "Preselection failed for:" + str(seqoffer["vendors"]))
+                    self.assertEqual(selected_secondary, best_secondary,
+                                     "Preselection failed for:" + str(seqoffer["vendors"]))
 
     def test_in_memory_session(self) -> None:
         print("\nTesting in-memory session management")

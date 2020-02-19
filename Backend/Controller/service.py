@@ -2,6 +2,7 @@ import os
 import tempfile
 from secrets import token_urlsafe
 from typing import List
+from sys import maxsize
 
 from Pinger.Entities import *
 from Pinger.Entities import VendorInformation, SequenceInformation
@@ -179,10 +180,19 @@ class DefaultComparisonService(ComparisonService):
                                 if vendoff.vendorInformation.key == newvendoff.vendorInformation.key:
                                     vendoff.offers = newvendoff.offers
 
+
             session.storeResults(seqoffers)
 
+        # selection criterion; Default is selection by price
+        # The '% maxsize's are there to ensure that negative numbers wrap around to
+        # very high numbers, making them inferior to offers that provide this information
+        selector = (lambda x: (x["turnoverTime"] % maxsize, x["price"] % maxsize)) \
+        if "preselectByDeliveryDays" in filter and filter["preselectByDeliveryDays"] else \
+            (lambda x: (x["price"] % maxsize, x["turnoverTime"] % maxsize))
+
         # build response from offers stored in the session
-        result = buildSearchResponseJSON(filterOffers(filter, seqoffers), self.config.vendors, offset, size)
+        result = buildSearchResponseJSON(filterOffers(filter, seqoffers), self.config.vendors, selector,
+                                         offset, size)
 
         return result
 
@@ -197,7 +207,10 @@ class DefaultComparisonService(ComparisonService):
     #
     def getSession(self) -> SessionManager:
         if "sessionKey" not in session_cookie:
-            session_cookie["sessionKey"] = token_urlsafe(64)
+            token = token_urlsafe(64)
+            while SessionManager.hasSession(token):
+                token = token_urlsafe(64)
+            session_cookie["sessionKey"] = token
         session = SessionManager(session_cookie["sessionKey"])
 
         if not session.loadPinger():  # This indicates that the session is new

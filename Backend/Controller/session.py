@@ -276,7 +276,8 @@ class InMemorySessionManager(SessionManager):
     #   @result
     #       True if the ID is already taken, False otherwise
     #
-    def hasSession(self, id):
+    @staticmethod
+    def hasSession(id):
         for (sid, sm) in InMemorySessionManager.sessions:
             if sid == id:
                 return True

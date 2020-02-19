@@ -90,7 +90,7 @@ class EntityValidator:
         # VendorOffers
         elif isinstance(obj, VendorOffers):
             # vendorInformation
-            if isinstance(obj.vendorInformation, vendorInformation):
+            if isinstance(obj.vendorInformation, VendorInformation):
                 if (not self.validate(obj.vendorInformation)):
                     return self.raiseFalse("VendorOffers contains invalid VendorInformation")
             else:

@@ -28,7 +28,7 @@ def buildSearchResponseJSON(seqvendoffers, vendors, offset=0, size=10):
             for offer in vendoff.offers:
                 messages = []
                 for message in offer.messages:
-                    if message.messageType.value in range(1000, 1999):
+                    if message.messageType.value in range(1000, 1999) or message.messageType.value in range(4000, 4999):
                         messages.append({"text": message.text, "messageType": message.messageType.value})
 
                 result["vendors"][vendoff.vendorInformation.key]["offers"].append({

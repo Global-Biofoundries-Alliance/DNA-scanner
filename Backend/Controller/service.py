@@ -81,13 +81,10 @@ class DefaultComparisonService(ComparisonService):
         seqfile.save(tpath)
         seqfile.close()
 
+        objSequences = []
         try:
             # Parse sequence file
             objSequences = parse(tpath)
-
-            # Convert [SeqObject] to [SequenceInformation] and store them in the session
-            self.setSequences(sequenceInfoFromObjects(objSequences))
-
         except Exception as e:
             print(e)
             return json.jsonify({'error': 'File format not supported'})
@@ -96,6 +93,9 @@ class DefaultComparisonService(ComparisonService):
             # Cleanup
             os.close(tempf)
             os.remove(tpath)
+
+        # Convert [SeqObject] to [SequenceInformation] and store them in the session
+        self.setSequences(sequenceInfoFromObjects(objSequences))
 
         return 'upload successful'
 

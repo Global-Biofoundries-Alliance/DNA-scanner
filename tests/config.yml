@@ -47,6 +47,11 @@ controller:
             name: ThermoFisher Scientific GeneArt,
             shortName: GeneArt,
             pinger: PINGER_MOCK
+        },
+        {
+            name: Invalid Pinger Configuration inc.,
+            shortName: WRONG,
+            pinger: PINGER_WRONGBEARD
         }
         ]
 

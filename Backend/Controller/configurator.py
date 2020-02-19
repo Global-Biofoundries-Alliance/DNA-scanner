@@ -1,4 +1,5 @@
 # python imports
+from typing import Tuple
 
 import yaml
 from Pinger.AdvancedMock import AdvancedMockPinger
@@ -94,7 +95,7 @@ class YmlConfigurator(Configurator):
     #
     #   @result A pinger of type as specified by id and configured to the capacity of the config
     #
-    def getPingerFromKey(self, id: str) -> BasePinger:
+    def getPingerFromKey(self, id : str) -> BasePinger:
         try:
             cfg_pinger = self.cfg["pinger"]
             if id == "PINGER_TWIST":
@@ -116,8 +117,51 @@ class YmlConfigurator(Configurator):
             if id == "PINGER_MOCK":
                 return AdvancedMockPinger()
             else:
-                # TODO Invalid-Contact-Your-Admin-Pinger here
-                return None
+                return InvalidPinger()
         except:
-            # TODO Invalid-Contact-Your-Admin-Pinger here
-            return None
+            return InvalidPinger()
+
+
+#
+#   The InvalidPinger is used if a pinger could not be initialized due to a misconfiguration.
+#   Its purpose is to tell the user to contact the system's admin.
+#
+class InvalidPinger(BasePinger):
+
+    def __init__(self):
+        self.tempOffer = Offer(price=Price(currency=Currency.EUR, amount=-1), turnovertime=-1)
+        self.tempOffer.messages.append(
+            Message(MessageType.INFO, "Invalid vendor configuration. Please contact your administrator."))
+        self.offers = []
+        self.running = False
+
+    #
+    #   After:
+    #       isRunning() -> true
+    #       getOffers() -> [SequenceOffer(seqInf[0], self.tempOffer), SequenceOffer(seqInf[1], self.tempOffer), ...
+    #                           SequenceOffer(seqInf[n], self.tempOffer)]
+    #
+    def searchOffers(self, seqInf):
+        self.running = True
+        self.offers = []
+        for s in seqInf:
+            self.offers.append(SequenceOffers(sequenceInformation=s, offers=[self.tempOffer]))
+        self.running = False
+
+    #
+    #   True if searchOffers called last
+    #   False if getOffers called last
+    #
+    def isRunning(self):
+        return self.running
+
+    #
+    #   Returns List with a  SequenceOffer for every sequence in last searchOffers(seqInf)-call.
+    #   Every SequenceOffer contains the same offers. Default 1 see self.tempOffer and self.offers.
+    #
+    def getOffers(self):
+        return self.offers
+
+    def clear(self):
+        self.offers = []
+        self.running = False

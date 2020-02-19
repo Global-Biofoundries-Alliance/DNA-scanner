@@ -8,10 +8,9 @@ import random as rand
 class AdvancedMockPinger(BasePinger):
 
 
-    def __init__(self, vendorInformation=VendorInformation(name="DummyVendor", shortName="Dummy", key=0)):
+    def __init__(self):
         self.running = False
         self.offers = []
-        self.vendorInformation = vendorInformation
 
     #
     #   After:
@@ -38,11 +37,10 @@ class AdvancedMockPinger(BasePinger):
             tempOffers = []
             for i in range(0, numOffers):
                 tempOffer = Offer()
-                tempOffer.vendorInformation = self.vendorInformation
                 tempOffer.price = Price(currency=Currency.EUR, amount=float(int(random() * 100)) / 100)
                 tempOffer.turnovertime = randint(0, 20)
                 tempOffer.messages = []
-                if random() > 0.5:
+                if random() > 0.2:
                     tempOffer.messages.append(rand.choice(messages))
                 counter = counter + 1
                 tempOffers.append(tempOffer)

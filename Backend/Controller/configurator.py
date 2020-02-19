@@ -4,6 +4,8 @@ import yaml
 from Pinger.AdvancedMock import AdvancedMockPinger
 from Pinger.Entities import *
 from Pinger.GeneArt import GeneArt
+from Pinger.IDT import IDT
+from .session import SessionManager
 # project imports
 from Pinger.Pinger import BasePinger, ManagedPinger, CompositePinger
 
@@ -24,7 +26,7 @@ class Configurator:
     #   @result
     #           Returns a managedPinger with registered BasePingers.
     #
-    def initializePinger(self) -> ManagedPinger:
+    def initializePinger(self, session: SessionManager) -> ManagedPinger:
         raise NotImplementedError
 
 
@@ -61,17 +63,15 @@ class YmlConfigurator(Configurator):
 
         if "vendors" in cfg_controller:
             key = 0
-            pingerIDTuples = []
             for vendor in cfg_controller["vendors"]:
                 vendorInfo = VendorInformation(name=vendor["name"], shortName=vendor["shortName"], key=key)
                 self.vendors.append(vendorInfo)
-                pingerIDTuples.append((vendorInfo, vendor["pinger"]))
                 key = key + 1
 
     #
     #   see Configurator.initializePinger
     #
-    def initializePinger(self) -> ManagedPinger:
+    def initializePinger(self, session: SessionManager) -> ManagedPinger:
         cfg_controller = self.cfg["controller"]
         pinger = CompositePinger()
         pingerIDTuples = []
@@ -83,6 +83,10 @@ class YmlConfigurator(Configurator):
 
         for pingerInfo in pingerIDTuples:
             newPinger = self.getPingerFromKey(pingerInfo[1])
+            #Catch pingers that could not be initialized for any reason
+            if isinstance(newPinger, Message):
+                session.addGlobalMessages([newPinger])
+                continue
             pinger.registerVendor(vendorInformation=pingerInfo[0], vendorPinger=newPinger)
         return pinger
 
@@ -100,7 +104,19 @@ class YmlConfigurator(Configurator):
             if id == "PINGER_TWIST":
                 return BasePinger()
             if id == "PINGER_IDT":
-                return BasePinger()
+                cfg_idt = cfg_pinger["idt"]
+                pinger = IDT(idt_username=cfg_idt["username"],
+                           idt_password=cfg_idt["password"],
+                           client_id=cfg_idt["client_id"],
+                           client_secret=cfg_idt["client_secret"],
+                           scope=cfg_idt["scope"])
+                token = pinger.getToken()
+                if isinstance(token, Message):
+                    return token
+                else:
+                    pinger.token = token
+                return pinger
+
             if id == "PINGER_GENEART":
                 cfg_geneart = cfg_pinger["geneart"]
                 return GeneArt(username=cfg_geneart["username"],

@@ -16,6 +16,12 @@ pinger:
         email: YOUR_EMAIL
         username: YOUR_USERNAME
         token: YOUR_TOKEN
+    idt:
+        username: YOUR_USERNAME
+        password: YOUR_PASSWORD
+        client_id: YOUR_CLIENT_ID
+        client_secret: YOUR_CLIENT_SECRET
+        scope: YOUR_SCOPE
 controller:
     vendors:
         [

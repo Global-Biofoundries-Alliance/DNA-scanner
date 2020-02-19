@@ -182,8 +182,7 @@ class DefaultComparisonService(ComparisonService):
             session.storeResults(seqoffers)
 
         # build response from offers stored in the session
-        result = buildSearchResponseJSON(filterOffers(filter, seqoffers), self.config.vendors,
-                                         offset, size)
+        result = buildSearchResponseJSON(filterOffers(filter, seqoffers), self.config.vendors, offset, size)
 
         return result
 
@@ -202,5 +201,5 @@ class DefaultComparisonService(ComparisonService):
         session = SessionManager(session_cookie["sessionKey"])
 
         if not session.loadPinger():  # This indicates that the session is new
-            session.storePinger(self.config.initializePinger())
+            session.storePinger(self.config.initializePinger(session))
         return session

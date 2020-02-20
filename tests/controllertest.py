@@ -79,7 +79,7 @@ class TestController(unittest.TestCase):
                 for vendorTuple in combinations(self.vendors, r):
                     vendors = list(vendorTuple)
                     filter = {
-                        "filter": {"vendors": vendors, "price": [0, 10], "deliveryDays": 50, "preselectByPrice": True, \
+                        "filter": {"vendors": vendors, "price": [0, 100], "deliveryDays": 50, "preselectByPrice": True, \
                                    "preselectByDeliveryDays": False}}
                     response = self.client.post('/api/filter', content_type='application/json', data=json.dumps(filter))
                     self.assertIn(b"filter submission successful", response.data)
@@ -93,7 +93,7 @@ class TestController(unittest.TestCase):
 
                     # test filtering vendors with redundant and invalid ones
                     tainted_vendors = vendors + vendors + [-872150987209, 666, -1]
-                    filter = {"filter": {"vendors": tainted_vendors, "price": [0, 10], "deliveryDays": 50,
+                    filter = {"filter": {"vendors": tainted_vendors, "price": [0, 100], "deliveryDays": 50,
                                          "preselectByPrice": True, \
                                          "preselectByDeliveryDays": False}}
                     response = self.client.post('/api/filter', content_type='application/json', data=json.dumps(filter))
@@ -109,7 +109,7 @@ class TestController(unittest.TestCase):
 
             # test filtering by price
             filter = {
-                "filter": {"vendors": [0, 1, 2], "price": [0.2, 0.5], "deliveryDays": 50, "preselectByPrice": True, \
+                "filter": {"vendors": [0, 1, 2], "price": [20, 50], "deliveryDays": 50, "preselectByPrice": True, \
                            "preselectByDeliveryDays": False}}
             response = self.client.post('/api/filter', content_type='application/json', data=json.dumps(filter))
             self.assertIn(b"filter submission successful", response.data)
@@ -119,11 +119,11 @@ class TestController(unittest.TestCase):
                 for vendor in res["vendors"]:
                     for offer in vendor["offers"]:
                         if (offer["price"] >= 0.0):  # negative values are placeholders and must stay in
-                            self.assertLessEqual(offer["price"], 0.5)
-                            self.assertGreaterEqual(offer["price"], 0.2)
+                            self.assertLessEqual(offer["price"], 50)
+                            self.assertGreaterEqual(offer["price"], 20)
 
             # test filtering by delivery days
-            filter = {"filter": {"vendors": [0, 1, 2], "price": [0, 10], "deliveryDays": 5, "preselectByPrice": True, \
+            filter = {"filter": {"vendors": [0, 1, 2], "price": [0, 100], "deliveryDays": 5, "preselectByPrice": True, \
                                  "preselectByDeliveryDays": False}}
             response = self.client.post('/api/filter', content_type='application/json', data=json.dumps(filter))
             self.assertIn(b"filter submission successful", response.data)
@@ -140,7 +140,7 @@ class TestController(unittest.TestCase):
         for i in range(self.iterations):
             handle = open(self.sequence_path, 'rb')
             self.client.post('/api/upload', content_type='multipart/form-data', data={'seqfile': handle})
-            filter = '{"filter": {"vendors": [1],"price": [0, 10],"deliveryDays": 5,"preselectByPrice": True,"preselectByDeliveryDays": False}}'
+            filter = '{"filter": {"vendors": [1],"price": [0, 100],"deliveryDays": 5,"preselectByPrice": True,"preselectByDeliveryDays": False}}'
             self.client.post('/api/filter', data=filter)
             searchResult = self.client.post('/api/results', content_type='multipart/form-data',
                                             data={'size': 1000, 'offset': 0}).get_json()
@@ -205,7 +205,7 @@ class TestController(unittest.TestCase):
             response = self.client.post('/api/upload', content_type='multipart/form-data', data={'seqfile': handle})
             self.assertIn(b"upload successful", response.data)
 
-            filter = {"filter": {"vendors": [1, 2], "price": [0, 10], "deliveryDays": 100, "preselectByPrice": True,
+            filter = {"filter": {"vendors": [1, 2], "price": [0, 100], "deliveryDays": 100, "preselectByPrice": True,
                                  "preselectByDeliveryDays": False}}
             filter_response = self.client.post('/api/filter', content_type='application/json', data=json.dumps(filter))
             self.assertIn(b"filter submission successful", filter_response.data)
@@ -219,7 +219,7 @@ class TestController(unittest.TestCase):
                              "\n\nresponse = " + str(response.data) + "\n\n\nresponse2 = " + str(response2.data))
 
             # ...and after identical filter submission
-            filter = {"filter": {"vendors": [1, 2], "price": [0, 10], "deliveryDays": 100, "preselectByPrice": True,
+            filter = {"filter": {"vendors": [1, 2], "price": [0, 100], "deliveryDays": 100, "preselectByPrice": True,
                                  "preselectByDeliveryDays": False}}
             filter_response = self.client.post('/api/filter', content_type='application/json', data=json.dumps(filter))
             self.assertIn(b"filter submission successful", filter_response.data)
@@ -232,7 +232,7 @@ class TestController(unittest.TestCase):
             for r in range(1, len(self.vendors)):
                 for vendors in combinations(self.vendors, r):
                     filter = {
-                        "filter": {"vendors": [1, 2], "price": [0, 10], "deliveryDays": 100, "preselectByPrice": True,
+                        "filter": {"vendors": [1, 2], "price": [0, 100], "deliveryDays": 100, "preselectByPrice": True,
                                    "preselectByDeliveryDays": False}}
                     filter_response = self.client.post('/api/filter', content_type='application/json',
                                                        data=json.dumps(filter))
@@ -244,14 +244,14 @@ class TestController(unittest.TestCase):
                     responseDB[vendors] = response.data
 
             # Try to confuse the server with empty, full and invalid vendor lists
-            filter = {"filter": {"vendors": [], "price": [0, 10], "deliveryDays": 100, "preselectByPrice": True,
+            filter = {"filter": {"vendors": [], "price": [0, 100], "deliveryDays": 100, "preselectByPrice": True,
                                  "preselectByDeliveryDays": False}}
             filter_response = self.client.post('/api/filter', content_type='application/json',
                                                data=json.dumps(filter))
             self.assertIn(b"filter submission successful", filter_response.data)
             response = self.client.post('/api/results', content_type='multipart/form-data',
                                         data={'size': 1000, 'offset': 0})
-            filter = {"filter": {"vendors": [0, 1, 2], "price": [0, 10], "deliveryDays": 100,
+            filter = {"filter": {"vendors": [0, 1, 2], "price": [0, 100], "deliveryDays": 100,
                                  "preselectByPrice": True,
                                  "preselectByDeliveryDays": False}}
             filter_response = self.client.post('/api/filter', content_type='application/json',
@@ -259,7 +259,7 @@ class TestController(unittest.TestCase):
             self.assertIn(b"filter submission successful", filter_response.data)
             response = self.client.post('/api/results', content_type='multipart/form-data',
                                         data={'size': 1000, 'offset': 0})
-            filter = {"filter": {"vendors": [666, -42, 0, 0, 0, 0], "price": [0, 10], "deliveryDays": 100,
+            filter = {"filter": {"vendors": [666, -42, 0, 0, 0, 0], "price": [0, 100], "deliveryDays": 100,
                                  "preselectByPrice": True, "preselectByDeliveryDays": False}}
             filter_response = self.client.post('/api/filter', content_type='application/json',
                                                data=json.dumps(filter))
@@ -271,7 +271,7 @@ class TestController(unittest.TestCase):
             for r in range(1, len(self.vendors)):
                 for vendors in combinations(self.vendors, r):
                     filter = {
-                        "filter": {"vendors": [1, 2], "price": [0, 10], "deliveryDays": 100, "preselectByPrice": True,
+                        "filter": {"vendors": [1, 2], "price": [0, 100], "deliveryDays": 100, "preselectByPrice": True,
                                    "preselectByDeliveryDays": False}}
                     filter_response = self.client.post('/api/filter', content_type='application/json',
                                                        data=json.dumps(filter))
@@ -295,7 +295,7 @@ class TestController(unittest.TestCase):
 
             # test sorting by price
             filter = {
-                "filter": {"vendors": [0, 1, 2], "price": [0, 10], "deliveryDays": 100,
+                "filter": {"vendors": [0, 1, 2], "price": [0, 100], "deliveryDays": 100,
                            "preselectByPrice": True,
                            "preselectByDeliveryDays": False}}
             filter_response = self.client.post('/api/filter', content_type='application/json',
@@ -314,13 +314,15 @@ class TestController(unittest.TestCase):
                     prev_offer = (0, 0)
                     for offer in vendoffers["offers"]:
                         offer_criteria = (offer[selector[0]] % maxsize, offer[selector[1]] % maxsize)
+                        if offer["offerMessage"]:
+                            offer_criteria = (maxsize, maxsize)
                         self.assertLessEqual(prev_offer, offer_criteria,
                                              "\n\nSorting failed for: \n" + str(vendoffers["offers"]))
                         prev_offer = offer_criteria
 
             # Test sorting by delivery days
             filter = {
-                "filter": {"vendors": [0, 1, 2], "price": [0, 10], "deliveryDays": 100,
+                "filter": {"vendors": [0, 1, 2], "price": [0, 100], "deliveryDays": 100,
                            "preselectByPrice": False,
                            "preselectByDeliveryDays": True}}
             filter_response = self.client.post('/api/filter', content_type='application/json',
@@ -338,6 +340,8 @@ class TestController(unittest.TestCase):
                     prev_offer = (0, 0)
                     for offer in vendoffers["offers"]:
                         offer_criteria = (offer[selector[0]] % maxsize, offer[selector[1]] % maxsize)
+                        if offer["offerMessage"]:
+                            offer_criteria = (maxsize, maxsize)
                         self.assertLessEqual(prev_offer, offer_criteria,
                                              "\n\nSorting failed for: \n" + str(vendoffers["offers"]))
                         prev_offer = offer_criteria
@@ -353,7 +357,7 @@ class TestController(unittest.TestCase):
 
             # Test preselection by price
             filter = {
-                "filter": {"vendors": self.vendors, "price": [0, 10], "deliveryDays": 100, "preselectByPrice": True,
+                "filter": {"vendors": self.vendors, "price": [0, 100], "deliveryDays": 100, "preselectByPrice": True,
                            "preselectByDeliveryDays": False}}
             filter_response = self.client.post('/api/filter', content_type='application/json',
                                                data=json.dumps(filter))
@@ -372,9 +376,10 @@ class TestController(unittest.TestCase):
                 for vendoffers in seqoffer["vendors"]:
                     for offer in vendoffers["offers"]:
                         offersPresent = True
-                        if offer["price"] % maxsize <= best % maxsize or first_time:
-                            if offer["price"] % maxsize < best % maxsize or offer[
-                                "turnoverTime"] % maxsize < best_secondary % maxsize or first_time:
+                        if not offer["offerMessage"] and (offer["price"] % maxsize <= best % maxsize or first_time):
+                            if offer["price"] % maxsize < best % maxsize or \
+                                    offer["turnoverTime"] % maxsize < best_secondary % maxsize or first_time:
+                                first_time = False
                                 best = offer["price"]
                                 best_secondary = offer["turnoverTime"]
                         if offer["selected"]:
@@ -382,15 +387,16 @@ class TestController(unittest.TestCase):
                                              maxsize - 1)  # If this fails there was probably more than one offer selected
                             selected = offer["price"]
                             selected_secondary = offer["turnoverTime"]
-                        first_time = False
+
                 if offersPresent and selected != maxsize - 1:  # It is possible that nothing is selected due to everything being negative
                     self.assertEqual(selected, best, "Preselection failed for:" + str(seqoffer["vendors"]))
+                    self.assertGreaterEqual(selected, 0)
                     self.assertEqual(selected_secondary, best_secondary,
                                      "Preselection failed for:" + str(seqoffer["vendors"]))
 
             # Test preselection by delivery days
             filter = {
-                "filter": {"vendors": [0, 1, 2], "price": [0, 10], "deliveryDays": 100,
+                "filter": {"vendors": [0, 1, 2], "price": [0, 100], "deliveryDays": 100,
                            "preselectByPrice": False,
                            "preselectByDeliveryDays": True}}
             filter_response = self.client.post('/api/filter', content_type='application/json',
@@ -410,9 +416,10 @@ class TestController(unittest.TestCase):
                 for vendoffers in seqoffer["vendors"]:
                     for offer in vendoffers["offers"]:
                         offersPresent = True
-                        if offer["turnoverTime"] % maxsize <= best % maxsize or first_time:
-                            if offer["turnoverTime"] % maxsize < best % maxsize or offer[
-                                "price"] % maxsize < best_secondary % maxsize or first_time:
+                        if not offer["offerMessage"] and (
+                                offer["turnoverTime"] % maxsize <= best % maxsize or first_time):
+                            if offer["turnoverTime"] % maxsize < best % maxsize or \
+                                    offer["price"] % maxsize < best_secondary % maxsize or first_time:
                                 best = offer["turnoverTime"]
                                 best_secondary = offer["price"]
                         if offer["selected"]:
@@ -423,6 +430,7 @@ class TestController(unittest.TestCase):
                         first_time = False
                 if offersPresent and selected != maxsize - 1:  # It is possible that nothing is selected due to everything being negative
                     self.assertEqual(selected, best, "Preselection failed for:" + str(seqoffer["vendors"]))
+                    self.assertGreaterEqual(selected, 0)
                     self.assertEqual(selected_secondary, best_secondary,
                                      "Preselection failed for:" + str(seqoffer["vendors"]))
 

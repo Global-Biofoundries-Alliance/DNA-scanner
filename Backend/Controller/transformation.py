@@ -25,14 +25,14 @@ def buildSearchResponseJSON(seqvendoffers, vendors, selector, offset=0, size=10)
 
         # Abysmal starting offer so the first offer will get selected right away
         # NOTE: Do not set this to maxsize! This will break the selection as this uses % maxsize.
-        selectedResult = {"price": maxsize - 1, "turnoverTime": maxsize - 1, "offerMessages": [], "selected": False}
+        selectedResult = {"price": maxsize - 1, "turnoverTime": maxsize - 1, "offerMessage": [], "selected": False}
         for vendoff in seqvendoff.vendorOffers:
             resultOffers = []
             for offer in vendoff.offers:
                 messages = []
 
                 for message in offer.messages:
-                    if message.messageType.value in range(1000, 1999) or message.messageType.value in range(4000, 4999):
+                    if message.messageType.value in range(1000, 1999):
                         messages.append({"text": message.text, "messageType": message.messageType.value})
 
                 resultOffers.append({
@@ -80,7 +80,7 @@ def filterOffers(filter, seqvendoffers):
                     vendoff.vendorInformation.key in filter["vendors"]:
                 for offer in vendoff.offers:
                     if "price" not in filter or offer.price.amount < 0 or \
-                            offer.price.amount >= filter["price"][0] and offer.price.amount <= filter["price"][1]:
+                            (offer.price.amount >= filter["price"][0] and offer.price.amount <= filter["price"][1]):
                         if "deliveryDays" not in filter or offer.turnovertime < 0 or \
                                 offer.turnovertime <= filter["deliveryDays"]:
                             filteredVendOff.offers.append(offer)

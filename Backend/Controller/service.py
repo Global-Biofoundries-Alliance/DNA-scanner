@@ -186,9 +186,11 @@ class DefaultComparisonService(ComparisonService):
         # selection criterion; Default is selection by price
         # The '% maxsize's are there to ensure that negative numbers wrap around to
         # very high numbers, making them inferior to offers that provide this information
-        selector = (lambda x: (x["turnoverTime"] % maxsize, x["price"] % maxsize)) \
+        selector = (lambda x: (((x["turnoverTime"] % maxsize) if not x["offerMessage"] else maxsize),
+                               (x["price"] % maxsize) if not x["offerMessage"] else maxsize)) \
         if "preselectByDeliveryDays" in filter and filter["preselectByDeliveryDays"] else \
-            (lambda x: (x["price"] % maxsize, x["turnoverTime"] % maxsize))
+            (lambda x: (((x["price"] % maxsize) if not x["offerMessage"] else maxsize),
+                        ((x["turnoverTime"] % maxsize) if not x["offerMessage"] else maxsize)))
 
         # build response from offers stored in the session
         result = buildSearchResponseJSON(filterOffers(filter, seqoffers), self.config.vendors, selector,

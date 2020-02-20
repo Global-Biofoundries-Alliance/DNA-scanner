@@ -169,7 +169,7 @@
                     "filter":
                         {
                             "vendors": this.selectedVendors,
-                            "price": [0, 0.5],
+                            "price": this.range,
                             "deliveryDays": this.deliveryDays,
                             "preselectByPrice": this.preselectByPrice,
                             "preselectByDeliveryDays": this.preselectByTime

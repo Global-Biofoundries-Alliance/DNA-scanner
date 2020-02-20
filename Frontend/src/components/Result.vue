@@ -312,11 +312,11 @@
                         </td>
                     </template>
                 </v-data-table>
-                <p>{{selectedTwist}}</p>
-                <p>{{selectedIDT}}</p>
-                <p>{{selectedGeneArt}}</p>
-                <p>{{computedHeaders}}</p>
-                <p>{{computedHeadersSecond}}</p>
+<!--                <p>{{selectedTwist}}</p>-->
+<!--                <p>{{selectedIDT}}</p>-->
+<!--                <p>{{selectedGeneArt}}</p>-->
+<!--                <p>{{computedHeaders}}</p>-->
+<!--                <p>{{computedHeadersSecond}}</p>-->
             </v-app>
         </div>
     </div>

@@ -40,7 +40,7 @@ class AdvancedMockPinger(BasePinger):
                 tempOffer.price = Price(currency=Currency.EUR, amount=float(int((random() - 0.1) * 10000)) / 100)
                 tempOffer.turnovertime = randint(-1, 20)
                 tempOffer.messages = []
-                if random() > 0.2:
+                if random() < 0.1:
                     tempOffer.messages.append(rand.choice(messages))
                 counter = counter + 1
                 tempOffers.append(tempOffer)

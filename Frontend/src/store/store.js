@@ -14,6 +14,7 @@ export const store = new Vuex.Store({
         DeliveryFilterMax: 1000,
         DeliveryFilterCurrent: 7,
         StoreVendors: [],
+        StoreSelectedVendors: [],
         StoreDialogItem: null,
         StoreSize: 2,
         StoreOffset: 0,

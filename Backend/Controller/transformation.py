@@ -47,7 +47,8 @@ def buildSearchResponseJSON(seqvendoffers, vendors, selector, offset=0, size=10)
             selectedResult = selectedResult if resultOffers and \
                                                (selector(selectedResult) <= selector(resultList[0])) else resultList[0]
 
-        selectedResult["selected"] = True
+        if selectedResult["price"] >= 0 and selectedResult["turnoverTime"] >= 0:
+            selectedResult["selected"] = True
 
         resp.data["result"].append(result)
 

@@ -1,303 +1,713 @@
 <template>
     <div>
-        <v-container>
+        <div>
+            <v-app id="inspire">
+                <v-data-table
+                        :headers="headers"
+                        :items="results"
+                        :expanded.sync="expanded"
+                        item-key="sequenceInformation.name"
+                        class="elevation-1"
+                        show-expand
+                >
+                    <template v-slot:header.selectedTwist="{header}">
+                        <v-chip color="red" @click="selectAllTwist()">
+                            {{header.text}}
+                        </v-chip>
+                    </template>
 
-                <v-row>
-                    <v-col cols="4" style="margin-top: 100px">
-                        <v-row class="mb-4">
-                            <v-card width="110px" tile outlined class="pa-2" style="border-right: 0">
-                                ID
-                            </v-card>
-                            <v-card width="150px" tile outlined class="pa-2" style="border-left: 0">
-                                Name
-                            </v-card>
-                        </v-row>
-                        <v-row v-for="(n,i) in resultBody.size" :key="i">
-                            <v-card width="110px" tile outlined class="pa-2" style="border-right: 0">
-                                {{result[i].sequenceInformation.id}}
-                            </v-card>
-                            <v-card width="150px" tile outlined class="pa-2" style="border-left: 0">
-                                {{result[i].sequenceInformation.name}}
-                            </v-card>
-                        </v-row>
-                    </v-col>
-                    <v-col cols="8">
-                        <v-row>
-                            <v-card width="200px" style="text-align: center" tile outlined class="pa-6"
-                                    v-for="vendor in vendors" :key="vendor.name">
-                                {{vendor.name}}
-                            </v-card>
-                        </v-row>
-                        <v-row class="mb-4">
-                            <v-card width="200px" tile outlined class="mt-6" v-for="i in vendors.length" :key="i">
-                                <v-card-actions>
-                                    <v-icon class="mr-3" medium>{{icons.mdiCurrencyUsd}}</v-icon>
-                                    <v-spacer></v-spacer>
-                                    <v-icon class="ml-3" size="22px">mdi-watch</v-icon>
-                                </v-card-actions>
-                            </v-card>
-                        </v-row>
-                        <v-row v-for="(n,i) in resultBody.size" :key="i">
-                            <v-hover v-slot:default="{ hover }" v-for="(k,j) in vendors.length" :key="j">
-                                <v-card width="200px" class="pt-2 pb-2" tile outlined
-                                        :elevation="(hover || result[i].vendors[j].offers[0].selected) ? 16 : 0">
-                                    <v-card-actions v-if="result[i].vendors[j].offers[0].offerMessage.length !== 0" style="padding-top: 2px; padding-bottom: 2px" class="red lighten-4">
-                                        <v-card-text class="ml-2 pa-0" style="font-size: 12px">
-                                            {{result[i].vendors[j].offers[0].offerMessage[0].text}}
-                                        </v-card-text>
-                                    </v-card-actions>
+                    <template v-slot:header.selectedIDT="{header}">
+                        <v-chip color="green" @click="selectAllIDT()">
+                            {{header.text}}
+                        </v-chip>
+                    </template>
 
-                                    <v-card-actions v-if="result[i].vendors[j].offers[0].offerMessage.length === 0" style="padding-top: 2px; padding-bottom: 2px" :class="{'grey lighten-1': result[i].vendors[j].offers[0].selected === true}">
-                                        <v-card-text class="ml-2 pa-0" style="font-size: 20px">
-                                            {{result[i].vendors[j].offers[0].price}}
-                                        </v-card-text>
-                                        <v-spacer></v-spacer>
-                                        <v-card-text class="mr-1 pa-0" style="text-align: right; font-size: 20px">
-                                            {{result[i].vendors[j].offers[0].turnoverTime}}
-                                        </v-card-text>
-                                    </v-card-actions>
+                    <template v-slot:header.selectedGeneArt="{header}">
+                        <v-chip color="orange" @click="selectAllGeneArt()">
+                            {{header.text}}
+                        </v-chip>
+                    </template>
 
-                                    <v-expand-transition v-if="result[i].vendors[j].offers[0].selected === true">
-                                        <div
-                                                v-if="hover"
-                                                class="d-flex transition-fast-in-fast-out grey lighten-2 v-card--reveal display-3"
-                                                style="height: 100%; width: 100%"
-                                        >
-                                            <v-icon class="ml-3" size="22px"
-                                                    @click="minusBtn(i, j)">
-                                                mdi-minus
-                                            </v-icon>
-                                        </div>
-                                    </v-expand-transition>
+                    <template v-slot:item.selectedTwist="{item, value}">
+                        <v-tooltip v-if="item.vendors[0].offers.length === 0" left>
+                            <template v-slot:activator="{ on }">
+                                <v-icon color="red" v-on="on">mdi-message</v-icon>
+                            </template>
+                            <span>No offer available</span>
+                        </v-tooltip>
+                        <v-tooltip v-else-if="item.vendors[0].offers[0].offerMessage.length !== 0" left>
+                            <template v-slot:activator="{ on }">
+                                <v-icon color="red" v-on="on">mdi-message</v-icon>
+                            </template>
+                            <span>{{item.vendors[0].offers[0].offerMessage[0].text}}</span>
+                        </v-tooltip>
+                        <v-checkbox v-else
+                                    v-model="selectedTwist"
+                                    :value="item.vendors[0].offers[0].id"
+                                    @change="selectTwist(item.vendors[0].offers, 0)"
+                                    color="red"></v-checkbox>
+                    </template>
 
-                                    <v-expand-transition v-else-if="result[i].vendors[j].offers.length > 1 && result[i].vendors[j].offers[0].offerMessage.length === 0">
-                                        <div
-                                                v-if="hover"
-                                                class="d-flex transition-fast-in-fast-out grey lighten-2 v-card--reveal display-3"
-                                                style="height: 100%; width: 100%"
-                                        >
+                    <template v-slot:item.vendors[0].offers[0].price="{item, value}">
+                        <p v-if="item.vendors[0].offers.length === 0 || item.vendors[0].offers[0].offerMessage.length !== 0"
+                           class="mb-0">0</p>
+                        <v-chip v-else-if="item.vendors[0].offers[0].selected" color="red">{{value}}</v-chip>
+                        <p v-else class="mb-0">{{value}}</p>
+                    </template>
 
-                                            <v-icon class="ml-3" size="22px"
-                                                    @click="dialogShow(i, j)">
-                                                mdi-dots-horizontal
-                                            </v-icon>
+                    <template v-slot:item.vendors[0].offers[0].turnoverTime="{item, value}">
+                        <p v-if="item.vendors[0].offers.length === 0 || item.vendors[0].offers[0].offerMessage.length !== 0"
+                           class="mb-0">0</p>
+                        <v-chip v-else-if="item.vendors[0].offers[0].selected" color="red">{{value}}</v-chip>
+                        <p v-else class="mb-0">{{value}}</p>
+                    </template>
 
-                                        </div>
-                                    </v-expand-transition>
+                    <template v-slot:item.selectedIDT="{item}">
+                        <v-tooltip v-if="item.vendors[1].offers.length === 0" left>
+                            <template v-slot:activator="{ on }">
+                                <v-icon color="green" v-on="on">mdi-message</v-icon>
+                            </template>
+                            <span>No offer available</span>
+                        </v-tooltip>
+                        <v-tooltip v-else-if="item.vendors[1].offers[0].offerMessage.length !== 0" left>
+                            <template v-slot:activator="{ on }">
+                                <v-icon color="green" v-on="on">mdi-message</v-icon>
+                            </template>
+                            <span>{{item.vendors[1].offers[0].offerMessage[0].text}}</span>
+                        </v-tooltip>
+                        <v-checkbox v-else
+                                    v-model="selectedIDT"
+                                    :value="item.vendors[1].offers[0].id"
+                                    @change="selectIDT(item.vendors[1].offers, 0)"
+                                    color="green"></v-checkbox>
+                    </template>
 
-                                    <v-expand-transition v-else-if="result[i].vendors[j].offers[0].offerMessage.length === 0">
-                                        <div
-                                                v-if="hover"
-                                                class="d-flex transition-fast-in-fast-out grey lighten-2 v-card--reveal display-3"
-                                                style="height: 100%; width: 100%"
-                                        >
-                                            <v-icon class="ml-3" size="22px"
-                                                    @click="plusBtn(i, j)">
-                                                mdi-plus
-                                            </v-icon>
-                                        </div>
-                                    </v-expand-transition>
-                                </v-card>
-                            </v-hover>
-                        </v-row>
+                    <template v-slot:item.vendors[1].offers[0].price="{item, value}">
+                        <p v-if="item.vendors[1].offers.length === 0 || item.vendors[1].offers[0].offerMessage.length !== 0"
+                           class="mb-0">0</p>
+                        <v-chip v-else-if="item.vendors[1].offers[0].selected" color="green">{{value}}</v-chip>
+                        <p v-else class="mb-0">{{value}}</p>
+                    </template>
 
-                        <v-dialog v-model="dialog" scrollable max-width="300px">
-                            <v-card>
-                                <v-card-title>Select Offer</v-card-title>
-                                <v-divider></v-divider>
-                                <v-card-text style="height: 300px" class="pl-0 pr-0 pt-3">
-                                    <v-card-actions class="pl-12 pr-12">
-                                        <v-icon class="mr-3" medium>{{icons.mdiCurrencyUsd}}</v-icon>
-                                        <v-spacer></v-spacer>
-                                        <v-icon class="ml-3" size="22px">mdi-watch</v-icon>
-                                    </v-card-actions>
-                                    <v-list rounded>
-                                        <v-list-item-group v-model="dialogItem">
-                                            <v-list-item v-for="(n, k) in dialogList" :key="k">
-                                                <v-list-item-content>
-                                                    <v-card-actions class="pl-8 pr-8">
-                                                        <span>{{n.price}}</span>
-                                                        <v-spacer></v-spacer>
-                                                        <span>{{n.turnoverTime}}</span>
-                                                    </v-card-actions>
-                                                </v-list-item-content>
-                                            </v-list-item>
-                                        </v-list-item-group>
-                                    </v-list>
-                                </v-card-text>
-                                <v-divider></v-divider>
-                                <v-card-actions>
-                                    <v-btn color="blue darken-1" text
-                                           @click="dialogClose()">Close
-                                    </v-btn>
-                                    <v-btn color="blue darken-1" text
-                                           @click="dialogSave()">Save
-                                    </v-btn>
-                                </v-card-actions>
-                            </v-card>
-                        </v-dialog>
-                    </v-col>
-                    <p>{{dialogItem}}</p>
-                </v-row>
-        </v-container>
-        <v-row>
-            <v-pagination
-                    v-model="page"
-                    :length="Math.round(this.$store.state.StoreCount / this.$store.state.StoreSize)"
-                    style="alignment: bottom"
-                    circle
-                    @next="next"
-                    @previous="previous"
-                    @input="input"
-            ></v-pagination>
-        </v-row>
-        <p>{{this.$store.state.StoreOffset}}</p>
-        <p>{{this.$store.state.StoreSize}}</p>
+                    <template v-slot:item.vendors[1].offers[0].turnoverTime="{item, value}">
+                        <p v-if="item.vendors[1].offers.length === 0 || item.vendors[1].offers[0].offerMessage.length !== 0"
+                           class="mb-0">0</p>
+                        <v-chip v-else-if="item.vendors[1].offers[0].selected" color="green">{{value}}</v-chip>
+                        <p v-else class="mb-0">{{value}}</p>
+                    </template>
+
+                    <template v-slot:item.selectedGeneArt="{item}">
+                        <v-tooltip v-if="item.vendors[2].offers.length === 0" left>
+                            <template v-slot:activator="{ on }">
+                                <v-icon color="orange" v-on="on">mdi-message</v-icon>
+                            </template>
+                            <span>No offer available</span>
+                        </v-tooltip>
+                        <v-tooltip v-else-if="item.vendors[2].offers[0].offerMessage.length !== 0" left>
+                            <template v-slot:activator="{ on }">
+                                <v-icon color="orange" v-on="on">mdi-message</v-icon>
+                            </template>
+                            <span>{{item.vendors[2].offers[0].offerMessage[0].text}}</span>
+                        </v-tooltip>
+                        <v-checkbox v-else
+                                    v-model="selectedGeneArt"
+                                    :value="item.vendors[2].offers[0].id"
+                                    @change="selectGeneArt(item.vendors[2].offers, 0)"
+                                    color="orange"></v-checkbox>
+                    </template>
+
+                    <template v-slot:item.vendors[2].offers[0].price="{item, value}">
+                        <p v-if="item.vendors[2].offers.length === 0 || item.vendors[2].offers[0].offerMessage.length !== 0"
+                           class="mb-0">0</p>
+                        <v-chip v-else-if="item.vendors[2].offers[0].selected" color="orange">{{value}}</v-chip>
+                        <p v-else class="mb-0">{{value}}</p>
+                    </template>
+
+                    <template v-slot:item.vendors[2].offers[0].turnoverTime="{item, value}">
+                        <p v-if="item.vendors[2].offers.length === 0 || item.vendors[2].offers[0].offerMessage.length !== 0"
+                           class="mb-0">0</p>
+                        <v-chip v-else-if="item.vendors[2].offers[0].selected" color="orange">{{value}}</v-chip>
+                        <p v-else class="mb-0">{{value}}</p>
+                    </template>
+
+                    <template v-slot:expanded-item="{item, headers}">
+                        <td :colspan="headers.length" class="pa-0">
+                            <v-data-table
+                                    :headers="headersSecond"
+                                    :items="item.vendors[item.sequenceInformation.mostOffVendor].offers"
+                                    item-key="sequenceInformation.name"
+                                    class="elevation-1"
+                                    hide-default-footer
+                            >
+                                <template v-slot:header.selectedTwist="{header}">
+                                    <v-chip>
+                                        {{header.text}}
+                                    </v-chip>
+                                </template>
+                                <template v-slot:header.selectedIDT="{header}">
+                                    <v-chip>
+                                        {{header.text}}
+                                    </v-chip>
+                                </template>
+                                <template v-slot:header.selectedGeneArt="{header}">
+                                    <v-chip>
+                                        {{header.text}}
+                                    </v-chip>
+                                </template>
+
+                                <template v-slot:item="props">
+                                    <tr>
+                                        <td v-if="selectedVendors.includes(0)">
+                                            <p class="mb-0"
+                                               v-if="results[item.sequenceInformation.id].vendors[0].offers.length <= props.index"></p>
+                                            <v-tooltip
+                                                    v-else-if="results[item.sequenceInformation.id].vendors[0].offers[props.index].offerMessage.length !== 0"
+                                                    right>
+                                                <template v-slot:activator="{ on }">
+                                                    <v-icon color="red" v-on="on">mdi-message</v-icon>
+                                                </template>
+                                                <span>{{results[item.sequenceInformation.id].vendors[0].offers[props.index].offerMessage[0].text}}</span>
+                                            </v-tooltip>
+                                            <v-checkbox v-else
+                                                        v-model="selectedTwist"
+                                                        :value="results[item.sequenceInformation.id].vendors[0].offers[props.index].id"
+                                                        @change="selectTwist(results[item.sequenceInformation.id].vendors[0].offers, props.index)"
+                                                        color="red"></v-checkbox>
+                                        </td>
+                                        <td v-if="selectedVendors.includes(0)">
+                                            <p class="mb-0"
+                                               v-if="results[item.sequenceInformation.id].vendors[0].offers.length <= props.index"></p>
+                                            <p class="mb-0"
+                                               v-else-if="results[item.sequenceInformation.id].vendors[0].offers[props.index].offerMessage.length !== 0">
+                                                0</p>
+                                            <p class="mb-0"
+                                               v-else-if="results[item.sequenceInformation.id].vendors[0].offers[props.index].selected">
+                                                <v-chip color="red">
+                                                    {{results[item.sequenceInformation.id].vendors[0].offers[props.index].price}}
+                                                </v-chip>
+                                            </p>
+                                            <p class="mb-0" v-else>
+                                                {{results[item.sequenceInformation.id].vendors[0].offers[props.index].price}}
+                                            </p>
+                                        </td>
+                                        <td v-if="selectedVendors.includes(0)">
+                                            <p class="mb-0"
+                                               v-if="results[item.sequenceInformation.id].vendors[0].offers.length <= props.index"></p>
+                                            <p class="mb-0"
+                                               v-else-if="results[item.sequenceInformation.id].vendors[0].offers[props.index].offerMessage.length !== 0">
+                                                0</p>
+                                            <p class="mb-0"
+                                               v-else-if="results[item.sequenceInformation.id].vendors[0].offers[props.index].selected">
+                                                <v-chip color="red">
+                                                    {{results[item.sequenceInformation.id].vendors[0].offers[props.index].turnoverTime}}
+                                                </v-chip>
+                                            </p>
+                                            <p class="mb-0" v-else>
+                                                {{results[item.sequenceInformation.id].vendors[0].offers[props.index].turnoverTime}}
+                                            </p>
+                                        </td>
+
+                                        <td v-if="selectedVendors.includes(1)">
+                                            <p class="mb-0"
+                                               v-if="results[item.sequenceInformation.id].vendors[1].offers.length <= props.index"></p>
+                                            <v-tooltip
+                                                    v-else-if="results[item.sequenceInformation.id].vendors[1].offers[props.index].offerMessage.length !== 0"
+                                                    right>
+                                                <template v-slot:activator="{ on }">
+                                                    <v-icon color="green" v-on="on">mdi-message</v-icon>
+                                                </template>
+                                                <span>{{results[item.sequenceInformation.id].vendors[1].offers[props.index].offerMessage[0].text}}</span>
+                                            </v-tooltip>
+                                            <v-checkbox v-else
+                                                        v-model="selectedIDT"
+                                                        :value="results[item.sequenceInformation.id].vendors[1].offers[props.index].id"
+                                                        @change="selectIDT(results[item.sequenceInformation.id].vendors[1].offers, props.index)"
+                                                        color="green"></v-checkbox>
+                                        </td>
+                                        <td v-if="selectedVendors.includes(1)">
+                                            <p class="mb-0"
+                                               v-if="results[item.sequenceInformation.id].vendors[1].offers.length <= props.index"></p>
+                                            <p class="mb-0"
+                                               v-else-if="results[item.sequenceInformation.id].vendors[1].offers[props.index].offerMessage.length !== 0">
+                                                0</p>
+                                            <p class="mb-0"
+                                               v-else-if="results[item.sequenceInformation.id].vendors[1].offers[props.index].selected">
+                                                <v-chip color="green">
+                                                    {{results[item.sequenceInformation.id].vendors[1].offers[props.index].price}}
+                                                </v-chip>
+                                            </p>
+                                            <p class="mb-0" v-else>
+                                                {{results[item.sequenceInformation.id].vendors[1].offers[props.index].price}}
+                                            </p>
+                                        </td>
+                                        <td v-if="selectedVendors.includes(1)">
+                                            <p class="mb-0"
+                                               v-if="results[item.sequenceInformation.id].vendors[1].offers.length <= props.index"></p>
+                                            <p class="mb-0"
+                                               v-else-if="results[item.sequenceInformation.id].vendors[1].offers[props.index].offerMessage.length !== 0">
+                                                0</p>
+                                            <p class="mb-0"
+                                               v-else-if="results[item.sequenceInformation.id].vendors[1].offers[props.index].selected">
+                                                <v-chip color="green">
+                                                    {{results[item.sequenceInformation.id].vendors[1].offers[props.index].turnoverTime}}
+                                                </v-chip>
+                                            </p>
+                                            <p class="mb-0" v-else>
+                                                {{results[item.sequenceInformation.id].vendors[1].offers[props.index].turnoverTime}}
+                                            </p>
+                                        </td>
+
+                                        <td v-if="selectedVendors.includes(2)">
+                                            <p class="mb-0"
+                                               v-if="results[item.sequenceInformation.id].vendors[2].offers.length <= props.index"></p>
+                                            <v-tooltip
+                                                    v-else-if="results[item.sequenceInformation.id].vendors[2].offers[props.index].offerMessage.length !== 0"
+                                                    right>
+                                                <template v-slot:activator="{ on }">
+                                                    <v-icon color="orange" v-on="on">mdi-message</v-icon>
+                                                </template>
+                                                <span>{{results[item.sequenceInformation.id].vendors[2].offers[props.index].offerMessage[0].text}}</span>
+                                            </v-tooltip>
+                                            <v-checkbox v-else
+                                                        v-model="selectedGeneArt"
+                                                        :value="results[item.sequenceInformation.id].vendors[2].offers[props.index].id"
+                                                        @change="selectGeneArt(results[item.sequenceInformation.id].vendors[2].offers, props.index)"
+                                                        color="orange"></v-checkbox>
+                                        </td>
+                                        <td v-if="selectedVendors.includes(2)">
+                                            <p class="mb-0"
+                                               v-if="results[item.sequenceInformation.id].vendors[2].offers.length <= props.index"></p>
+                                            <p class="mb-0"
+                                               v-else-if="results[item.sequenceInformation.id].vendors[2].offers[props.index].offerMessage.length !== 0">
+                                                0</p>
+                                            <p class="mb-0"
+                                               v-else-if="results[item.sequenceInformation.id].vendors[2].offers[props.index].selected">
+                                                <v-chip color="orange">
+                                                    {{results[item.sequenceInformation.id].vendors[2].offers[props.index].price}}
+                                                </v-chip>
+                                            </p>
+                                            <p class="mb-0" v-else>
+                                                {{results[item.sequenceInformation.id].vendors[2].offers[props.index].price}}
+                                            </p>
+                                        </td>
+                                        <td v-if="selectedVendors.includes(2)">
+                                            <p class="mb-0"
+                                               v-if="results[item.sequenceInformation.id].vendors[2].offers.length <= props.index"></p>
+                                            <p class="mb-0"
+                                               v-else-if="results[item.sequenceInformation.id].vendors[2].offers[props.index].offerMessage.length !== 0">
+                                                0</p>
+                                            <p class="mb-0"
+                                               v-else-if="results[item.sequenceInformation.id].vendors[2].offers[props.index].selected">
+                                                <v-chip color="orange">
+                                                    {{results[item.sequenceInformation.id].vendors[2].offers[props.index].turnoverTime}}
+                                                </v-chip>
+                                            </p>
+                                            <p class="mb-0" v-else>
+                                                {{results[item.sequenceInformation.id].vendors[2].offers[props.index].turnoverTime}}
+                                            </p>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </v-data-table>
+                        </td>
+                    </template>
+                </v-data-table>
+            </v-app>
+        </div>
     </div>
 </template>
 
 <script>
-    import {mdiCurrencyUsd} from '@mdi/js';
-
-    export default {
-        name: "Result",
+    export default ({
+        name: 'Result',
         data() {
             return {
-                fileName: this.$store.state.StoreFile.name,
-                icons: {
-                    mdiCurrencyUsd
-                },
-                dialogItem: null,
-                dialog: false,
-                dialogList: [],
-                page: 1,
-                plus: false
-            }
-        },
-        computed: {
-            result() {
-                return this.$store.state.StoreSearchResult.result;
-            },
-            resultBody() {
-                return this.$store.state.StoreSearchResult;
-            },
-            vendors() {
-                return this.$store.state.StoreVendors;
-            },
-            permanentElevation() {
-                return this.$store.state.StorePermanentElevation;
+                computedHeaders: [],
+                computedHeadersSecond: [],
+                expanded: [],
+                selectedTwist: [],
+                lengthTwist: 0,
+                selectedIDT: [],
+                lengthIDT: 0,
+                selectedGeneArt: [],
+                lengthGeneArt: 0,
+                checkTwist: false,
+                checkIDT: false,
+                checkGeneArt: false,
+                singleExpand: false,
+
+                // results: [
+                //     {
+                //         sequenceInformation: {
+                //             id: 0,
+                //             name: 'Frozen Yogurt',
+                //             mostOff: 2,
+                //             mostOffVendor: 2
+                //         },
+                //         vendors: [
+                //             {
+                //                 key: 0,
+                //                 offers: []
+                //             },
+                //             {
+                //                 key: 1,
+                //                 offers: [
+                //                     {
+                //                         id: "010",
+                //                         offerMessage: [],
+                //                         price: 0.8,
+                //                         selected: false,
+                //                         turnoverTime: 4
+                //                     }
+                //                 ]
+                //             },
+                //             {
+                //                 key: 2,
+                //                 offers: [
+                //                     {
+                //                         id: "020",
+                //                         offerMessage: [
+                //                             {
+                //                                 messageType: 1006,
+                //                                 text: "This vendor cannot synthesize this sequence"
+                //                             }
+                //                         ],
+                //                         price: 0.8,
+                //                         selected: false,
+                //                         turnoverTime: 9
+                //                     },
+                //                     {
+                //                         id: "021",
+                //                         offerMessage: [],
+                //                         price: 0.8,
+                //                         selected: false,
+                //                         turnoverTime: 30
+                //                     }
+                //                 ]
+                //             }
+                //         ]
+                //     },
+                //     {
+                //         sequenceInformation: {
+                //             id: 1,
+                //             name: 'Ice cream Sandwich',
+                //             mostOff: 3,
+                //             mostOffVendor: 2
+                //         },
+                //         vendors: [
+                //             {
+                //                 key: 0,
+                //                 offers: []
+                //             },
+                //             {
+                //                 key: 1,
+                //                 offers: [
+                //                     {
+                //                         id: "110",
+                //                         offerMessage: [],
+                //                         price: 0.9,
+                //                         selected: false,
+                //                         turnoverTime: 60
+                //                     },
+                //                     {
+                //                         id: "111",
+                //                         offerMessage: [],
+                //                         price: 0.2,
+                //                         selected: false,
+                //                         turnoverTime: 5
+                //                     }
+                //                 ]
+                //             },
+                //             {
+                //                 key: 2,
+                //                 offers: [
+                //                     {
+                //                         id: "120",
+                //                         offerMessage: [
+                //                             {
+                //                                 messageType: 1006,
+                //                                 text: "This vendor cannot synthesize this sequence"
+                //                             }
+                //                         ],
+                //                         price: 0.7,
+                //                         selected: false,
+                //                         turnoverTime: 90
+                //                     },
+                //                     {
+                //                         id: "121",
+                //                         offerMessage: [
+                //                             {
+                //                                 messageType: 1006,
+                //                                 text: "This vendor cannot synthesize this sequence"
+                //                             }
+                //                         ],
+                //                         price: 0.95,
+                //                         selected: false,
+                //                         turnoverTime: 33
+                //                     },
+                //                     {
+                //                         id: "122",
+                //                         offerMessage: [],
+                //                         price: 0.4,
+                //                         selected: false,
+                //                         turnoverTime: 8
+                //                     }
+                //                 ]
+                //             }
+                //         ]
+                //     },
+                // ],
             }
         },
         methods: {
-            plusBtn(i, j) {
-                this.$store.state.StoreSearchResult.result[i].vendors[j].offers[0].selected = true;
-                this.plus = true;
+            selectTwist(offers, index) {
+                if (!offers[index].selected) {
+                    offers[index].selected = true;
+                    var temp = offers[0];
+                    offers[0] = offers[index];
+                    offers[index] = temp;
+                } else {
+                    offers[index].selected = false
+                }
+                this.checkTwist = this.selectedTwist.length >= this.results.length - this.lengthTwist;
             },
-            minusBtn(i,j) {
-                this.$store.state.StoreSearchResult.result[i].vendors[j].offers[0].selected = false;
-                this.plus = false;
-            },
-            dialogShow(i, j) {
-                this.dialog = true;
-                this.dialogList = this.$store.state.StoreSearchResult.result[i].vendors[j].offers
-            },
-            dialogSave() {
-                this.dialog = false;
-                this.dialogList[this.dialogItem].selected = true;
-                this.dialogItem = null
-            },
-            dialogClose() {
-                this.dialog = false;
-                this.dialogItem = null
-            },
-            next() {
-                this.$store.state.StoreOffset = this.$store.state.StoreSize * (this.page - 1);
-                var resData = new FormData();
-                resData.append('size', this.$store.state.StoreSize);
-                resData.append('offset', this.$store.state.StoreOffset);
+            selectAllTwist() {
+                if (!this.checkTwist) {
+                    this.results.forEach(i => {
+                        if (i.vendors[0].offers.length !== 0) {
+                            if (i.vendors[0].offers[0].offerMessage.length === 0 && !this.selectedTwist.includes(i.vendors[0].offers[0].id)) {
+                                i.vendors[0].offers[0].selected = true;
+                                this.selectedTwist.push(i.vendors[0].offers[0].id)
+                            }
+                        }
 
-
-                this.$http.post('/api/results', resData, {
-                    headers: {
-                        'Access-Control-Allow-Origin': '*',
-                        'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE, PUT',
-                        'Access-Control-Allow-Headers': 'append,delete,entries,foreach,get,has,keys,set,values,Authorization',
-                    }
-                })
-                    .then(response => {
-                        // eslint-disable-next-line no-console
-                        console.log(response);
-                        this.$store.state.StoreSearchResult = response.body;
-                        // eslint-disable-next-line no-console
-                        console.log(this.$store.state.StoreSearchResult);
-                        this.$store.state.StoreFile = this.file;
-                        this.$store.state.StoreCount = response.body.count;
-                        this.$router.push('/result/' + `${this.page}`);
                     });
+                    this.checkTwist = true;
+                } else {
+                    this.results.forEach(i => {
+                        let j;
+                        for (j = 0; j < i.vendors[0].offers.length; j++) {
+                            i.vendors[0].offers[j].selected = false
+                        }
 
-            },
-            previous() {
-                this.$store.state.StoreOffset = this.$store.state.StoreSize * (this.page - 1);
-                var resData = new FormData();
-                resData.append('size', this.$store.state.StoreSize);
-                resData.append('offset', this.$store.state.StoreOffset);
-
-
-                this.$http.post('/api/results', resData, {
-                    headers: {
-                        'Access-Control-Allow-Origin': '*',
-                        'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE, PUT',
-                        'Access-Control-Allow-Headers': 'append,delete,entries,foreach,get,has,keys,set,values,Authorization',
-                    }
-                })
-                    .then(response => {
-                        // eslint-disable-next-line no-console
-                        console.log(response);
-                        this.$store.state.StoreSearchResult = response.body;
-                        // eslint-disable-next-line no-console
-                        console.log(this.$store.state.StoreSearchResult);
-                        this.$store.state.StoreFile = this.file;
-                        this.$store.state.StoreCount = response.body.count;
-                        this.$router.push('/result/' + `${this.page}`);
                     });
+                    this.selectedTwist = [];
+                    this.checkTwist = false;
+                }
             },
-            input() {
-                this.$store.state.StoreOffset = this.$store.state.StoreSize * (this.page - 1);
-                var resData = new FormData();
-                resData.append('size', this.$store.state.StoreSize);
-                resData.append('offset', this.$store.state.StoreOffset);
-
-
-                this.$http.post('/api/results', resData, {
-                    headers: {
-                        'Access-Control-Allow-Origin': '*',
-                        'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE, PUT',
-                        'Access-Control-Allow-Headers': 'append,delete,entries,foreach,get,has,keys,set,values,Authorization',
-                    }
-                })
-                    .then(response => {
-                        // eslint-disable-next-line no-console
-                        console.log(response);
-                        this.$store.state.StoreSearchResult = response.body;
-                        // eslint-disable-next-line no-console
-                        console.log(this.$store.state.StoreSearchResult);
-                        this.$store.state.StoreFile = this.file;
-                        this.$store.state.StoreCount = response.body.count;
-                        this.$router.push('/result/' + `${this.page}`);
+            selectIDT(offers, index) {
+                if (!offers[index].selected) {
+                    offers[index].selected = true;
+                    var temp = offers[0];
+                    offers[0] = offers[index];
+                    offers[index] = temp;
+                } else {
+                    offers[index].selected = false
+                }
+                this.checkIDT = this.selectedIDT.length >= this.results.length - this.lengthIDT;
+            },
+            selectAllIDT() {
+                if (!this.checkIDT) {
+                    this.results.forEach(i => {
+                        if (i.vendors[1].offers.length !== 0) {
+                            if (i.vendors[1].offers[0].offerMessage.length === 0 && !this.selectedIDT.includes(i.vendors[1].offers[0].id)) {
+                                i.vendors[1].offers[0].selected = true;
+                                this.selectedIDT.push(i.vendors[1].offers[0].id)
+                            }
+                        }
                     });
+                    this.checkIDT = true;
+                } else {
+                    this.results.forEach(i => {
+                        let j;
+                        for (j = 0; j < i.vendors[1].offers.length; j++) {
+                            i.vendors[1].offers[j].selected = false
+                        }
+                    });
+                    this.selectedIDT = [];
+                    this.checkIDT = false;
+                }
+            },
+            selectGeneArt(offers, index) {
+                if (!offers[index].selected) {
+                    offers[index].selected = true;
+                    var temp = offers[0];
+                    offers[0] = offers[index];
+                    offers[index] = temp;
+                } else {
+                    offers[index].selected = false
+                }
+                this.checkGeneArt = this.selectedGeneArt.length >= this.results.length - this.lengthGeneArt;
+            },
+            selectAllGeneArt() {
+                if (!this.checkGeneArt) {
+                    this.results.forEach(i => {
+                        if (i.vendors[2].offers.length !== 0) {
+                            if (i.vendors[2].offers[0].offerMessage.length === 0 && !this.selectedGeneArt.includes(i.vendors[2].offers[0].id)) {
+                                i.vendors[2].offers[0].selected = true;
+                                this.selectedGeneArt.push(i.vendors[2].offers[0].id)
+                            }
+                        }
+                    });
+                    this.checkGeneArt = true;
+                } else {
+                    this.results.forEach(i => {
+                        let j;
+                        for (j = 0; j < i.vendors[2].offers.length; j++) {
+                            i.vendors[2].offers[j].selected = false
+                        }
+                    });
+                    this.selectedGeneArt = [];
+                    this.checkGeneArt = false;
+                }
+            },
+        },
+        computed: {
+            vendors() {
+                return this.$store.state.StoreVendors
+            },
+            selectedVendors() {
+                return this.$store.state.StoreSelectedVendors
+            },
+            headers() {
+                // return [
+                //     {
+                //         text: 'Sequence',
+                //         align: 'left',
+                //         sortable: false,
+                //         value: 'sequenceInformation.name',
+                //     },
+                //     {text: 'Twist', value: 'selectedTwist', sortable: false},
+                //     {text: 'Price', value: 'vendors[0].offers[0].price'},
+                //     {text: 'Time', value: 'vendors[0].offers[0].turnoverTime'},
+                //
+                //     {text: 'IDT', value: 'selectedIDT', sortable: false},
+                //     {text: 'Price', value: 'vendors[1].offers[0].price'},
+                //     {text: 'Time', value: 'vendors[1].offers[0].turnoverTime'},
+                //
+                //     {text: 'GeneArt', value: 'selectedGeneArt', sortable: false},
+                //     {text: 'Price', value: 'vendors[2].offers[0].price'},
+                //     {text: 'Time', value: 'vendors[2].offers[0].turnoverTime'},
+                //
+                //     {text: '', value: 'data-table-expand'}
+                //
+                // ]
+                return this.computedHeaders
+            },
+            headersSecond() {
+                // return [
+                //
+                //     {text: 'Twist', value: 'selectedTwist', sortable: false},
+                //     {text: 'Price', value: 'price'},
+                //     {text: 'Time', value: 'time'},
+                //
+                //     {text: 'IDT', value: 'selectedIDT', sortable: false},
+                //     {text: 'Price', value: 'price'},
+                //     {text: 'Time', value: 'time'},
+                //
+                //     {text: 'GeneArt', value: 'selectedGeneArt', sortable: false},
+                //     {text: 'Price', value: 'price'},
+                //     {text: 'Time', value: 'tot'},
+                //
+                //
+                // ]
+                return this.computedHeadersSecond
+            },
+            results() {
+                return this.$store.state.StoreSearchResult
             }
-        }
 
-    }
+        },
+        created() {
+            let i, j, k;
+            for (i = 0; i < this.results.length; i++) {
+                for (j = 0; j < this.results[i].vendors.length; j++) {
+                    if (this.results[i].vendors[j].offers.length === 0 || this.results[i].vendors[j].offers[0].offerMessage.length !== 0) {
+                        if (j === 0) {
+                            this.lengthTwist -= 1;
+                        }
+                        if (j === 1) {
+                            this.lengthIDT -= 1;
+                        }
+                        if (j === 2) {
+                            this.lengthGeneArt -= 1;
+                        }
+                    }
+                    for (k = 0; k < this.results[i].vendors[j].offers.length; k++) {
+                        if (this.results[i].vendors[j].offers[k].selected) {
+                            if (j === 0) {
+                                this.selectedTwist.push(this.results[i].vendors[j].offers[k].id);
+                            }
+                            if (j === 1) {
+                                this.selectedIDT.push(this.results[i].vendors[j].offers[k].id);
+                            }
+                            if (j === 2) {
+                                this.selectedGeneArt.push(this.results[i].vendors[j].offers[k].id);
+                            }
+                        }
+                    }
+                }
+            }
+            this.lengthTwist = Math.abs(this.lengthTwist);
+            this.checkTwist = this.selectedTwist.length >= this.results.length - this.lengthTwist;
+
+            this.lengthIDT = Math.abs(this.lengthIDT);
+            this.checkIDT = this.selectedIDT.length >= this.results.length - this.lengthIDT;
+
+            this.lengthGeneArt = Math.abs(this.lengthGeneArt);
+            this.checkGeneArt = this.selectedGeneArt.length >= this.results.length - this.lengthGeneArt;
+
+            this.computedHeaders.push({
+                text: 'Sequence',
+                align: 'left',
+                sortable: false,
+                value: 'sequenceInformation.name',
+            });
+            for (let i = 0; i < this.selectedVendors.length; i++) {
+                this.computedHeaders.push(
+                    {
+                        text: this.vendors[this.selectedVendors[i]].name,
+                        value: 'selected' + this.vendors[this.selectedVendors[i]].name,
+                        sortable: false
+                    },
+                    {
+                        text: 'Price',
+                        value: 'vendors[' + this.vendors[this.selectedVendors[i]].id + '].offers[0].price',
+                        sortable: false
+                    },
+                    {
+                        text: 'Time',
+                        value: 'vendors[' + this.vendors[this.selectedVendors[i]].id + '].offers[0].turnoverTime',
+                        sortable: false
+                    }
+                );
+                this.computedHeadersSecond.push(
+                    {
+                        text: this.vendors[this.selectedVendors[i]].name,
+                        value: 'selected' + this.vendors[this.selectedVendors[i]].name,
+                        sortable: false
+                    },
+                    {
+                        text: 'Price',
+                        value: 'price',
+                        sortable: false
+                    },
+                    {
+                        text: 'Time',
+                        value: 'time',
+                        sortable: false
+                    }
+                )
+            }
+            this.computedHeaders.push({
+                text: '',
+                value: 'data-table-expand'
+            })
+        }
+    })
 </script>
 
-<style scoped>
-    .v-card--reveal {
-        align-items: center;
-        bottom: 0;
-        justify-content: center;
-        opacity: .5;
-        position: absolute;
-        width: 100%;
-    }
+<style lang="sass">
+    @import '../sass/variables.sass'
+
 </style>

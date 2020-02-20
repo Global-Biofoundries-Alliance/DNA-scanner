@@ -249,7 +249,10 @@ class GeneArt(BasePinger):
                         message = Message(MessageType.INFO, messageText)
                         turnOverTime = response["constructs"][count]["eComInfo"]["productionDaysEstimated"]
                         productCode = response["constructs"][count]["eComInfo"]["lineItems"][0]["sku"]
-                        price = Price(amount = self.products[productCode], customerSpecific=True)
+                        if(productCode in list(self.products.keys())):
+                            price = Price(amount = self.products[productCode], customerSpecific=True)
+                        else:
+                            price = Price()
                     else:
                         turnOverTime = -1
                         price = Price()

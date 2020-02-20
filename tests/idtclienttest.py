@@ -1,7 +1,7 @@
 import unittest
 import json
 import yaml
-from Pinger import IDT
+from Pinger import IDT, Entities
 
 # Log-In Credentials
 with open("config.yml", 'r') as ymlfile:
@@ -39,7 +39,7 @@ class TestIDTClient(unittest.TestCase):
         client_id_dummy = "ID"
         client_secret = "SECRET"
         scope = "SCOPE"
-        with self.assertRaises(KeyError): IDT.IDTClient(TestIDTClient.token_server, TestIDTClient.screening_server, username_dummy, password_dummy, client_id, client_secret, scope)
+        with self.assertRaises(Entities.AuthenticationError): IDT.IDTClient(TestIDTClient.token_server, TestIDTClient.screening_server, username_dummy, password_dummy, client_id, client_secret, scope)
         
         self.assertEqual(32, len(self.idt.token))
         

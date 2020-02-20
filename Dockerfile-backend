@@ -18,4 +18,4 @@ RUN pip install -r requirements.txt
 EXPOSE 8080
 
 # Run Python-Application
-CMD ["python", "/src/backend/"]
+CMD ["python", "-u", "/src/backend/"]

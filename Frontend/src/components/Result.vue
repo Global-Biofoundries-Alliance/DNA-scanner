@@ -312,6 +312,11 @@
                         </td>
                     </template>
                 </v-data-table>
+                <p>{{selectedTwist}}</p>
+                <p>{{selectedIDT}}</p>
+                <p>{{selectedGeneArt}}</p>
+                <p>{{computedHeaders}}</p>
+                <p>{{computedHeadersSecond}}</p>
             </v-app>
         </div>
     </div>
@@ -615,12 +620,19 @@
             },
             results() {
                 return this.$store.state.StoreSearchResult
-            }
+            },
+            // selectedTwist() {
+            //     return this.selectedTwist;
+            // }
 
         },
         created() {
+            // eslint-disable-next-line no-console
+            console.log("jnfw");
             let i, j, k;
-            for (i = 0; i < this.results.length; i++) {
+            for (i = 0; i < this.$store.state.StoreSearchResult.length; i++) {
+                // eslint-disable-next-line no-console
+                console.log("jnfw");
                 for (j = 0; j < this.results[i].vendors.length; j++) {
                     if (this.results[i].vendors[j].offers.length === 0 || this.results[i].vendors[j].offers[0].offerMessage.length !== 0) {
                         if (j === 0) {
@@ -637,6 +649,8 @@
                         if (this.results[i].vendors[j].offers[k].selected) {
                             if (j === 0) {
                                 this.selectedTwist.push(this.results[i].vendors[j].offers[k].id);
+                                // eslint-disable-next-line no-console
+                                console.log(this.results[i].vendors[j].offers[k].id);
                             }
                             if (j === 1) {
                                 this.selectedIDT.push(this.results[i].vendors[j].offers[k].id);

@@ -6,12 +6,13 @@
                 dark
         >
             <!--            <v-icon v-if="this.$route.path !== '/'" class="ml-3" size="22px" @click="this.$router.push('')">mdi-arrow-left</v-icon>-->
-            <v-app-bar-nav-icon v-if="res" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+            <v-app-bar-nav-icon v-if="this.$route.path !== '/'" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
             <v-toolbar-title class="display-1 mx-auto font-weight-medium">DNA Scanner</v-toolbar-title>
         </v-app-bar>
 
         <v-content>
             <v-navigation-drawer
+                    v-if="this.$route.path !== '/'"
                     v-model="drawer"
                     absolute
                     temporary
@@ -116,24 +117,18 @@
                     <v-btn color="blue darken-1" text @click="useFilter()">Use Filter</v-btn>
                 </v-card-actions>
             </v-navigation-drawer>
-<!--            <router-view></router-view>-->
-            <Landing v-if="!res" v-on:returnResult="click"></Landing>
-            <Result v-if="res" :key="filter"></Result>
+            <router-view :key="filter"></router-view>
+<!--            <Landing v-if="!res" v-on:returnResult="click"></Landing>-->
+<!--            <Result v-if="res" :key="filter"></Result>-->
         </v-content>
 
     </v-app>
 </template>
 
 <script>
-    import Landing from './components/Landing.vue'
-    import Result from './components/Result.vue'
 
     export default {
         name: 'App',
-        components: {
-            Landing,
-            Result
-        },
         data() {
             return {
                 filter: false,
@@ -154,11 +149,13 @@
             }
         },
         methods: {
-            click(value) {
-                // eslint-disable-next-line no-console
-                console.log(this.res);
-                this.res = value
-            },
+            // click(value) {
+            //     // eslint-disable-next-line no-console
+            //     console.log(this.res);
+            //     this.res = value;
+            //     this.filter = !this.filter
+            // },
+
             reset() {
                 this.selectedVendors = [0, 1, 2];
                 this.range = [0, 50];
@@ -172,7 +169,7 @@
                     "filter":
                         {
                             "vendors": this.selectedVendors,
-                            "price": this.range,
+                            "price": [0, 0.5],
                             "deliveryDays": this.deliveryDays,
                             "preselectByPrice": this.preselectByPrice,
                             "preselectByDeliveryDays": this.preselectByTime

@@ -168,7 +168,7 @@
                                 "filter":
                                     {
                                         "vendors": this.vendors,
-                                        "price": this.range,
+                                        "price": [0, 0.5],
                                         "deliveryDays": this.deliveryDays,
                                         "preselectByPrice": this.preselectByPrice,
                                         "preselectByDeliveryDays": this.preselectByTime
@@ -221,13 +221,13 @@
                                     // eslint-disable-next-line no-console
                                     console.log(this.$store.state.StoreSearchResult);
                                     this.$store.state.StoreCount = response.body.count;
-                                    // this.$router.push('/result');
+                                    this.$router.push('/result');
                                 });
 
                         });
-
-                    this.result = true;
-                    this.$emit('returnResult', this.result);
+                    //
+                    // this.result = true;
+                    // this.$emit('returnResult', this.result);
                 }
             },
             reset() {

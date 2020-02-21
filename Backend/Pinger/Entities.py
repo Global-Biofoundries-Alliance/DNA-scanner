@@ -213,12 +213,17 @@ class SequenceOffers:
 #   @attribute offers
 #           Type ArrayOf(Offer). The list of offers from the vendor represented from 'vendorInformation'.
 #
+#   @attribute messages
+#           Type ArrayOf(Message). Vendor specific Messages (see MessageType 2XXX)
+#
 class VendorOffers:
 
-    def __init__(self, vendorInformation, offers = []):
+    def __init__(self, vendorInformation, offers = [], messages = []):
         self.vendorInformation = vendorInformation
         
         self.offers = offers
+
+        self.messages = messages
 
 #
 #   Desc:   Representation of a Offer. A Offer can also only represent a error, when it contains a
@@ -228,7 +233,7 @@ class VendorOffers:
 #           Type Price. Represents the price of the offer. If less then 0, then no price is available 
 #           or price is unknown.
 #
-#   @attribute turonvertime
+#   @attribute turnovertime
 #           Type int. Turnovertime is the number of days it needs to synthesize the sequence. If less then 
 #           0, then no turnovertime is available or turnovertime is unknown.
 #
@@ -331,3 +336,35 @@ class UrlRedirectOrder(Order):
         Order(seqInf=seqInf, orderType=OrderType.URL_REDIRECT)
         self.url = url
 
+#####################################################
+#                                                   #
+#   Errors                                          #
+#                                                   #
+#####################################################
+
+#
+#   Desc:   Input of a used function is not like exxpected. Should be like
+#           described in the description.
+#
+class InvalidInputError(Exception):
+    pass
+
+#
+#   Desc:   Used if it is not possible to make a request to a specific url.
+#           Maybe destination not exists or is temporary unavailable.
+#
+class UnavailableError(Exception):
+    pass
+
+#
+#   Desc:   Pinger is running. You cannot make multiple actions at the same 
+#           time.
+#
+class IsRunningError(Exception):
+    pass
+
+#
+#   Desc:   Authentication failed. Credentials are wrong or has not enough rights.
+#
+class AuthenticationError(Exception):
+    pass

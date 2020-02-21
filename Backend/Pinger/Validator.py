@@ -20,8 +20,10 @@ class Validator:
         raise NotImplementedError
 
 class EntityValidator:
-    def __init__(self):
-        pass
+    def __init__(self, raiseError=False, errorClass=Exception, printError=False):
+        self.raiseError = raiseError
+        self.errorClass = errorClass
+        self.printError = printError
 
     def validate(self, obj):
         # VendorInformation
@@ -58,61 +60,53 @@ class EntityValidator:
         elif isinstance(obj, SequenceVendorOffers):
             if isinstance(obj.sequenceInformation, SequenceInformation):
                 if (not self.validate(obj.sequenceInformation)):
-                    return raiseFalse("SequenceVendorOffers contains invalid SequenceInformation")
+                    return self.raiseFalse("SequenceVendorOffers contains invalid SequenceInformation")
             else:
-                return raiseFalse("sequenceInformation is not of type SequenceInformation")
-            if isinstance(obj.vendorOffers, VendorOffers):
-                if (not self.validate(obj.vendorOffers)):
-                    return raiseFalse("SequenceVendorOffers contains invalid VendorOffers")
-            else:
-                return raiseFalse("vendorOffers is not of type VendorOffers")
+                return self.raiseFalse("sequenceInformation is not of type SequenceInformation")
+            for vendorOffers in obj.vendorOffers:
+                if isinstance(vendorOffers, VendorOffers):
+                    if (not self.validate(vendorOffers)):
+                        return self.raiseFalse("SequenceVendorOffers contains invalid VendorOffers")
+                else:
+                    return self.raiseFalse("vendorOffers is not of type VendorOffers")
 
         # SequenceOffers
         elif isinstance(obj, SequenceOffers):
             if isinstance(obj.sequenceInformation, SequenceInformation):
                 if (not self.validate(obj.sequenceInformation)):
-                    return raiseFalse("SequenceOffers contains invalid SequenceInformation")
+                    return self.raiseFalse("SequenceOffers contains invalid SequenceInformation")
             else:
-                return raiseFalse("sequenceInformation is not of type SequenceInformation")
+                return self.raiseFalse("sequenceInformation is not of type SequenceInformation")
             if isinstance(obj.offers, list):
                 for offer in obj.offers:
                     if isinstance(offer, Offer):
                         if (not self.validate(offer)):
-                            return raiseFalse("one offer in offers is invalid")
+                            return self.raiseFalse("one offer in offers is invalid")
                     else:
-                        return raiseFalse("one object in offers is not of type Offer")
+                        return self.raiseFalse("one object in offers is not of type Offer")
             else:
-                return raiseFalse("offers is not of type List")
+                return self.raiseFalse("offers is not of type List")
 
         # VendorOffers
         elif isinstance(obj, VendorOffers):
-            if isinstance(obj.vendorInformation, vendorInformation):
+            # vendorInformation
+            if isinstance(obj.vendorInformation, VendorInformation):
                 if (not self.validate(obj.vendorInformation)):
-                    return raiseFalse("VendorOffers contains invalid VendorInformation")
+                    return self.raiseFalse("VendorOffers contains invalid VendorInformation")
             else:
-                return raiseFalse("vendorInformation is not of type VendorInformation")
+                return self.raiseFalse("vendorInformation is not of type VendorInformation")
+
+            # offers
             if isinstance(obj.offers, list):
                 for offer in obj.offers:
                     if isinstance(offer, Offer):
                         if (not self.validate(offer)):
-                            return raiseFalse("one offer in offers is invalid")
+                            return self.raiseFalse("one offer in offers is invalid")
                     else:
-                        return raiseFalse("one object in offers is not of type Offer")
+                        return self.raiseFalse("one object in offers is not of type Offer")
             else:
-                return raiseFalse("offers is not of type List")
-        
-        # Offer
-        elif isinstance(obj, Offer):
-            # price
-            if (not isinstance(obj.price, Price)):
-                return raiseFalse("Attribute price is not of type Price")
-            if (not self.validate(obj.price)):
-                return raiseFalse("Attribute price is invalid")
-            
-            #turnovertime
-            if (not isinstance(obj.turnovertime, int)):
-                return raiseFalse("turnovertime is not of type int")
-            
+                return self.raiseFalse("offers is not of type List")
+
             # messages
             if isinstance(obj.messages, list):
                 for message in obj.messages:
@@ -123,19 +117,71 @@ class EntityValidator:
                         return raiseFalse("one object in message is not of type Message")
             else:
                 return raiseFalse("messages is not of type List")
+        
+        # Offer
+        elif isinstance(obj, Offer):
+            # price
+            if (not isinstance(obj.price, Price)):
+                return self.raiseFalse("Attribute price is not of type Price")
+            if (not self.validate(obj.price)):
+                return self.raiseFalse("Attribute price is invalid")
+            
+            #turnovertime
+            if (not isinstance(obj.turnovertime, int)):
+                return self.raiseFalse("turnovertime is not of type int")
+            
+            # messages
+            if isinstance(obj.messages, list):
+                for message in obj.messages:
+                    if isinstance(message, Message):
+                        if (not self.validate(message)):
+                            return self.raiseFalse("one message in messages is invalid")
+                    else:
+                        return self.raiseFalse("one object in message is not of type Message")
+            else:
+                return self.raiseFalse("messages is not of type List")
 
         # Message
         elif isinstance(obj, Message):
             if(not isinstance(obj.messageType, MessageType)):
-                return raiseFalse("attribute type of Message has not type MessageType")
+                return self.raiseFalse("attribute type of Message has not type MessageType")
             if(not isinstance(obj.text, str)):
-                return raiseFalse("text is not of type String")
+                return self.raiseFalse("text is not of type String")
 
         # List
         elif isinstance(obj, list):
+            # Check that all elements in the list have the same type and that keys are unique
+            
+            elemType = None
+            firstElem = True
+            keys = []
+
+            # For every element in the list...
             for elem in obj:
+                # ... check that it is valide
                 if (not self.validate(elem)):
                     return self.raiseFalse("List contains invalid elements")
+
+                if firstElem:
+                    # Take the type of the first element to compare with the other types
+                    elemType = type(elem)
+                    firstElem = False
+                elif elemType != type(elem):
+                    # Can be ok because of polymorphism, but currently there is no reason
+                    # Maybe remove this later
+                    return self.raiseFalse("List contains various types")
+
+                # Check that keys are unique for specific types
+                if isinstance(elem, SequenceInformation):
+                    if elem.key in keys:
+                        return self.raiseFalse("Identifier is not unique")
+
+                    keys.append(elem.key)
+                elif isinstance(elem, VendorInformation):
+                    if elem.key in keys:
+                        return self.raiseFalse("Identifier is not unique")
+
+                    keys.append(elem.key)
 
         else:
             return self.raiseFalse("The object to validate has a not supported type")
@@ -143,10 +189,14 @@ class EntityValidator:
         return self.raiseTrue()
 
     def raiseFalse(self, text = ""):
-        print("Validation Failed:", text)
+        if self.printError:
+            print("Validation Failed:", text)
+        if self.raiseError:
+            raise self.errorClass(text)
         return False
 
     def raiseTrue(self, text = ""):
         return True
 
+entityValidatorThrowing = EntityValidator(raiseError=True, errorClass=InvalidInputError)
 entityValidator = EntityValidator()

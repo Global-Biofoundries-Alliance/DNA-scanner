@@ -1,3 +1,4 @@
+
 pinger:
     geneart:
         server: https://www.thermofisher.com/order/gene-design-ordering/api
@@ -7,6 +8,7 @@ pinger:
         upload: /upload/v1
         dnaStrings: enabled
         hqDnaStrings: enabled
+        timeout: 60
         username: YOUR_USERNAME
         token: YOUR_TOKEN
     twist:
@@ -14,7 +16,31 @@ pinger:
         email: YOUR_EMAIL
         username: YOUR_USERNAME
         token: YOUR_TOKEN
+    idt:
+        username: YOUR_USERNAME
+        password: YOUR_PASSWORD
+        client_id: YOUR_CLIENT_ID
+        client_secret: YOUR_CLIENT_SECRET
+        scope: YOUR_SCOPE
 controller:
+    vendors:
+        [
+        {
+            name: Twist Bioscience,
+            shortName: Twist,
+            pinger: PINGER_MOCK
+        },
+        {
+            name: IDT DNA,
+            shortName: IDT,
+            pinger: PINGER_MOCK
+        },
+        {
+            name: ThermoFisher Scientific GeneArt,
+            shortName: GeneArt,
+            pinger: PINGER_MOCK
+        }
+        ]
 
 review:
     db: 

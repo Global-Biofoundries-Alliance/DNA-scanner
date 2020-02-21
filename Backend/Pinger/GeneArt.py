@@ -3,6 +3,7 @@ import re
 from datetime import datetime
 import requests
 from .Pinger import *
+from .Validator import *
 
 class GeneArtClient: 
     # Constructur for a GeneArtClient ()
@@ -22,7 +23,7 @@ class GeneArtClient:
         self.timeout = timeout
         self.validAcc = self.authenticate()
         if(self.validAcc == False):
-            raise Exception('User Credentials are wrong')
+            raise AuthenticationError('User Credentials are wrong')
         
     # Defines the destination address for the action defined in the parameter     
     def destination(self, action):
@@ -172,12 +173,20 @@ class GeneArt(BasePinger):
         self.dnaStrings = dnaStrings 
         self.hqDnaStrings = hqDnaStrings
         self.timeout = timeout
-        
-        self.client = GeneArtClient(self.server, 
+       
+        try:
+            self.client = GeneArtClient(self.server, 
                       self.validate, self.status, self.addToCart,
                       self.upload, 
                       self.username, self.token, 
                       self.dnaStrings, self.hqDnaStrings, self.timeout)
+        except requests.exceptions.RequestException as err:
+            raise UnavailableError("Request got timeout") from err
+
+
+        self.offers = []
+        self.products = {"815010DE": 89.00,"815020DE": 109.00, "815030DE": 119.00, "815040DE": 182.00}
+        self.validator = EntityValidator(raiseError=True)
     
 
     #
@@ -186,10 +195,11 @@ class GeneArt(BasePinger):
     #
     def encode_sequence(self, seqInf):
         if isinstance(seqInf, SequenceInformation):
-            return { "idN": seqInf.key, "name": seqInf.name, "sequence": seqInf.sequence}
+            if self.validator.validate(seqInf):
+                return { "idN": seqInf.key, "name": seqInf.name, "sequence": seqInf.sequence}
         else:
             type_name = seqInf.__class__.__name__
-            raise TypeError(f"Object of type '{type_name}' is not JSON serializable")
+            raise InvalidInputError(f"Parameter must be of type SequenceInformation but is of type '{type_name}'.")
     
     #
     #   Authenticates the instance
@@ -201,6 +211,8 @@ class GeneArt(BasePinger):
         response = {}
         try:
             response = self.client.authenticate()
+        except requests.exceptions.RequestException as err:
+            raise UnavailableError("Request got timeout") from err
         except:
             messageText = 'Wrong Credentials'
             return Message(MessageType.WRONG_CREDENTIALS, messageText)
@@ -214,44 +226,69 @@ class GeneArt(BasePinger):
     #                           SequenceOffer(seqInf[n], self.tempOffer)]
     #
     def searchOffers(self, seqInf):
-        self.running = True
-        offers = [] # Empty Offers List
-        for product in "dnaStrings", "hqDnaStrings": # Two possible Product Types. 
-            try:
-                response = self.projectValidate(seqInf, product)
-            except requests.ConnectionError:  # If request timeout             
-                offers.append(SequenceOffers(None, [Offer(messages = [Message(MessageType.API_CURRENTLY_UNAVAILABLE, "GeneArt API is not available")])]))
-                break
-            count = 0 # Count the sequences
-            for seq in seqInf:
-                accepted = response["constructs"][count]["accepted"] # See if the API accepted the sequence
-                if accepted == True:
-                    messageText = product + "_" + "accepted"
-                    message = Message(MessageType.INFO, messageText)
-                else:
-                    if(len(response["constructs"][count]["reasons"]) == 1):
-                        reason = response["constructs"][count]["reasons"][0]
-                        if (reason == "length"):
-                            messageText = product + "_" + "rejected_" + str(reason) + "."
-                            message = Message(MessageType.INVALID_LENGTH, messageText)
-                        if (reason == "homology"):
-                            messageText = product + "_" + "rejected_" + str(reason) + "."
-                            message = Message(MessageType.HOMOLOGY, messageText)
-                        if (reason == "problems"):
-                            messageText = product + "_" + "rejected_" + str(reason) + "."
-                            message = Message(MessageType.INVALID_LENGTH, messageText)
-                    else:
-                        messageText = product + "_" + "rejected_"
-                        for reason in response["constructs"][count]["reasons"]:
-                            messageText = messageText + str(reason) + "."
-                        message = Message(MessageType.SYNTHESIS_ERROR, messageText)
 
-                seqOffer = SequenceOffers(seq, [Offer(messages = [message])])
-                offers.append(seqOffer)
-                count = count + 1
-        self.offers = offers
-        self.running = False
+        # Check pinger is not running
+        if(self.isRunning()):
+            raise IsRunningError("Pinger is currently running and can not perform a other action")
         
+        try: 
+            self.running = True
+            offers = [] # Empty Offers List
+            for product in "dnaStrings", "hqDnaStrings": # Two possible Product Types. 
+                try:
+                    response = self.projectValidate(seqInf, product)
+                except requests.exceptions.RequestException as err:  # If request timeout             
+                    self.running = False
+                    raise UnavailableError from err
+    
+                count = 0 # Count the sequences
+                for seq in seqInf:
+                    accepted = response["constructs"][count]["accepted"] # See if the API accepted the sequence
+                    if accepted == True:
+                        messageText = product + "_" + "accepted"
+                        message = Message(MessageType.INFO, messageText)
+                        turnOverTime = response["constructs"][count]["eComInfo"]["productionDaysEstimated"]
+                        productCode = response["constructs"][count]["eComInfo"]["lineItems"][0]["sku"]
+                        if(productCode in list(self.products.keys())):
+                            price = Price(amount = self.products[productCode], customerSpecific=True)
+                        else:
+                            price = Price()
+                    else:
+                        turnOverTime = -1
+                        price = Price()
+                        if(len(response["constructs"][count]["reasons"]) == 1):
+                            reason = response["constructs"][count]["reasons"][0]
+                            if (reason == "length"):
+                                messageText = product + "_" + "rejected_" + str(reason) + "."
+                                message = Message(MessageType.INVALID_LENGTH, messageText)
+                            if (reason == "homology"):
+                                messageText = product + "_" + "rejected_" + str(reason) + "."
+                                message = Message(MessageType.HOMOLOGY, messageText)
+                            if (reason == "problems"):
+                                messageText = product + "_" + "rejected_" + str(reason) + "."
+                                message = Message(MessageType.INVALID_LENGTH, messageText)
+                        else:
+                            messageText = product + "_" + "rejected_"
+                            for reason in response["constructs"][count]["reasons"]:
+                                messageText = messageText + str(reason) + "."
+                            message = Message(MessageType.SYNTHESIS_ERROR, messageText)
+    
+                    seqOffer = SequenceOffers(seq, [Offer(price = price, turnovertime = turnOverTime, messages = [message])])
+                    offers.append(seqOffer)
+                    count = count + 1
+            self.offers = offers
+            self.running = False
+        except InvalidInputError as err:
+            self.running = False
+            raise InvalidInputError from err
+        except requests.exceptions.RequestException as err:
+            raise UnavailableError("Request got a error") from err
+        except UnavailableError as err:
+            self.running = False
+            raise UnavailableError from err
+        except Exception as err:
+            self.running = False
+            raise UnavailableError from err    
         
     
     # 
@@ -308,7 +345,11 @@ class GeneArt(BasePinger):
     #
     def toCart(self, projectId):
         # Add the project to cart by calling the corresponding method.
-        response = self.client.toCart(projectId)
+        try:
+            response = self.client.toCart(projectId)
+        except requests.exceptions.RequestException as err:
+            raise UnavailableError("Request got Timeout") from err
+
         return response
         
     #
@@ -318,7 +359,11 @@ class GeneArt(BasePinger):
     #
     def statusReview(self, projectId):
         # Review the status of the project by calling the corresponding method.
-        response = self.client.statusReview(projectId)
+        try:
+            response = self.client.statusReview(projectId)
+        except requests.exceptions.RequestException as err:
+            raise UnavailableError("Request got timeout") from err
+
         return response
     #
     #   Desc:   Resets the pinger by
@@ -328,4 +373,34 @@ class GeneArt(BasePinger):
     def clear(self):
         self.running = False
         self.offers = [] # Empty Offers List
-        
+
+
+    #
+    #   Desc:   Create a request to trigger an order.
+    #
+    #   @param seqInf
+    #           Type ArrayOf(Entities.SequenceInformation). Representation of the sequences you want to order.
+    #
+    #   @result
+    #           Type Entities.Order. Representation of the order.
+    #
+    def order(self, seqInf):
+        self.running = True
+        constructUpload = self.constUpload(seqInf, "dnaStrings")
+        if(len(constructUpload["project"]["constructs"]) != len(seqInf)):
+            messageText = "The selected sequences cannot be synthesised."
+            message = Message(MessageType.SYNTHESIS_ERROR, messageText)
+            return message            
+            self.running = False
+        else:
+            projectId = constructUpload["project"]["projectId"]
+            toCartResponse = self.toCart(projectId)
+            expectedKeys = ["projectId", "cartId"]
+            if(expectedKeys == list(toCartResponse.keys())):
+                messageText = "Project: " + str(toCartResponse["projectId"]) + "has been successfully added to cart: " + str(toCartResponse["cartId"])
+                message = Message(MessageType.INFO, messageText)
+            else:
+                messageText = "Unable to order sequences at the moment."
+                message = Message(MessageType.API_CURRENTLY_UNAVAILABLE, messageText)
+        return message
+        self.running = False

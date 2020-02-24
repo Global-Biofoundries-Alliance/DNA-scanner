@@ -178,7 +178,7 @@ class DefaultComparisonService(ComparisonService):
                                 continue
                             for newvendoff in newseqoff.vendorOffers:
                                 if vendoff.vendorInformation.key == newvendoff.vendorInformation.key:
-                                    vendoff.offers = newvendoff.offers
+                                    vendoff.offers.extend(newvendoff.offers)
 
 
             session.storeResults(seqoffers)

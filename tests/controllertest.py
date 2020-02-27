@@ -8,6 +8,7 @@ from Controller.session import InMemorySessionManager
 from Pinger.Entities import SequenceInformation, SequenceVendorOffers
 from Pinger.Pinger import CompositePinger
 from flask import json
+from random import random
 
 
 class TestController(unittest.TestCase):
@@ -517,6 +518,55 @@ class TestController(unittest.TestCase):
         session.free()
         for i in range(0, n_sessions):
             self.assertFalse(session.hasSession(i))
+
+    def testSelectionEndpoint(self) -> None:
+        print("Testing /select endpoint")
+
+        for iteration in range(self.iterations):
+            # upload file
+            handle = open(self.sequence_path, 'rb')
+            response = self.client.post('/api/upload', content_type='multipart/form-data', data={'seqfile': handle})
+            self.assertIn(b"upload successful", response.data)
+
+            # This shouldn't select anything
+            filter = {
+                "filter": {"vendors": self.vendors, "price": [0, 100], "deliveryDays": 100, "preselectByPrice": False,
+                           "preselectByDeliveryDays": False}}
+            filter_response = self.client.post('/api/filter', content_type='application/json',
+                                               data=json.dumps(filter))
+            self.assertIn(b"filter submission successful", filter_response.data)
+            response_json = self.client.post('/api/results', content_type='multipart/form-data',
+                                             data={'size': 1000, 'offset': 0}).get_json()
+
+            selection = []
+
+            # Verify that nothing is selected and choose what shall be selected next time at random
+            for sequence in response_json["result"]:
+                for vendor in sequence["vendors"]:
+                    #TODO Use offer IDs as soon as they are implemented
+                    offerIndex = 0
+                    for offer in vendor["offers"]:
+                        self.assertFalse(offer["selected"])
+                        # Random selection
+                        if random() <= 0.4:
+                            selection.append([sequence["sequenceInformation"]["id"], vendor["key"], offerIndex])
+                        offerIndex = offerIndex + 1
+
+            response = self.client.post("/api/select", content_type='application/json',
+                                        data=json.dumps({"selection": selection}))
+            self.assertIn(b"selection set", response.data)
+
+            response_json = self.client.post('/api/results', content_type='multipart/form-data',
+                                             data={'size': 1000, 'offset': 0}).get_json()
+
+            print(response_json)
+
+            for sequence in response_json["result"]:
+                for vendor in sequence["vendors"]:
+                    offerIndex = 0
+                    for offer in vendor["offers"]:
+                        self.assertEqual(not offer["selected"], [sequence["sequenceInformation"]["id"], vendor["key"],
+                                                                  offerIndex] in selection)
 
 
 if __name__ == '__main__':

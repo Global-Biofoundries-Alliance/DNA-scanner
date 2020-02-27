@@ -1,3 +1,4 @@
+import types
 from sys import maxsize
 
 from Controller.dataformats import SearchResponse
@@ -6,13 +7,18 @@ from flask import json
 
 
 # Builds a search response in JSON format from a list of offers.
-def buildSearchResponseJSON(seqvendoffers, vendors, selector, offset=0, size=10):
+def buildSearchResponseJSON(seqvendoffers, vendors, selector = [], offset=0, size=10):
     resp = SearchResponse()
     resp.data["result"] = []
     resp.data["globalMessage"] = []
     resp.data["count"] = len(seqvendoffers)
+    # Set the size to the size requested or as high as it goes
     resp.data["size"] = min(size, len(seqvendoffers) - offset)
     resp.data["offset"] = offset
+
+    # Check if this is a lambda. Otherwise it has to be a list.
+    selectByLambda = isinstance(selector, types.FunctionType)
+
     for seqvendoff in seqvendoffers[offset: min(offset + size, len(seqvendoffers))]:
         result = {
             "sequenceInformation": {"id": seqvendoff.sequenceInformation.key,
@@ -28,6 +34,8 @@ def buildSearchResponseJSON(seqvendoffers, vendors, selector, offset=0, size=10)
         selectedResult = {"price": maxsize - 1, "turnoverTime": maxsize - 1, "offerMessage": [], "selected": False}
         for vendoff in seqvendoff.vendorOffers:
             resultOffers = []
+            #TODO Use offer IDs as soon as they are implemented
+            offerIndex = 0
             for offer in vendoff.offers:
                 messages = []
 
@@ -39,13 +47,19 @@ def buildSearchResponseJSON(seqvendoffers, vendors, selector, offset=0, size=10)
                     "price": offer.price.amount,
                     "turnoverTime": offer.turnovertime,
                     "offerMessage": messages,
-                    "selected": False})
+                    "selected": (not selectByLambda) and
+                                [seqvendoff.sequenceInformation.key, vendoff.vendorInformation.key,
+                                 offerIndex] in selector})
 
-            for offer in sorted(resultOffers, key=selector):
-                result["vendors"][vendoff.vendorInformation.key]["offers"].append(offer)
-            resultList = result["vendors"][vendoff.vendorInformation.key]["offers"]
-            selectedResult = selectedResult if not resultList or \
-                                               (selector(selectedResult) <= selector(resultList[0])) else resultList[0]
+            if selectByLambda:
+                for offer in sorted(resultOffers, key=selector):
+                    result["vendors"][vendoff.vendorInformation.key]["offers"].append(offer)
+                resultList = result["vendors"][vendoff.vendorInformation.key]["offers"]
+                selectedResult = selectedResult if not resultList or \
+                                                   (selector(selectedResult) <= selector(resultList[0])) else \
+                resultList[0]
+            else:
+                result["vendors"][vendoff.vendorInformation.key]["offers"] = resultOffers
 
         if selectedResult["price"] >= 0 and selectedResult["turnoverTime"] >= 0:
             selectedResult["selected"] = True

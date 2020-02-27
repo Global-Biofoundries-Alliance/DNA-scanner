@@ -21,6 +21,7 @@ class SessionManager:
         self.results = []
         self.searchedVendors = []
         self.globalMessages = []
+        self.selection = []
 
     #
     #   Desc:   Loades the Pinger out of the session-store
@@ -113,6 +114,18 @@ class SessionManager:
         raise NotImplementedError
 
     #
+    #   Desc: Stores the current selection
+    #
+    def storeSelection(self, selection):
+        raise NotImplementedError
+
+    #
+    #   Desc: Returns the current selection
+    #
+    def loadSelection(self):
+        raise NotImplementedError
+
+    #
     #   Desc:   Free memory by Free all or old sessions. Can
     #           be different for every StoreManager.
     #
@@ -132,6 +145,7 @@ class SingleSession(SessionManager):
         self.results = []
         self.searchedVendors = []
         self.globalMessages = []
+        self.selection = []
 
     #
     #   Desc:   Loades the Pinger out of the session-store
@@ -245,6 +259,18 @@ class SingleSession(SessionManager):
     #
     def clearGlobalMessages(self):
         self.globalMessages = []
+
+    #
+    #   Desc: Stores the current selection
+    #
+    def storeSelection(self, selection):
+        self.selection = selection
+
+    #
+    #   Desc: Returns the current selection
+    #
+    def loadSelection(self):
+        return self.selection
 
     def free(self):
         self.sequences = []
@@ -372,6 +398,18 @@ class InMemorySessionManager(SessionManager):
     #
     def clearGlobalMessages(self):
         self.session.clearGlobalMessages()
+
+    #
+    #   Desc: Stores the current selection
+    #
+    def storeSelection(self, selection):
+        self.session.storeSelection(selection)
+
+    #
+    #   Desc: Returns the current selection
+    #
+    def loadSelection(self):
+        return self.session.loadSelection()
 
     #
     #   Desc: Frees all sessions

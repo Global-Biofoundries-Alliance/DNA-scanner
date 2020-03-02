@@ -120,6 +120,10 @@ class EntityValidator:
         
         # Offer
         elif isinstance(obj, Offer):
+            # key
+            if (not isinstance(obj.key, int)):
+                return self.raiseFalse("key is not of type int")
+            
             # price
             if (not isinstance(obj.price, Price)):
                 return self.raiseFalse("Attribute price is not of type Price")
@@ -172,12 +176,9 @@ class EntityValidator:
                     return self.raiseFalse("List contains various types")
 
                 # Check that keys are unique for specific types
-                if isinstance(elem, SequenceInformation):
-                    if elem.key in keys:
-                        return self.raiseFalse("Identifier is not unique")
-
-                    keys.append(elem.key)
-                elif isinstance(elem, VendorInformation):
+                if (isinstance(elem, SequenceInformation)
+                        or isinstance(elem, VendorInformation)
+                        or isinstance(elem, Offer)):
                     if elem.key in keys:
                         return self.raiseFalse("Identifier is not unique")
 

@@ -118,9 +118,8 @@ class BasePinger:
     #
     #   Desc:   Create a request to trigger an order.
     #
-    #   @param seqInf
-    #           Type ArrayOf(Entities.SequenceInformation). Representation of the sequences you want to order.
-    #           Sequence-Keys must be unique.
+    #   @param offerIds
+    #           Type ArrayOf(int). Id of the Offer to Order. Ids must be unique.
     #
     #   @results
     #           Type Entities.Order. Representation of the order.
@@ -228,9 +227,8 @@ class ManagedPinger:
     #
     #   Desc:   Create a request to trigger an order with an specific vendor.
     #
-    #   @param seqInf
-    #           Type ArrayOf(Entities.SequenceInformation). Representation of the sequences you want to order.
-    #           Sequence-Keys must be unique.
+    #   @param orderIds
+    #           Type ArrayOf(int). Id of the Offer to Order. Ids must be unique.
     #
     #   @param vendor
     #           Type int. The key (VendorInformatin.Key) of the vendor where you want to do the order.
@@ -245,7 +243,7 @@ class ManagedPinger:
     #   @throws IsRunningError
     #           if the Pinger is already running. You have to wait until it is finished.
     #
-    def order(self, seqInf, vendorInf):
+    def order(self, offerid, vendorInf):
         raise NotImplementedError
 
 
@@ -404,17 +402,17 @@ class CompositePinger(ManagedPinger):
     #
     #   see ManagedPinger.order
     #
-    def order(self, seqInf, vendor):
+    def order(self, offerIds, vendor):
         # Check pinger is not running
         if(self.isRunning()):
             raise IsRunningError("Pinger is currently running and can not perform a other action")
 
         # check input: seqInf
-        if(not isinstance(seqInf, list)):
-            Validator.validate(seqInf)
-        for seq in seqInf:
-            if (not isinstance(seq, SequenceInformation)):
-                raise InvalidInputError("parameter seqInf contains elements which are not of type SequenceInformation")
+        if(not isinstance(offerIds, list)):
+            raise InvalidInputError("parameter vendorIds has not type list")
+        for offerId in offerIds:
+            if (not isinstance(offerId, int)):
+                raise InvalidInputError("parameter vendorIds contains elements which are not of type integer")
         # check input: vendors
         if(not isinstance(vendor, int)):
                 raise InvalidInputError("parameter vendor should be a integer")
@@ -423,7 +421,7 @@ class CompositePinger(ManagedPinger):
         for vh in self.vendorHandler:
             # Start searching if vendor is accepted by the filter
             if(vh.vendor.key == vendor):
-                return vh.handler.order(seqInf)
+                return vh.handler.order(offerIds)
 
         raise InvalidInputError("Parameter vendor does not match any key of a registered vendor")
 #

@@ -1,4 +1,5 @@
 from enum import Enum
+from .atomiccounter import *
 
 #########################################################
 #                                                       #
@@ -229,6 +230,10 @@ class VendorOffers:
 #   Desc:   Representation of a Offer. A Offer can also only represent a error, when it contains a
 #           message with an error type.
 #
+#   @attribute key
+#           Type int. Unique Id to identify the current offer.
+#
+#
 #   @attribute price
 #           Type Price. Represents the price of the offer. If less then 0, then no price is available 
 #           or price is unknown.
@@ -243,7 +248,14 @@ class VendorOffers:
 #
 class Offer:
 
+    # Define counter for IDs
+    # Atomic Counter is a threadsafe counter
+    idcounter = AtomicCounter()
+
     def __init__(self, price=Price(), turnovertime=-1, messages = []):
+
+        # Unique id of the offer
+        self.key = Offer.getId()
 
         # price of the offer
         self.price = price
@@ -253,6 +265,12 @@ class Offer:
 
         # for example syntesis-errors
         self.messages = messages
+
+    #
+    #   Static Method to generate a unique id
+    #
+    def getId():
+        return Offer.idcounter.increment()
 
 #
 #   Desc:   Messages with specific type and text.

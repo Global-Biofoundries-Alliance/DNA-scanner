@@ -62,6 +62,7 @@ class YmlConfigurator(Configurator):
 
         cfg_controller = self.cfg["controller"]
 
+        # Initialize static vendor list and assign IDs.
         if "vendors" in cfg_controller:
             key = 0
             for vendor in cfg_controller["vendors"]:
@@ -112,6 +113,7 @@ class YmlConfigurator(Configurator):
                            client_secret=cfg_idt["client_secret"],
                            scope=cfg_idt["scope"])
                 token = pinger.getToken()
+                # This may return a message instead of a token in case of failure
                 if isinstance(token, Message):
                     return token
                 else:

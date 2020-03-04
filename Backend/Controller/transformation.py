@@ -19,6 +19,7 @@ def buildSearchResponseJSON(seqvendoffers, vendors, selector = [], offset=0, siz
     # Check if this is a lambda. Otherwise it has to be a list.
     selectByLambda = isinstance(selector, types.FunctionType)
 
+    # Put offers and other relevant data into JSON serializable dictionary
     for seqvendoff in seqvendoffers[offset: min(offset + size, len(seqvendoffers))]:
         result = {
             "sequenceInformation": {"id": seqvendoff.sequenceInformation.key,
@@ -26,6 +27,7 @@ def buildSearchResponseJSON(seqvendoffers, vendors, selector = [], offset=0, siz
                                     "sequence": seqvendoff.sequenceInformation.sequence,
                                     "length": len(seqvendoff.sequenceInformation.sequence)}, "vendors": []}
 
+        # Setup skeleton for per-vendor information
         for vendor in vendors:
             result["vendors"].append({"key": vendor.key, "offers": []})
 
@@ -40,6 +42,7 @@ def buildSearchResponseJSON(seqvendoffers, vendors, selector = [], offset=0, siz
                 messages = []
 
                 for message in offer.messages:
+                    # Only output messages that are actually errors
                     if message.messageType.value in range(1000, 1999):
                         messages.append({"text": message.text, "messageType": message.messageType.value})
 
@@ -49,21 +52,26 @@ def buildSearchResponseJSON(seqvendoffers, vendors, selector = [], offset=0, siz
                     "offerMessage": messages,
                     "selected": (not selectByLambda) and
                                 [seqvendoff.sequenceInformation.key, vendoff.vendorInformation.key,
-                                 offerIndex] in selector})
+                                 offerIndex] in selector})  # If not selected by lambda use selection list
 
+            # If there is a selection lambda use it to sort offers and select the best one
+            # TODO: If offers are selected by list there should be some kind of sorting as well
             if selectByLambda:
                 for offer in sorted(resultOffers, key=selector):
                     result["vendors"][vendoff.vendorInformation.key]["offers"].append(offer)
                 resultList = result["vendors"][vendoff.vendorInformation.key]["offers"]
+                # Compare previously selected result with the best one from this result list
                 selectedResult = selectedResult if not resultList or \
                                                    (selector(selectedResult) <= selector(resultList[0])) else \
                 resultList[0]
             else:
                 result["vendors"][vendoff.vendorInformation.key]["offers"] = resultOffers
 
+        # Only select the best offer if it is valid (otherwise it would select garbage if all offers are invalid in some way)
         if selectedResult["price"] >= 0 and selectedResult["turnoverTime"] >= 0:
             selectedResult["selected"] = True
 
+        # Put it in the outer result object
         resp.data["result"].append(result)
 
     return json.jsonify(resp.data)
@@ -87,10 +95,12 @@ def sequenceInfoFromObjects(objSequences):
 #
 def filterOffers(filter, seqvendoffers):
     filteredOffers = []
+    # Iterate through the quite deep offer structure
     for seqvendoff in seqvendoffers:
         filteredSeqVendOff = SequenceVendorOffers(seqvendoff.sequenceInformation, [])
         for vendoff in seqvendoff.vendorOffers:
             filteredVendOff = VendorOffers(vendoff.vendorInformation, [])
+            # If existent apply the filtering criteria. Otherwise just let everything in.
             if "vendors" not in filter or \
                     vendoff.vendorInformation.key in filter["vendors"]:
                 for offer in vendoff.offers:

@@ -255,7 +255,7 @@ class Offer:
     def __init__(self, price=Price(), turnovertime=-1, messages = []):
 
         # Unique id of the offer
-        self.key = Offer.getId()
+        self.key = Offer.generateId()
 
         # price of the offer
         self.price = price
@@ -269,7 +269,7 @@ class Offer:
     #
     #   Static Method to generate a unique id
     #
-    def getId():
+    def generateId():
         return Offer.idcounter.increment()
 
 #

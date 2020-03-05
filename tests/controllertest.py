@@ -543,14 +543,12 @@ class TestController(unittest.TestCase):
             # Verify that nothing is selected and choose what shall be selected next time at random
             for sequence in response_json["result"]:
                 for vendor in sequence["vendors"]:
-                    #TODO Use offer IDs as soon as they are implemented
-                    offerIndex = 0
                     for offer in vendor["offers"]:
+                        # Check that the offer was not selected by the dry run
                         self.assertFalse(offer["selected"])
                         # Random selection
                         if random() <= 0.4:
-                            selection.append([sequence["sequenceInformation"]["id"], vendor["key"], offerIndex])
-                        offerIndex = offerIndex + 1
+                            selection.append(offer["key"])
 
             response = self.client.post("/api/select", content_type='application/json',
                                         data=json.dumps({"selection": selection}))
@@ -563,10 +561,9 @@ class TestController(unittest.TestCase):
 
             for sequence in response_json["result"]:
                 for vendor in sequence["vendors"]:
-                    offerIndex = 0
                     for offer in vendor["offers"]:
-                        self.assertEqual(not offer["selected"], [sequence["sequenceInformation"]["id"], vendor["key"],
-                                                                  offerIndex] in selection)
+                        # An offer should be selected if and only if it was in the selection list
+                        self.assertEqual(offer["selected"], offer["key"] in selection)
 
 
 if __name__ == '__main__':

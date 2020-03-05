@@ -7,7 +7,7 @@ from flask import json
 
 
 # Builds a search response in JSON format from a list of offers.
-def buildSearchResponseJSON(seqvendoffers, vendors, selector = [], offset=0, size=10):
+def buildSearchResponseJSON(seqvendoffers, vendors, selector=[], offset=0, size=10):
     resp = SearchResponse()
     resp.data["result"] = []
     resp.data["globalMessage"] = []
@@ -36,8 +36,6 @@ def buildSearchResponseJSON(seqvendoffers, vendors, selector = [], offset=0, siz
         selectedResult = {"price": maxsize - 1, "turnoverTime": maxsize - 1, "offerMessage": [], "selected": False}
         for vendoff in seqvendoff.vendorOffers:
             resultOffers = []
-            #TODO Use offer IDs as soon as they are implemented
-            offerIndex = 0
             for offer in vendoff.offers:
                 messages = []
 
@@ -49,10 +47,10 @@ def buildSearchResponseJSON(seqvendoffers, vendors, selector = [], offset=0, siz
                 resultOffers.append({
                     "price": offer.price.amount,
                     "turnoverTime": offer.turnovertime,
+                    "key": offer.key,
                     "offerMessage": messages,
                     "selected": (not selectByLambda) and
-                                [seqvendoff.sequenceInformation.key, vendoff.vendorInformation.key,
-                                 offerIndex] in selector})  # If not selected by lambda use selection list
+                                offer.key in selector})  # If not selected by lambda use selection list
 
             # If there is a selection lambda use it to sort offers and select the best one
             # TODO: If offers are selected by list there should be some kind of sorting as well
@@ -63,7 +61,7 @@ def buildSearchResponseJSON(seqvendoffers, vendors, selector = [], offset=0, siz
                 # Compare previously selected result with the best one from this result list
                 selectedResult = selectedResult if not resultList or \
                                                    (selector(selectedResult) <= selector(resultList[0])) else \
-                resultList[0]
+                    resultList[0]
             else:
                 result["vendors"][vendoff.vendorInformation.key]["offers"] = resultOffers
 

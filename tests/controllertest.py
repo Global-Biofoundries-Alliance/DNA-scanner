@@ -539,7 +539,6 @@ class TestController(unittest.TestCase):
                                              data={'size': 1000, 'offset': 0}).get_json()
 
             selection = []
-
             # Verify that nothing is selected and choose what shall be selected next time at random
             for sequence in response_json["result"]:
                 for vendor in sequence["vendors"]:
@@ -556,8 +555,6 @@ class TestController(unittest.TestCase):
 
             response_json = self.client.post('/api/results', content_type='multipart/form-data',
                                              data={'size': 1000, 'offset': 0}).get_json()
-
-            print(response_json)
 
             for sequence in response_json["result"]:
                 for vendor in sequence["vendors"]:

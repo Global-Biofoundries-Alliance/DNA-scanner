@@ -36,6 +36,8 @@ def buildSearchResponseJSON(seqvendoffers, vendors, selector=[], offset=0, size=
         selectedResult = {"price": maxsize - 1, "turnoverTime": maxsize - 1, "offerMessage": [], "selected": False}
         for vendoff in seqvendoff.vendorOffers:
             resultOffers = []
+            # TODO Use offer IDs as soon as they are implemented
+            offerIndex = 0
             for offer in vendoff.offers:
                 messages = []
 
@@ -61,7 +63,8 @@ def buildSearchResponseJSON(seqvendoffers, vendors, selector=[], offset=0, size=
                 # Compare previously selected result with the best one from this result list
                 selectedResult = selectedResult if not resultList or \
                                                    (selector(selectedResult) <= selector(resultList[0])) else \
-                    resultList[0]
+                resultList[0]
+
             else:
                 result["vendors"][vendoff.vendorInformation.key]["offers"] = resultOffers
 

@@ -7,6 +7,21 @@ from flask import json
 
 
 # Builds a search response in JSON format from a list of offers.
+#
+# @param
+#       seqvendoffers List of SequenceVendorOffers as obtained from a ManagedPinger
+#
+# @param vendors
+#       List of available vendor IDs
+#
+# @param selector
+#       This may be either a list of selected offer IDs or a lambda that functions as a sorting criterion
+#
+# @param offset
+#       At which position to start showing results
+#
+# @param size
+#       How many results to show per page
 def buildSearchResponseJSON(seqvendoffers, vendors, selector=[], offset=0, size=10):
     resp = SearchResponse()
     resp.data["result"] = []

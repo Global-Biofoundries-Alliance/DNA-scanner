@@ -14,8 +14,7 @@ class SeqObject():
     def toJSON(self):
         return {"idN": self.idN, "name": self.name, "sequence": self.sequence}
 class BoostClient:
-    def __init__(self, server, url_job, url_hosts, url_submit, url_login, username, password, juggling_strategy, host, timeout = 60): 
-        self.server = server
+    def __init__(self, url_job, url_hosts, url_submit, url_login, username, password, juggling_strategy, host, timeout = 60): 
         self.url_job = url_job
         self.url_hosts = url_hosts
         self.url_submit = url_submit
@@ -106,8 +105,7 @@ class BoostClient:
 
 
 class Parser:
-    def __init__(self, server, url_job, url_hosts, url_submit, url_login, username, password, juggling_strategy, host, timeout = 60): 
-        self.server = server
+    def __init__(self, url_job, url_hosts, url_submit, url_login, username, password, juggling_strategy, host, timeout = 60): 
         self.url_job = url_job
         self.url_hosts = url_hosts
         self.url_submit = url_submit
@@ -129,7 +127,7 @@ class Parser:
         if(fileType == "sbol"):
             parsedSequences = self.parseSBOL(inputFileName)
         if(aminoacids == True):        
-            self.boostClient = BoostClient(self.server, self.url_job, self.url_hosts, self.url_submit, self.url_login, self.username, self.password, self.juggling_strategy, self.host, self.timeout)
+            self.boostClient = BoostClient(self.url_job, self.url_hosts, self.url_submit, self.url_login, self.username, self.password, self.juggling_strategy, self.host, self.timeout)
             if(len(parsedSequences) == 0):
                 raise RuntimeError("Parsing went wrong.")
             translatedSequences = self.boostClient.translate(parsedSequences)

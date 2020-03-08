@@ -44,8 +44,10 @@ def uploadFile():
         if 'seqfile' not in request.files or request.files['seqfile'] == "":
             return json.jsonify({'error': 'No file specified'})
 
+        seqPrefix = request.form.get("prefix", default="")     # Sequence prefix for this file's sequences
+
         # Actually parse the file and save the sequences
-        return service.setSequencesFromFile(request.files["seqfile"])
+        return service.setSequencesFromFile(request.files["seqfile"], seqPrefix)
     except:
         return {"error": "Encountered error during file upload\n" + (traceback.format_exc() if __debug__ else "")}
 
@@ -110,5 +112,26 @@ def setSelection():
         service.setSelection(request.get_json()["selection"])
         return 'selection set'
     except Exception as error:
-        return {"error": "Encountered error while fetching search results\n" + (
+        return {"error": "Encountered error while setting selection\n" + (
+            traceback.format_exc() if __debug__ else "")}
+
+@app.route('/available_hosts', methods=['GET'])
+def getAvailableHosts():
+    try:
+        # TODO obtain host organisms from BOOST client
+        return json.jsonify(["Escherichia Coli", "Saccharomyces Cerevisiae", "Palmerella Coli", "Leuconostoc Citreum"])
+    except Exception as error:
+        return {"error": "Encountered error while fetching list of available hosts\n" + (
+            traceback.format_exc() if __debug__ else "")}
+
+@app.route('/codon_optimization', methods=['POST'])
+def setCodonOptimizationOptions():
+    try:
+        request_json = request.get_json()
+        if "strategy" not in request_json or "host" not in request_json:
+            raise KeyError
+
+        return 'codon optimization options set'
+    except Exception as error:
+        return {"error": "Encountered error while setting codon optimization options\n" + (
             traceback.format_exc() if __debug__ else "")}

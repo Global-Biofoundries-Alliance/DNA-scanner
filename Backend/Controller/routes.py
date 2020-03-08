@@ -110,5 +110,5 @@ def setSelection():
         service.setSelection(request.get_json()["selection"])
         return 'selection set'
     except Exception as error:
-        return {"error": "Encountered error while fetching search results\n" + (
+        return {"error": "Encountered error while selecting offers\n" + (
             traceback.format_exc() if __debug__ else "")}

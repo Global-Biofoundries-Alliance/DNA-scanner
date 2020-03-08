@@ -276,10 +276,9 @@
                 }
             },
             reset() {
-                this.dialog = false;
                 this.$store.state.StoreSelectedVendors = [0, 1, 2];
                 this.$store.state.StorePriceFilterRange = [0, 50];
-                this.$store.state.StoreDeliveryDays = 7;
+                this.$store.state.StoreDeliveryDays = 30;
                 this.$store.state.StorePreselectByPrice = false;
                 this.$store.state.StorePreselectByTime = false;
             }

@@ -117,7 +117,11 @@ class GeneArtClient:
                 "comment": "idN: " + construct["idN"] + " , name: " + construct["name"]
               }
             constructsList.append(sequence)
-        request = {
+        request = { 
+            "authentication": {
+                "username": self.username,
+                "token": self.token
+            },
            "project": {
                 "name": projectname,
                 "constructs": constructsList
@@ -155,7 +159,7 @@ class GeneArt(BasePinger):
     dnaStrings_default = True
     hqDnaStrings_default = True
     timeout_default = 60
-    
+    currencies = {"EUR":Currency.EUR, "USD":Currency.USD}
     #
     # Constructur for a GeneArt-Pinger
     # Takes as input the log-in parameters.
@@ -248,11 +252,10 @@ class GeneArt(BasePinger):
                         messageText = product + "_" + "accepted"
                         message = Message(MessageType.INFO, messageText)
                         turnOverTime = response["constructs"][count]["eComInfo"]["productionDaysEstimated"]
-                        productCode = response["constructs"][count]["eComInfo"]["lineItems"][0]["sku"]
-                        if(productCode in list(self.products.keys())):
-                            price = Price(amount = self.products[productCode], customerSpecific=True)
-                        else:
-                            price = Price()
+                        currencycode = response["constructs"][count]["eComInfo"]["currencyIsoCode"]
+                        cost = response["constructs"][count]["eComInfo"]["lineItems"][0]["customerSpecificPrice"]
+                        print(cost)
+                        price = Price(amount = cost, currency = self.currencies[currencycode], customerSpecific = True)
                     else:
                         turnOverTime = -1
                         price = Price()

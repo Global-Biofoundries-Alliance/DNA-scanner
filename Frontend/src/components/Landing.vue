@@ -121,6 +121,12 @@
             <v-alert v-if="noFile === true" type="error" class="mt-4 mx-auto" width="350px">
                 Please upload a file
             </v-alert>
+            <p class="text-center font-weight-light mt-4 mb-0">Please give your project a name:</p>
+            <v-row justify="center">
+                <v-col cols="5" class="pa-0">
+                    <v-text-field placeholder="Project Name" v-model="projectName" class="pa-0 centered-input" ></v-text-field>
+                </v-col>
+            </v-row>
             <p class="text-center font-weight-light mt-4 mb-0">Does your file include Amino Acid Sequences?</p>
             <v-row justify="center" class="mt-n4">
                 <v-radio-group v-model="isAminoAcid" hide-details row>
@@ -158,6 +164,7 @@
         name: 'Landing',
         data() {
             return {
+                projectName: "",
                 strategies: ['Random', 'Balanced', 'Mostly Used', 'Least Different'],
                 strategy: "",
                 hosts: [],
@@ -186,6 +193,7 @@
                     this.$store.state.StoreSelectedVendors = this.vendors;
                     var data = new FormData();
                     data.append('seqfile', this.file);
+                    data.append('prefix', this.projectName);
 
                     this.$http.post('/api/upload', data, {
                         headers: {
@@ -315,5 +323,8 @@
 </script>
 
 <style>
+    .centered-input input {
+        text-align: center;
+    }
 </style>
 

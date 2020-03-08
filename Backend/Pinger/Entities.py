@@ -353,6 +353,8 @@ class UrlRedirectOrder(Order):
     def __init__(self, url, seqInf):
         Order(seqInf=seqInf, orderType=OrderType.URL_REDIRECT)
         self.url = url
+        self.orderType = OrderType.URL_REDIRECT
+        self.seqInf = seqInf
 
 #####################################################
 #                                                   #

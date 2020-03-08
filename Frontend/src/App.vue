@@ -47,15 +47,15 @@
                                 <v-row>
                                     <v-col class="px-4">
                                         <v-range-slider
-                                                v-model="range"
-                                                :max="max"
-                                                :min="min"
+                                                v-model="priceRange"
+                                                :max="maxVal"
+                                                :min="minVal"
                                                 hide-details
                                                 class="align-center"
                                         >
                                             <template v-slot:prepend>
                                                 <v-text-field
-                                                        v-model="range[0]"
+                                                        v-model="priceRange[0]"
                                                         class="mt-0 pt-0"
                                                         hide-details
                                                         single-line
@@ -65,7 +65,7 @@
                                             </template>
                                             <template v-slot:append>
                                                 <v-text-field
-                                                        v-model="range[1]"
+                                                        v-model="priceRange[1]"
                                                         class="mt-0 pt-0"
                                                         hide-details
                                                         single-line
@@ -85,8 +85,8 @@
                                         <v-slider
                                                 v-model="deliveryDays"
                                                 class="align-center"
-                                                :max="max"
-                                                :min="min"
+                                                :max="maxVal"
+                                                :min="minVal"
                                                 hide-details
                                         >
                                             <template v-slot:append>
@@ -118,8 +118,6 @@
                 </v-card-actions>
             </v-navigation-drawer>
             <router-view :key="filter"></router-view>
-<!--            <Landing v-if="!res" v-on:returnResult="click"></Landing>-->
-<!--            <Result v-if="res" :key="filter"></Result>-->
         </v-content>
 
     </v-app>
@@ -132,47 +130,88 @@
         data() {
             return {
                 filter: false,
-                res: false,
                 drawer: false,
-                selectedVendors: [0, 1, 2],
-                preselectByPrice: false,
-                preselectByTime: false,
-                min: 1,
-                max: 200,
-                range: [0, 50],
-                deliveryDays: 7,
             }
         },
         computed: {
             vendors() {
                 return this.$store.state.StoreVendors;
+            },
+            selectedVendors: {
+                get() {
+                    return this.$store.state.StoreSelectedVendors;
+                },
+                set(value) {
+                    this.$store.commit('update', value)
+                }
+            },
+            priceRange: {
+                get() {
+                    return this.$store.state.StorePriceFilterRange;
+                },
+                set(value) {
+                    this.$store.commit('updateRange', value)
+                }
+            },
+            maxVal: {
+                get() {
+                    return this.$store.state.StoreFilterMax;
+                },
+                set(value) {
+                    this.$store.commit('updateFilterMax', value)
+                }
+            },
+            minVal: {
+                get() {
+                    return this.$store.state.StoreFilterMin;
+                },
+                set(value) {
+                    this.$store.commit('updateFilterMin', value)
+                }
+            },
+            deliveryDays: {
+                get() {
+                    return this.$store.state.StoreDeliveryDays;
+                },
+                set(value) {
+                    this.$store.commit('updateDeliveryDays', value)
+                }
+            },
+            preselectByPrice: {
+                get() {
+                    return this.$store.state.StorePreselectByPrice;
+                },
+                set(value) {
+                    this.$store.commit('updatePreselectByPrice', value)
+                }
+            },
+            preselectByTime: {
+                get() {
+                    return this.$store.state.StorePreselectByTime;
+                },
+                set(value) {
+                    this.$store.commit('updatePreselectByTime', value)
+                }
             }
         },
         methods: {
-            // click(value) {
-            //     // eslint-disable-next-line no-console
-            //     console.log(this.res);
-            //     this.res = value;
-            //     this.filter = !this.filter
-            // },
-
             reset() {
-                this.selectedVendors = [0, 1, 2];
-                this.range = [0, 50];
-                this.deliveryDays = 7;
-                this.preselectByPrice = false;
-                this.preselectByTime = false;
+                this.$store.state.StoreSelectedVendors = [0, 1, 2];
+                this.$store.state.StorePriceFilterRange = [0, 50];
+                this.$store.state.StoreDeliveryDays = 7;
+                this.$store.state.StorePreselectByPrice = false;
+                this.$store.state.StorePreselectByTime = false;
             },
             useFilter() {
 
                 var filter = {
                     "filter":
                         {
-                            "vendors": this.selectedVendors,
-                            "price": this.range,
-                            "deliveryDays": this.deliveryDays,
-                            "preselectByPrice": this.preselectByPrice,
-                            "preselectByDeliveryDays": this.preselectByTime
+                            "vendors": this.$store.state.StoreSelectedVendors,
+                            "price": this.$store.state.StorePriceFilterRange,
+                            "deliveryDays": this.$store.state.StoreDeliveryDays,
+                            "preselectByPrice": this.$store.state.StorePreselectByPrice,
+                            "preselectByDeliveryDays": this.$store.state.StorePreselectByTime
                         }
                 };
 

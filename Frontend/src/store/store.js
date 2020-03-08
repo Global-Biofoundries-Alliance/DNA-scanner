@@ -5,19 +5,43 @@ Vue.use(Vuex);
 
 export const store = new Vuex.Store({
     state: {
+        StoreSelectedVendors: [0, 1, 2],
+        StoreFilterMin: 1,
+        StoreFilterMax: 200,
+        StorePriceFilterRange: [1, 50],
+        StoreDeliveryDays: 30,
+        StorePreselectByTime: false,
+        StorePreselectByPrice: false,
         StoreFile: [],
         StoreSearchResult: [],
-        PriceFilterMin: 1,
-        PriceFilterMax: 1000,
-        PriceFilterCurrentRange: [1, 100],
-        DeliveryFilterMin: 1,
-        DeliveryFilterMax: 1000,
-        DeliveryFilterCurrent: 7,
         StoreVendors: [],
-        StoreSelectedVendors: [],
         StoreDialogItem: null,
         StoreSize: 2,
         StoreOffset: 0,
-        StoreLength: 0
+        StoreLength: 0,
+
+    },
+    mutations: {
+        updateSelectedVendors(state, arr) {
+            state.StoreSelectedVendors = arr
+        },
+        updateRange(state, r) {
+            state.StorePriceFilterRange = r
+        },
+        updateFilterMax(state, max) {
+            state.StoreFilterMax = max
+        },
+        updateFilterMin(state, min) {
+            state.StoreFilterMin = min
+        },
+        updateDeliveryDays(state, days) {
+            state.StoreDeliveryDays = days
+        },
+        updatePreselectByPrice(state, price) {
+            state.StorePreselectByPrice = price
+        },
+        updatePreselectByTime(state, time) {
+            state.StorePreselectByTime = time
+        }
     }
 });

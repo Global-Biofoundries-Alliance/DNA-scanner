@@ -34,7 +34,7 @@
                                                             :key="vendor.name"
                                                             :label="`${vendor.name}`"
                                                             :value="vendor.id"
-                                                            v-model="vendors"></v-checkbox>
+                                                            v-model="selectedVendors"></v-checkbox>
                                             </v-col>
                                         </v-container>
                                     </v-col>
@@ -44,15 +44,15 @@
                                         <v-row>
                                             <v-col class="px-4">
                                                 <v-range-slider
-                                                        v-model="range"
-                                                        :max="max"
-                                                        :min="min"
+                                                        v-model="priceRange"
+                                                        :max="maxVal"
+                                                        :min="minVal"
                                                         hide-details
                                                         class="align-center"
                                                 >
                                                     <template v-slot:prepend>
                                                         <v-text-field
-                                                                v-model="range[0]"
+                                                                v-model="priceRange[0]"
                                                                 class="mt-0 pt-0"
                                                                 hide-details
                                                                 single-line
@@ -62,7 +62,7 @@
                                                     </template>
                                                     <template v-slot:append>
                                                         <v-text-field
-                                                                v-model="range[1]"
+                                                                v-model="priceRange[1]"
                                                                 class="mt-0 pt-0"
                                                                 hide-details
                                                                 single-line
@@ -82,8 +82,8 @@
                                                 <v-slider
                                                         v-model="deliveryDays"
                                                         class="align-center"
-                                                        :max="max"
-                                                        :min="min"
+                                                        :max="maxVal"
+                                                        :min="minVal"
                                                         hide-details
                                                 >
                                                     <template v-slot:append>
@@ -130,19 +130,68 @@
         name: 'Landing',
         data() {
             return {
-                result: false,
                 file: [],
-                vendors: [0, 1, 2],
-                preselectByPrice: false,
-                preselectByTime: false,
-                min: 1,
-                max: 200,
-                range: [0, 50],
-                deliveryDays: 7,
                 dialog: false,
-                filter: [],
                 noFile: false,
                 colors: ["red", "green", "orange"],
+            }
+        },
+        computed: {
+            selectedVendors: {
+                get() {
+                    return this.$store.state.StoreSelectedVendors;
+                },
+                set(value) {
+                    this.$store.commit('updateSelectedVendors', value)
+                }
+            },
+            priceRange: {
+                get() {
+                    return this.$store.state.StorePriceFilterRange;
+                },
+                set(value) {
+                    this.$store.commit('updateRange', value)
+                }
+            },
+            maxVal: {
+                get() {
+                    return this.$store.state.StoreFilterMax;
+                },
+                set(value) {
+                    this.$store.commit('updateFilterMax', value)
+                }
+            },
+            minVal: {
+                get() {
+                    return this.$store.state.StoreFilterMin;
+                },
+                set(value) {
+                    this.$store.commit('updateFilterMin', value)
+                }
+            },
+            deliveryDays: {
+                get() {
+                    return this.$store.state.StoreDeliveryDays;
+                },
+                set(value) {
+                    this.$store.commit('updateDeliveryDays', value)
+                }
+            },
+            preselectByPrice: {
+                get() {
+                    return this.$store.state.StorePreselectByPrice;
+                },
+                set(value) {
+                    this.$store.commit('updatePreselectByPrice', value)
+                }
+            },
+            preselectByTime: {
+                get() {
+                    return this.$store.state.StorePreselectByTime;
+                },
+                set(value) {
+                    this.$store.commit('updatePreselectByTime', value)
+                }
             }
         },
         methods: {
@@ -150,7 +199,6 @@
                 if (this.file.length === 0) {
                     this.noFile = true;
                 } else {
-                    this.$store.state.StoreSelectedVendors = this.vendors;
                     var data = new FormData();
                     data.append('seqfile', this.file);
 
@@ -167,11 +215,11 @@
                             var filter = {
                                 "filter":
                                     {
-                                        "vendors": this.vendors,
-                                        "price": this.range,
-                                        "deliveryDays": this.deliveryDays,
-                                        "preselectByPrice": this.preselectByPrice,
-                                        "preselectByDeliveryDays": this.preselectByTime
+                                        "vendors": this.$store.state.StoreSelectedVendors,
+                                        "price": this.$store.state.StorePriceFilterRange,
+                                        "deliveryDays": this.$store.state.StoreDeliveryDays,
+                                        "preselectByPrice": this.$store.state.StorePreselectByPrice,
+                                        "preselectByDeliveryDays": this.$store.state.StorePreselectByTime
                                     }
                             };
 
@@ -201,13 +249,13 @@
                                     var mostOffers = 0;
                                     var mostOffersVendor = 0;
                                     var offId = 0;
-                                    for(i = 0; i < response.body.result.length; i++) {
-                                        for(j = 0; j < response.body.result[i].vendors.length; j++) {
-                                            if(response.body.result[i].vendors[j].offers.length > mostOffers) {
+                                    for (i = 0; i < response.body.result.length; i++) {
+                                        for (j = 0; j < response.body.result[i].vendors.length; j++) {
+                                            if (response.body.result[i].vendors[j].offers.length > mostOffers) {
                                                 mostOffers = response.body.result[i].vendors[j].offers.length;
                                                 mostOffersVendor = j;
                                             }
-                                            for(k = 0; k < response.body.result[i].vendors[j].offers.length; k++) {
+                                            for (k = 0; k < response.body.result[i].vendors[j].offers.length; k++) {
                                                 offId = response.body.result[i].sequenceInformation.id.toString() + response.body.result[i].vendors[j].key.toString() + k.toString();
                                                 response.body.result[i].vendors[j].offers[k].id = offId;
                                             }
@@ -225,18 +273,15 @@
                                 });
 
                         });
-                    //
-                    // this.result = true;
-                    // this.$emit('returnResult', this.result);
                 }
             },
             reset() {
                 this.dialog = false;
-                this.vendors = [0, 1, 2];
-                this.range = [0, 50];
-                this.deliveryDays = 7;
-                this.preselectByPrice = false;
-                this.preselectByTime = false;
+                this.$store.state.StoreSelectedVendors = [0, 1, 2];
+                this.$store.state.StorePriceFilterRange = [0, 50];
+                this.$store.state.StoreDeliveryDays = 7;
+                this.$store.state.StorePreselectByPrice = false;
+                this.$store.state.StorePreselectByTime = false;
             }
         },
         created() {

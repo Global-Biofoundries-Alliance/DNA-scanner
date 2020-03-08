@@ -121,6 +121,34 @@
             <v-alert v-if="noFile === true" type="error" class="mt-4 mx-auto" width="350px">
                 Please upload a file
             </v-alert>
+            <p class="text-center font-weight-light mt-4 mb-0">Does your file include Amino Acid Sequences?</p>
+            <v-row justify="center" class="mt-n4">
+                <v-radio-group v-model="isAminoAcid" hide-details row>
+                    <v-radio value="1" label="Yes"></v-radio>
+                    <v-radio value="0" label="No"></v-radio>
+                </v-radio-group>
+            </v-row>
+            <v-row v-if="isAminoAcid === '1'">
+                <v-col cols="6">
+                    <p class="text-center">Select your Strategy</p>
+                    <v-overflow-btn
+                            class="my-2"
+                            :items="strategies"
+                            label="Strategies"
+                            target="#dropdown-example"
+                    ></v-overflow-btn>
+                </v-col>
+                <v-spacer></v-spacer>
+                <v-col cols="6">
+                    <p class="text-center">Select your Codon Usage Table</p>
+                    <v-overflow-btn
+                            class="my-2"
+                            :items="hosts"
+                            label="Codon Usage Table"
+                            target="#dropdown-example"
+                    ></v-overflow-btn>
+                </v-col>
+            </v-row>
         </v-container>
     </div>
 </template>
@@ -130,6 +158,10 @@
         name: 'Landing',
         data() {
             return {
+                strategies: ['Random', 'Balanced', 'Mostly Used', 'Least Different'],
+                strategy: "",
+                hosts: [],
+                host: "",
                 result: false,
                 file: [],
                 vendors: [0, 1, 2],
@@ -143,6 +175,7 @@
                 filter: [],
                 noFile: false,
                 colors: ["red", "green", "orange"],
+                isAminoAcid: '0'
             }
         },
         methods: {
@@ -186,6 +219,15 @@
                             // resData.append('size', this.$store.state.StoreSize);
                             // resData.append('offset', this.$store.state.StoreOffset);
 
+                            var selectedOptimization = {
+                                "strategy": this.strategy,
+                                "host": this.host
+                            };
+                            this.$http.post('/api/codon_optimization', selectedOptimization)
+                                .then(response => {
+                                    // eslint-disable-next-line no-console
+                                    console.log(response);
+                                });
 
                             this.$http.post('/api/results', {
                                 headers: {
@@ -258,6 +300,16 @@
                     // eslint-disable-next-line no-console
                     console.log(this.$store.state.StoreVendors);
                 });
+            this.$http.get('/api/available_hosts', {
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE, PUT',
+                    'Access-Control-Allow-Headers': 'append,delete,entries,foreach,get,has,keys,set,values,Authorization'
+                }
+            })
+                .then(response => {
+                    this.hosts = response.body
+                })
         }
     };
 </script>

@@ -254,7 +254,6 @@ class GeneArt(BasePinger):
                         turnOverTime = response["constructs"][count]["eComInfo"]["productionDaysEstimated"]
                         currencycode = response["constructs"][count]["eComInfo"]["currencyIsoCode"]
                         cost = response["constructs"][count]["eComInfo"]["lineItems"][0]["customerSpecificPrice"]
-                        print(cost)
                         price = Price(amount = cost, currency = self.currencies[currencycode], customerSpecific = True)
                     else:
                         turnOverTime = -1

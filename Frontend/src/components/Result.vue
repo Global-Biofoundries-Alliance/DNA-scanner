@@ -214,7 +214,9 @@
                                                         v-model="selectedTwist"
                                                         :value="results[item.sequenceInformation.id].vendors[0].offers[props.index].id"
                                                         @change="selectTwist(results[item.sequenceInformation.id].vendors[0].offers, props.index)"
-                                                        color="red"></v-checkbox>
+                                                        color="red"
+                                                        :disabled="selectedTwist.includes(results[item.sequenceInformation.id].vendors[0].offers[0].id)">
+                                            </v-checkbox>
                                         </td>
                                         <td v-if="selectedVendors.includes(0)">
                                             <p class="mb-0"
@@ -264,7 +266,9 @@
                                                         v-model="selectedIDT"
                                                         :value="results[item.sequenceInformation.id].vendors[1].offers[props.index].id"
                                                         @change="selectIDT(results[item.sequenceInformation.id].vendors[1].offers, props.index)"
-                                                        color="green"></v-checkbox>
+                                                        color="green"
+                                                        :disabled="selectedIDT.includes(results[item.sequenceInformation.id].vendors[1].offers[0].id)">
+                                            </v-checkbox>
                                         </td>
                                         <td v-if="selectedVendors.includes(1)">
                                             <p class="mb-0"
@@ -314,7 +318,9 @@
                                                         v-model="selectedGeneArt"
                                                         :value="results[item.sequenceInformation.id].vendors[2].offers[props.index].id"
                                                         @change="selectGeneArt(results[item.sequenceInformation.id].vendors[2].offers, props.index)"
-                                                        color="orange"></v-checkbox>
+                                                        color="orange"
+                                                        :disabled="selectedGeneArt.includes(results[item.sequenceInformation.id].vendors[2].offers[0].id)">
+                                            </v-checkbox>
                                         </td>
                                         <td v-if="selectedVendors.includes(2)">
                                             <p class="mb-0"

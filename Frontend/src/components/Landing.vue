@@ -5,7 +5,7 @@
             vendors</p>
         <v-container class="mt-4 pb-0">
             <v-file-input v-model="file" label="File input" outlined rounded prepend-icon="" hide-details
-                          class="mb-4" accept=".fasta,.gb,.xml"></v-file-input>
+                          class="mb-4"></v-file-input>
         </v-container>
         <v-container>
             <v-row justify="center">
@@ -118,13 +118,16 @@
                 </v-dialog>
                 <v-btn color="primary" style="width: 25%;" class="ml-2" @click="searchNow()">Search</v-btn>
             </v-row>
-            <v-alert v-if="noFile === true" type="error" class="mt-4 mx-auto" width="350px">
+            <v-alert v-if="noFile" type="error" class="mt-4 mx-auto" width="350px">
                 Please upload a file
+            </v-alert>
+            <v-alert v-if="wrongFile" type="error" class="mt-4 mx-auto" width="350px">
+                Wrong File Format
             </v-alert>
             <p class="text-center font-weight-light mt-4 mb-0">Please give your project a name:</p>
             <v-row justify="center">
                 <v-col cols="5" class="pa-0">
-                    <v-text-field placeholder="Project Name" v-model="projectName" class="pa-0 centered-input" ></v-text-field>
+                    <v-text-field placeholder="Project Name" v-model="projectName" class="pa-0 centered-input" :error="projectName === '' && search"></v-text-field>
                 </v-col>
             </v-row>
             <p class="text-center font-weight-light mt-4 mb-0">Does your file include Amino Acid Sequences?</p>
@@ -182,14 +185,23 @@
                 filter: [],
                 noFile: false,
                 colors: ["red", "green", "orange"],
-                isAminoAcid: '0'
+                isAminoAcid: '0',
+                wrongFile: false,
+                search: false
             }
         },
         methods: {
             searchNow() {
-                if (this.file.length === 0) {
+                if(this.file === null) {
                     this.noFile = true;
-                } else {
+                }
+                else if (this.file.length === 0) {
+                    this.noFile = true;
+                }
+                else if(this.projectName === "") {
+                    this.search = true;
+                }
+                else {
                     this.$store.state.StoreSelectedVendors = this.vendors;
                     var data = new FormData();
                     data.append('seqfile', this.file);
@@ -203,81 +215,77 @@
                         }
                     })
                         .then(response => {
-                            // eslint-disable-next-line no-console
-                            console.log(response);
-                            var filter = {
-                                "filter":
-                                    {
-                                        "vendors": this.vendors,
-                                        "price": this.range,
-                                        "deliveryDays": this.deliveryDays,
-                                        "preselectByPrice": this.preselectByPrice,
-                                        "preselectByDeliveryDays": this.preselectByTime
-                                    }
-                            };
-
-                            this.$http.post('/api/filter', filter).then(response => {
-                                // eslint-disable-next-line no-console
-                                console.log(filter);
-                                // eslint-disable-next-line no-console
-                                console.log(response);
-                            });
-
-                            // var resData = new FormData();
-                            // resData.append('size', this.$store.state.StoreSize);
-                            // resData.append('offset', this.$store.state.StoreOffset);
-
-                            var selectedOptimization = {
-                                "strategy": this.strategy,
-                                "host": this.host
-                            };
-                            this.$http.post('/api/codon_optimization', selectedOptimization)
-                                .then(response => {
-                                    // eslint-disable-next-line no-console
-                                    console.log(response);
-                                });
-
-                            this.$http.post('/api/results', {
-                                headers: {
-                                    'Access-Control-Allow-Origin': '*',
-                                    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE, PUT',
-                                    'Access-Control-Allow-Headers': 'append,delete,entries,foreach,get,has,keys,set,values,Authorization',
-                                }
-                            })
-                                .then(response => {
-                                    // eslint-disable-next-line no-console
-                                    console.log(response);
-                                    let i, j, k;
-                                    var mostOffers = 0;
-                                    var mostOffersVendor = 0;
-                                    var offId = 0;
-                                    for(i = 0; i < response.body.result.length; i++) {
-                                        for(j = 0; j < response.body.result[i].vendors.length; j++) {
-                                            if(response.body.result[i].vendors[j].offers.length > mostOffers) {
-                                                mostOffers = response.body.result[i].vendors[j].offers.length;
-                                                mostOffersVendor = j;
-                                            }
-                                            for(k = 0; k < response.body.result[i].vendors[j].offers.length; k++) {
-                                                offId = response.body.result[i].sequenceInformation.id.toString() + response.body.result[i].vendors[j].key.toString() + k.toString();
-                                                response.body.result[i].vendors[j].offers[k].id = offId;
-                                            }
+                            if(response.body.length === 17) {
+                                var filter = {
+                                    "filter":
+                                        {
+                                            "vendors": this.vendors,
+                                            "price": this.range,
+                                            "deliveryDays": this.deliveryDays,
+                                            "preselectByPrice": this.preselectByPrice,
+                                            "preselectByDeliveryDays": this.preselectByTime
                                         }
-                                        response.body.result[i].sequenceInformation.id = i;
-                                        response.body.result[i].sequenceInformation.mostOffVendor = mostOffersVendor;
-                                        mostOffers = 0;
-                                        mostOffersVendor = 0
-                                    }
-                                    this.$store.state.StoreSearchResult = response.body.result;
+                                };
+
+                                this.$http.post('/api/filter', filter).then(response => {
                                     // eslint-disable-next-line no-console
-                                    console.log(this.$store.state.StoreSearchResult);
-                                    this.$store.state.StoreCount = response.body.count;
-                                    this.$router.push('/result');
+                                    console.log(filter);
+                                    // eslint-disable-next-line no-console
+                                    console.log(response);
                                 });
+
+                                var selectedOptimization = {
+                                    "strategy": this.strategy,
+                                    "host": this.host
+                                };
+                                this.$http.post('/api/codon_optimization', selectedOptimization)
+                                    .then(response => {
+                                        // eslint-disable-next-line no-console
+                                        console.log(response);
+                                    });
+
+                                this.$http.post('/api/results', {
+                                    headers: {
+                                        'Access-Control-Allow-Origin': '*',
+                                        'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE, PUT',
+                                        'Access-Control-Allow-Headers': 'append,delete,entries,foreach,get,has,keys,set,values,Authorization',
+                                    }
+                                })
+                                    .then(response => {
+                                        // eslint-disable-next-line no-console
+                                        console.log(response);
+                                        let i, j, k;
+                                        var mostOffers = 0;
+                                        var mostOffersVendor = 0;
+                                        var offId = 0;
+                                        for(i = 0; i < response.body.result.length; i++) {
+                                            for(j = 0; j < response.body.result[i].vendors.length; j++) {
+                                                if(response.body.result[i].vendors[j].offers.length > mostOffers) {
+                                                    mostOffers = response.body.result[i].vendors[j].offers.length;
+                                                    mostOffersVendor = j;
+                                                }
+                                                for(k = 0; k < response.body.result[i].vendors[j].offers.length; k++) {
+                                                    offId = response.body.result[i].sequenceInformation.id.toString() + response.body.result[i].vendors[j].key.toString() + k.toString();
+                                                    response.body.result[i].vendors[j].offers[k].id = offId;
+                                                }
+                                            }
+                                            response.body.result[i].sequenceInformation.id = i;
+                                            response.body.result[i].sequenceInformation.mostOffVendor = mostOffersVendor;
+                                            mostOffers = 0;
+                                            mostOffersVendor = 0
+                                        }
+                                        this.$store.state.StoreSearchResult = response.body.result;
+                                        // eslint-disable-next-line no-console
+                                        console.log(this.$store.state.StoreSearchResult);
+                                        this.$store.state.StoreCount = response.body.count;
+                                        this.$router.push('/result');
+                                    });
+                            }
+                            else {
+                                this.wrongFile = true
+                            }
 
                         });
-                    //
-                    // this.result = true;
-                    // this.$emit('returnResult', this.result);
                 }
             },
             reset() {

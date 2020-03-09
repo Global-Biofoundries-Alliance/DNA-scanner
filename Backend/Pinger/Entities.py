@@ -316,16 +316,13 @@ class OrderType(Enum):
 #
 #   Desc:   General interface for orders.
 #
-#   @attribute seqInf
-#
 #   @attribute orderType
 #           Type OrderType. The type of the concrete order.
 #
 class Order:
 
-    def __init__(self, seqInf, orderType = OrderType.NOT_SUPPORTED):
+    def __init__(self, orderType = OrderType.NOT_SUPPORTED):
         self.orderType = orderType
-        self.seqInf = seqInf
 
     #
     #   Desc:   Returns the type of the concrete order.
@@ -342,6 +339,9 @@ class Order:
 #   @attribute url
 #           Type String. The redirect url to make the order.
 #
+#   @attribute orderType
+#           Type OrderType. The type of the concrete order.
+#
 class UrlRedirectOrder(Order):
 
     #
@@ -350,11 +350,9 @@ class UrlRedirectOrder(Order):
     #   @param url
     #           Type String. The redirect url to make the order.
     #
-    def __init__(self, url, seqInf):
-        Order(seqInf=seqInf, orderType=OrderType.URL_REDIRECT)
+    def __init__(self, url):
+        super().__init__(orderType=OrderType.URL_REDIRECT)
         self.url = url
-        self.orderType = OrderType.URL_REDIRECT
-        self.seqInf = seqInf
 
 #####################################################
 #                                                   #

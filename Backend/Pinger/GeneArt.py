@@ -501,7 +501,7 @@ class GeneArt(BasePinger):
             print("Order", len(offersToBuy), "sequences at GeneArt")
             # Upload to a project at geneart
             constructUpload = self.constUploadMixedProduct(offersToBuy)
-            order = Order(seqInf = [])
+            order = Order()
 
             # If not all sequences are in the response?
             if(len(constructUpload["project"]["constructs"]) != len(offersToBuy)):
@@ -516,7 +516,7 @@ class GeneArt(BasePinger):
                 # Check Cart-Response
                 expectedKeys = ["projectId", "cartId"]
                 if(expectedKeys == list(toCartResponse.keys())):
-                    order = UrlRedirectOrder(seqInf = [], url = self.cartBaseUrl + str(toCartResponse["cartId"]))
+                    order = UrlRedirectOrder(url = self.cartBaseUrl + str(toCartResponse["cartId"]))
                 else:
                     # Failed to create Cart
                     raise UnavailableError("Failed to create toCart request")

@@ -1,8 +1,11 @@
 from Bio import SeqIO
+import os
+import tempfile
 import json
 import sbol
 import time
 import requests
+
 # Object representing a sequence
 class SeqObject():
     def __init__(self, idN, name, sequence):
@@ -13,6 +16,8 @@ class SeqObject():
     # Converts the SeqObject into a JSON-Object
     def toJSON(self):
         return {"idN": self.idN, "name": self.name, "sequence": self.sequence}
+
+# This class is used to communicate with the BOOST-Server
 class BoostClient:
     def __init__(self, url_job, url_hosts, url_submit, url_login, username, password, juggling_strategy, host, timeout = 60): 
         self.url_job = url_job
@@ -29,16 +34,14 @@ class BoostClient:
         self.uuid = "NO_UUID"
         self.codonUsageTable = "NO_TABLE"
 
-    # Log-In
+    # Log in the BOOST-Server and get your token.
     def login(self):
         data = {"username": self.username, "password": self.password}
         response = requests.post(url = self.url_login, json = data)
-        print(response)
         self.token = response.json()["boost-jwt"]
         self.jwt = {"boost-jwt": self.token}
-        print("Token: ", self.token)
     
-    # Translate
+    # Translate the aminoacids into dna sequences using the service called reverse translate.
     def translate(self, inputSequences):
         self.login()
         self.getPreDefinedHosts()
@@ -47,14 +50,16 @@ class BoostClient:
             inputString = inputString + (">" + str((i.toJSON())["name"]) + "\n" + str((i.toJSON())["sequence"]) + "*\n")
         inputString = inputString[: -2]    
         submit = self.submit(inputString, self.codonUsageTable, self.juggling_strategy)
-        while(self.getInformation1(self.uuid) != "FINISHED"):
-            print("SLEEP 2 Seconds")
+        response = self.getInformation(self.uuid)
+        while(response["job"]["job-status"] != "FINISHED"):
             time.sleep(3)
-        response = self.getInformation2(self.uuid)
-        file = open("resultfile.fasta","w") 
-        file.write(response["job"]["job-report"]["response"][0]["modified-sequences-text"]) 
-        file.close()
-        #return g
+            
+        fd, path = tempfile.mkstemp('boost_translated.fasta')
+
+        with os.fdopen(fd, 'w+') as tmp:
+            tmp.write(response["job"]["job-report"]["response"][0]["modified-sequences-text"])
+
+        return path
     
     # Submit a Job
     def submit(self, inputString, codonTable, strategy):
@@ -71,26 +76,11 @@ class BoostClient:
                 "format": "FASTA"
             }
         }
-        print(job)
         response = requests.post(url='https://boost.jgi.doe.gov/rest/jobs/submit', json = job, cookies = self.jwt)
-        print(response)
-        print(response.json())
         self.uuid = response.json()["job-uuid"]
-        print("Job-UUID", self.uuid)
 
-    # Get information for this job
-    def getInformation1(self, uuid):
-        url_job_uuid = self.url_job + str(uuid)
-        print(url_job_uuid)
-        print(self.jwt)
-        response = requests.get(url=url_job_uuid, cookies = self.jwt)
-        print("GG")
-        print(response)
-        print(response.json()["job"]["job-status"])
-        return response.json()["job"]["job-status"]
-    
         # Get information for this job
-    def getInformation2(self, uuid):
+    def getInformation(self, uuid):
         url_job_uuid = self.url_job + str(uuid)
         response = requests.get(url=url_job_uuid, cookies = self.jwt)
         return response.json()
@@ -130,8 +120,10 @@ class Parser:
             self.boostClient = BoostClient(self.url_job, self.url_hosts, self.url_submit, self.url_login, self.username, self.password, self.juggling_strategy, self.host, self.timeout)
             if(len(parsedSequences) == 0):
                 raise RuntimeError("Parsing went wrong.")
-            translatedSequences = self.boostClient.translate(parsedSequences)
-            return self.parse("resultfile.fasta", False)
+            translatedSequencesFile = self.boostClient.translate(parsedSequences)
+            return self.parse(translatedSequencesFile, False)
+        if(inputFileName[len(inputFileName)-22:len(inputFileName)] =="boost_translated.fasta"):
+            os.remove(inputFileName)
         return parsedSequences
         
         # Returns the file format based on the file ending

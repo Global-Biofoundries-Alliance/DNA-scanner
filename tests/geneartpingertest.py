@@ -189,6 +189,11 @@ class TestGeneArtPinger(unittest.TestCase):
         order = self.pinger_example.order(offer2order)
         self.assertEqual(order.orderType, Entities.OrderType.URL_REDIRECT)
 
+        print("")
+        print("Here is the redirect URL of the offer. You can open it and login to check it manually.")
+        print("Ridrect URL: ", order.url)
+        print("")
+
         # Check error when using unknown offerId
         offer2order = [sequenceOffer1.offers[0].key, 12345]
         with self.assertRaises(Entities.InvalidInputError): self.pinger_example.order(offer2order)

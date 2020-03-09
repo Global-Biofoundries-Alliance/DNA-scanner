@@ -199,12 +199,13 @@ class GeneArt(BasePinger):
     dnaStrings_default = True
     hqDnaStrings_default = True
     timeout_default = 60
+    cartBaseUrl_default = "https://www.thermofisher.com/order/catalog/en/US/direct/lt?cmd=ViewCart&ShoppingCartKey="
     
     #
     # Constructur for a GeneArt-Pinger
     # Takes as input the log-in parameters.
     #
-    def __init__(self, username, token, server = server_default, validate = validate_default, status = status_default, addToCart = addToCart_default, upload = upload_default, dnaStrings = dnaStrings_default, hqDnaStrings = hqDnaStrings_default, timeout = timeout_default):
+    def __init__(self, username, token, server = server_default, validate = validate_default, status = status_default, addToCart = addToCart_default, upload = upload_default, dnaStrings = dnaStrings_default, hqDnaStrings = hqDnaStrings_default, timeout = timeout_default, cartBaseUrl = cartBaseUrl_default):
         self.running = False
 
         self.server = server
@@ -217,6 +218,7 @@ class GeneArt(BasePinger):
         self.dnaStrings = dnaStrings 
         self.hqDnaStrings = hqDnaStrings
         self.timeout = timeout
+        self.cartBaseUrl = cartBaseUrl
        
         try:
             self.client = GeneArtClient(self.server, 
@@ -501,12 +503,11 @@ class GeneArt(BasePinger):
             constructUpload = self.constUploadMixedProduct(offersToBuy)
             order = Order(seqInf = [])
 
-            # Check that all offers are synthesisable
+            # If not all sequences are in the response?
             if(len(constructUpload["project"]["constructs"]) != len(offersToBuy)):
                 print("Someone tried to order sequences that are not synthesizeable")
                 raise InvalidInputError("The given offers cannot be synthesised")
             else:
-                # All offers are synthesizeable!
 
                 # Create Cart
                 projectId = constructUpload["project"]["projectId"]
@@ -515,8 +516,7 @@ class GeneArt(BasePinger):
                 # Check Cart-Response
                 expectedKeys = ["projectId", "cartId"]
                 if(expectedKeys == list(toCartResponse.keys())):
-                    # TODO Configure Redirect URL
-                    order = UrlRedirectOrder(seqInf = [], url = "" + str(toCartResponse["cartId"]))
+                    order = UrlRedirectOrder(seqInf = [], url = self.cartBaseUrl + str(toCartResponse["cartId"]))
                 else:
                     # Failed to create Cart
                     raise UnavailableError("Failed to create toCart request")

@@ -103,3 +103,25 @@ def getSearchResults():
     except Exception as error:
         return {"error": "Encountered error while fetching search results\n" + (
             traceback.format_exc() if __debug__ else "")}
+
+
+@app.route('/available_hosts', methods=['GET'])
+def getAvailableHosts():
+    try:
+        # TODO obtain host organisms from BOOST client
+        return json.jsonify(["Escherichia Coli", "Saccharomyces Cerevisiae", "Palmerella Coli", "Leuconostoc Citreum"])
+    except Exception as error:
+        return {"error": "Encountered error while fetching list of available hosts\n" + (
+            traceback.format_exc() if __debug__ else "")}
+
+@app.route('/codon_optimization', methods=['POST'])
+def setCodonOptimizationOptions():
+    try:
+        request_json = request.get_json()
+        if "strategy" not in request_json or "host" not in request_json:
+            raise KeyError
+
+        return 'codon optimization options set'
+    except Exception as error:
+        return {"error": "Encountered error while setting codon optimization options\n" + (
+            traceback.format_exc() if __debug__ else "")}

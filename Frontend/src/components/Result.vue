@@ -42,11 +42,12 @@
                             <span>{{item.vendors[0].offers[0].offerMessage[0].text}}</span>
                         </v-tooltip>
                         <v-checkbox v-else
-                                    v-model="selectedTwist"
+                                    v-model="selected[0]"
                                     :value="item.vendors[0].offers[0].id"
                                     @change="selectTwist(item.vendors[0].offers, 0)"
                                     color="red"></v-checkbox>
                     </template>
+
 
                     <template v-slot:item.vendors[0].offers[0].price="{item, value}">
                         <p v-if="item.vendors[0].offers.length === 0 || item.vendors[0].offers[0].offerMessage.length !== 0"
@@ -76,7 +77,7 @@
                             <span>{{item.vendors[1].offers[0].offerMessage[0].text}}</span>
                         </v-tooltip>
                         <v-checkbox v-else
-                                    v-model="selectedIDT"
+                                    v-model="selected[1]"
                                     :value="item.vendors[1].offers[0].id"
                                     @change="selectIDT(item.vendors[1].offers, 0)"
                                     color="green"></v-checkbox>
@@ -110,7 +111,7 @@
                             <span>{{item.vendors[2].offers[0].offerMessage[0].text}}</span>
                         </v-tooltip>
                         <v-checkbox v-else
-                                    v-model="selectedGeneArt"
+                                    v-model="selected[2]"
                                     :value="item.vendors[2].offers[0].id"
                                     @change="selectGeneArt(item.vendors[2].offers, 0)"
                                     color="orange"></v-checkbox>
@@ -157,6 +158,44 @@
 
                                 <template v-slot:item="props">
                                     <tr>
+
+                                        <!--                                        <td v-for="(n,i) in 3" :key="i">-->
+                                        <!--                                            <p class="mb-0"-->
+                                        <!--                                               v-if="results[item.sequenceInformation.id].vendors[i].offers.length <= props.index"></p>-->
+                                        <!--                                            <v-tooltip-->
+                                        <!--                                                    v-else-if="results[item.sequenceInformation.id].vendors[i].offers[props.index].offerMessage.length !== 0"-->
+                                        <!--                                                    right>-->
+                                        <!--                                                <template v-slot:activator="{ on }">-->
+                                        <!--                                                    <v-icon color="red" v-on="on">mdi-message</v-icon>-->
+                                        <!--                                                </template>-->
+                                        <!--                                                <span>{{results[item.sequenceInformation.id].vendors[i].offers[props.index].offerMessage[0].text}}</span>-->
+                                        <!--                                            </v-tooltip>-->
+                                        <!--                                            <v-checkbox v-else-->
+                                        <!--                                                        v-model="selected[i]"-->
+                                        <!--                                                        :value="results[item.sequenceInformation.id].vendors[i].offers[props.index].id"-->
+                                        <!--                                                        @change="selectTwist(results[item.sequenceInformation.id].vendors[i].offers, props.index)"-->
+                                        <!--                                                        color="red">-->
+                                        <!--                                            </v-checkbox>-->
+                                        <!--                                        </td>-->
+
+                                        <!--                                        <td v-for="(n,i) in 3" :key="i">-->
+                                        <!--                                            <p class="mb-0"-->
+                                        <!--                                               v-if="results[item.sequenceInformation.id].vendors[i].offers.length <= props.index"></p>-->
+                                        <!--                                            <p class="mb-0"-->
+                                        <!--                                               v-else-if="results[item.sequenceInformation.id].vendors[i].offers[props.index].offerMessage.length !== 0">-->
+                                        <!--                                                0-->
+                                        <!--                                            </p>-->
+                                        <!--                                            <p class="mb-0"-->
+                                        <!--                                               v-else-if="results[item.sequenceInformation.id].vendors[i].offers[props.index].selected">-->
+                                        <!--                                                <v-chip color="red">-->
+                                        <!--                                                    {{results[item.sequenceInformation.id].vendors[i].offers[props.index].price}}-->
+                                        <!--                                                </v-chip>-->
+                                        <!--                                            </p>-->
+                                        <!--                                            <p class="mb-0" v-else>-->
+                                        <!--                                                {{results[item.sequenceInformation.id].vendors[i].offers[props.index].price}}-->
+                                        <!--                                            </p>-->
+                                        <!--                                        </td>-->
+
                                         <td v-if="selectedVendors.includes(0)">
                                             <p class="mb-0"
                                                v-if="results[item.sequenceInformation.id].vendors[0].offers.length <= props.index"></p>
@@ -169,7 +208,7 @@
                                                 <span>{{results[item.sequenceInformation.id].vendors[0].offers[props.index].offerMessage[0].text}}</span>
                                             </v-tooltip>
                                             <v-checkbox v-else
-                                                        v-model="selectedTwist"
+                                                        v-model="selected[0]"
                                                         :value="results[item.sequenceInformation.id].vendors[0].offers[props.index].id"
                                                         @change="selectTwist(results[item.sequenceInformation.id].vendors[0].offers, props.index)"
                                                         color="red"></v-checkbox>
@@ -219,7 +258,7 @@
                                                 <span>{{results[item.sequenceInformation.id].vendors[1].offers[props.index].offerMessage[0].text}}</span>
                                             </v-tooltip>
                                             <v-checkbox v-else
-                                                        v-model="selectedIDT"
+                                                        v-model="selected[1]"
                                                         :value="results[item.sequenceInformation.id].vendors[1].offers[props.index].id"
                                                         @change="selectIDT(results[item.sequenceInformation.id].vendors[1].offers, props.index)"
                                                         color="green"></v-checkbox>
@@ -269,10 +308,11 @@
                                                 <span>{{results[item.sequenceInformation.id].vendors[2].offers[props.index].offerMessage[0].text}}</span>
                                             </v-tooltip>
                                             <v-checkbox v-else
-                                                        v-model="selectedGeneArt"
+                                                        v-model="selected[2]"
                                                         :value="results[item.sequenceInformation.id].vendors[2].offers[props.index].id"
                                                         @change="selectGeneArt(results[item.sequenceInformation.id].vendors[2].offers, props.index)"
-                                                        color="orange"></v-checkbox>
+                                                        color="orange">
+                                            </v-checkbox>
                                         </td>
                                         <td v-if="selectedVendors.includes(2)">
                                             <p class="mb-0"
@@ -312,11 +352,6 @@
                         </td>
                     </template>
                 </v-data-table>
-<!--                <p>{{selectedTwist}}</p>-->
-<!--                <p>{{selectedIDT}}</p>-->
-<!--                <p>{{selectedGeneArt}}</p>-->
-<!--                <p>{{computedHeaders}}</p>-->
-<!--                <p>{{computedHeadersSecond}}</p>-->
             </v-app>
         </div>
     </div>
@@ -330,17 +365,18 @@
                 computedHeaders: [],
                 computedHeadersSecond: [],
                 expanded: [],
-                selectedTwist: [],
                 lengthTwist: 0,
-                selectedIDT: [],
                 lengthIDT: 0,
-                selectedGeneArt: [],
                 lengthGeneArt: 0,
                 checkTwist: false,
                 checkIDT: false,
                 checkGeneArt: false,
                 singleExpand: false,
-
+                selected: {
+                    0: [],
+                    1: [],
+                    2: []
+                }
                 // results: [
                 //     {
                 //         sequenceInformation: {
@@ -474,18 +510,17 @@
                 } else {
                     offers[index].selected = false
                 }
-                this.checkTwist = this.selectedTwist.length >= this.results.length - this.lengthTwist;
+                this.checkTwist = this.selected[0].length >= this.results.length - this.lengthTwist;
             },
             selectAllTwist() {
                 if (!this.checkTwist) {
                     this.results.forEach(i => {
                         if (i.vendors[0].offers.length !== 0) {
-                            if (i.vendors[0].offers[0].offerMessage.length === 0 && !this.selectedTwist.includes(i.vendors[0].offers[0].id)) {
+                            if (i.vendors[0].offers[0].offerMessage.length === 0 && !this.selected[0].includes(i.vendors[0].offers[0].id)) {
                                 i.vendors[0].offers[0].selected = true;
-                                this.selectedTwist.push(i.vendors[0].offers[0].id)
+                                this.selected[0].push(i.vendors[0].offers[0].id)
                             }
                         }
-
                     });
                     this.checkTwist = true;
                 } else {
@@ -496,7 +531,7 @@
                         }
 
                     });
-                    this.selectedTwist = [];
+                    this.selected[0] = [];
                     this.checkTwist = false;
                 }
             },
@@ -509,15 +544,15 @@
                 } else {
                     offers[index].selected = false
                 }
-                this.checkIDT = this.selectedIDT.length >= this.results.length - this.lengthIDT;
+                this.checkIDT = this.selected[1].length >= this.results.length - this.lengthIDT;
             },
             selectAllIDT() {
                 if (!this.checkIDT) {
                     this.results.forEach(i => {
                         if (i.vendors[1].offers.length !== 0) {
-                            if (i.vendors[1].offers[0].offerMessage.length === 0 && !this.selectedIDT.includes(i.vendors[1].offers[0].id)) {
+                            if (i.vendors[1].offers[0].offerMessage.length === 0 && !this.selected[1].includes(i.vendors[1].offers[0].id)) {
                                 i.vendors[1].offers[0].selected = true;
-                                this.selectedIDT.push(i.vendors[1].offers[0].id)
+                                this.selected[1].push(i.vendors[1].offers[0].id)
                             }
                         }
                     });
@@ -529,7 +564,7 @@
                             i.vendors[1].offers[j].selected = false
                         }
                     });
-                    this.selectedIDT = [];
+                    this.selected[1] = [];
                     this.checkIDT = false;
                 }
             },
@@ -542,15 +577,15 @@
                 } else {
                     offers[index].selected = false
                 }
-                this.checkGeneArt = this.selectedGeneArt.length >= this.results.length - this.lengthGeneArt;
+                this.checkGeneArt = this.selected[2].length >= this.results.length - this.lengthGeneArt;
             },
             selectAllGeneArt() {
                 if (!this.checkGeneArt) {
                     this.results.forEach(i => {
                         if (i.vendors[2].offers.length !== 0) {
-                            if (i.vendors[2].offers[0].offerMessage.length === 0 && !this.selectedGeneArt.includes(i.vendors[2].offers[0].id)) {
+                            if (i.vendors[2].offers[0].offerMessage.length === 0 && !this.selected[2].includes(i.vendors[2].offers[0].id)) {
                                 i.vendors[2].offers[0].selected = true;
-                                this.selectedGeneArt.push(i.vendors[2].offers[0].id)
+                                this.selected[2].push(i.vendors[2].offers[0].id)
                             }
                         }
                     });
@@ -562,7 +597,7 @@
                             i.vendors[2].offers[j].selected = false
                         }
                     });
-                    this.selectedGeneArt = [];
+                    this.selected[2] = [];
                     this.checkGeneArt = false;
                 }
             },
@@ -575,64 +610,19 @@
                 return this.$store.state.StoreSelectedVendors
             },
             headers() {
-                // return [
-                //     {
-                //         text: 'Sequence',
-                //         align: 'left',
-                //         sortable: false,
-                //         value: 'sequenceInformation.name',
-                //     },
-                //     {text: 'Twist', value: 'selectedTwist', sortable: false},
-                //     {text: 'Price', value: 'vendors[0].offers[0].price'},
-                //     {text: 'Time', value: 'vendors[0].offers[0].turnoverTime'},
-                //
-                //     {text: 'IDT', value: 'selectedIDT', sortable: false},
-                //     {text: 'Price', value: 'vendors[1].offers[0].price'},
-                //     {text: 'Time', value: 'vendors[1].offers[0].turnoverTime'},
-                //
-                //     {text: 'GeneArt', value: 'selectedGeneArt', sortable: false},
-                //     {text: 'Price', value: 'vendors[2].offers[0].price'},
-                //     {text: 'Time', value: 'vendors[2].offers[0].turnoverTime'},
-                //
-                //     {text: '', value: 'data-table-expand'}
-                //
-                // ]
                 return this.computedHeaders
             },
             headersSecond() {
-                // return [
-                //
-                //     {text: 'Twist', value: 'selectedTwist', sortable: false},
-                //     {text: 'Price', value: 'price'},
-                //     {text: 'Time', value: 'time'},
-                //
-                //     {text: 'IDT', value: 'selectedIDT', sortable: false},
-                //     {text: 'Price', value: 'price'},
-                //     {text: 'Time', value: 'time'},
-                //
-                //     {text: 'GeneArt', value: 'selectedGeneArt', sortable: false},
-                //     {text: 'Price', value: 'price'},
-                //     {text: 'Time', value: 'tot'},
-                //
-                //
-                // ]
                 return this.computedHeadersSecond
             },
             results() {
                 return this.$store.state.StoreSearchResult
             },
-            // selectedTwist() {
-            //     return this.selectedTwist;
-            // }
 
         },
         created() {
-            // eslint-disable-next-line no-console
-            console.log("jnfw");
             let i, j, k;
             for (i = 0; i < this.$store.state.StoreSearchResult.length; i++) {
-                // eslint-disable-next-line no-console
-                console.log("jnfw");
                 for (j = 0; j < this.results[i].vendors.length; j++) {
                     if (this.results[i].vendors[j].offers.length === 0 || this.results[i].vendors[j].offers[0].offerMessage.length !== 0) {
                         if (j === 0) {
@@ -648,28 +638,26 @@
                     for (k = 0; k < this.results[i].vendors[j].offers.length; k++) {
                         if (this.results[i].vendors[j].offers[k].selected) {
                             if (j === 0) {
-                                this.selectedTwist.push(this.results[i].vendors[j].offers[k].id);
-                                // eslint-disable-next-line no-console
-                                console.log(this.results[i].vendors[j].offers[k].id);
+                                this.selected[0].push(this.results[i].vendors[j].offers[k].id);
                             }
                             if (j === 1) {
-                                this.selectedIDT.push(this.results[i].vendors[j].offers[k].id);
+                                this.selected[1].push(this.results[i].vendors[j].offers[k].id);
                             }
                             if (j === 2) {
-                                this.selectedGeneArt.push(this.results[i].vendors[j].offers[k].id);
+                                this.selected[2].push(this.results[i].vendors[j].offers[k].id);
                             }
                         }
                     }
                 }
             }
             this.lengthTwist = Math.abs(this.lengthTwist);
-            this.checkTwist = this.selectedTwist.length >= this.results.length - this.lengthTwist;
+            this.checkTwist = this.selected[0].length >= this.results.length - this.lengthTwist;
 
             this.lengthIDT = Math.abs(this.lengthIDT);
-            this.checkIDT = this.selectedIDT.length >= this.results.length - this.lengthIDT;
+            this.checkIDT = this.selected[1].length >= this.results.length - this.lengthIDT;
 
             this.lengthGeneArt = Math.abs(this.lengthGeneArt);
-            this.checkGeneArt = this.selectedGeneArt.length >= this.results.length - this.lengthGeneArt;
+            this.checkGeneArt = this.selected[2].length >= this.results.length - this.lengthGeneArt;
 
             this.computedHeaders.push({
                 text: 'Sequence',
@@ -677,6 +665,7 @@
                 sortable: false,
                 value: 'sequenceInformation.name',
             });
+            this.selectedVendors.sort();
             for (let i = 0; i < this.selectedVendors.length; i++) {
                 this.computedHeaders.push(
                     {

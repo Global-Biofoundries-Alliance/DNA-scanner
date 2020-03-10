@@ -248,27 +248,36 @@ class GeneArt(BasePinger):
                 count = 0 # Count the sequences
                 for seq in seqInf:
                     accepted = response["constructs"][count]["accepted"] # See if the API accepted the sequence
+                    # If the sequence was accepted                    
                     if accepted == True:
                         messageText = product + "_" + "accepted"
                         message = Message(MessageType.INFO, messageText)
                         turnOverTime = response["constructs"][count]["eComInfo"]["productionDaysEstimated"]
                         currencycode = response["constructs"][count]["eComInfo"]["currencyIsoCode"]
                         cost = response["constructs"][count]["eComInfo"]["lineItems"][0]["customerSpecificPrice"]
-                        price = Price(amount = cost, currency = self.currencies[currencycode], customerSpecific = True)
+                        # If the currencycode is known.
+                        if(currencycode in list(self.currencies.keys())):
+                            price = Price(amount = cost, currency = self.currencies[currencycode], customerSpecific = True)
+                        # If the currencycode is unknown.
+                        else:
+                            price = Price(amount = cost, currency = UNKNOWN, customerSpecific = True)
+                    # If the sequence was rejected
                     else:
                         turnOverTime = -1
                         price = Price()
+                        # If there was only one reason why it got rejected. Identify the reason and costumize the message text.
                         if(len(response["constructs"][count]["reasons"]) == 1):
                             reason = response["constructs"][count]["reasons"][0]
+                            messageText = product + "_" + "rejected_" + str(reason) + "."
                             if (reason == "length"):
-                                messageText = product + "_" + "rejected_" + str(reason) + "."
                                 message = Message(MessageType.INVALID_LENGTH, messageText)
-                            if (reason == "homology"):
-                                messageText = product + "_" + "rejected_" + str(reason) + "."
+                            elif (reason == "homology"):
                                 message = Message(MessageType.HOMOLOGY, messageText)
-                            if (reason == "problems"):
-                                messageText = product + "_" + "rejected_" + str(reason) + "."
+                            elif (reason == "problems"):
                                 message = Message(MessageType.INVALID_LENGTH, messageText)
+                            else:
+                                message = Message(MessageType.SYNTHESIS_ERROR, messageText)
+                        # If there was were several reasons why it got rejected. Costumize the message text.
                         else:
                             messageText = product + "_" + "rejected_"
                             for reason in response["constructs"][count]["reasons"]:

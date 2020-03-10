@@ -189,7 +189,6 @@ class GeneArt(BasePinger):
 
 
         self.offers = []
-        self.products = {"815010DE": 89.00,"815020DE": 109.00, "815030DE": 119.00, "815040DE": 182.00}
         self.validator = EntityValidator(raiseError=True)
     
 

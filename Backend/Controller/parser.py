@@ -37,7 +37,7 @@ class BoostClient:
     # Log in the BOOST-Server and get your token.
     def login(self):
         data = {"username": self.username, "password": self.password}
-        response = requests.post(url = self.url_login, json = data)
+        response = requests.post(url = self.url_login, json = data, timeout = self.timeout)
         self.token = response.json()["boost-jwt"]
         self.jwt = {"boost-jwt": self.token}
     
@@ -53,7 +53,7 @@ class BoostClient:
         response = self.getInformation(self.uuid)
         while(response["job"]["job-status"] != "FINISHED"):
             time.sleep(3)
-            
+        # Save the result in a temporary file.
         fd, path = tempfile.mkstemp('boost_translated.fasta')
 
         with os.fdopen(fd, 'w+') as tmp:
@@ -61,7 +61,7 @@ class BoostClient:
 
         return path
     
-    # Submit a Job
+    # Submit a Job for reverse traversial
     def submit(self, inputString, codonTable, strategy):
         job = {"job": {"job-BOOST-function": "REVERSE_TRANSLATE"},"sequences": {
                 "text": inputString,
@@ -76,18 +76,18 @@ class BoostClient:
                 "format": "FASTA"
             }
         }
-        response = requests.post(url='https://boost.jgi.doe.gov/rest/jobs/submit', json = job, cookies = self.jwt)
+        response = requests.post(url='https://boost.jgi.doe.gov/rest/jobs/submit', json = job, cookies = self.jwt, timeout = self.timeout)
         self.uuid = response.json()["job-uuid"]
 
         # Get information for this job
     def getInformation(self, uuid):
         url_job_uuid = self.url_job + str(uuid)
-        response = requests.get(url=url_job_uuid, cookies = self.jwt)
+        response = requests.get(url=url_job_uuid, cookies = self.jwt, timeout = self.timeout)
         return response.json()
 
     # Get Pre-defined hosts
     def getPreDefinedHosts(self):
-        response = (requests.get(url=self.url_hosts, cookies = self.jwt)).json()
+        response = (requests.get(url=self.url_hosts, cookies = self.jwt, timeout = self.timeout)).json()
         for i in response["predefined-hosts"]:
             if(i["host-name"]== self.host):
                 self.codonUsageTable = i["codon-usage-table"]
@@ -109,19 +109,23 @@ class Parser:
         self.jwt = "NO_JWT"
         self.uuid = "NO_UUID"
 
-        # Parse File based on inputFileName
+        # Parse File based on inputFileName.
+        # Aminoacids is True if there are aminoacids and false otherwise.
     def parse(self, inputFileName, aminoacids):
         fileType = self.getFileType(inputFileName)
         if(fileType == "fasta" or fileType == "genbank"):
             parsedSequences = self.parseFastaGB(inputFileName,fileType)
         if(fileType == "sbol"):
             parsedSequences = self.parseSBOL(inputFileName)
-        if(aminoacids == True):        
+        if(aminoacids == True):
+            # Reverse Translation needed      
             self.boostClient = BoostClient(self.url_job, self.url_hosts, self.url_submit, self.url_login, self.username, self.password, self.juggling_strategy, self.host, self.timeout)
             if(len(parsedSequences) == 0):
                 raise RuntimeError("Parsing went wrong.")
             translatedSequencesFile = self.boostClient.translate(parsedSequences)
+            # Parse the new temp file.
             return self.parse(translatedSequencesFile, False)
+        # The temp files names end with "boost_translated.fasta". If such a file is inputed, remove it after the parse.
         if(inputFileName[len(inputFileName)-22:len(inputFileName)] =="boost_translated.fasta"):
             os.remove(inputFileName)
         return parsedSequences

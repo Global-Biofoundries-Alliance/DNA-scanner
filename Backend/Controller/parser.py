@@ -94,87 +94,73 @@ class BoostClient:
                 break
 
 
-class Parser:
-    def __init__(self, url_job, url_hosts, url_submit, url_login, username, password, juggling_strategy, host, timeout = 60): 
-        self.url_job = url_job
-        self.url_hosts = url_hosts
-        self.url_submit = url_submit
-        self.url_login = url_login
-        self.username = username
-        self.password = password
-        self.juggling_strategy = juggling_strategy
-        self.host = host
-        self.timeout = timeout
-        self.token = "NO_TOKEN"
-        self.jwt = "NO_JWT"
-        self.uuid = "NO_UUID"
-
-        # Parse File based on inputFileName.
-        # Aminoacids is True if there are aminoacids and false otherwise.
-    def parse(self, inputFileName, aminoacids):
-        fileType = self.getFileType(inputFileName)
-        if(fileType == "fasta" or fileType == "genbank"):
-            parsedSequences = self.parseFastaGB(inputFileName,fileType)
-        if(fileType == "sbol"):
-            parsedSequences = self.parseSBOL(inputFileName)
-        if(aminoacids == True):
-            # Reverse Translation needed      
-            self.boostClient = BoostClient(self.url_job, self.url_hosts, self.url_submit, self.url_login, self.username, self.password, self.juggling_strategy, self.host, self.timeout)
-            if(len(parsedSequences) == 0):
-                raise RuntimeError("Parsing went wrong.")
-            translatedSequencesFile = self.boostClient.translate(parsedSequences)
-            # Parse the new temp file.
-            return self.parse(translatedSequencesFile, False)
-        # The temp files names end with "boost_translated.fasta". If such a file is inputed, remove it after the parse.
-        if(inputFileName[len(inputFileName)-22:len(inputFileName)] =="boost_translated.fasta"):
-            os.remove(inputFileName)
-        return parsedSequences
-        
-        # Returns the file format based on the file ending
-    def getFileType(self, inputFileName):
-        f = open(inputFileName)
-        line = f.readline()
-        f.close()
-        words = line.split()
-        if(inputFileName.endswith('.gb') or inputFileName.endswith('.gbk')):
-            if(words[0] == "LOCUS"):
-                return 'genbank'
-            else:
-                raise RuntimeError("Not a valid GenBank file.")
-        elif(inputFileName.endswith('.fasta') or inputFileName.endswith('.fna') or inputFileName.endswith('.faa')):
-            if(words[0][0] == ">"):
-                return 'fasta'
-            else:
-                raise RuntimeError("Not a valid Fasta file.")
-        elif(inputFileName.endswith('.xml') or inputFileName.endswith('.rdf')):
-            return 'sbol'
+    # Parse File based on inputFileName.
+    # Aminoacids is True if there are aminoacids and false otherwise.
+def parse(inputFileName):
+    fileType = getFileType(inputFileName)
+    if(fileType == "fasta" or fileType == "genbank"):
+        parsedSequences = parseFastaGB(inputFileName,fileType)
+    if(fileType == "sbol"):
+        parsedSequences = parseSBOL(inputFileName)
+    if(len(parsedSequences) == 0):
+            raise RuntimeError("Parsing went wrong.")
+    charactersList = list(dict.fromkeys(list(parsedSequences[0].sequence)))
+    if(not(len(charactersList) == 4 and "A" in charactersList and "T" in charactersList and "C" in charactersList and "G" in charactersList)):
+        # Reverse Translation needed
+        boostClient = BoostClient(url_job="https://boost.jgi.doe.gov/rest/jobs/", url_hosts="https://boost.jgi.doe.gov/rest/files/predefined_hosts", url_submit="https://boost.jgi.doe.gov/rest/jobs/submit", url_login="https://boost.jgi.doe.gov/rest/auth/login", username = "dummyworkingusername", password = "dummyworkingpassword", juggling_strategy = "Random", host="Arabidopsis thaliana", timeout = 60)
+        translatedSequencesFile = boostClient.translate(parsedSequences)
+        # Parse the new temp file.
+        return parse(translatedSequencesFile)
+    # The temp files names end with "boost_translated.fasta". If such a file is inputed, remove it after the parse.
+    if(inputFileName[len(inputFileName)-22:len(inputFileName)] =="boost_translated.fasta"):
+        os.remove(inputFileName)
+    return parsedSequences
+    
+    # Returns the file format based on the file ending
+def getFileType(inputFileName):
+    f = open(inputFileName)
+    line = f.readline()
+    f.close()
+    words = line.split()
+    if(inputFileName.endswith('.gb') or inputFileName.endswith('.gbk')):
+        if(words[0] == "LOCUS"):
+            return 'genbank'
         else:
-            raise NameError("FILE NOT SUPPORTED! --gb, gbk, fasta, faa, fna, xml, rdf")
-        
-        # Parses only Fasta and GenBank files
-        # Returns a list of SeqObject where each object represents a sequence of the given file
-    def parseFastaGB(self, inputFile, fileFormat):
-        i = 0
-        returnList = []
-        try:
-            parsed = SeqIO.parse(inputFile, fileFormat)
-        except:
-            print("Parsing of the file failed.")    
-        for seq_record in parsed:
-            sequence = SeqObject(idN = seq_record.id, name = seq_record.name, sequence = str(seq_record.seq).upper())
-            returnList.append(sequence)
-            i = i + 1
-        return returnList
+            raise RuntimeError("Not a valid GenBank file.")
+    elif(inputFileName.endswith('.fasta') or inputFileName.endswith('.fna') or inputFileName.endswith('.faa')):
+        if(words[0][0] == ">"):
+            return 'fasta'
+        else:
+            raise RuntimeError("Not a valid Fasta file.")
+    elif(inputFileName.endswith('.xml') or inputFileName.endswith('.rdf')):
+        return 'sbol'
+    else:
+        raise NameError("FILE NOT SUPPORTED! --gb, gbk, fasta, faa, fna, xml, rdf")
+    
+    # Parses only Fasta and GenBank files
+    # Returns a list of SeqObject where each object represents a sequence of the given file
+def parseFastaGB(inputFile, fileFormat):
+    i = 0
+    returnList = []
+    try:
+        parsed = SeqIO.parse(inputFile, fileFormat)
+    except:
+        print("Parsing of the file failed.")    
+    for seq_record in parsed:
+        sequence = SeqObject(idN = seq_record.id, name = seq_record.name, sequence = str(seq_record.seq).upper())
+        returnList.append(sequence)
+        i = i + 1
+    return returnList
 
-        # Parses only SBOL files
-        # Returns a list of SeqObject where each object represents a sequence of the given file
-    def parseSBOL(self, inputFile):
-        i = 0
-        doc = sbol.Document()
-        doc.read(inputFile)
-        returnList = []
-        for a in doc.sequences:
-            sequence = SeqObject(idN = a.displayId, name = "Sequence " + str(i), sequence = str(a.elements).upper())
-            returnList.append(sequence)
-            i = i + 1
-        return returnList
+    # Parses only SBOL files
+    # Returns a list of SeqObject where each object represents a sequence of the given file
+def parseSBOL(inputFile):
+    i = 0
+    doc = sbol.Document()
+    doc.read(inputFile)
+    returnList = []
+    for a in doc.sequences:
+        sequence = SeqObject(idN = a.displayId, name = "Sequence " + str(i), sequence = str(a.elements).upper())
+        returnList.append(sequence)
+        i = i + 1
+    return returnList

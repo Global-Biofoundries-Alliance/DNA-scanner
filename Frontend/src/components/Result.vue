@@ -572,7 +572,7 @@
                 } else {
                     this.results.forEach(i => {
                         if (i.vendors[2].offers.length !== 0) {
-                            if (i.vendors[2].offers[0].offerMessage.length === 0 && this.selectedGeneArt.includes(i.vendors[2].offers[0].id)) {
+                            if (i.vendors[2].offers[0].offerMessage.length === 0 && this.selected[2].includes(i.vendors[2].offers[0].id)) {
                                 this.priceOverview[2] = Math.round((this.priceOverview[2] - i.vendors[2].offers[0].price) * 100) / 100;
                                 this.timeOverviewGeneArt.splice(this.timeOverviewGeneArt.indexOf(i.vendors[2].offers[0].turnoverTime), 1);
                                 this.timeOverview[2] = Math.max(...this.timeOverviewGeneArt);

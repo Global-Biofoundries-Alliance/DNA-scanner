@@ -252,7 +252,6 @@
                     this.search = true;
                 }
                 else {
-                    this.$store.state.StoreSelectedVendors = this.vendors;
                     var data = new FormData();
                     data.append('seqfile', this.file);
                     data.append('prefix', this.projectName);

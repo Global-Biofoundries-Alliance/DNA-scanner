@@ -44,8 +44,10 @@ def uploadFile():
         if 'seqfile' not in request.files or request.files['seqfile'] == "":
             return json.jsonify({'error': 'No file specified'})
 
+        seqPrefix = request.form.get("prefix", default="")     # Sequence prefix for this file's sequences
+
         # Actually parse the file and save the sequences
-        return service.setSequencesFromFile(request.files["seqfile"])
+        return service.setSequencesFromFile(request.files["seqfile"], seqPrefix)
     except:
         return {"error": "Encountered error during file upload\n" + (traceback.format_exc() if __debug__ else "")}
 
@@ -112,3 +114,4 @@ def setSelection():
     except Exception as error:
         return {"error": "Encountered error while selecting offers\n" + (
             traceback.format_exc() if __debug__ else "")}
+

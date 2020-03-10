@@ -34,7 +34,7 @@
                                                             :key="vendor.name"
                                                             :label="`${vendor.name}`"
                                                             :value="vendor.id"
-                                                            v-model="vendors"></v-checkbox>
+                                                            v-model="selectedVendors"></v-checkbox>
                                             </v-col>
                                         </v-container>
                                     </v-col>
@@ -44,15 +44,15 @@
                                         <v-row>
                                             <v-col class="px-4">
                                                 <v-range-slider
-                                                        v-model="range"
-                                                        :max="max"
-                                                        :min="min"
+                                                        v-model="priceRange"
+                                                        :max="maxVal"
+                                                        :min="minVal"
                                                         hide-details
                                                         class="align-center"
                                                 >
                                                     <template v-slot:prepend>
                                                         <v-text-field
-                                                                v-model="range[0]"
+                                                                v-model="priceRange[0]"
                                                                 class="mt-0 pt-0"
                                                                 hide-details
                                                                 single-line
@@ -62,7 +62,7 @@
                                                     </template>
                                                     <template v-slot:append>
                                                         <v-text-field
-                                                                v-model="range[1]"
+                                                                v-model="priceRange[1]"
                                                                 class="mt-0 pt-0"
                                                                 hide-details
                                                                 single-line
@@ -82,8 +82,8 @@
                                                 <v-slider
                                                         v-model="deliveryDays"
                                                         class="align-center"
-                                                        :max="max"
-                                                        :min="min"
+                                                        :max="maxVal"
+                                                        :min="minVal"
                                                         hide-details
                                                 >
                                                     <template v-slot:append>
@@ -118,9 +118,46 @@
                 </v-dialog>
                 <v-btn color="primary" style="width: 25%;" class="ml-2" @click="searchNow()">Search</v-btn>
             </v-row>
-            <v-alert v-if="noFile === true" type="error" class="mt-4 mx-auto" width="350px">
+            <v-alert v-if="noFile" type="error" class="mt-4 mx-auto" width="350px">
                 Please upload a file
             </v-alert>
+            <v-alert v-if="wrongFile" type="error" class="mt-4 mx-auto" width="350px">
+                Wrong File Format
+            </v-alert>
+            <p class="text-center font-weight-light mt-4 mb-0">Please give your project a name:</p>
+            <v-row justify="center">
+                <v-col cols="5" class="pa-0">
+                    <v-text-field placeholder="Project Name" v-model="projectName" class="pa-0 centered-input" :error="projectName === '' && search"></v-text-field>
+                </v-col>
+            </v-row>
+            <p class="text-center font-weight-light mt-4 mb-0">Does your file include Amino Acid Sequences?</p>
+            <v-row justify="center" class="mt-n4">
+                <v-radio-group v-model="isAminoAcid" hide-details row>
+                    <v-radio value="1" label="Yes"></v-radio>
+                    <v-radio value="0" label="No"></v-radio>
+                </v-radio-group>
+            </v-row>
+            <v-row v-if="isAminoAcid === '1'">
+                <v-col cols="6">
+                    <p class="text-center">Select your Strategy</p>
+                    <v-overflow-btn
+                            class="my-2"
+                            :items="strategies"
+                            label="Strategies"
+                            target="#dropdown-example"
+                    ></v-overflow-btn>
+                </v-col>
+                <v-spacer></v-spacer>
+                <v-col cols="6">
+                    <p class="text-center">Select your Codon Usage Table</p>
+                    <v-overflow-btn
+                            class="my-2"
+                            :items="hosts"
+                            label="Codon Usage Table"
+                            target="#dropdown-example"
+                    ></v-overflow-btn>
+                </v-col>
+            </v-row>
         </v-container>
     </div>
 </template>
@@ -130,29 +167,94 @@
         name: 'Landing',
         data() {
             return {
+                projectName: "",
+                strategies: ['Random', 'Balanced', 'Mostly Used', 'Least Different'],
+                strategy: "",
+                hosts: [],
+                host: "",
                 result: false,
                 file: [],
-                vendors: [0, 1, 2],
-                preselectByPrice: false,
-                preselectByTime: false,
-                min: 1,
-                max: 200,
-                range: [0, 50],
-                deliveryDays: 7,
                 dialog: false,
-                filter: [],
                 noFile: false,
                 colors: ["red", "green", "orange"],
+                isAminoAcid: '0',
+                wrongFile: false,
+                search: false
+            }
+        },
+        computed: {
+            selectedVendors: {
+                get() {
+                    return this.$store.state.StoreSelectedVendors;
+                },
+                set(value) {
+                    this.$store.commit('updateSelectedVendors', value)
+                }
+            },
+            priceRange: {
+                get() {
+                    return this.$store.state.StorePriceFilterRange;
+                },
+                set(value) {
+                    this.$store.commit('updateRange', value)
+                }
+            },
+            maxVal: {
+                get() {
+                    return this.$store.state.StoreFilterMax;
+                },
+                set(value) {
+                    this.$store.commit('updateFilterMax', value)
+                }
+            },
+            minVal: {
+                get() {
+                    return this.$store.state.StoreFilterMin;
+                },
+                set(value) {
+                    this.$store.commit('updateFilterMin', value)
+                }
+            },
+            deliveryDays: {
+                get() {
+                    return this.$store.state.StoreDeliveryDays;
+                },
+                set(value) {
+                    this.$store.commit('updateDeliveryDays', value)
+                }
+            },
+            preselectByPrice: {
+                get() {
+                    return this.$store.state.StorePreselectByPrice;
+                },
+                set(value) {
+                    this.$store.commit('updatePreselectByPrice', value)
+                }
+            },
+            preselectByTime: {
+                get() {
+                    return this.$store.state.StorePreselectByTime;
+                },
+                set(value) {
+                    this.$store.commit('updatePreselectByTime', value)
+                }
             }
         },
         methods: {
             searchNow() {
-                if (this.file.length === 0) {
+                if(this.file === null) {
                     this.noFile = true;
-                } else {
-                    this.$store.state.StoreSelectedVendors = this.vendors;
+                }
+                else if (this.file.length === 0) {
+                    this.noFile = true;
+                }
+                else if(this.projectName === "") {
+                    this.search = true;
+                }
+                else {
                     var data = new FormData();
                     data.append('seqfile', this.file);
+                    data.append('prefix', this.projectName);
 
                     this.$http.post('/api/upload', data, {
                         headers: {
@@ -162,81 +264,85 @@
                         }
                     })
                         .then(response => {
-                            // eslint-disable-next-line no-console
-                            console.log(response);
-                            var filter = {
-                                "filter":
-                                    {
-                                        "vendors": this.vendors,
-                                        "price": this.range,
-                                        "deliveryDays": this.deliveryDays,
-                                        "preselectByPrice": this.preselectByPrice,
-                                        "preselectByDeliveryDays": this.preselectByTime
-                                    }
-                            };
+                            if(response.body.length === 17) {
+                                var filter = {
+                                    "filter":
+                                        {
+                                            "vendors": this.$store.state.StoreSelectedVendors,
+                                            "price": this.$store.state.StorePriceFilterRange,
+                                            "deliveryDays": this.$store.state.StoreDeliveryDays,
+                                            "preselectByPrice": this.$store.state.StorePreselectByPrice,
+                                            "preselectByDeliveryDays": this.$store.state.StorePreselectByTime
+                                        }
+                                };
 
-                            this.$http.post('/api/filter', filter).then(response => {
-                                // eslint-disable-next-line no-console
-                                console.log(filter);
-                                // eslint-disable-next-line no-console
-                                console.log(response);
-                            });
-
-                            // var resData = new FormData();
-                            // resData.append('size', this.$store.state.StoreSize);
-                            // resData.append('offset', this.$store.state.StoreOffset);
-
-
-                            this.$http.post('/api/results', {
-                                headers: {
-                                    'Access-Control-Allow-Origin': '*',
-                                    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE, PUT',
-                                    'Access-Control-Allow-Headers': 'append,delete,entries,foreach,get,has,keys,set,values,Authorization',
-                                }
-                            })
-                                .then(response => {
+                                this.$http.post('/api/filter', filter).then(response => {
+                                    // eslint-disable-next-line no-console
+                                    console.log(filter);
                                     // eslint-disable-next-line no-console
                                     console.log(response);
-                                    let i, j, k;
-                                    var mostOffers = 0;
-                                    var mostOffersVendor = 0;
-                                    var offId = 0;
-                                    for(i = 0; i < response.body.result.length; i++) {
-                                        for(j = 0; j < response.body.result[i].vendors.length; j++) {
-                                            if(response.body.result[i].vendors[j].offers.length > mostOffers) {
-                                                mostOffers = response.body.result[i].vendors[j].offers.length;
-                                                mostOffersVendor = j;
-                                            }
-                                            for(k = 0; k < response.body.result[i].vendors[j].offers.length; k++) {
-                                                offId = response.body.result[i].sequenceInformation.id.toString() + response.body.result[i].vendors[j].key.toString() + k.toString();
-                                                response.body.result[i].vendors[j].offers[k].id = offId;
-                                            }
-                                        }
-                                        response.body.result[i].sequenceInformation.id = i;
-                                        response.body.result[i].sequenceInformation.mostOffVendor = mostOffersVendor;
-                                        mostOffers = 0;
-                                        mostOffersVendor = 0
-                                    }
-                                    this.$store.state.StoreSearchResult = response.body.result;
-                                    // eslint-disable-next-line no-console
-                                    console.log(this.$store.state.StoreSearchResult);
-                                    this.$store.state.StoreCount = response.body.count;
-                                    this.$router.push('/result');
                                 });
 
+                                var selectedOptimization = {
+                                    "strategy": this.strategy,
+                                    "host": this.host
+                                };
+                                this.$http.post('/api/codon_optimization', selectedOptimization)
+                                    .then(response => {
+                                        // eslint-disable-next-line no-console
+                                        console.log(response);
+                                    });
+
+                                this.$http.post('/api/results', {
+                                    headers: {
+                                        'Access-Control-Allow-Origin': '*',
+                                        'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE, PUT',
+                                        'Access-Control-Allow-Headers': 'append,delete,entries,foreach,get,has,keys,set,values,Authorization',
+                                    }
+                                })
+                                    .then(response => {
+                                        // eslint-disable-next-line no-console
+                                        console.log(response);
+                                        let i, j, k;
+                                        var mostOffers = 0;
+                                        var mostOffersVendor = 0;
+                                        var offId = 0;
+                                        for(i = 0; i < response.body.result.length; i++) {
+                                            for(j = 0; j < response.body.result[i].vendors.length; j++) {
+                                                if(response.body.result[i].vendors[j].offers.length > mostOffers) {
+                                                    mostOffers = response.body.result[i].vendors[j].offers.length;
+                                                    mostOffersVendor = j;
+                                                }
+                                                for(k = 0; k < response.body.result[i].vendors[j].offers.length; k++) {
+                                                    offId = response.body.result[i].sequenceInformation.id.toString() + response.body.result[i].vendors[j].key.toString() + k.toString();
+                                                    response.body.result[i].vendors[j].offers[k].id = offId;
+                                                }
+                                            }
+                                            response.body.result[i].sequenceInformation.id = i;
+                                            response.body.result[i].sequenceInformation.mostOffVendor = mostOffersVendor;
+                                            mostOffers = 0;
+                                            mostOffersVendor = 0
+                                        }
+                                        this.$store.state.StoreSearchResult = response.body.result;
+                                        // eslint-disable-next-line no-console
+                                        console.log(this.$store.state.StoreSearchResult);
+                                        this.$store.state.StoreCount = response.body.count;
+                                        this.$router.push('/result');
+                                    });
+                            }
+                            else {
+                                this.wrongFile = true
+                            }
+
                         });
-                    //
-                    // this.result = true;
-                    // this.$emit('returnResult', this.result);
                 }
             },
             reset() {
-                this.dialog = false;
-                this.vendors = [0, 1, 2];
-                this.range = [0, 50];
-                this.deliveryDays = 7;
-                this.preselectByPrice = false;
-                this.preselectByTime = false;
+                this.$store.state.StoreSelectedVendors = [0, 1, 2];
+                this.$store.state.StorePriceFilterRange = [0, 50];
+                this.$store.state.StoreDeliveryDays = 30;
+                this.$store.state.StorePreselectByPrice = false;
+                this.$store.state.StorePreselectByTime = false;
             }
         },
         created() {
@@ -258,10 +364,23 @@
                     // eslint-disable-next-line no-console
                     console.log(this.$store.state.StoreVendors);
                 });
+            this.$http.get('/api/available_hosts', {
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE, PUT',
+                    'Access-Control-Allow-Headers': 'append,delete,entries,foreach,get,has,keys,set,values,Authorization'
+                }
+            })
+                .then(response => {
+                    this.hosts = response.body
+                })
         }
     };
 </script>
 
 <style>
+    .centered-input input {
+        text-align: center;
+    }
 </style>
 

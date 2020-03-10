@@ -19,6 +19,7 @@ class SearchResponse(object):
                                 {
                                     "price": 0.0,
                                     "turnoverTime": 0,
+                                    "key": 0,
                                     "offerMessage": [],
                                     "selected": False
                                 },

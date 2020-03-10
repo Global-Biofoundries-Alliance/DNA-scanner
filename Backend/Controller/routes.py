@@ -103,3 +103,12 @@ def getSearchResults():
     except Exception as error:
         return {"error": "Encountered error while fetching search results\n" + (
             traceback.format_exc() if __debug__ else "")}
+
+@app.route('/select', methods=['POST'])
+def setSelection():
+    try:
+        service.setSelection(request.get_json()["selection"])
+        return 'selection set'
+    except Exception as error:
+        return {"error": "Encountered error while selecting offers\n" + (
+            traceback.format_exc() if __debug__ else "")}

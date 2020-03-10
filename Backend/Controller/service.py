@@ -1,15 +1,15 @@
-import os
-import tempfile
-from secrets import token_urlsafe
-from typing import List
 from sys import maxsize
 
+import os
+import tempfile
 from Pinger.Entities import *
 from Pinger.Entities import VendorInformation, SequenceInformation
 from Pinger.Pinger import *
 from Pinger.Validator import EntityValidator
 from flask import json
 from flask import session as session_cookie
+from secrets import token_urlsafe
+from typing import List
 from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
 
@@ -126,9 +126,10 @@ class DefaultComparisonService(ComparisonService):
                 seqoff.vendorOffers.append(VendorOffers(vendor, []))
             seqoffers.append(seqoff)
 
-        # Clear results
+        # Clear results and state concerning them
         session.storeResults(seqoffers)
         session.resetSearchedVendors()
+        session.storeSelection([])
 
     #
     # Sets the filter settings
@@ -136,6 +137,13 @@ class DefaultComparisonService(ComparisonService):
     def setFilter(self, filter: dict):
         session = self.getSession()
         session.storeFilter(filter)
+        session.storeSelection([])
+
+    #
+    # Sets which sequences are marked as selected
+    #
+    def setSelection(self, selection: List[List]):
+        self.getSession().storeSelection(selection)
 
     #
     #   Returns all search results packed into a JSON response
@@ -151,16 +159,23 @@ class DefaultComparisonService(ComparisonService):
 
         filter = session.loadFilter()
 
+        # Create a list of vendors to contact in the search process.
+        # Only vendors that are to be searched by the filter settings
+        # and that have not been contacted yet are to be contacted.
+        # This is for saving network overhead on both sides.
         vendorsToSearch = []
         if "vendors" in filter:
+            # Only contact vendors that are allowed in the filter
             for key in filter["vendors"]:
                 if key not in session.loadSearchedVendors():
                     vendorsToSearch.append(key)
         else:
+            # If there are no vendor preferences just contact all
             for vendor in self.config.vendors:
                 if vendor.key not in session.loadSearchedVendors():
                     vendorsToSearch.append(vendor.key)
 
+        # Only do a search if any vendors are to be contacted as everything else would be quite pointless
         if vendorsToSearch:
             mainPinger = session.loadPinger()
             mainPinger.searchOffers(seqInf=sequences, vendors=vendorsToSearch)
@@ -180,21 +195,28 @@ class DefaultComparisonService(ComparisonService):
                                 if vendoff.vendorInformation.key == newvendoff.vendorInformation.key:
                                     vendoff.offers.extend(newvendoff.offers)
 
-
             session.storeResults(seqoffers)
 
-        # selection criterion; Default is selection by price
-        # The '% maxsize's are there to ensure that negative numbers wrap around to
-        # very high numbers, making them inferior to offers that provide this information
-        selector = (lambda x: (((x["turnoverTime"] % maxsize) if not x["offerMessage"] else maxsize),
-                               (x["price"] % maxsize) if not x["offerMessage"] else maxsize)) \
-        if "preselectByDeliveryDays" in filter and filter["preselectByDeliveryDays"] else \
-            (lambda x: (((x["price"] % maxsize) if not x["offerMessage"] else maxsize),
-                        ((x["turnoverTime"] % maxsize) if not x["offerMessage"] else maxsize)))
-
         # build response from offers stored in the session
-        result = buildSearchResponseJSON(filterOffers(filter, seqoffers), self.config.vendors, selector,
-                                         offset, size)
+        if not filter or filter["preselectByPrice"] or filter["preselectByDeliveryDays"]:
+
+            # selection criterion; Default is selection by price
+            # The '% maxsize's are there to ensure that negative numbers wrap around to
+            # very high numbers, making them inferior to offers that provide this information
+            # If the offer contains an error message it is to be treated as inferior as well.
+            selector = (lambda x: (((x["turnoverTime"] % maxsize) if not x["offerMessage"] else maxsize),
+                                   (x["price"] % maxsize) if not x["offerMessage"] else maxsize)) \
+                if "preselectByDeliveryDays" in filter and filter["preselectByDeliveryDays"] else \
+                (lambda x: (((x["price"] % maxsize) if not x["offerMessage"] else maxsize),
+                            ((x["turnoverTime"] % maxsize) if not x["offerMessage"] else maxsize)))
+            # Preselection by lambda
+            result = buildSearchResponseJSON(filterOffers(filter, seqoffers), self.config.vendors, selector,
+                                             offset, size)
+        else:
+            # Use selection list
+            result = buildSearchResponseJSON(filterOffers(filter, seqoffers), self.config.vendors,
+                                             session.loadSelection(),
+                                             offset, size)
 
         return result
 
@@ -208,8 +230,12 @@ class DefaultComparisonService(ComparisonService):
     #   Returns the current session or creates it if it hasn't been already.
     #
     def getSession(self) -> SessionManager:
+        # Store a session identifier in the client-side cookie if not already present.
+        # This is used to identify the server-side session later on.
         if "sessionKey" not in session_cookie:
             token = token_urlsafe(64)
+            # Session collision prevention
+            # (yes it's still random guessing but with that range it should not need many tries)
             while SessionManager.hasSession(token):
                 token = token_urlsafe(64)
             session_cookie["sessionKey"] = token

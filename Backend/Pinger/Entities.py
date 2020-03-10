@@ -87,6 +87,8 @@ class Currency(Enum):
     EUR = 0
     # United States Dollar
     USD = 1
+    # Currency is unknown
+    UNKNOWN = 2
 
 #########################################################
 #                                                       #

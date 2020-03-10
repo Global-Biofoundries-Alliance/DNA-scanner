@@ -140,7 +140,7 @@ class TestController(unittest.TestCase):
 
         for i in range(self.iterations):
             handle = open(self.sequence_path, 'rb')
-            self.client.post('/api/upload', content_type='multipart/form-data', data={'seqfile': handle})
+            self.client.post('/api/upload', content_type='multipart/form-data', data={'seqfile': handle, 'prefix': "Zucchini" + str(i)})
             filter = '{"filter": {"vendors": [1],"price": [0, 100],"deliveryDays": 5,"preselectByPrice": True,"preselectByDeliveryDays": False}}'
             self.client.post('/api/filter', data=filter)
             searchResult = self.client.post('/api/results', content_type='multipart/form-data',
@@ -163,6 +163,9 @@ class TestController(unittest.TestCase):
                 self.assertIn("name", result["sequenceInformation"].keys())
                 self.assertIn("sequence", result["sequenceInformation"].keys())
                 self.assertIn("length", result["sequenceInformation"].keys())
+
+                self.assertTrue(result["sequenceInformation"]["name"].startswith("Zucchini" + str(i)))
+                self.assertTrue(result["sequenceInformation"]["id"].startswith("Zucchini" + str(i)))
 
                 self.assertIn("vendors", result.keys())
                 for vendor in result["vendors"]:

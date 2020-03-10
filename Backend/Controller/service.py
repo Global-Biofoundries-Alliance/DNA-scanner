@@ -39,7 +39,7 @@ class ComparisonService:
     #
     #   Receives a werkzeug FileStorage, extracts sequences from it and stores them in the session
     #
-    def setSequencesFromFile(self, seqfile: FileStorage) -> None:
+    def setSequencesFromFile(self, seqfile: FileStorage, prefix: str) -> None:
         raise NotImplementedError
 
     #
@@ -75,7 +75,7 @@ class DefaultComparisonService(ComparisonService):
     #
     # Parses an uploaded sequence file and stores the sequences in the session
     #
-    def setSequencesFromFile(self, seqfile: FileStorage):
+    def setSequencesFromFile(self, seqfile: FileStorage, prefix: str):
         # Store the input in a temporary file for the parser to process
         tempf, tpath = tempfile.mkstemp(
             '.' + secure_filename(seqfile.filename).rsplit('.', 1)[1].lower())
@@ -95,8 +95,14 @@ class DefaultComparisonService(ComparisonService):
             os.close(tempf)
             os.remove(tpath)
 
-        # Convert [SeqObject] to [SequenceInformation] and store them in the session
-        self.setSequences(sequenceInfoFromObjects(objSequences))
+        # Convert [SeqObject] to [SequenceInformation]
+        sequences = sequenceInfoFromObjects(objSequences)
+        # Add specified prefix
+        for seq in sequences:
+            seq.name = prefix + seq.name
+            seq.key = prefix + seq.key
+
+        self.setSequences(sequences)
 
         return 'upload successful'
 

@@ -5,6 +5,17 @@ import requests
 from .Pinger import *
 from .Validator import *
 
+
+_APITOKEN = '''
+
+    '''
+
+_EUTOKEN = '''
+
+    '''
+
+_HOST = 'https://twist-api.twistbioscience-staging.com/'
+
 class TwistError(Exception):
     '''Class to represent a TwistException.'''
 
@@ -14,7 +25,7 @@ class TwistError(Exception):
 class TwistClient():
     '''Class to define client for the Twist API.'''
 
-    def __init__(self, email = 'neil.swainston@manchester.ac.uk', password = 'u6u8XVyrZ4WABGpU', username = 'gba_api'):
+    def __init__(self, email, password, username):
         self.__password = password
         self.__email = email
         self.__username = username

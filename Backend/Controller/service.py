@@ -13,7 +13,7 @@ from typing import List
 from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
 
-from .parser import parse
+from .parser import parse, BoostClient
 from .session import InMemorySessionManager as SessionManager
 from .transformation import buildSearchResponseJSON, sequenceInfoFromObjects, filterOffers
 
@@ -64,6 +64,12 @@ class ComparisonService:
     #   Returns the list of available vendors
     #
     def getVendors(self) -> List[VendorInformation]:
+        raise NotImplementedError
+
+    #
+    #   Returns a list of available host organisms
+    #
+    def getAvailableHosts(self):
         raise NotImplementedError
 
 
@@ -233,6 +239,15 @@ class DefaultComparisonService(ComparisonService):
         return self.config.vendors
 
     #
+    #   Returns a list of available host organisms
+    #
+    def getAvailableHosts(self):
+        boost = self.getBoostClient()
+        print(str(boost.jwt))
+        print(str(boost.token))
+        return boost.getPreDefinedHosts()
+
+    #
     #   Returns the current session or creates it if it hasn't been already.
     #
     def getSession(self) -> SessionManager:
@@ -250,3 +265,15 @@ class DefaultComparisonService(ComparisonService):
         if not session.loadPinger():  # This indicates that the session is new
             session.storePinger(self.config.initializePinger(session))
         return session
+
+    #
+    #   Returns the current session's BOOST client and configures it if nonexistent
+    #
+    def getBoostClient(self) -> BoostClient:
+        session = self.getSession()
+        boost = session.loadBoostClient()
+        if not boost:
+            boost = self.config.initializeBoostClient()
+            boost.login()
+            session.storeBoostClient(boost)
+        return boost

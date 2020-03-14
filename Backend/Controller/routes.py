@@ -118,8 +118,7 @@ def setSelection():
 @app.route('/available_hosts', methods=['GET'])
 def getAvailableHosts():
     try:
-        # TODO obtain host organisms from BOOST client
-        return json.jsonify(["Escherichia Coli", "Saccharomyces Cerevisiae", "Clostridium Perfringens", "Leuconostoc Citreum"])
+        return json.jsonify(service.getAvailableHosts())
     except Exception as error:
         return {"error": "Encountered error while fetching list of available hosts\n" + (
             traceback.format_exc() if __debug__ else "")}

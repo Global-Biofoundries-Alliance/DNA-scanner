@@ -22,6 +22,7 @@ class SessionManager:
         self.searchedVendors = []
         self.globalMessages = []
         self.selection = []
+        self.boostClient = None
 
     #
     #   Desc:   Loades the Pinger out of the session-store
@@ -126,6 +127,18 @@ class SessionManager:
         raise NotImplementedError
 
     #
+    #   Desc: Sets the BOOST client
+    #
+    def storeBoostClient(self, boostClient):
+        raise NotImplementedError
+
+    #
+    #   Desc: Returns the BOOST client
+    #
+    def loadBoostClient(self):
+        raise NotImplementedError
+
+    #
     #   Desc:   Free memory by Free all or old sessions. Can
     #           be different for every StoreManager.
     #
@@ -146,6 +159,7 @@ class SingleSession(SessionManager):
         self.searchedVendors = []
         self.globalMessages = []
         self.selection = []
+        self.boostClient = None
 
     #
     #   Desc:   Loades the Pinger out of the session-store
@@ -271,6 +285,18 @@ class SingleSession(SessionManager):
     #
     def loadSelection(self):
         return self.selection
+
+    #
+    #   Desc: Sets the BOOST client
+    #
+    def storeBoostClient(self, boostClient):
+        self.boostClient = boostClient
+
+    #
+    #   Desc: Returns the BOOST client
+    #
+    def loadBoostClient(self):
+        return self.boostClient
 
     def free(self):
         self.sequences = []
@@ -410,6 +436,18 @@ class InMemorySessionManager(SessionManager):
     #
     def loadSelection(self):
         return self.session.loadSelection()
+
+    #
+    #   Desc: Sets the BOOST client
+    #
+    def storeBoostClient(self, boostClient):
+        self.session.storeBoostClient(boostClient)
+
+    #
+    #   Desc: Returns the BOOST client
+    #
+    def loadBoostClient(self):
+        return self.session.loadBoostClient()
 
     #
     #   Desc: Frees all sessions

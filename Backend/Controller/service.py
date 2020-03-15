@@ -93,8 +93,9 @@ class DefaultComparisonService(ComparisonService):
 
         objSequences = []
         try:
+            session = self.getSession()
             # Parse sequence file
-            objSequences = parse(tpath)
+            objSequences = parse(tpath, self.getBoostClient(), session.loadHostOrganism(), session.loadJugglingStrategy())
         except Exception as e:
             print(e)
             return json.jsonify({'error': 'File format not supported'})
@@ -246,8 +247,6 @@ class DefaultComparisonService(ComparisonService):
     #
     def getAvailableHosts(self):
         boost = self.getBoostClient()
-        print(str(boost.jwt))
-        print(str(boost.token))
         return boost.getPreDefinedHosts()
 
     #

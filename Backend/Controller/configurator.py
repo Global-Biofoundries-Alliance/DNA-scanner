@@ -148,8 +148,6 @@ class YmlConfigurator(Configurator):
                                url_login = cfg_boost["url_login"],
                                username = cfg_boost["username"],
                                password = cfg_boost["password"],
-                               juggling_strategy = "Mostly Used",
-                               host = "Escherichia Coli",
                                timeout = cfg_boost["timeout"])
         except Exception as error:
             print(traceback.format_exc())

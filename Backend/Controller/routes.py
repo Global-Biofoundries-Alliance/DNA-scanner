@@ -127,6 +127,7 @@ def getAvailableHosts():
 def setCodonOptimizationOptions():
     try:
         request_json = request.get_json()
+        service.setCodonOptimizationOptions(request_json["host"], request_json["strategy"])
         if "strategy" not in request_json or "host" not in request_json:
             raise KeyError
 

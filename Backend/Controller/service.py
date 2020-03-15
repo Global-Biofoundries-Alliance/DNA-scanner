@@ -72,6 +72,9 @@ class ComparisonService:
     def getAvailableHosts(self):
         raise NotImplementedError
 
+    def setCodonOptimizationOptions(self, host, strategy):
+        raise NotImplementedError
+
 
 class DefaultComparisonService(ComparisonService):
 
@@ -246,6 +249,14 @@ class DefaultComparisonService(ComparisonService):
         print(str(boost.jwt))
         print(str(boost.token))
         return boost.getPreDefinedHosts()
+
+    #
+    #   Sets the host organism and juggling strategy to be used in subsequent codon optimizations
+    #
+    def setCodonOptimizationOptions(self, host, strategy):
+        session = self.getSession()
+        session.storeHostOrganism(host)
+        session.storeJugglingStrategy()
 
     #
     #   Returns the current session or creates it if it hasn't been already.

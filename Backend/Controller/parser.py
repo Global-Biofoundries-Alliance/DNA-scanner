@@ -19,20 +19,17 @@ class SeqObject():
 
 # This class is used to communicate with the BOOST-Server
 class BoostClient:
-    def __init__(self, url_job, url_hosts, url_submit, url_login, username, password, juggling_strategy, host, timeout = 60): 
+    def __init__(self, url_job, url_hosts, url_submit, url_login, username, password, timeout = 60):
         self.url_job = url_job
         self.url_hosts = url_hosts
         self.url_submit = url_submit
         self.url_login = url_login
         self.username = username
         self.password = password
-        self.juggling_strategy = juggling_strategy
-        self.host = host
         self.timeout = timeout
         self.token = "NO_TOKEN"
         self.jwt = {'NO': 'TOKEN'}
         self.uuid = "NO_UUID"
-        self.codonUsageTable = "NO_TABLE"
 
     # Log in the BOOST-Server and get your token.
     def login(self):
@@ -42,14 +39,14 @@ class BoostClient:
         self.jwt = {"boost-jwt": self.token}
     
     # Translate the aminoacids into dna sequences using the service called reverse translate.
-    def translate(self, inputSequences):
+    def translate(self, inputSequences, host, juggling_strategy="Mostly Used"):
         self.login()
-        self.getPreDefinedHosts()
+        codonUsageTable = self.selectCodonTableForHost(host)
         inputString = ""
         for i in inputSequences:
             inputString = inputString + (">" + str((i.toJSON())["name"]) + "\n" + str((i.toJSON())["sequence"]) + "*\n")
         inputString = inputString[: -2]    
-        submit = self.submit(inputString, self.codonUsageTable, self.juggling_strategy)
+        self.submit(inputString, codonUsageTable, juggling_strategy)
         response = self.getInformation(self.uuid)
         while(response["job"]["job-status"] != "FINISHED"):
             time.sleep(3)
@@ -88,27 +85,37 @@ class BoostClient:
     # Get Pre-defined hosts
     def getPreDefinedHosts(self):
         response = (requests.get(url=self.url_hosts, cookies = self.jwt, timeout = self.timeout)).json()
+        hostNames = []
+        for host in response["predefined-hosts"]:
+            hostNames.append(host["host-name"])
+        return hostNames
+
+    # Selects a codon usage table from the list of available hosts.
+    #
+    # @param host The name of the host for which the codon usage table is to be selected
+    # @return The codon usage table for host or null
+    #
+    def selectCodonTableForHost(self, host):
+        response = (requests.get(url=self.url_hosts, cookies=self.jwt, timeout=self.timeout)).json()
         for i in response["predefined-hosts"]:
-            if(i["host-name"]== self.host):
-                self.codonUsageTable = i["codon-usage-table"]
-                break
+            if (i["host-name"] == host):
+                return i["codon-usage-table"]
 
 
-    # Parse File based on inputFileName.
-    # Aminoacids is True if there are aminoacids and false otherwise.
-def parse(inputFileName):
+# Parse File based on inputFileName.
+def parse(inputFileName, boostClient, host, jugglingStrategy):
     fileType = getFileType(inputFileName)
+    parsedSequences = []
     if(fileType == "fasta" or fileType == "genbank"):
         parsedSequences = parseFastaGB(inputFileName,fileType)
-    if(fileType == "sbol"):
+    elif(fileType == "sbol"):
         parsedSequences = parseSBOL(inputFileName)
     if(len(parsedSequences) == 0):
             raise RuntimeError("Parsing went wrong.")
     charactersList = list(dict.fromkeys(list(parsedSequences[0].sequence)))
     if(not(len(charactersList) == 4 and "A" in charactersList and "T" in charactersList and "C" in charactersList and "G" in charactersList)):
         # Reverse Translation needed
-        boostClient = BoostClient(url_job="https://boost.jgi.doe.gov/rest/jobs/", url_hosts="https://boost.jgi.doe.gov/rest/files/predefined_hosts", url_submit="https://boost.jgi.doe.gov/rest/jobs/submit", url_login="https://boost.jgi.doe.gov/rest/auth/login", username = "dummyworkingusername", password = "dummyworkingpassword", juggling_strategy = "Random", host="Arabidopsis thaliana", timeout = 60)
-        translatedSequencesFile = boostClient.translate(parsedSequences)
+        translatedSequencesFile = boostClient.translate(parsedSequences, host, jugglingStrategy)
         # Parse the new temp file.
         return parse(translatedSequencesFile)
     # The temp files names end with "boost_translated.fasta". If such a file is inputed, remove it after the parse.

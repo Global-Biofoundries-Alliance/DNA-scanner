@@ -5,7 +5,6 @@ import requests
 from .Pinger import *
 from .Validator import *
 
-
 class TwistError(Exception):
     '''Class to represent a TwistException.'''
 

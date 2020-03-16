@@ -505,7 +505,7 @@ class InMemorySessionManager(SessionManager):
     #   Desc: Sets the juggling strategy used for codon optimization
     #
     def storeJugglingStrategy(self, strategy: str):
-        self.session.storeJugglingStrategy()
+        self.session.storeJugglingStrategy(strategy)
 
     #
     #   Desc: Returns the juggling strategy used for codon optimization

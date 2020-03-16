@@ -126,10 +126,10 @@ def getAvailableHosts():
 @app.route('/codon_optimization', methods=['POST'])
 def setCodonOptimizationOptions():
     try:
+        request_json = request.get_json()
         if "strategy" not in request_json or "host" not in request_json:
             return {"error": "Request is missing fields"}
 
-        request_json = request.get_json()
         service.setCodonOptimizationOptions(request_json["host"], request_json["strategy"])
 
 

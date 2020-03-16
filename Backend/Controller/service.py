@@ -94,8 +94,9 @@ class DefaultComparisonService(ComparisonService):
         objSequences = []
         try:
             session = self.getSession()
+            isProtein = session.loadHostOrganism() != ""
             # Parse sequence file
-            objSequences = parse(tpath, self.getBoostClient(), session.loadHostOrganism(), session.loadJugglingStrategy())
+            objSequences = parse(tpath, isProtein, self.getBoostClient(), session.loadHostOrganism(), session.loadJugglingStrategy())
         except Exception as e:
             print(e)
             return json.jsonify({'error': 'File format not supported'})
@@ -255,7 +256,7 @@ class DefaultComparisonService(ComparisonService):
     def setCodonOptimizationOptions(self, host, strategy):
         session = self.getSession()
         session.storeHostOrganism(host)
-        session.storeJugglingStrategy()
+        session.storeJugglingStrategy(strategy)
 
     #
     #   Returns the current session or creates it if it hasn't been already.

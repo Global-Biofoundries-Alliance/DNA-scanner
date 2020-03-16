@@ -103,7 +103,7 @@ class BoostClient:
 
 
 # Parse File based on inputFileName.
-def parse(inputFileName, boostClient, host, jugglingStrategy):
+def parse(inputFileName, isProtein=False, boostClient=None, host="", jugglingStrategy=""):
     fileType = getFileType(inputFileName)
     parsedSequences = []
     if(fileType == "fasta" or fileType == "genbank"):
@@ -113,13 +113,13 @@ def parse(inputFileName, boostClient, host, jugglingStrategy):
     if(len(parsedSequences) == 0):
             raise RuntimeError("Parsing went wrong.")
     charactersList = list(dict.fromkeys(list(parsedSequences[0].sequence)))
-    if(not(len(charactersList) == 4 and "A" in charactersList and "T" in charactersList and "C" in charactersList and "G" in charactersList)):
+    if(isProtein):
         # Reverse Translation needed
         translatedSequencesFile = boostClient.translate(parsedSequences, host, jugglingStrategy)
         # Parse the new temp file.
         return parse(translatedSequencesFile)
     # The temp files names end with "boost_translated.fasta". If such a file is inputed, remove it after the parse.
-    if(inputFileName[len(inputFileName)-22:len(inputFileName)] =="boost_translated.fasta"):
+    if inputFileName.endswith("boost_translated.fasta"):
         os.remove(inputFileName)
     return parsedSequences
     

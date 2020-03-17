@@ -1,10 +1,12 @@
 geneart: 
     username: YOUR_USERNAME
     token: YOUR_TOKEN  
-twist:                                                                                                                                                                                                           
-    email: YOUR_EMAIL                                                                                                                                                                                            
+twist:
+    email: YOUR_EMAIL
+    password: YOUR_PASSWORD
+    apitoken: YOUR_APITOKEN
+    eutoken: YOUR_EUTOKEN
     username: YOUR_USERNAME
-    token: YOUR_TOKEN
 
 idt:
     idt_username: YOUR_USERNAME

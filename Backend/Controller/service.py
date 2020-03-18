@@ -99,8 +99,9 @@ class DefaultComparisonService(ComparisonService):
         sequences = sequenceInfoFromObjects(objSequences)
         # Add specified prefix
         for seq in sequences:
-            seq.name = prefix + seq.name
-            seq.key = prefix + seq.key
+            uniqueID = str(SequenceInformation.generateId())
+            seq.name = prefix + "_" + uniqueID + "_" + seq.name
+            seq.key = prefix + "_" + uniqueID + "_" + seq.key
 
         self.setSequences(sequences)
 

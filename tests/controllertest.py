@@ -138,6 +138,10 @@ class TestController(unittest.TestCase):
     def test_results_endpoint(self) -> None:
         print("\nTesting /results endpoint")
 
+        # Sequence names and IDs that have already occured; Used to ensure unique names IDs
+        sequenceNames = []
+        sequenceIDs = []
+
         for i in range(self.iterations):
             handle = open(self.sequence_path, 'rb')
             self.client.post('/api/upload', content_type='multipart/form-data', data={'seqfile': handle, 'prefix': "Zucchini" + str(i)})
@@ -163,6 +167,13 @@ class TestController(unittest.TestCase):
                 self.assertIn("name", result["sequenceInformation"].keys())
                 self.assertIn("sequence", result["sequenceInformation"].keys())
                 self.assertIn("length", result["sequenceInformation"].keys())
+
+                # Test uniqueness of names and IDs
+                self.assertNotIn(result["sequenceInformation"]["name"], sequenceNames)
+                self.assertNotIn(result["sequenceInformation"]["id"], sequenceIDs)
+                sequenceNames.append(result["sequenceInformation"]["name"])
+                sequenceIDs.append(result["sequenceInformation"]["id"])
+                sequenceIDs.append(result["sequenceInformation"]["id"])
 
                 self.assertTrue(result["sequenceInformation"]["name"].startswith("Zucchini" + str(i)))
                 self.assertTrue(result["sequenceInformation"]["id"].startswith("Zucchini" + str(i)))

@@ -111,6 +111,10 @@ class Currency(Enum):
 #
 class SequenceInformation:
 
+    # Define counter for IDs
+    # Atomic Counter is a threadsafe counter
+    idcounter = AtomicCounter
+
     def __init__(self, sequence, name = "", key = ""):
         # ID of the sequence.
         self.key = key
@@ -118,6 +122,14 @@ class SequenceInformation:
         self.name = name
         # The sequence
         self.sequence = sequence
+
+    #
+    #   Static Method to generate a unique id
+    #
+    def generateId():
+        return Offer.idcounter.increment()
+
+
 
         
 

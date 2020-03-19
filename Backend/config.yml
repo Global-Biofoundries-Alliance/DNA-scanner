@@ -1,4 +1,4 @@
-
+# Configuration for all pingers that need it
 pinger:
     geneart:
         server: https://www.thermofisher.com/order/gene-design-ordering/api
@@ -22,7 +22,9 @@ pinger:
         client_id: YOUR_CLIENT_ID
         client_secret: YOUR_CLIENT_SECRET
         scope: YOUR_SCOPE
+
 controller:
+    # A complete list of vendors available
     vendors:
         [
         {
@@ -42,6 +44,7 @@ controller:
         }
         ]
 
+# Configuration for the BOOST service
 boost:
     url_job: "https://boost.jgi.doe.gov/rest/jobs/"
     url_hosts: "https://boost.jgi.doe.gov/rest/files/predefined_hosts"
@@ -51,6 +54,7 @@ boost:
     password: YOUR_PASSWORD
     timeout: 60
 
+# Configuration for the review database
 review:
     db: 
         # https://docs.sqlalchemy.org/en/13/core/engines.html

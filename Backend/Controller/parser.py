@@ -93,7 +93,7 @@ class BoostClient:
     # Selects a codon usage table from the list of available hosts.
     #
     # @param host The name of the host for which the codon usage table is to be selected
-    # @return The codon usage table for host or null
+    # @return The codon usage table for host or None if host is invalid
     #
     def selectCodonTableForHost(self, host):
         response = (requests.get(url=self.url_hosts, cookies=self.jwt, timeout=self.timeout)).json()
@@ -103,6 +103,7 @@ class BoostClient:
 
 
 # Parse File based on inputFileName.
+# @raises RuntimeError if the file could not be parsed for any reason.
 def parse(inputFileName, isProtein=False, boostClient=None, host="", jugglingStrategy=""):
     fileType = getFileType(inputFileName)
     parsedSequences = []

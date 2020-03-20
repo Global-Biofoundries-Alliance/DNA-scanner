@@ -100,8 +100,8 @@ class DefaultComparisonService(ComparisonService):
         # Add specified prefix
         for seq in sequences:
             uniqueID = str(SequenceInformation.generateId())
-            seq.name = prefix + "_" + uniqueID + "_" + seq.name
-            seq.key = prefix + "_" + uniqueID + "_" + seq.key
+            seq.name = uniqueID + "_" + prefix + "_" + seq.name
+            seq.key = uniqueID
 
         self.setSequences(sequences)
 

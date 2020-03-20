@@ -113,7 +113,7 @@ class SequenceInformation:
 
     # Define counter for IDs
     # Atomic Counter is a threadsafe counter
-    idcounter = AtomicCounter
+    idcounter = AtomicCounter()
 
     def __init__(self, sequence, name = "", key = ""):
         # ID of the sequence.
@@ -125,9 +125,10 @@ class SequenceInformation:
 
     #
     #   Static Method to generate a unique id
+    #   NOTE: Only used during external initialization.
     #
     def generateId():
-        return Offer.idcounter.increment()
+        return SequenceInformation.idcounter.increment()
 
 
 

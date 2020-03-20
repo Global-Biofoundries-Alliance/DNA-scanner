@@ -144,7 +144,8 @@ class TestController(unittest.TestCase):
 
         for i in range(self.iterations):
             handle = open(self.sequence_path, 'rb')
-            self.client.post('/api/upload', content_type='multipart/form-data', data={'seqfile': handle, 'prefix': "Zucchini" + str(i)})
+            self.client.post('/api/upload', content_type='multipart/form-data',
+                             data={'seqfile': handle, 'prefix': "Zucchini" + str(i)})
             filter = '{"filter": {"vendors": [1],"price": [0, 100],"deliveryDays": 5,"preselectByPrice": True,"preselectByDeliveryDays": False}}'
             self.client.post('/api/filter', data=filter)
             searchResult = self.client.post('/api/results', content_type='multipart/form-data',
@@ -172,11 +173,11 @@ class TestController(unittest.TestCase):
                 self.assertNotIn(result["sequenceInformation"]["name"], sequenceNames)
                 self.assertNotIn(result["sequenceInformation"]["id"], sequenceIDs)
                 sequenceNames.append(result["sequenceInformation"]["name"])
-                sequenceIDs.append(result["sequenceInformation"]["id"])
+                sequenceNames.append(result["sequenceInformation"]["name"])
                 sequenceIDs.append(result["sequenceInformation"]["id"])
 
-                self.assertTrue(result["sequenceInformation"]["name"].startswith("Zucchini" + str(i)))
-                self.assertTrue(result["sequenceInformation"]["id"].startswith("Zucchini" + str(i)))
+                self.assertTrue(result["sequenceInformation"]["name"].startswith(
+                    str(result["sequenceInformation"]["id"]) + "_Zucchini" + str(i) + "_"))
 
                 self.assertIn("vendors", result.keys())
                 for vendor in result["vendors"]:

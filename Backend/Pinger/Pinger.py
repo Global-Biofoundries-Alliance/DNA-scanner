@@ -44,6 +44,10 @@ class BasePinger:
     #   Desc:   Contructor.
     #           The constructor of implemented BasePinger will have specfic parameters. For Example baseUrl and Credentials.
     #
+    #           !!! You have to check the costructor for each specific BasePinger of the providers separately, because this is
+    #           !!! the only method which cannot be defined uniformly.
+    #
+    #
     #   @throws AuthenticationError
     #           if credentials are not available, wrong or does not allow access.
     #
@@ -56,7 +60,7 @@ class BasePinger:
         raise NotImplementedError
 
     #
-    #   Desc:   Start a search for a given list of sequences. This method has no result because of asynchronous search.
+    #   Desc:   Start search for offers of a given list of sequences. This method has no result because of asynchronous search.
     #           After this method is called it starts searching. isRunning will be true. If the search is finished isRunning()
     #           will return False. Then you can get the full result with getOffers().
     #           Maybe you can get a partial result from getOffers() while running.
@@ -79,11 +83,11 @@ class BasePinger:
         raise NotImplementedError
 
     #
-    #   Desc:   True if Pinger is currently searching,
+    #   Desc:   True if Pinger is currently in progress,
     #           else false.
     #
     #   @result 
-    #           Boolean. True if searching, else false.
+    #           Boolean. True if in progress, else false.
     #
     def isRunning(self):
         raise NotImplementedError
@@ -122,7 +126,8 @@ class BasePinger:
     #           Type ArrayOf(int). Id of the Offer to Order. Ids must be unique.
     #
     #   @results
-    #           Type Entities.Order. Representation of the order.
+    #           Type Entities.Order. Representation of the order. A Order can have different sub-types
+    #           Your can find more for the various sub-types of orders in Entities.py.
     #
     #   @throws InvalidInputError
     #           if input parameter are not like expected (see parameter definition above).
@@ -142,7 +147,7 @@ class BasePinger:
 
 #
 #   Desc:   Interface for represent a fully Pinger. Fully Pinger means managing multiple vendor (represented by
-#           BasePingers) and add advanced functionalities e.g. search just for specific vendors.
+#           BasePingers) and add advanced functionalities e.g. search offers only for specific vendors.
 #
 class ManagedPinger:
 
@@ -150,7 +155,7 @@ class ManagedPinger:
         raise NotImplementedError
 
     #
-    #   Desc:   Start a search for a given list of sequences. This method has no result because of asynchronous search.
+    #   Desc:   Start a searching offers for a given list of sequences. This method has no result because of asynchronous search.
     #           After this method is called it starts searching. isRunning will be true. If the search is finished isRunning()
     #           will return False. Then you can get the full result with getOffers().
     #           Maybe you can get a partial result from getOffers() while running.
@@ -174,11 +179,11 @@ class ManagedPinger:
         raise NotImplementedError
 
     #
-    #   Desc:   True if Pinger is currently searching,
+    #   Desc:   True if Pinger is currently in progress,
     #           else false.
     #
     #   @result 
-    #           Type Boolean. True if searching, else false.
+    #           Type Boolean. True if in progress, else false.
     #
     def isRunning(self):
         raise NotImplementedError
@@ -234,7 +239,8 @@ class ManagedPinger:
     #           Type int. The key (VendorInformatin.Key) of the vendor where you want to do the order.
     #
     #   @result
-    #           Type Entities.Order. Representation of the order.
+    #           Type Entities.Order. Representation of the order. A Order can have different sub-types
+    #           Your can find more for the various sub-types of orders in Entities.py.
     #
     #   @throws InvalidInputError
     #           if input parameter are not like expected (see parameter definition above)
@@ -371,6 +377,8 @@ class CompositePinger(ManagedPinger):
             vendorMessage = []
             seqOffers = []
 
+            # Check if vendor-message is available. Vendor messages can be available if a error occured calling searchOffers(...) 
+            # at the specific vendor-pinger.
             if vh.vendor.key in self.vendorMessages:
                 vendorMessage = self.vendorMessages[vh.vendor.key]
             else:
@@ -378,13 +386,10 @@ class CompositePinger(ManagedPinger):
 
             # If output if the VendorPinger is invalid, then ignore and continue
             if (not isinstance(seqOffers, list)):
-                print("Vendor", vh.vendor.name, "returns", type(seqOffers), "instead of list")
+                print("CompositePinger.getOffers(...): Vendor", vh.vendor.name, "returns", type(seqOffers), "instead of list")
                 continue
-            
-            if(len(seqOffers) == 0 and (len(self.curVendors) == 0 or vh.vendor.key in self.curVendors)):
-                for curSO in self.sequenceVendorOffers:
-                    curSO.vendorOffers.append(VendorOffers(vh.vendor, offers=seqOffers, messages = vendorMessage))
 
+            # Check the output of the vendor pinger to make sure to return valid output
             try:
                 Validator.validate(seqOffers)
 
@@ -394,8 +399,15 @@ class CompositePinger(ManagedPinger):
                         if newSO.sequenceInformation.key == curSO.sequenceInformation.key:
                             curSO.vendorOffers.append(VendorOffers(vendorInformation=vh.vendor, offers=newSO.offers, messages = vendorMessage))
             except InvalidInputError:
-                print("Vendor", vh.vendor.name, "returns invalid offers")
+                # If Invalid values was found ignore this vendor and coninue with the next one
+                print("CompositePinger.getOffers(...): Vendor", vh.vendor.name, "returns invalid offers")
                 continue
+            
+            # If vendor has no sequence offers and filter allows the current selected vendor
+            # then create the VendorOffer and save it
+            if(len(seqOffers) == 0 and (len(self.curVendors) == 0 or vh.vendor.key in self.curVendors)):
+                for curSO in self.sequenceVendorOffers:
+                    curSO.vendorOffers.append(VendorOffers(vh.vendor, offers=seqOffers, messages = vendorMessage))
 
         return self.sequenceVendorOffers
 
@@ -424,6 +436,8 @@ class CompositePinger(ManagedPinger):
                 return vh.handler.order(offerIds)
 
         raise InvalidInputError("Parameter vendor does not match any key of a registered vendor")
+
+
 #
 #   The Dummy Pinger is for testing.
 #
@@ -432,7 +446,6 @@ class DummyPinger(BasePinger):
 
     def __init__(self):
         self.running = False
-
 
         self.tempOffer = Offer(price=Price(currency=Currency.EUR,amount=120),turnovertime=14)
         self.tempOffer.messages.append(Message(MessageType.DEBUG, "This offer is created from Dummy"))

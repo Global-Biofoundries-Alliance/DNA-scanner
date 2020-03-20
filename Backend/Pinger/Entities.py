@@ -101,7 +101,7 @@ class Currency(Enum):
 #   Desc:   Representation of a Sequence
 #
 #   @attribute key
-#       Type String. Identifies a specific sequence.
+#       Type Integer. Identifies a specific sequence.
 #
 #   @attribute name
 #       Type String. Gives the sequence an human readable name.
@@ -115,7 +115,7 @@ class SequenceInformation:
     # Atomic Counter is a threadsafe counter
     idcounter = AtomicCounter()
 
-    def __init__(self, sequence, name = "", key = ""):
+    def __init__(self, sequence, name = "", key = 0):
         # ID of the sequence.
         self.key = key
         # Name of the sequence. Readable representation of the sequence for users

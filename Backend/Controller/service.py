@@ -217,11 +217,12 @@ class DefaultComparisonService(ComparisonService):
                             ((x["turnoverTime"] % maxsize) if not x["offerMessage"] else maxsize)))
             # Preselection by lambda
             result = buildSearchResponseJSON(filterOffers(filter, seqoffers), self.config.vendors, selector,
+                                             session.loadGlobalMessages(),
                                              offset, size)
         else:
             # Use selection list
             result = buildSearchResponseJSON(filterOffers(filter, seqoffers), self.config.vendors,
-                                             session.loadSelection(),
+                                             session.loadSelection(), session.loadGlobalMessages(),
                                              offset, size)
 
         return result

@@ -89,6 +89,8 @@ class YmlConfigurator(Configurator):
             if isinstance(newPinger, Message):
                 session.addGlobalMessages([newPinger])
                 continue
+            if isinstance(newPinger, AdvancedMockPinger):
+                session.addGlobalMessages(["Warning: A mock vendor is being used. Contact an administrator."])
             pinger.registerVendor(vendorInformation=pingerInfo[0], vendorPinger=newPinger)
         return pinger
 

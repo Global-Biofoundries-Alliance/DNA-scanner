@@ -155,6 +155,9 @@ class TestController(unittest.TestCase):
             self.assertIn("result", searchResult.keys())
             self.assertIn("globalMessage", searchResult.keys())
 
+            # AdvancedMockPingers are used for testing so there should be warning messages present.
+            self.assertTrue(searchResult["globalMessage"])
+
             for result in searchResult["result"]:
                 expectedCount = expectedCount + 1
 

@@ -9,7 +9,14 @@ Hint: Not every vendor provide all of these functions via their APIs. And in mos
 
 ## Installation
 
+You can find a `setup.py` in the `Backend` directory. With this file you can install the dnabackend resources with:
+```bash
+pip3 install /path/to/projectfolder/Backend/
+```
 
+If a error occurs you maybe need to be root user. Sometimes `sudo` is not enough so run `sudo su` to login as root user.
+
+If the command runs successfully Pinger-Library is installed.
 
 ## Structure
 

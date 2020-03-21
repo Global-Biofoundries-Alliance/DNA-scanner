@@ -55,6 +55,15 @@ controller:
         }
         ]
 
+boost:
+    url_job: "https://boost.jgi.doe.gov/rest/jobs/"
+    url_hosts: "https://boost.jgi.doe.gov/rest/files/predefined_hosts"
+    url_submit: "https://boost.jgi.doe.gov/rest/jobs/submit"
+    url_login: "https://boost.jgi.doe.gov/rest/auth/login"
+    username: YOUR_USERNAME
+    password: YOUR_PASSWORD
+    timeout: 60
+
 review:
     db: 
         # https://docs.sqlalchemy.org/en/13/core/engines.html

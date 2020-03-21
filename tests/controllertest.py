@@ -9,6 +9,7 @@ from Pinger.Entities import SequenceInformation, SequenceVendorOffers
 from Pinger.Pinger import CompositePinger
 from flask import json
 from random import random
+import random as rand
 
 
 class TestController(unittest.TestCase):
@@ -190,7 +191,6 @@ class TestController(unittest.TestCase):
                         self.assertIn("price", offer.keys())
                         self.assertIn("turnoverTime", offer.keys())
                         self.assertIn("offerMessage", offer.keys())
-                        # self.assertTrue(offer["offerMessage"])
                         for message in offer["offerMessage"]:
                             self.assertIn("text", message)
                             self.assertIn("messageType", message)
@@ -538,7 +538,7 @@ class TestController(unittest.TestCase):
             self.assertFalse(session.hasSession(i))
 
     def testSelectionEndpoint(self) -> None:
-        print("Testing /select endpoint")
+        print("\nTesting /select endpoint")
 
         for iteration in range(self.iterations):
             # upload file
@@ -579,6 +579,40 @@ class TestController(unittest.TestCase):
                     for offer in vendor["offers"]:
                         # An offer should be selected if and only if it was in the selection list
                         self.assertEqual(offer["selected"], offer["key"] in selection)
+
+    def test_available_hosts_endpoint(self):
+        print("\nTesting /available_hosts endpoint")
+        response_json = self.client.get("/api/available_hosts").get_json()
+        self.assertGreater(len(response_json), 0)
+
+    # NOTE: This must not be made into an iterated test as it accesses the BOOST service
+    #       which we don't want to overload with requests.
+    def test_codon_optimization(self):
+        print("\nTesting codon optimization")
+
+        host_list = self.client.get("/api/available_hosts").get_json()
+        strategies = ["Random", "Balanced", "MostlyUsed"]
+
+        for strategy in strategies:
+            response = self.client.post('/api/codon_optimization', content_type='application/json',
+                                             data=json.dumps({'host': rand.choice(host_list), 'strategy': strategy}))
+            self.assertIn(b"codon optimization options set", response.data)
+
+            # upload protein sequence file
+            handle = open("examples/low_temp_yeast.gb", 'rb')
+            response = self.client.post('/api/upload', content_type='multipart/form-data', data={'seqfile': handle})
+            self.assertIn(b"upload successful", response.data)
+
+            response_json = self.client.post('/api/results', content_type='multipart/form-data',
+                                             data={'size': 1000, 'offset': 0}).get_json()
+
+            for sequence in response_json["result"]:
+                self.assertGreater(sequence["sequenceInformation"]["length"], 0)
+
+
+
+
+
 
 
 if __name__ == '__main__':

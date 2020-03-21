@@ -14,6 +14,8 @@ password = cfg['twist']['password']
 apitoken = cfg['twist']['apitoken']
 eutoken = cfg['twist']['eutoken']
 username = cfg['twist']['username']
+firstname = cfg['twist']['firstname']
+lastname = cfg['twist']['lastname']
 
 
 # Test file which can be successfully valideted by the API.
@@ -26,7 +28,7 @@ class TestTwistClient(unittest.TestCase):
     host = "https://twist-api.twistbioscience-staging.com/"
     timeout = 60
     # Object of type TwistClient used in these tests to communicate with the API.
-    twist = Twist.TwistClient(email, password, apitoken, eutoken, username, host = host, timeout = timeout)
+    twist = Twist.TwistClient(email, password, apitoken, eutoken, username, firstname, lastname, host = host, timeout = timeout)
 
     # Checks the methods with static results.
     def test_static_results(self):

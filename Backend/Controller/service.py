@@ -96,7 +96,8 @@ class DefaultComparisonService(ComparisonService):
             session = self.getSession()
             isProtein = session.loadHostOrganism() != ""
             # Parse sequence file
-            objSequences = parse(tpath, isProtein, self.getBoostClient(), session.loadHostOrganism(), session.loadJugglingStrategy())
+            objSequences = parse(tpath, isProtein, self.getBoostClient(), session.loadHostOrganism(),
+                                 session.loadJugglingStrategy())
         except Exception as e:
             print(e)
             return json.jsonify({'error': 'File format not supported'})
@@ -259,6 +260,35 @@ class DefaultComparisonService(ComparisonService):
         session = self.getSession()
         session.storeHostOrganism(host)
         session.storeJugglingStrategy(strategy)
+
+    #
+    #   Orders a list of offer ids
+    #
+    #   @param offer_ids A list of offer ids to order
+    #
+    def issueOrder(self, offer_ids):
+        session = self.getSession()
+
+        pinger = self.getSession().loadPinger()
+
+        seqoffers = session.loadResults()
+        offersPerVendor = [[] for v in self.config.vendors]
+
+        for seqoffer in seqoffers:
+            for vendoffer in seqoffer.vendorOffers:
+                for offer in vendoffer.offers:
+                    if offer.key in offer_ids:
+                        offersPerVendor[vendoffer.vendorInformation.key] = offer.key
+
+        orders = []
+        for vendor in self.config.vendors:
+            order = pinger.order(offersPerVendor[vendor.key], vendor.key)
+
+            orders.append({NOT_SUPPORTED: {"type": "NOT_SUPPORTED", "url": ""},
+                           URL_REDIRECT: {"type": "URL_REDIRECT", "url": order.url}}.get(order.getType(),
+                                                                                         {"type": "NOT_SUPPORTED",
+                                                                                          "url": ""}))
+        return orders
 
     #
     #   Returns the current session or creates it if it hasn't been already.

@@ -249,7 +249,7 @@ class ManagedPinger:
     #   @throws IsRunningError
     #           if the Pinger is already running. You have to wait until it is finished.
     #
-    def order(self, offerid, vendorInf):
+    def order(self, offerids, vendor):
         raise NotImplementedError
 
 

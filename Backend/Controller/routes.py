@@ -118,8 +118,7 @@ def setSelection():
 @app.route('/available_hosts', methods=['GET'])
 def getAvailableHosts():
     try:
-        # TODO obtain host organisms from BOOST client
-        return json.jsonify(["Escherichia Coli", "Saccharomyces Cerevisiae", "Clostridium Perfringens", "Leuconostoc Citreum"])
+        return json.jsonify(service.getAvailableHosts())
     except Exception as error:
         return {"error": "Encountered error while fetching list of available hosts\n" + (
             traceback.format_exc() if __debug__ else "")}
@@ -129,7 +128,10 @@ def setCodonOptimizationOptions():
     try:
         request_json = request.get_json()
         if "strategy" not in request_json or "host" not in request_json:
-            raise KeyError
+            return {"error": "Request is missing fields"}
+
+        service.setCodonOptimizationOptions(request_json["host"], request_json["strategy"])
+
 
         return 'codon optimization options set'
     except Exception as error:

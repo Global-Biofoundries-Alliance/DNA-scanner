@@ -1,12 +1,12 @@
-# python imports
-from typing import Tuple
-
 import yaml
 from Pinger.AdvancedMock import AdvancedMockPinger
 from Pinger.Entities import *
 from Pinger.GeneArt import GeneArt
 from Pinger.IDT import IDT
+from .parser import BoostClient
 from .session import SessionManager
+import traceback
+
 # project imports
 from Pinger.Pinger import BasePinger, ManagedPinger, CompositePinger
 
@@ -89,6 +89,8 @@ class YmlConfigurator(Configurator):
             if isinstance(newPinger, Message):
                 session.addGlobalMessages([newPinger])
                 continue
+            if isinstance(newPinger, AdvancedMockPinger):
+                session.addGlobalMessages(["Warning: A mock vendor is being used. Contact an administrator."])
             pinger.registerVendor(vendorInformation=pingerInfo[0], vendorPinger=newPinger)
         return pinger
 
@@ -139,6 +141,19 @@ class YmlConfigurator(Configurator):
         except:
             return InvalidPinger()
 
+    def initializeBoostClient(self):
+        try:
+            cfg_boost = self.cfg["boost"]
+            return BoostClient(url_job = cfg_boost["url_job"],
+                               url_hosts = cfg_boost["url_hosts"],
+                               url_submit = cfg_boost["url_submit"],
+                               url_login = cfg_boost["url_login"],
+                               username = cfg_boost["username"],
+                               password = cfg_boost["password"],
+                               timeout = cfg_boost["timeout"])
+        except Exception as error:
+            print(traceback.format_exc())
+            return None
 
 #
 #   The InvalidPinger is used if a pinger could not be initialized due to a misconfiguration.

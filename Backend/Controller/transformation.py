@@ -22,10 +22,10 @@ from flask import json
 #
 # @param size
 #       How many results to show per page
-def buildSearchResponseJSON(seqvendoffers, vendors, selector=[], offset=0, size=10):
+def buildSearchResponseJSON(seqvendoffers, vendors, selector=[], globalMessages=[], offset=0, size=10):
     resp = SearchResponse()
     resp.data["result"] = []
-    resp.data["globalMessage"] = []
+    resp.data["globalMessage"] = globalMessages
     resp.data["count"] = len(seqvendoffers)
     # Set the size to the size requested or as high as it goes
     resp.data["size"] = min(size, len(seqvendoffers) - offset)
@@ -78,7 +78,7 @@ def buildSearchResponseJSON(seqvendoffers, vendors, selector=[], offset=0, size=
                 # Compare previously selected result with the best one from this result list
                 selectedResult = selectedResult if not resultList or \
                                                    (selector(selectedResult) <= selector(resultList[0])) else \
-                resultList[0]
+                    resultList[0]
 
             else:
                 result["vendors"][vendoff.vendorInformation.key]["offers"] = resultOffers

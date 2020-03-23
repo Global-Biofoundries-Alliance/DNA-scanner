@@ -13,7 +13,7 @@ from typing import List
 from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
 
-from .parser import parse
+from .parser import parse, BoostClient
 from .session import InMemorySessionManager as SessionManager
 from .transformation import buildSearchResponseJSON, sequenceInfoFromObjects, filterOffers
 
@@ -66,6 +66,15 @@ class ComparisonService:
     def getVendors(self) -> List[VendorInformation]:
         raise NotImplementedError
 
+    #
+    #   Returns a list of available host organisms
+    #
+    def getAvailableHosts(self):
+        raise NotImplementedError
+
+    def setCodonOptimizationOptions(self, host, strategy):
+        raise NotImplementedError
+
 
 class DefaultComparisonService(ComparisonService):
 
@@ -84,8 +93,10 @@ class DefaultComparisonService(ComparisonService):
 
         objSequences = []
         try:
+            session = self.getSession()
+            isProtein = session.loadHostOrganism() != ""
             # Parse sequence file
-            objSequences = parse(tpath)
+            objSequences = parse(tpath, isProtein, self.getBoostClient(), session.loadHostOrganism(), session.loadJugglingStrategy())
         except Exception as e:
             print(e)
             return json.jsonify({'error': 'File format not supported'})
@@ -99,8 +110,9 @@ class DefaultComparisonService(ComparisonService):
         sequences = sequenceInfoFromObjects(objSequences)
         # Add specified prefix
         for seq in sequences:
-            seq.name = prefix + seq.name
-            seq.key = prefix + seq.key
+            uniqueID = str(SequenceInformation.generateId())
+            seq.name = uniqueID + "_" + prefix + "_" + seq.name
+            seq.key = uniqueID
 
         self.setSequences(sequences)
 
@@ -217,11 +229,12 @@ class DefaultComparisonService(ComparisonService):
                             ((x["turnoverTime"] % maxsize) if not x["offerMessage"] else maxsize)))
             # Preselection by lambda
             result = buildSearchResponseJSON(filterOffers(filter, seqoffers), self.config.vendors, selector,
+                                             session.loadGlobalMessages(),
                                              offset, size)
         else:
             # Use selection list
             result = buildSearchResponseJSON(filterOffers(filter, seqoffers), self.config.vendors,
-                                             session.loadSelection(),
+                                             session.loadSelection(), session.loadGlobalMessages(),
                                              offset, size)
 
         return result
@@ -231,6 +244,21 @@ class DefaultComparisonService(ComparisonService):
     #
     def getVendors(self):
         return self.config.vendors
+
+    #
+    #   Returns a list of available host organisms
+    #
+    def getAvailableHosts(self):
+        boost = self.getBoostClient()
+        return boost.getPreDefinedHosts()
+
+    #
+    #   Sets the host organism and juggling strategy to be used in subsequent codon optimizations
+    #
+    def setCodonOptimizationOptions(self, host, strategy):
+        session = self.getSession()
+        session.storeHostOrganism(host)
+        session.storeJugglingStrategy(strategy)
 
     #
     #   Returns the current session or creates it if it hasn't been already.
@@ -250,3 +278,15 @@ class DefaultComparisonService(ComparisonService):
         if not session.loadPinger():  # This indicates that the session is new
             session.storePinger(self.config.initializePinger(session))
         return session
+
+    #
+    #   Returns the current session's BOOST client and configures it if nonexistent
+    #
+    def getBoostClient(self) -> BoostClient:
+        session = self.getSession()
+        boost = session.loadBoostClient()
+        if not boost:
+            boost = self.config.initializeBoostClient()
+            boost.login()
+            session.storeBoostClient(boost)
+        return boost

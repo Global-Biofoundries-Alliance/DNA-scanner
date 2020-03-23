@@ -5,7 +5,6 @@ import json
 import sbol
 import time
 import requests
-from Pinger import atomiccounter
 
 # Object representing a sequence
 class SeqObject():

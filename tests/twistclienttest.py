@@ -130,7 +130,7 @@ class TestTwistClient(unittest.TestCase):
         # Delete the newly created quote
         delete_quote = self.twist.delete_quote(example_id)
         self.assertEqual(True, {'quote_marked_for_deletion': example_id} == delete_quote)
-        
+
         print("Test Get Quote (2)")
         # Create a new quote to use for the final order.
         quote_id = self.twist.get_quote([ids[0]],

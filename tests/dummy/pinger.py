@@ -46,6 +46,12 @@ class DummyPinger(BasePinger):
         self.offers = []
         self.running = False
 
+    #
+    #   Return Order with OrderType Not Supported
+    #
+    def order(self, offerIds):
+        return Order()
+
 class NotAvailablePinger(BasePinger):
 
     def __init__(self):

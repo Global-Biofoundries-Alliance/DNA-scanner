@@ -140,7 +140,7 @@ class BasePinger:
     #           Maybe the base url of the API is wrong? API could be only temporary
     #           unavailable.
     #
-    def order(self, seqInf):
+    def order(self, offerIds):
         raise NotImplementedError
 
 
@@ -249,7 +249,7 @@ class ManagedPinger:
     #   @throws IsRunningError
     #           if the Pinger is already running. You have to wait until it is finished.
     #
-    def order(self, offerid, vendorInf):
+    def order(self, offerIds, vendor):
         raise NotImplementedError
 
 

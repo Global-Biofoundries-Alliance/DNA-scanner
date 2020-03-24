@@ -278,16 +278,20 @@ class DefaultComparisonService(ComparisonService):
             for vendoffer in seqoffer.vendorOffers:
                 for offer in vendoffer.offers:
                     if offer.key in offer_ids:
-                        offersPerVendor[vendoffer.vendorInformation.key] = offer.key
+                        offersPerVendor[vendoffer.vendorInformation.key].append(offer.key)
 
         orders = []
         for vendor in self.config.vendors:
             order = pinger.order(offersPerVendor[vendor.key], vendor.key)
 
-            orders.append({NOT_SUPPORTED: {"type": "NOT_SUPPORTED", "url": ""},
-                           URL_REDIRECT: {"type": "URL_REDIRECT", "url": order.url}}.get(order.getType(),
-                                                                                         {"type": "NOT_SUPPORTED",
-                                                                                          "url": ""}))
+            orderType = order.getType()
+            if orderType == OrderType.NOT_SUPPORTED:
+                orders.append({"type": "NOT_SUPPORTED"})
+            elif orderType == OrderType.URL_REDIRECT:
+                orders.append({"type": "URL_REDIRECT", "url": order.url})
+            else:
+                orders.append({"type": "NOT_SUPPORTED"})
+
         return orders
 
     #

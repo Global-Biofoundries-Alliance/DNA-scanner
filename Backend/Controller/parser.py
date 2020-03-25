@@ -50,6 +50,11 @@ class BoostClient:
         response = self.getInformation(self.uuid)
         waitingRounds = 0
         while(response["job"]["job-status"] != "FINISHED" and waitingRounds < 20):
+            if(reponse["job"]["job-status"] == "FAILED" and "exception" in list(response["job"]["job-report"].keys())):
+                message = ""
+                for exc in response["job"]["job-report"]["exception"]:
+                    message = message + str(exc) + "."
+                raise RuntimeError("Translation for this file is not possible. Reason: " + message)
             time.sleep(3)
             waitingRounds = waitingRounds + 1
         if(waitingRounds == 20):

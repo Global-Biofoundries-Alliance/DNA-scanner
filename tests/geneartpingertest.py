@@ -191,7 +191,7 @@ class TestGeneArtPinger(unittest.TestCase):
 
         print("")
         print("Here is the redirect URL of the offer. You can open it and login to check it manually.")
-        print("Ridrect URL: ", order.url)
+        print("Redirect URL: ", order.url)
         print("")
 
         # Check error when using unknown offerId

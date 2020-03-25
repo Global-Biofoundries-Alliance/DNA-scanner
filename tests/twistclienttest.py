@@ -126,6 +126,8 @@ class TestTwistClient(unittest.TestCase):
                                     first_name=addresses[0]['first_name'],
                                     last_name=addresses[0]['last_name'])
 
+        with self.assertRaises(ValueError): self.twist.check_quote(quote_id)
+
         print("Test Deleted Quote")
         # Delete the newly created quote
         delete_quote = self.twist.delete_quote(example_id)

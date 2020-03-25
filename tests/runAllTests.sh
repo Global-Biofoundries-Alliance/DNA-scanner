@@ -8,6 +8,7 @@ echo "Install dependencies"
 ./venv/bin/pip3 install -r requirements.txt
 
 echo "run tests"
+
 # Discover all tests and run them
 venv/bin/coverage run -m unittest discover -p "*test.py"
 

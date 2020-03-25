@@ -1,6 +1,7 @@
 geneart: 
     username: YOUR_USERNAME
     token: YOUR_TOKEN  
+
 twist:                                                                                                                                                                                                           
     email: YOUR_EMAIL
     password: YOUR_PASSWORD

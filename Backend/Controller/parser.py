@@ -48,8 +48,12 @@ class BoostClient:
         inputString = inputString[: -2]    
         self.submit(inputString, codonUsageTable, juggling_strategy)
         response = self.getInformation(self.uuid)
-        while(response["job"]["job-status"] != "FINISHED"):
+        waitingRounds = 0
+        while(response["job"]["job-status"] != "FINISHED" and waitingRounds < 20):
             time.sleep(3)
+            waitingRounds = waitingRounds + 1
+        if(waitingRounds == 20):
+            raise RuntimeError("Translation for this file is not possible.")
         # Save the result in a temporary file.
         fd, path = tempfile.mkstemp('boost_translated.fasta')
 

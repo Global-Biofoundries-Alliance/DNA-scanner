@@ -15,10 +15,6 @@ export const store = new Vuex.Store({
         StoreFile: [],
         StoreSearchResult: [],
         StoreVendors: [],
-        StoreDialogItem: null,
-        StoreSize: 2,
-        StoreOffset: 0,
-        StoreLength: 0,
 
     },
     mutations: {

@@ -198,3 +198,6 @@ class InvalidPinger(BasePinger):
     def clear(self):
         self.offers = []
         self.running = False
+
+    def order(self, offerIds):
+        return Order(OrderType.NOT_SUPPORTED)

@@ -1,6 +1,7 @@
 from .Pinger import *
 from random import randint, random
 import random as rand
+from .Entities import Order, OrderType, UrlRedirectOrder
 
 #
 #   The Dummy Pinger is for testing.
@@ -63,5 +64,20 @@ class AdvancedMockPinger(BasePinger):
     def clear(self):
         self.offers = []
         self.running = False
+
+    def order(self, offerIds):
+        offerkeys = []
+        for seqoffer in self.offers:
+            for offer in seqoffer.offers:
+                offerkeys.append(offer.key)
+
+        #Basically returns redirect if all IDs are valid and unsupported otherwise
+        for id in offerIds:
+            if id not in offerkeys:
+                return Order(OrderType.NOT_SUPPORTED)   #Faux ID leads to non-supported order response
+        return UrlRedirectOrder("dummy redirect")
+
+
+
 
 

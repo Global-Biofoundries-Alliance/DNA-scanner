@@ -96,7 +96,8 @@ class DefaultComparisonService(ComparisonService):
             session = self.getSession()
             isProtein = session.loadHostOrganism() != ""
             # Parse sequence file
-            objSequences = parse(tpath, isProtein, self.getBoostClient(), session.loadHostOrganism(), session.loadJugglingStrategy())
+            objSequences = parse(tpath, isProtein, self.getBoostClient(), session.loadHostOrganism(),
+                                 session.loadJugglingStrategy())
         except Exception as e:
             print(e)
             return json.jsonify({'error': 'File format not supported'})
@@ -259,6 +260,39 @@ class DefaultComparisonService(ComparisonService):
         session = self.getSession()
         session.storeHostOrganism(host)
         session.storeJugglingStrategy(strategy)
+
+    #
+    #   Orders a list of offer ids
+    #
+    #   @param offer_ids A list of offer ids to order
+    #
+    def issueOrder(self, offer_ids):
+        session = self.getSession()
+
+        pinger = self.getSession().loadPinger()
+
+        seqoffers = session.loadResults()
+        offersPerVendor = [[] for v in self.config.vendors]
+
+        for seqoffer in seqoffers:
+            for vendoffer in seqoffer.vendorOffers:
+                for offer in vendoffer.offers:
+                    if offer.key in offer_ids:
+                        offersPerVendor[vendoffer.vendorInformation.key].append(offer.key)
+
+        orders = []
+        for vendor in self.config.vendors:
+            order = pinger.order(offersPerVendor[vendor.key], vendor.key)
+
+            orderType = order.getType()
+            if orderType == OrderType.NOT_SUPPORTED:
+                orders.append({"vendor": vendor.key, "type": "NOT_SUPPORTED"})
+            elif orderType == OrderType.URL_REDIRECT:
+                orders.append({"vendor": vendor.key, "type": "URL_REDIRECT", "url": order.url})
+            else:
+                orders.append({"vendor": vendor.key, "type": "NOT_SUPPORTED"})
+
+        return orders
 
     #
     #   Returns the current session or creates it if it hasn't been already.

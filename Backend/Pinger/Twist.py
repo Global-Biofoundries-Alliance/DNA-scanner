@@ -200,11 +200,9 @@ class TwistClient():
         # Delete quote.
     def delete_quote(self, quote_id):
         resp = None
-
-        while True:
-            url = self.get_email_url('v1/users/{}/quotes/%s/') % quote_id
-            resp = self.delete(url)
-            return resp
+        url = self.get_email_url('v1/users/{}/quotes/%s/') % quote_id
+        resp = self.delete(url)
+        return resp
 
 
     # Class to define pinger for the Twist API.
@@ -489,11 +487,9 @@ class Twist(BasePinger):
             
             for s in seqInf:
                 # Encode each element in JSON-Format with fields readable by the TWISTClient and add it to the list.
+                self.validator.validate(s)
                 seq = self.encode_sequence(s)
                 twistSequences.append(seq)
-            
-            sequences = [x['sequence'] for x in twistSequences]
-            names = [y['name'] for y in twistSequences]
 
             constructs = self.submit_constructs(twistSequences)
 
@@ -505,9 +501,11 @@ class Twist(BasePinger):
                 for constructscore in scores:
                     if(constructscore['id'] == identifier):
                         issues = constructscore["score_data"]["issues"]
+                        # If the construct can be produced
                         if (constructscore["score"] == "BUILDABLE" and len(issues) == 0):
                             messageText = constructscore["name"] + "_" + "accepted" + "->ConstructID =" + str(identifier)
                             message = Message(MessageType.INFO, messageText)
+                        # If the construct can not be produced
                         if (constructscore["score"] != "BUILDABLE" and len(issues) != 0):
                             turnOverTime = -1
                             price = Price()

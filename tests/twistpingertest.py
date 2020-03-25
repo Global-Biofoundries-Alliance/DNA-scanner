@@ -65,7 +65,6 @@ class TestTwistPinger(unittest.TestCase):
         with self.assertRaises(Entities.UnavailableError): self.twist.order([])
 
         order = self.twist.order(offersToOrder)
-        print(type(order))
         assert isinstance(order, Entities.UrlRedirectOrder)
 
         # Test clear

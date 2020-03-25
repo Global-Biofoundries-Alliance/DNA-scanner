@@ -15,6 +15,7 @@ export const store = new Vuex.Store({
         StoreFile: [],
         StoreSearchResult: [],
         StoreVendors: [],
+        StoreSelectedOffers: {},
 
     },
     mutations: {
@@ -38,6 +39,9 @@ export const store = new Vuex.Store({
         },
         updatePreselectByTime(state, time) {
             state.StorePreselectByTime = time
+        },
+        updateSelectedOffers(state, offers) {
+            state.StoreSelectedOffers = offers
         }
     }
 });

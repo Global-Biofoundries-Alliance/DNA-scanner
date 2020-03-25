@@ -120,8 +120,6 @@
                 },
                 set(value) {
                     this.$store.commit('updateSelectedVendors', value);
-                    // eslint-disable-next-line no-console
-                    console.log(this.$store.state.StoreSelectedVendors);
                 }
             },
             priceRange: {
@@ -171,31 +169,58 @@
                 set(value) {
                     this.$store.commit('updatePreselectByTime', value)
                 }
+            },
+            selectBox: {
+                get() {
+                    return this.$store.state.StoreSelectedOffers;
+                },
+                set(value) {
+                    this.$store.commit('updateSelectedOffers', value)
+                }
             }
         },
         methods: {
             reset() {
-                this.$store.state.StoreSelectedVendors = [0, 1, 2];
-                this.$store.state.StorePriceFilterRange = [0, 50];
-                this.$store.state.StoreDeliveryDays = 30;
-                this.$store.state.StorePreselectByPrice = false;
-                this.$store.state.StorePreselectByTime = false;
+                this.selectedVendors = [0, 1, 2];
+                this.priceRange = [0, 50];
+                this.deliveryDays = 30;
+                this.preselectByPrice = false;
+                this.preselectByTime = false;
             },
             save() {
-                // If this.isApp is true, then the current filter and a new results request is sent to the controller.
+                // If this.isApp is true, then the current selected offer ids, filter and a new results request is sent to the controller.
                 // At the end a usedFilter event is emitted to tell the App component to close the sidebar and reload the page.
                 // If this.isApp is false, then a saved event is emitted to tell the Landing component to close the filter dialog.
                 if(this.isApp) {
+                    let selected = [];
+
+                    for(let i = 0; i < this.$store.state.StoreSearchResult.length; i++) {
+                        if(this.selectBox[this.$store.state.StoreSearchResult[i].sequenceInformation.id]) {
+                            selected.push(this.selectBox[this.$store.state.StoreSearchResult[i].sequenceInformation.id])
+                        }
+                    }
+
                     // eslint-disable-next-line no-console
-                    console.log('isapp is true');
-                    var filter = {
+                    console.log("selected:" + selected);
+
+                    let selection = {
+                        "selected": selected
+                    };
+
+                    this.$http.post('/api/select', selection)
+                        .then(response => {
+                            // eslint-disable-next-line no-console
+                            console.log(response);
+                        });
+
+                    let filter = {
                         "filter":
                             {
-                                "vendors": this.$store.state.StoreSelectedVendors,
-                                "price": this.$store.state.StorePriceFilterRange,
-                                "deliveryDays": this.$store.state.StoreDeliveryDays,
-                                "preselectByPrice": this.$store.state.StorePreselectByPrice,
-                                "preselectByDeliveryDays": this.$store.state.StorePreselectByTime
+                                "vendors": this.selectedVendors,
+                                "price": this.priceRange,
+                                "deliveryDays": this.deliveryDays,
+                                "preselectByPrice": this.preselectByPrice,
+                                "preselectByDeliveryDays": this.preselectByTime
                             }
                     };
 
@@ -216,11 +241,10 @@
                             })
                                 .then(response => {
                                     this.$store.state.StoreSearchResult = response.body.result;
-                                    this.$store.state.StoreSelectedVendors = this.selectedVendors;
                                     // eslint-disable-next-line no-console
                                     console.log(this.$store.state.StoreSearchResult);
                                     // eslint-disable-next-line no-console
-                                    console.log(this.$store.state.StoreSelectedVendors);
+                                    console.log(this.selectedVendors);
                                     this.$emit('usedFilter');
                                 })
                         });

@@ -132,6 +132,7 @@
                         </td>
                     </template>
                 </v-data-table>
+                <p>{{this.selectBox}}</p>
             </v-app>
         </div>
     </div>
@@ -154,7 +155,6 @@
                 computedPriceTotal: [],
                 computedTimeOverview: [],
                 computedTimeTotal: [],
-                selectBox: [],
                 computedSelectedAll: [],
 
             }
@@ -232,6 +232,8 @@
                     });
                     this.$forceUpdate();
                 }
+                // eslint-disable-next-line no-console
+                console.log(this.selectBox)
 
             },
         },
@@ -253,6 +255,14 @@
             },
             slots() {
                 return this.computedSlots
+            },
+            selectBox: {
+                get() {
+                    return this.$store.state.StoreSelectedOffers;
+                },
+                set(value) {
+                    this.$store.commit('updateSelectedOffers', value)
+                }
             }
 
 
@@ -265,7 +275,7 @@
                 this.computedTimeTotal[j] = 0;
                 this.computedSelectedAll[j] = false;
             }
-
+            this.selectBox = [];
             this.results.forEach(i => {
                 for(let j = 0; j < i.vendors.length; j++) {
                     for (let k = 0; k < i.vendors[j].offers.length; k++) {

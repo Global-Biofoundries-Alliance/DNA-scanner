@@ -1,3 +1,5 @@
+<!-- This Landing component is displayed on the front page. It
+-->
 <template>
     <div>
         <div v-if="!loading">

@@ -7,6 +7,8 @@ twist:
     apitoken: YOUR_APITOKEN
     eutoken: YOUR_EUTOKEN
     username: YOUR_USERNAME
+    firstname: YOUR_FIRSTNAME
+    lastname: YOUR_LASTNAME
 
 idt:
     idt_username: YOUR_USERNAME

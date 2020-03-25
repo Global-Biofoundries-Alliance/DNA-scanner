@@ -595,7 +595,7 @@ class TestController(unittest.TestCase):
 
         for strategy in strategies:
             response = self.client.post('/api/codon_optimization', content_type='application/json',
-                                             data=json.dumps({'host': rand.choice(host_list), 'strategy': strategy}))
+                                        data=json.dumps({'host': rand.choice(host_list), 'strategy': strategy}))
             self.assertIn(b"codon optimization options set", response.data)
 
             # upload protein sequence file
@@ -609,10 +609,34 @@ class TestController(unittest.TestCase):
             for sequence in response_json["result"]:
                 self.assertGreater(sequence["sequenceInformation"]["length"], 0)
 
+    def test_results_endpoint(self) -> None:
+        print("\nTesting /order endpoint")
 
+        for i in range(self.iterations):
+            handle = open(self.sequence_path, 'rb')
+            self.client.post('/api/upload', content_type='multipart/form-data',
+                             data={'seqfile': handle, 'prefix': "Zucchini" + str(i)})
+            filter = '{"filter": {"vendors": [1],"price": [0, 100],"deliveryDays": 5,"preselectByPrice": True,"preselectByDeliveryDays": False}}'
+            self.client.post('/api/filter', data=filter)
+            searchResult = self.client.post('/api/results', content_type='multipart/form-data',
+                                            data={'size': 1000, 'offset': 0}).get_json()
 
+            self.assertNotIn("error", searchResult, "Results endpoint returned error: " + str(searchResult))
 
+            offerkeys = []
 
+            for result in searchResult["result"]:
+                for vendor in result["vendors"]:
+                    for offer in vendor["offers"]:
+                        offerkeys.append(offer["key"])
+
+            orderkeys = rand.sample(offerkeys, rand.randint(0, len(offerkeys) - 1))
+            response = self.client.post("/api/order", content_type="application/json",
+                                        data=json.dumps({"offers": orderkeys})).get_json()
+
+            for order in response:
+                if(order["type"] == "URL_REDIRECT"):
+                    self.assertIn("url", order.keys())
 
 
 if __name__ == '__main__':

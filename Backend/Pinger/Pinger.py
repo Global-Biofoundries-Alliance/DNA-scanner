@@ -421,10 +421,10 @@ class CompositePinger(ManagedPinger):
 
         # check input: seqInf
         if(not isinstance(offerIds, list)):
-            raise InvalidInputError("parameter vendorIds has not type list")
+            raise InvalidInputError("parameter offerIds is not of type list")
         for offerId in offerIds:
             if (not isinstance(offerId, int)):
-                raise InvalidInputError("parameter vendorIds contains elements which are not of type integer")
+                raise InvalidInputError("parameter offerIds contains elements which are not of type integer")
         # check input: vendors
         if(not isinstance(vendor, int)):
                 raise InvalidInputError("parameter vendor should be a integer")

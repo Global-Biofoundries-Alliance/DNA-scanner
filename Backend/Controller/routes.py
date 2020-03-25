@@ -137,3 +137,15 @@ def setCodonOptimizationOptions():
     except Exception as error:
         return {"error": "Encountered error while setting codon optimization options\n" + (
             traceback.format_exc() if __debug__ else "")}
+
+@app.route('/order', methods=['POST'])
+def order():
+    try:
+        request_json = request.get_json()
+        if "offers" not in request_json:
+            return {"error": "Request is missing fields"}
+
+        return json.jsonify(service.issueOrder(request_json["offers"]))
+    except Exception as error:
+        return {"error": "Encountered error while issuing order\n" + (
+            traceback.format_exc() if __debug__ else "")}

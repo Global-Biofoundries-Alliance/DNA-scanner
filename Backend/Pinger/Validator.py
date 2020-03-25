@@ -106,12 +106,15 @@ class EntityValidator(Validator):
                     return self.raiseFalse("SequenceVendorOffers contains invalid SequenceInformation")
             else:
                 return self.raiseFalse("sequenceInformation is not of type SequenceInformation")
-            for vendorOffers in obj.vendorOffers:
-                if isinstance(vendorOffers, VendorOffers):
-                    if (not self.validate(vendorOffers)):
-                        return self.raiseFalse("SequenceVendorOffers contains invalid VendorOffers")
-                else:
-                    return self.raiseFalse("vendorOffers is not of type VendorOffers")
+            if isinstance(obj.vendorOffers, list):
+                for vendorOffers in obj.vendorOffers:
+                    if isinstance(vendorOffers, VendorOffers):
+                        if (not self.validate(vendorOffers)):
+                            return self.raiseFalse("SequenceVendorOffers contains invalid VendorOffers")
+                    else:
+                        return self.raiseFalse("vendorOffers has elements with other type than VendorOffer")
+            else:
+                return self.raiseFalse("vendorOffers is not of type list")
 
         # SequenceOffers
         elif isinstance(obj, SequenceOffers):
@@ -155,11 +158,11 @@ class EntityValidator(Validator):
                 for message in obj.messages:
                     if isinstance(message, Message):
                         if (not self.validate(message)):
-                            return raiseFalse("one message in messages is invalid")
+                            return self.raiseFalse("one message in messages is invalid")
                     else:
-                        return raiseFalse("one object in message is not of type Message")
+                        return self.raiseFalse("one object in message is not of type Message")
             else:
-                return raiseFalse("messages is not of type List")
+                return self.raiseFalse("messages is not of type List")
         
         # Offer
         elif isinstance(obj, Offer):
@@ -243,7 +246,7 @@ class EntityValidator(Validator):
     #
     def raiseFalse(self, text = ""):
         if self.printError:
-            print("Validator.validate(...): Validation Failed >>>", text, "<<<")
+            print("EntityValidator.validate(...): Validation Failed >>>", text, "<<<")
         if self.raiseError:
             raise self.errorClass(text)
         return False

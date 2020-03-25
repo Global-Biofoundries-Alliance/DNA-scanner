@@ -28,6 +28,23 @@ class TestEntities(unittest.TestCase):
             # add key to list
             keys.append(offer.key)
 
+    #
+    #   Desc:   Test the automatic generation of unique ids in the SequenceInformation-Entity.
+    #
+    def test_sequenceinformation_id_generation(self):
+        # Initialize a empty list for keys
+        keys = []
+
+        # create n ids and put them in the list
+        # raise error if a generated key is not unique
+        n = 1000
+        for i in range(1, n):
+            # Create a new key
+            key = Entities.SequenceInformation.generateId()
+            # assert that key is not in list
+            self.assertFalse(key in keys)
+            # add key to list
+            keys.append(key)
 
 if __name__ == '__main__':
     unittest.main()

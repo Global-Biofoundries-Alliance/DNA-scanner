@@ -286,11 +286,11 @@ class DefaultComparisonService(ComparisonService):
 
             orderType = order.getType()
             if orderType == OrderType.NOT_SUPPORTED:
-                orders.append({"type": "NOT_SUPPORTED"})
+                orders.append({"vendor": vendor.key, "type": "NOT_SUPPORTED"})
             elif orderType == OrderType.URL_REDIRECT:
-                orders.append({"type": "URL_REDIRECT", "url": order.url})
+                orders.append({"vendor": vendor.key, "type": "URL_REDIRECT", "url": order.url})
             else:
-                orders.append({"type": "NOT_SUPPORTED"})
+                orders.append({"vendor": vendor.key, "type": "NOT_SUPPORTED"})
 
         return orders
 

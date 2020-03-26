@@ -19,15 +19,15 @@
 
                     <template v-for="(n,i) in slots.length" v-slot:[slots[i].price]="{header}">
                         <div :key="i">
-                            <p class="mb-0">Price({{computedPriceTotal[slots[i].key]}})</p>
-                            <p class="mb-0 pl-5">{{computedPriceOverview[slots[i].key]}}</p>
+                            <p class="mb-0">Price</p>
+                            <p class="mb-0">{{computedPriceTotal[slots[i].key]}} ({{computedPriceOverview[slots[i].key]}})</p>
                         </div>
                     </template>
 
                     <template v-for="(n,i) in slots.length" v-slot:[slots[i].time]="{header}">
                         <div :key="i">
-                            <p class="mb-0">Time({{computedTimeTotal[slots[i].key]}})</p>
-                            <p class="mb-0 pl-5">{{computedTimeOverview[slots[i].key]}}</p>
+                            <p class="mb-0">Time</p>
+                            <p class="mb-0">{{computedTimeTotal[slots[i].key]}} ({{computedTimeOverview[slots[i].key]}})</p>
                         </div>
                     </template>
 
@@ -176,7 +176,9 @@
                     this.results.forEach(i => {
                         if (i.vendors[vendorKey].offers.length !== 0 && i.vendors[vendorKey].offers[0].offerMessage.length === 0) {
                             this.selectBox[i.sequenceInformation.id] = i.vendors[vendorKey].offers[0].key;
-                            this.computedPriceOverview[vendorKey] = Math.round((this.computedPriceOverview[vendorKey] + i.vendors[vendorKey].offers[0].price) * 100) / 100;
+                            if(i.vendors[vendorKey].offers[0].price > 0){
+                                this.computedPriceOverview[vendorKey] = Math.round((this.computedPriceOverview[vendorKey] + i.vendors[vendorKey].offers[0].price) * 100) / 100;
+                            }
                             if (i.vendors[vendorKey].offers[0].turnoverTime > this.computedTimeOverview[vendorKey]) {
                                 this.computedTimeOverview[vendorKey] = i.vendors[vendorKey].offers[0].turnoverTime
                             }
@@ -191,7 +193,9 @@
                             this.results.forEach(i => {
                                 if (i.vendors[j].offers.length !== 0 && i.vendors[j].offers[0].offerMessage.length === 0) {
                                     if (this.selectBox[i.sequenceInformation.id] === i.vendors[j].offers[0].key) {
-                                        this.computedPriceOverview[j] = Math.round((this.computedPriceOverview[j] + i.vendors[j].offers[0].price) * 100) / 100;
+                                        if(i.vendors[j].offers[0].price > 0){
+                                            this.computedPriceOverview[j] = Math.round((this.computedPriceOverview[j] + i.vendors[j].offers[0].price) * 100) / 100;
+                                        }
                                         if (i.vendors[j].offers[0].turnoverTime > this.computedTimeOverview[j]) {
                                             this.computedTimeOverview[j] = i.vendors[j].offers[0].turnoverTime
                                         }
@@ -217,12 +221,16 @@
                     this.computedTimeTotal[j] = 0;
                     this.results.forEach(i => {
                         if (i.vendors[j].offers.length !== 0 && i.vendors[j].offers[0].offerMessage.length === 0) {
-                            this.computedPriceTotal[j] = Math.round((this.computedPriceTotal[j] + i.vendors[j].offers[0].price) * 100) / 100;
+                            if(i.vendors[j].offers[0].price > 0){
+                                this.computedPriceTotal[j] = Math.round((this.computedPriceTotal[j] + i.vendors[j].offers[0].price) * 100) / 100;
+                            }
                             if (i.vendors[j].offers[0].turnoverTime > this.computedTimeTotal[j]) {
                                 this.computedTimeTotal[j] = i.vendors[j].offers[0].turnoverTime
                             }
                             if (this.selectBox[i.sequenceInformation.id] === i.vendors[j].offers[0].key) {
-                                this.computedPriceOverview[j] = Math.round((this.computedPriceOverview[j] + i.vendors[j].offers[0].price) * 100) / 100;
+                                if(i.vendors[j].offers[0].price > 0){
+                                    this.computedPriceOverview[j] = Math.round((this.computedPriceOverview[j] + i.vendors[j].offers[0].price) * 100) / 100;
+                                }
                                 if (i.vendors[j].offers[0].turnoverTime > this.computedTimeOverview[j]) {
                                     this.computedTimeOverview[j] = i.vendors[j].offers[0].turnoverTime
                                 }
@@ -280,13 +288,17 @@
                     for (let k = 0; k < i.vendors[j].offers.length; k++) {
                         if (i.vendors[j].offers[k].selected) {
                             this.selectBox[i.sequenceInformation.id] = i.vendors[j].offers[k].key;
-                            this.computedPriceOverview[i.vendors[j].key] = Math.round((this.computedPriceOverview[i.vendors[j].key] + i.vendors[j].offers[k].price) * 100) / 100;
+                            if(i.vendors[j].offers[k].price > 0){
+                                this.computedPriceOverview[i.vendors[j].key] = Math.round((this.computedPriceOverview[i.vendors[j].key] + i.vendors[j].offers[k].price) * 100) / 100;
+                            }
                             if (i.vendors[j].offers[k].turnoverTime > this.computedTimeOverview[i.vendors[j].key]) {
                                 this.computedTimeOverview[i.vendors[j].key] = i.vendors[j].offers[k].turnoverTime
                             }
                         }
                         if (k === 0 && i.vendors[j].offers[0].offerMessage.length === 0 && i.vendors[j].offers.length !== 0) {
-                            this.computedPriceTotal[i.vendors[j].key] = Math.round((this.computedPriceTotal[i.vendors[j].key] + i.vendors[j].offers[k].price) * 100) / 100;
+                            if(i.vendors[j].offers[k].price > 0){
+                                this.computedPriceTotal[i.vendors[j].key] = Math.round((this.computedPriceTotal[i.vendors[j].key] + i.vendors[j].offers[k].price) * 100) / 100;
+                            }
                             if (i.vendors[j].offers[k].turnoverTime > this.computedTimeTotal[i.vendors[j].key]) {
                                 this.computedTimeTotal[i.vendors[j].key] = i.vendors[j].offers[k].turnoverTime
                             }

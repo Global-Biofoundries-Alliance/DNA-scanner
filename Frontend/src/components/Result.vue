@@ -10,400 +10,129 @@
                         class="elevation-1"
                         show-expand
                 >
-                    <template v-slot:header.selectedTwist="{header}">
-                        <v-chip color="red" @click="selectAllTwist()">
+
+                    <template v-for="(n,i) in slots.length" v-slot:[slots[i].name]="{header}">
+                        <v-chip :color=vendors[slots[i].key].color :key="slots[i].name" @click="selectAll(slots[i].key)">
                             {{header.text}}
                         </v-chip>
                     </template>
 
-                    <template v-slot:header.vendors[0].offers[0].price="{header}">
-                        <p class="mb-0" style="display: inline">Price</p>
-                        <p class="mb-0" style="display: inline">(</p>
-                        <p class="mb-0" style="display: inline">{{priceOverview[0]}}</p>
-                        <p class="mb-0" style="display: inline">)</p>
+                    <template v-for="(n,i) in slots.length" v-slot:[slots[i].price]="{header}">
+                        <div :key="i">
+                            <p class="mb-0">Price({{computedPriceTotal[slots[i].key]}})</p>
+                            <p class="mb-0 pl-5">{{computedPriceOverview[slots[i].key]}}</p>
+                        </div>
                     </template>
 
-                    <template v-slot:header.vendors[0].offers[0].turnoverTime="{header}">
-                        <p class="mb-0" style="display: inline">Time</p>
-                        <p class="mb-0" style="display: inline">(</p>
-                        <p class="mb-0" style="display: inline">{{timeOverview[0]}}</p>
-                        <p class="mb-0" style="display: inline">)</p>
+                    <template v-for="(n,i) in slots.length" v-slot:[slots[i].time]="{header}">
+                        <div :key="i">
+                            <p class="mb-0">Time({{computedTimeTotal[slots[i].key]}})</p>
+                            <p class="mb-0 pl-5">{{computedTimeOverview[slots[i].key]}}</p>
+                        </div>
                     </template>
 
-                    <template v-slot:header.selectedIDT="{header}">
-                        <v-chip color="green" @click="selectAllIDT()">
-                            {{header.text}}
-                        </v-chip>
+                    <template v-for="(n,i) in slots.length" v-slot:[slots[i].item]="{item, value}">
+                        <div :key="i">
+                            <v-tooltip v-if="item.vendors[slots[i].key].offers.length === 0" left>
+                                <template v-slot:activator="{ on }">
+                                    <v-icon :color=vendors[slots[i].key].color v-on="on">mdi-message</v-icon>
+                                </template>
+                                <span>No offer available</span>
+                            </v-tooltip>
+                            <v-tooltip v-else-if="item.vendors[slots[i].key].offers[0].offerMessage.length !== 0" left>
+                                <template v-slot:activator="{ on }">
+                                    <v-icon :color=vendors[slots[i].key].color v-on="on">mdi-message</v-icon>
+                                </template>
+                                <span>{{item.vendors[slots[i].key].offers[0].offerMessage[0].text}}</span>
+                            </v-tooltip>
+                            <v-checkbox v-else
+                                        v-model="selectBox[item.sequenceInformation.id]"
+                                        @change="select(item.sequenceInformation.id, item.vendors[slots[i].key].offers, item.vendors[slots[i].key].offers[0])"
+                                        :value="item.vendors[slots[i].key].offers[0].key"
+                                        :color=vendors[slots[i].key].color
+                            >
+                            </v-checkbox>
+                        </div>
                     </template>
 
-                    <template v-slot:header.vendors[1].offers[0].price="{header}">
-                        <p class="mb-0" style="display: inline">Price</p>
-                        <p class="mb-0" style="display: inline">(</p>
-                        <p class="mb-0" style="display: inline">{{priceOverview[1]}}</p>
-                        <p class="mb-0" style="display: inline">)</p>
+                    <template v-for="(n,i) in slots.length" v-slot:[slots[i].priceItem]="{item, value}">
+                        <div :key="i">
+                            <p v-if="item.vendors[slots[i].key].offers.length === 0 || item.vendors[slots[i].key].offers[0].offerMessage.length !== 0"
+                               class="mb-0">
+                                0
+                            </p>
+                            <v-chip v-else-if="selectBox[item.sequenceInformation.id] === item.vendors[slots[i].key].offers[0].key"
+                                    :color=vendors[slots[i].key].color>
+                                {{value}}
+                            </v-chip>
+                            <p v-else class="mb-0">{{value}}</p>
+                        </div>
                     </template>
 
-                    <template v-slot:header.vendors[1].offers[0].turnoverTime="{header}">
-                        <p class="mb-0" style="display: inline">Time</p>
-                        <p class="mb-0" style="display: inline">(</p>
-                        <p class="mb-0" style="display: inline">{{timeOverview[1]}}</p>
-                        <p class="mb-0" style="display: inline">)</p>
-                    </template>
-
-                    <template v-slot:header.selectedGeneArt="{header}">
-                        <v-chip color="orange" @click="selectAllGeneArt()">
-                            {{header.text}}
-                        </v-chip>
-                    </template>
-
-                    <template v-slot:header.vendors[2].offers[0].price="{header}">
-                        <p class="mb-0" style="display: inline">Price</p>
-                        <p class="mb-0" style="display: inline">(</p>
-                        <p class="mb-0" style="display: inline">{{priceOverview[2]}}</p>
-                        <p class="mb-0" style="display: inline">)</p>
-                    </template>
-
-                    <template v-slot:header.vendors[2].offers[0].turnoverTime="{header}">
-                        <p class="mb-0" style="display: inline">Time</p>
-                        <p class="mb-0" style="display: inline">(</p>
-                        <p class="mb-0" style="display: inline">{{timeOverview[2]}}</p>
-                        <p class="mb-0" style="display: inline">)</p>
-                    </template>
-
-                    <template v-slot:item.selectedTwist="{item, value}">
-                        <v-tooltip v-if="item.vendors[0].offers.length === 0" left>
-                            <template v-slot:activator="{ on }">
-                                <v-icon color="red" v-on="on">mdi-message</v-icon>
-                            </template>
-                            <span>No offer available</span>
-                        </v-tooltip>
-                        <v-tooltip v-else-if="item.vendors[0].offers[0].offerMessage.length !== 0" left>
-                            <template v-slot:activator="{ on }">
-                                <v-icon color="red" v-on="on">mdi-message</v-icon>
-                            </template>
-                            <span>{{item.vendors[0].offers[0].offerMessage[0].text}}</span>
-                        </v-tooltip>
-                        <v-checkbox v-else
-                                    v-model="selected[0]"
-                                    :value="item.vendors[0].offers[0].id"
-                                    @change="selectTwist(item.vendors[0].offers, 0)"
-                                    color="red"></v-checkbox>
-                    </template>
-
-
-                    <template v-slot:item.vendors[0].offers[0].price="{item, value}">
-                        <p v-if="item.vendors[0].offers.length === 0 || item.vendors[0].offers[0].offerMessage.length !== 0"
-                           class="mb-0">0</p>
-                        <v-chip v-else-if="item.vendors[0].offers[0].selected" color="red">{{value}}</v-chip>
-                        <p v-else class="mb-0">{{value}}</p>
-                    </template>
-
-                    <template v-slot:item.vendors[0].offers[0].turnoverTime="{item, value}">
-                        <p v-if="item.vendors[0].offers.length === 0 || item.vendors[0].offers[0].offerMessage.length !== 0"
-                           class="mb-0">0</p>
-                        <v-chip v-else-if="item.vendors[0].offers[0].selected" color="red">{{value}}</v-chip>
-                        <p v-else class="mb-0">{{value}}</p>
-                    </template>
-
-                    <template v-slot:item.selectedIDT="{item}">
-                        <v-tooltip v-if="item.vendors[1].offers.length === 0" left>
-                            <template v-slot:activator="{ on }">
-                                <v-icon color="green" v-on="on">mdi-message</v-icon>
-                            </template>
-                            <span>No offer available</span>
-                        </v-tooltip>
-                        <v-tooltip v-else-if="item.vendors[1].offers[0].offerMessage.length !== 0" left>
-                            <template v-slot:activator="{ on }">
-                                <v-icon color="green" v-on="on">mdi-message</v-icon>
-                            </template>
-                            <span>{{item.vendors[1].offers[0].offerMessage[0].text}}</span>
-                        </v-tooltip>
-                        <v-checkbox v-else
-                                    v-model="selected[1]"
-                                    :value="item.vendors[1].offers[0].id"
-                                    @change="selectIDT(item.vendors[1].offers, 0)"
-                                    color="green"></v-checkbox>
-                    </template>
-
-                    <template v-slot:item.vendors[1].offers[0].price="{item, value}">
-                        <p v-if="item.vendors[1].offers.length === 0 || item.vendors[1].offers[0].offerMessage.length !== 0"
-                           class="mb-0">0</p>
-                        <v-chip v-else-if="item.vendors[1].offers[0].selected" color="green">{{value}}</v-chip>
-                        <p v-else class="mb-0">{{value}}</p>
-                    </template>
-
-                    <template v-slot:item.vendors[1].offers[0].turnoverTime="{item, value}">
-                        <p v-if="item.vendors[1].offers.length === 0 || item.vendors[1].offers[0].offerMessage.length !== 0"
-                           class="mb-0">0</p>
-                        <v-chip v-else-if="item.vendors[1].offers[0].selected" color="green">{{value}}</v-chip>
-                        <p v-else class="mb-0">{{value}}</p>
-                    </template>
-
-                    <template v-slot:item.selectedGeneArt="{item}">
-                        <v-tooltip v-if="item.vendors[2].offers.length === 0" left>
-                            <template v-slot:activator="{ on }">
-                                <v-icon color="orange" v-on="on">mdi-message</v-icon>
-                            </template>
-                            <span>No offer available</span>
-                        </v-tooltip>
-                        <v-tooltip v-else-if="item.vendors[2].offers[0].offerMessage.length !== 0" left>
-                            <template v-slot:activator="{ on }">
-                                <v-icon color="orange" v-on="on">mdi-message</v-icon>
-                            </template>
-                            <span>{{item.vendors[2].offers[0].offerMessage[0].text}}</span>
-                        </v-tooltip>
-                        <v-checkbox v-else
-                                    v-model="selected[2]"
-                                    :value="item.vendors[2].offers[0].id"
-                                    @change="selectGeneArt(item.vendors[2].offers, 0)"
-                                    color="orange"></v-checkbox>
-                    </template>
-
-                    <template v-slot:item.vendors[2].offers[0].price="{item, value}">
-                        <p v-if="item.vendors[2].offers.length === 0 || item.vendors[2].offers[0].offerMessage.length !== 0"
-                           class="mb-0">0</p>
-                        <v-chip v-else-if="item.vendors[2].offers[0].selected" color="orange">{{value}}</v-chip>
-                        <p v-else class="mb-0">{{value}}</p>
-                    </template>
-
-                    <template v-slot:item.vendors[2].offers[0].turnoverTime="{item, value}">
-                        <p v-if="item.vendors[2].offers.length === 0 || item.vendors[2].offers[0].offerMessage.length !== 0"
-                           class="mb-0">0</p>
-                        <v-chip v-else-if="item.vendors[2].offers[0].selected" color="orange">{{value}}</v-chip>
-                        <p v-else class="mb-0">{{value}}</p>
+                    <template v-for="(n,i) in slots.length" v-slot:[slots[i].timeItem]="{item, value}">
+                        <div :key="i">
+                            <p v-if="item.vendors[slots[i].key].offers.length === 0 || item.vendors[slots[i].key].offers[0].offerMessage.length !== 0"
+                               class="mb-0">0</p>
+                            <v-chip v-else-if="selectBox[item.sequenceInformation.id] === item.vendors[slots[i].key].offers[0].key"
+                                    :color=vendors[slots[i].key].color>{{value}}
+                            </v-chip>
+                            <p v-else class="mb-0">{{value}}</p>
+                        </div>
                     </template>
 
                     <template v-slot:expanded-item="{item, headers}">
                         <td :colspan="headers.length" class="pa-0">
-                            <v-data-table
-                                    :headers="headersSecond"
-                                    :items="item.vendors[item.sequenceInformation.mostOffVendor].offers"
-                                    item-key="sequenceInformation.name"
-                                    class="elevation-1"
-                                    hide-default-footer
-                            >
-                                <template v-slot:header.selectedTwist="{header}">
-                                    <v-chip>
-                                        {{header.text}}
-                                    </v-chip>
-                                </template>
-                                <template v-slot:header.selectedIDT="{header}">
-                                    <v-chip>
-                                        {{header.text}}
-                                    </v-chip>
-                                </template>
-                                <template v-slot:header.selectedGeneArt="{header}">
-                                    <v-chip>
-                                        {{header.text}}
-                                    </v-chip>
-                                </template>
-
-                                <template v-slot:item="props">
-                                    <tr>
-
-                                        <!--                                        <td v-for="(n,i) in 3" :key="i">-->
-                                        <!--                                            <p class="mb-0"-->
-                                        <!--                                               v-if="results[item.sequenceInformation.id].vendors[i].offers.length <= props.index"></p>-->
-                                        <!--                                            <v-tooltip-->
-                                        <!--                                                    v-else-if="results[item.sequenceInformation.id].vendors[i].offers[props.index].offerMessage.length !== 0"-->
-                                        <!--                                                    right>-->
-                                        <!--                                                <template v-slot:activator="{ on }">-->
-                                        <!--                                                    <v-icon color="red" v-on="on">mdi-message</v-icon>-->
-                                        <!--                                                </template>-->
-                                        <!--                                                <span>{{results[item.sequenceInformation.id].vendors[i].offers[props.index].offerMessage[0].text}}</span>-->
-                                        <!--                                            </v-tooltip>-->
-                                        <!--                                            <v-checkbox v-else-->
-                                        <!--                                                        v-model="selected[i]"-->
-                                        <!--                                                        :value="results[item.sequenceInformation.id].vendors[i].offers[props.index].id"-->
-                                        <!--                                                        @change="selectTwist(results[item.sequenceInformation.id].vendors[i].offers, props.index)"-->
-                                        <!--                                                        color="red">-->
-                                        <!--                                            </v-checkbox>-->
-                                        <!--                                        </td>-->
-
-                                        <!--                                        <td v-for="(n,i) in 3" :key="i">-->
-                                        <!--                                            <p class="mb-0"-->
-                                        <!--                                               v-if="results[item.sequenceInformation.id].vendors[i].offers.length <= props.index"></p>-->
-                                        <!--                                            <p class="mb-0"-->
-                                        <!--                                               v-else-if="results[item.sequenceInformation.id].vendors[i].offers[props.index].offerMessage.length !== 0">-->
-                                        <!--                                                0-->
-                                        <!--                                            </p>-->
-                                        <!--                                            <p class="mb-0"-->
-                                        <!--                                               v-else-if="results[item.sequenceInformation.id].vendors[i].offers[props.index].selected">-->
-                                        <!--                                                <v-chip color="red">-->
-                                        <!--                                                    {{results[item.sequenceInformation.id].vendors[i].offers[props.index].price}}-->
-                                        <!--                                                </v-chip>-->
-                                        <!--                                            </p>-->
-                                        <!--                                            <p class="mb-0" v-else>-->
-                                        <!--                                                {{results[item.sequenceInformation.id].vendors[i].offers[props.index].price}}-->
-                                        <!--                                            </p>-->
-                                        <!--                                        </td>-->
-
-                                        <td v-if="selectedVendors.includes(0)">
-                                            <p class="mb-0"
-                                               v-if="results[item.sequenceInformation.id].vendors[0].offers.length <= props.index"></p>
-                                            <v-tooltip
-                                                    v-else-if="results[item.sequenceInformation.id].vendors[0].offers[props.index].offerMessage.length !== 0"
-                                                    right>
+                            <v-row>
+                                <v-col v-for="(n,i) in selectedVendors.length" :key="i">
+                                    <v-data-table
+                                            :headers="headersSecond[i]"
+                                            :items="item.vendors[selectedVendors[i]].offers"
+                                            item-key="sequenceInformation.name"
+                                            class="elevation-1"
+                                            hide-default-footer
+                                    >
+                                        <template v-slot:[slots[i].item]="props">
+                                            <v-tooltip v-if="props.item.offerMessage.length !== 0" left>
                                                 <template v-slot:activator="{ on }">
-                                                    <v-icon color="red" v-on="on">mdi-message</v-icon>
+                                                    <v-icon :color=vendors[selectedVendors[i]].color v-on="on">mdi-message</v-icon>
                                                 </template>
-                                                <span>{{results[item.sequenceInformation.id].vendors[0].offers[props.index].offerMessage[0].text}}</span>
+                                                <span>{{props.item.offerMessage[0].text}}</span>
                                             </v-tooltip>
                                             <v-checkbox v-else
-                                                        v-model="selected[0]"
-                                                        :value="results[item.sequenceInformation.id].vendors[0].offers[props.index].id"
-                                                        @change="selectTwist(results[item.sequenceInformation.id].vendors[0].offers, props.index)"
-                                                        color="red"
-                                                        :disabled="selected[0].includes(results[item.sequenceInformation.id].vendors[0].offers[0].id)">
+                                                        v-model="selectBox[item.sequenceInformation.id]"
+                                                        @change="select(item.sequenceInformation.id, item.vendors[selectedVendors[i]].offers, props.item)"
+                                                        :value="props.item.key"
+                                                        :color=vendors[selectedVendors[i]].color
+                                            >
                                             </v-checkbox>
-                                        </td>
-                                        <td v-if="selectedVendors.includes(0)">
-                                            <p class="mb-0"
-                                               v-if="results[item.sequenceInformation.id].vendors[0].offers.length <= props.index"></p>
-                                            <p class="mb-0"
-                                               v-else-if="results[item.sequenceInformation.id].vendors[0].offers[props.index].offerMessage.length !== 0">
-                                                0</p>
-                                            <p class="mb-0"
-                                               v-else-if="results[item.sequenceInformation.id].vendors[0].offers[props.index].selected">
-                                                <v-chip color="red">
-                                                    {{results[item.sequenceInformation.id].vendors[0].offers[props.index].price}}
-                                                </v-chip>
-                                            </p>
-                                            <p class="mb-0" v-else>
-                                                {{results[item.sequenceInformation.id].vendors[0].offers[props.index].price}}
-                                            </p>
-                                        </td>
-                                        <td v-if="selectedVendors.includes(0)">
-                                            <p class="mb-0"
-                                               v-if="results[item.sequenceInformation.id].vendors[0].offers.length <= props.index"></p>
-                                            <p class="mb-0"
-                                               v-else-if="results[item.sequenceInformation.id].vendors[0].offers[props.index].offerMessage.length !== 0">
-                                                0</p>
-                                            <p class="mb-0"
-                                               v-else-if="results[item.sequenceInformation.id].vendors[0].offers[props.index].selected">
-                                                <v-chip color="red">
-                                                    {{results[item.sequenceInformation.id].vendors[0].offers[props.index].turnoverTime}}
-                                                </v-chip>
-                                            </p>
-                                            <p class="mb-0" v-else>
-                                                {{results[item.sequenceInformation.id].vendors[0].offers[props.index].turnoverTime}}
-                                            </p>
-                                        </td>
+                                        </template>
 
-                                        <td v-if="selectedVendors.includes(1)">
-                                            <p class="mb-0"
-                                               v-if="results[item.sequenceInformation.id].vendors[1].offers.length <= props.index"></p>
-                                            <v-tooltip
-                                                    v-else-if="results[item.sequenceInformation.id].vendors[1].offers[props.index].offerMessage.length !== 0"
-                                                    right>
-                                                <template v-slot:activator="{ on }">
-                                                    <v-icon color="green" v-on="on">mdi-message</v-icon>
-                                                </template>
-                                                <span>{{results[item.sequenceInformation.id].vendors[1].offers[props.index].offerMessage[0].text}}</span>
-                                            </v-tooltip>
-                                            <v-checkbox v-else
-                                                        v-model="selected[1]"
-                                                        :value="results[item.sequenceInformation.id].vendors[1].offers[props.index].id"
-                                                        @change="selectIDT(results[item.sequenceInformation.id].vendors[1].offers, props.index)"
-                                                        color="green"
-                                                        :disabled="selected[1].includes(results[item.sequenceInformation.id].vendors[1].offers[0].id)">
-                                            </v-checkbox>
-                                        </td>
-                                        <td v-if="selectedVendors.includes(1)">
-                                            <p class="mb-0"
-                                               v-if="results[item.sequenceInformation.id].vendors[1].offers.length <= props.index"></p>
-                                            <p class="mb-0"
-                                               v-else-if="results[item.sequenceInformation.id].vendors[1].offers[props.index].offerMessage.length !== 0">
-                                                0</p>
-                                            <p class="mb-0"
-                                               v-else-if="results[item.sequenceInformation.id].vendors[1].offers[props.index].selected">
-                                                <v-chip color="green">
-                                                    {{results[item.sequenceInformation.id].vendors[1].offers[props.index].price}}
-                                                </v-chip>
-                                            </p>
-                                            <p class="mb-0" v-else>
-                                                {{results[item.sequenceInformation.id].vendors[1].offers[props.index].price}}
-                                            </p>
-                                        </td>
-                                        <td v-if="selectedVendors.includes(1)">
-                                            <p class="mb-0"
-                                               v-if="results[item.sequenceInformation.id].vendors[1].offers.length <= props.index"></p>
-                                            <p class="mb-0"
-                                               v-else-if="results[item.sequenceInformation.id].vendors[1].offers[props.index].offerMessage.length !== 0">
-                                                0</p>
-                                            <p class="mb-0"
-                                               v-else-if="results[item.sequenceInformation.id].vendors[1].offers[props.index].selected">
-                                                <v-chip color="green">
-                                                    {{results[item.sequenceInformation.id].vendors[1].offers[props.index].turnoverTime}}
-                                                </v-chip>
-                                            </p>
-                                            <p class="mb-0" v-else>
-                                                {{results[item.sequenceInformation.id].vendors[1].offers[props.index].turnoverTime}}
-                                            </p>
-                                        </td>
+                                        <template v-slot:item.price="props">
+                                            <p v-if="props.item.offerMessage.length !== 0"
+                                               class="mb-0">0</p>
+                                            <v-chip v-else-if="selectBox[item.sequenceInformation.id] === props.item.key"
+                                                    :color=vendors[selectedVendors[i]].color>
+                                                {{props.value}}
+                                            </v-chip>
+                                            <p v-else class="mb-0">{{props.value}}</p>
+                                        </template>
 
-                                        <td v-if="selectedVendors.includes(2)">
-                                            <p class="mb-0"
-                                               v-if="results[item.sequenceInformation.id].vendors[2].offers.length <= props.index"></p>
-                                            <v-tooltip
-                                                    v-else-if="results[item.sequenceInformation.id].vendors[2].offers[props.index].offerMessage.length !== 0"
-                                                    right>
-                                                <template v-slot:activator="{ on }">
-                                                    <v-icon color="orange" v-on="on">mdi-message</v-icon>
-                                                </template>
-                                                <span>{{results[item.sequenceInformation.id].vendors[2].offers[props.index].offerMessage[0].text}}</span>
-                                            </v-tooltip>
-                                            <v-checkbox v-else
-                                                        v-model="selected[2]"
-                                                        :value="results[item.sequenceInformation.id].vendors[2].offers[props.index].id"
-                                                        @change="selectGeneArt(results[item.sequenceInformation.id].vendors[2].offers, props.index)"
-                                                        color="orange"
-                                                        :disabled="selected[2].includes(results[item.sequenceInformation.id].vendors[2].offers[0].id)">
-                                            </v-checkbox>
-                                        </td>
-                                        <td v-if="selectedVendors.includes(2)">
-                                            <p class="mb-0"
-                                               v-if="results[item.sequenceInformation.id].vendors[2].offers.length <= props.index"></p>
-                                            <p class="mb-0"
-                                               v-else-if="results[item.sequenceInformation.id].vendors[2].offers[props.index].offerMessage.length !== 0">
-                                                0</p>
-                                            <p class="mb-0"
-                                               v-else-if="results[item.sequenceInformation.id].vendors[2].offers[props.index].selected">
-                                                <v-chip color="orange">
-                                                    {{results[item.sequenceInformation.id].vendors[2].offers[props.index].price}}
-                                                </v-chip>
-                                            </p>
-                                            <p class="mb-0" v-else>
-                                                {{results[item.sequenceInformation.id].vendors[2].offers[props.index].price}}
-                                            </p>
-                                        </td>
-                                        <td v-if="selectedVendors.includes(2)">
-                                            <p class="mb-0"
-                                               v-if="results[item.sequenceInformation.id].vendors[2].offers.length <= props.index"></p>
-                                            <p class="mb-0"
-                                               v-else-if="results[item.sequenceInformation.id].vendors[2].offers[props.index].offerMessage.length !== 0">
-                                                0</p>
-                                            <p class="mb-0"
-                                               v-else-if="results[item.sequenceInformation.id].vendors[2].offers[props.index].selected">
-                                                <v-chip color="orange">
-                                                    {{results[item.sequenceInformation.id].vendors[2].offers[props.index].turnoverTime}}
-                                                </v-chip>
-                                            </p>
-                                            <p class="mb-0" v-else>
-                                                {{results[item.sequenceInformation.id].vendors[2].offers[props.index].turnoverTime}}
-                                            </p>
-                                        </td>
-                                    </tr>
-                                </template>
-                            </v-data-table>
+                                        <template v-slot:item.turnoverTime="props">
+                                            <p v-if="props.item.offerMessage.length !== 0"
+                                               class="mb-0">0</p>
+                                            <v-chip v-else-if="selectBox[item.sequenceInformation.id] === props.item.key"
+                                                    :color=vendors[selectedVendors[i]].color>
+                                                {{props.value}}
+                                            </v-chip>
+                                            <p v-else class="mb-0">{{props.value}}</p>
+                                        </template>
+                                    </v-data-table>
+                                </v-col>
+                            </v-row>
                         </td>
                     </template>
                 </v-data-table>
-<!--                <p>{{selectedTwist}}</p>-->
-<!--                <p>{{selectedIDT}}</p>-->
-<!--                <p>{{selectedGeneArt}}</p>-->
-<!--                <p>{{computedHeaders}}</p>-->
-<!--                <p>{{computedHeadersSecond}}</p>-->
+                <p>{{this.selectBox}}</p>
             </v-app>
         </div>
     </div>
@@ -414,175 +143,98 @@
         name: 'Result',
         data() {
             return {
+                computedSlots: [],
                 computedHeaders: [],
-                computedHeadersSecond: [],
-                expanded: [],
-                lengthTwist: 0,
-                lengthIDT: 0,
-                lengthGeneArt: 0,
-                checkTwist: false,
-                checkIDT: false,
-                checkGeneArt: false,
-                singleExpand: false,
-                selected: {
+                computedHeadersSecond: {
                     0: [],
                     1: [],
                     2: []
                 },
-                priceOverview: {
-                    0: 0,
-                    1: 0,
-                    2: 0
-                },
-                timeOverview: {
-                    0: 0,
-                    1: 0,
-                    2: 0
-                },
-                timeOverviewTwist: [0],
-                timeOverviewIDT: [0],
-                timeOverviewGeneArt: [0],
+                expanded: [],
+                computedPriceOverview: [],
+                computedPriceTotal: [],
+                computedTimeOverview: [],
+                computedTimeTotal: [],
+                computedSelectedAll: [],
 
             }
         },
         methods: {
-            selectTwist(offers, index) {
-                if (!offers[index].selected) {
-                    this.priceOverview[0] = Math.round((this.priceOverview[0] + offers[index].price) * 100) / 100;
-                    this.timeOverviewTwist.push(offers[index].turnoverTime);
-                    this.timeOverview[0] = Math.max(...this.timeOverviewTwist);
-                    offers[index].selected = true;
-                    var temp = offers[0];
-                    offers[0] = offers[index];
-                    offers[index] = temp;
-                } else {
-                    this.priceOverview[0] = Math.round((this.priceOverview[0] - offers[index].price) * 100) / 100;
-                    this.timeOverviewTwist.splice(this.timeOverviewTwist.indexOf(offers[index].turnoverTime), 1);
-                    this.timeOverview[0] = Math.max(...this.timeOverviewTwist);
-                    offers[index].selected = false
-                }
-                this.checkTwist = this.selected[0].length >= this.results.length - this.lengthTwist;
-            },
-            selectAllTwist() {
-                if (!this.checkTwist) {
+            selectAll(vendorKey) {
+                if (this.computedSelectedAll[vendorKey]) {
                     this.results.forEach(i => {
-                        if (i.vendors[0].offers.length !== 0) {
-                            if (i.vendors[0].offers[0].offerMessage.length === 0 && !this.selected[0].includes(i.vendors[0].offers[0].id)) {
-                                this.priceOverview[0] = Math.round((this.priceOverview[0] + i.vendors[0].offers[0].price) * 100) / 100;
-                                this.timeOverviewTwist.push(i.vendors[0].offers[0].turnoverTime);
-                                this.timeOverview[0] = Math.max(...this.timeOverviewTwist);
-                                i.vendors[0].offers[0].selected = true;
-                                this.selected[0].push(i.vendors[0].offers[0].id)
-                            }
+                        if (i.vendors[vendorKey].offers.length !== 0 && i.vendors[vendorKey].offers[0].offerMessage.length === 0) {
+                            this.selectBox[i.sequenceInformation.id] = false;
                         }
                     });
-                    this.checkTwist = true;
+                    this.computedPriceOverview[vendorKey] = 0;
+                    this.computedTimeOverview[vendorKey] = 0;
+                    this.computedSelectedAll[vendorKey] = false;
+                    this.$forceUpdate();
                 } else {
+                    this.computedPriceOverview[vendorKey] = 0;
+                    this.computedTimeOverview[vendorKey] = 0;
                     this.results.forEach(i => {
-                        if (i.vendors[0].offers.length !== 0) {
-                            if (i.vendors[0].offers[0].offerMessage.length === 0 && this.selected[0].includes(i.vendors[0].offers[0].id)) {
-                                this.priceOverview[0] = Math.round((this.priceOverview[0] - i.vendors[0].offers[0].price) * 100) / 100;
-                                this.timeOverviewTwist.splice(this.timeOverviewTwist.indexOf(i.vendors[0].offers[0].turnoverTime), 1);
-                                this.timeOverview[0] = Math.max(...this.timeOverviewTwist);
-                                i.vendors[0].offers[0].selected = false
+                        if (i.vendors[vendorKey].offers.length !== 0 && i.vendors[vendorKey].offers[0].offerMessage.length === 0) {
+                            this.selectBox[i.sequenceInformation.id] = i.vendors[vendorKey].offers[0].key;
+                            this.computedPriceOverview[vendorKey] = Math.round((this.computedPriceOverview[vendorKey] + i.vendors[vendorKey].offers[0].price) * 100) / 100;
+                            if (i.vendors[vendorKey].offers[0].turnoverTime > this.computedTimeOverview[vendorKey]) {
+                                this.computedTimeOverview[vendorKey] = i.vendors[vendorKey].offers[0].turnoverTime
                             }
+                            this.$forceUpdate();
                         }
                     });
-                    this.selected[0] = [];
-                    this.checkTwist = false;
-                }
-            },
-            selectIDT(offers, index) {
-                if (!offers[index].selected) {
-                    this.priceOverview[1] = Math.round((this.priceOverview[1] + offers[index].price) * 100) / 100;
-                    this.timeOverviewIDT.push(offers[index].turnoverTime);
-                    this.timeOverview[1] = Math.max(...this.timeOverviewIDT);
-                    offers[index].selected = true;
-                    var temp = offers[0];
-                    offers[0] = offers[index];
-                    offers[index] = temp;
-                } else {
-                    this.priceOverview[1] = Math.round((this.priceOverview[1] - offers[index].price) * 100) / 100;
-                    this.timeOverviewIDT.splice(this.timeOverviewIDT.indexOf(offers[index].turnoverTime), 1);
-                    this.timeOverview[1] = Math.max(...this.timeOverviewIDT);
-                    offers[index].selected = false
-                }
-                this.checkIDT = this.selected[1].length >= this.results.length - this.lengthIDT;
-            },
-            selectAllIDT() {
-                if (!this.checkIDT) {
-                    this.results.forEach(i => {
-                        if (i.vendors[1].offers.length !== 0) {
-                            if (i.vendors[1].offers[0].offerMessage.length === 0 && !this.selected[1].includes(i.vendors[1].offers[0].id)) {
-                                this.priceOverview[1] = Math.round((this.priceOverview[1] + i.vendors[1].offers[0].price) * 100) / 100;
-                                this.timeOverviewIDT.push(i.vendors[1].offers[0].turnoverTime);
-                                this.timeOverview[1] = Math.max(...this.timeOverviewIDT);
-                                i.vendors[1].offers[0].selected = true;
-                                this.selected[1].push(i.vendors[1].offers[0].id)
-                            }
+                    this.computedSelectedAll[vendorKey] = true;
+                    for (let j = 0; j < this.computedSelectedAll.length; j++) {
+                        if (j !== vendorKey) {
+                            this.computedPriceOverview[j] = 0;
+                            this.computedTimeOverview[j] = 0;
+                            this.results.forEach(i => {
+                                if (i.vendors[j].offers.length !== 0 && i.vendors[j].offers[0].offerMessage.length === 0) {
+                                    if (this.selectBox[i.sequenceInformation.id] === i.vendors[j].offers[0].key) {
+                                        this.computedPriceOverview[j] = Math.round((this.computedPriceOverview[j] + i.vendors[j].offers[0].price) * 100) / 100;
+                                        if (i.vendors[j].offers[0].turnoverTime > this.computedTimeOverview[j]) {
+                                            this.computedTimeOverview[j] = i.vendors[j].offers[0].turnoverTime
+                                        }
+                                    }
+                                }
+                            });
+                            this.$forceUpdate();
+                            this.computedSelectedAll[j] = false
                         }
-                    });
-                    this.checkIDT = true;
-                } else {
-                    this.results.forEach(i => {
-                        if (i.vendors[1].offers.length !== 0) {
-                            if (i.vendors[1].offers[0].offerMessage.length === 0 && this.selected[1].includes(i.vendors[1].offers[0].id)) {
-                                this.priceOverview[1] = Math.round((this.priceOverview[1] - i.vendors[1].offers[0].price) * 100) / 100;
-                                this.timeOverviewIDT.splice(this.timeOverviewIDT.indexOf(i.vendors[1].offers[0].turnoverTime), 1);
-                                this.timeOverview[1] = Math.max(...this.timeOverviewIDT);
-                                i.vendors[1].offers[0].selected = false
-                            }
-                        }
-                    });
-                    this.selected[1] = [];
-                    this.checkIDT = false;
+                    }
                 }
             },
-            selectGeneArt(offers, index) {
-                if (!offers[index].selected) {
-                    this.priceOverview[2] = Math.round((this.priceOverview[2] + offers[index].price) * 100) / 100;
-                    this.timeOverviewGeneArt.push(offers[index].turnoverTime);
-                    this.timeOverview[2] = Math.max(...this.timeOverviewGeneArt);
-                    offers[index].selected = true;
-                    var temp = offers[0];
-                    offers[0] = offers[index];
-                    offers[index] = temp;
-                } else {
-                    this.priceOverview[2] = Math.round((this.priceOverview[2] - offers[index].price) * 100) / 100;
-                    this.timeOverviewGeneArt.splice(this.timeOverviewGeneArt.indexOf(offers[index].turnoverTime), 1);
-                    this.timeOverview[2] = Math.max(...this.timeOverviewGeneArt);
-                    offers[index].selected = false
-                }
-                this.checkGeneArt = this.selected[2].length >= this.results.length - this.lengthGeneArt;
-            },
-            selectAllGeneArt() {
-                if (!this.checkGeneArt) {
+            select(sequenceId, offers, item) {
+                let index = offers.indexOf(item);
+                let temp = offers[0];
+                offers[0] = item;
+                offers[index] = temp;
+
+                for (let j = 0; j < this.computedSelectedAll.length; j++) {
+                    this.computedPriceOverview[j] = 0;
+                    this.computedTimeOverview[j] = 0;
+                    this.computedPriceTotal[j] = 0;
+                    this.computedTimeTotal[j] = 0;
                     this.results.forEach(i => {
-                        if (i.vendors[2].offers.length !== 0) {
-                            if (i.vendors[2].offers[0].offerMessage.length === 0 && !this.selected[2].includes(i.vendors[2].offers[0].id)) {
-                                this.priceOverview[2] = Math.round((this.priceOverview[2] + i.vendors[2].offers[0].price) * 100) / 100;
-                                this.timeOverviewGeneArt.push(i.vendors[2].offers[0].turnoverTime);
-                                this.timeOverview[2] = Math.max(...this.timeOverviewGeneArt);
-                                i.vendors[2].offers[0].selected = true;
-                                this.selected[2].push(i.vendors[2].offers[0].id)
+                        if (i.vendors[j].offers.length !== 0 && i.vendors[j].offers[0].offerMessage.length === 0) {
+                            this.computedPriceTotal[j] = Math.round((this.computedPriceTotal[j] + i.vendors[j].offers[0].price) * 100) / 100;
+                            if (i.vendors[j].offers[0].turnoverTime > this.computedTimeTotal[j]) {
+                                this.computedTimeTotal[j] = i.vendors[j].offers[0].turnoverTime
+                            }
+                            if (this.selectBox[i.sequenceInformation.id] === i.vendors[j].offers[0].key) {
+                                this.computedPriceOverview[j] = Math.round((this.computedPriceOverview[j] + i.vendors[j].offers[0].price) * 100) / 100;
+                                if (i.vendors[j].offers[0].turnoverTime > this.computedTimeOverview[j]) {
+                                    this.computedTimeOverview[j] = i.vendors[j].offers[0].turnoverTime
+                                }
                             }
                         }
                     });
-                    this.checkGeneArt = true;
-                } else {
-                    this.results.forEach(i => {
-                        if (i.vendors[2].offers.length !== 0) {
-                            if (i.vendors[2].offers[0].offerMessage.length === 0 && this.selected[2].includes(i.vendors[2].offers[0].id)) {
-                                this.priceOverview[2] = Math.round((this.priceOverview[2] - i.vendors[2].offers[0].price) * 100) / 100;
-                                this.timeOverviewGeneArt.splice(this.timeOverviewGeneArt.indexOf(i.vendors[2].offers[0].turnoverTime), 1);
-                                this.timeOverview[2] = Math.max(...this.timeOverviewGeneArt);
-                                i.vendors[2].offers[0].selected = false
-                            }
-                        }
-                    });
-                    this.selected[2] = [];
-                    this.checkGeneArt = false;
+                    this.$forceUpdate();
                 }
+                // eslint-disable-next-line no-console
+                console.log(this.selectBox)
+
             },
         },
         computed: {
@@ -601,56 +253,48 @@
             results() {
                 return this.$store.state.StoreSearchResult
             },
+            slots() {
+                return this.computedSlots
+            },
+            selectBox: {
+                get() {
+                    return this.$store.state.StoreSelectedOffers;
+                },
+                set(value) {
+                    this.$store.commit('updateSelectedOffers', value)
+                }
+            }
 
 
         },
         created() {
-            let i, j, k;
-            for (i = 0; i < this.$store.state.StoreSearchResult.length; i++) {
-                for (j = 0; j < this.results[i].vendors.length; j++) {
-                    if (this.results[i].vendors[j].offers.length === 0 || this.results[i].vendors[j].offers[0].offerMessage.length !== 0) {
-                        if (j === 0) {
-                            this.lengthTwist -= 1;
-                        }
-                        if (j === 1) {
-                            this.lengthIDT -= 1;
-                        }
-                        if (j === 2) {
-                            this.lengthGeneArt -= 1;
-                        }
-                    }
-                    for (k = 0; k < this.results[i].vendors[j].offers.length; k++) {
-                        if (this.results[i].vendors[j].offers[k].selected) {
-                            if (j === 0) {
-                                this.selected[j].push(this.results[i].vendors[j].offers[k].id);
-                                this.priceOverview[j] = Math.round((this.priceOverview[j] + this.results[i].vendors[j].offers[k].price) * 100) / 100;
-                                this.timeOverviewTwist.push(this.results[i].vendors[j].offers[k].turnoverTime);
-                                this.timeOverview[0] = Math.max(...this.timeOverviewTwist);
+            for(let j = 0; j < this.vendors.length; j++) {
+                this.computedPriceOverview[j] = 0;
+                this.computedPriceTotal[j] = 0;
+                this.computedTimeOverview[j] = 0;
+                this.computedTimeTotal[j] = 0;
+                this.computedSelectedAll[j] = false;
+            }
+            this.selectBox = [];
+            this.results.forEach(i => {
+                for(let j = 0; j < i.vendors.length; j++) {
+                    for (let k = 0; k < i.vendors[j].offers.length; k++) {
+                        if (i.vendors[j].offers[k].selected) {
+                            this.selectBox[i.sequenceInformation.id] = i.vendors[j].offers[k].key;
+                            this.computedPriceOverview[i.vendors[j].key] = Math.round((this.computedPriceOverview[i.vendors[j].key] + i.vendors[j].offers[k].price) * 100) / 100;
+                            if (i.vendors[j].offers[k].turnoverTime > this.computedTimeOverview[i.vendors[j].key]) {
+                                this.computedTimeOverview[i.vendors[j].key] = i.vendors[j].offers[k].turnoverTime
                             }
-                            if (j === 1) {
-                                this.selected[j].push(this.results[i].vendors[j].offers[k].id);
-                                this.priceOverview[j] = Math.round((this.priceOverview[j] + this.results[i].vendors[j].offers[k].price) * 100) / 100;
-                                this.timeOverviewIDT.push(this.results[i].vendors[j].offers[k].turnoverTime);
-                                this.timeOverview[1] = Math.max(...this.timeOverviewIDT);
-                            }
-                            if (j === 2) {
-                                this.selected[j].push(this.results[i].vendors[j].offers[k].id);
-                                this.priceOverview[j] = Math.round((this.priceOverview[j] + this.results[i].vendors[j].offers[k].price) * 100) / 100;
-                                this.timeOverviewGeneArt.push(this.results[i].vendors[j].offers[k].turnoverTime);
-                                this.timeOverview[2] = Math.max(...this.timeOverviewGeneArt);
+                        }
+                        if (k === 0 && i.vendors[j].offers[0].offerMessage.length === 0 && i.vendors[j].offers.length !== 0) {
+                            this.computedPriceTotal[i.vendors[j].key] = Math.round((this.computedPriceTotal[i.vendors[j].key] + i.vendors[j].offers[k].price) * 100) / 100;
+                            if (i.vendors[j].offers[k].turnoverTime > this.computedTimeTotal[i.vendors[j].key]) {
+                                this.computedTimeTotal[i.vendors[j].key] = i.vendors[j].offers[k].turnoverTime
                             }
                         }
                     }
                 }
-            }
-            this.lengthTwist = Math.abs(this.lengthTwist);
-            this.checkTwist = this.selected[0].length >= this.results.length - this.lengthTwist;
-
-            this.lengthIDT = Math.abs(this.lengthIDT);
-            this.checkIDT = this.selected[1].length >= this.results.length - this.lengthIDT;
-
-            this.lengthGeneArt = Math.abs(this.lengthGeneArt);
-            this.checkGeneArt = this.selected[2].length >= this.results.length - this.lengthGeneArt;
+            });
 
             this.computedHeaders.push({
                 text: 'Sequence',
@@ -660,45 +304,64 @@
             });
             this.selectedVendors.sort();
             for (let i = 0; i < this.selectedVendors.length; i++) {
+                this.computedSlots.push({
+                    key: this.selectedVendors[i],
+                    name: "header.selected" + this.vendors[this.selectedVendors[i]].name,
+                    price: "header.vendors[" + this.selectedVendors[i] + "].offers[0].price",
+                    time: "header.vendors[" + this.selectedVendors[i] + "].offers[0].turnoverTime",
+                    item: "item.selected" + this.vendors[this.selectedVendors[i]].name,
+                    priceItem: "item.vendors[" + this.selectedVendors[i] + "].offers[0].price",
+                    timeItem: "item.vendors[" + this.selectedVendors[i] + "].offers[0].turnoverTime",
+
+                });
                 this.computedHeaders.push(
                     {
                         text: this.vendors[this.selectedVendors[i]].name,
                         value: 'selected' + this.vendors[this.selectedVendors[i]].name,
-                        sortable: false
+                        sortable: false,
                     },
                     {
                         text: '',
-                        value: 'vendors[' + i + '].offers[0].price',
-                        sortable: false
+                        value: 'vendors[' + this.selectedVendors[i] + '].offers[0].price',
+                        sortable: false,
                     },
                     {
                         text: '',
-                        value: 'vendors[' + i + '].offers[0].turnoverTime',
-                        sortable: false
+                        value: 'vendors[' + this.selectedVendors[i] + '].offers[0].turnoverTime',
+                        sortable: false,
                     }
                 );
-                this.computedHeadersSecond.push(
+                this.computedHeadersSecond[i].push(
                     {
                         text: this.vendors[this.selectedVendors[i]].name,
                         value: 'selected' + this.vendors[this.selectedVendors[i]].name,
-                        sortable: false
+                        sortable: false,
                     },
                     {
                         text: 'Price',
                         value: 'price',
-                        sortable: false
+                        sortable: false,
                     },
                     {
                         text: 'Time',
-                        value: 'time',
-                        sortable: false
+                        value: 'turnoverTime',
+                        sortable: false,
                     }
                 )
             }
             this.computedHeaders.push({
                 text: '',
                 value: 'data-table-expand'
-            })
+            });
+
+            // // eslint-disable-next-line no-console
+            // console.log(this.computedSlots);
+            // // eslint-disable-next-line no-console
+            // console.log(this.computedHeaders);
+            // // eslint-disable-next-line no-console
+            // console.log(this.computedHeadersSecond);
+            // // eslint-disable-next-line no-console
+            // console.log(this.selectedVendors)
         }
     })
 </script>

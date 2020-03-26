@@ -34,7 +34,7 @@ controller:
     #   you change the value of the field 'pinger' to 'PINGER_MOCK' 
     vendors:
         [
-            }
+            {
                 name: Twist Bioscience,
                 shortName: Twist,
                 pinger: PINGER_TWIST

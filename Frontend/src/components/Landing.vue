@@ -60,6 +60,7 @@
                                 :items="strategies"
                                 label="Strategies"
                                 target="#dropdown-example"
+                                
                         ></v-overflow-btn>
                     </v-col>
                     <v-spacer></v-spacer>
@@ -99,7 +100,7 @@
         data() {
             return {
                 projectName: "",
-                strategies: ['Random', 'Balanced', 'Mostly Used', 'Least Different'],
+                strategies: ['Random', 'Balanced', 'MostlyUsed'],
                 strategy: "",
                 hosts: [],
                 host: "",

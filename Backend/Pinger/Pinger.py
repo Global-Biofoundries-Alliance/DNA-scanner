@@ -141,7 +141,7 @@ class BasePinger:
     #           unavailable.
     #
     def order(self, offerIds):
-        raise NotImplementedError
+        return Order()
 
 
 

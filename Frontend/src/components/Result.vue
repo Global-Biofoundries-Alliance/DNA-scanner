@@ -132,7 +132,6 @@
                         </td>
                     </template>
                 </v-data-table>
-                <p>{{this.selectBox}}</p>
             </v-app>
         </div>
     </div>
@@ -369,4 +368,10 @@
 <style lang="sass">
     @import '../sass/variables.sass'
 
+</style>
+
+<style>
+    .v-data-table {
+        border-radius: 10px;
+    }
 </style>

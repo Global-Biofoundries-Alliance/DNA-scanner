@@ -60,7 +60,7 @@
                                 :items="strategies"
                                 label="Strategies"
                                 target="#dropdown-example"
-                                
+                                v-model="strategy"
                         ></v-overflow-btn>
                     </v-col>
                     <v-spacer></v-spacer>
@@ -71,6 +71,7 @@
                                 :items="hosts"
                                 label="Codon Usage Table"
                                 target="#dropdown-example"
+                                v-model="host"
                         ></v-overflow-btn>
                     </v-col>
                 </v-row>
@@ -183,7 +184,7 @@
                                         });
                                 });
 
-                                
+
                             } else {
                                 this.wrongFile = true
                             }

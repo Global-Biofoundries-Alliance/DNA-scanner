@@ -75,7 +75,7 @@ class AdvancedMockPinger(BasePinger):
         for id in offerIds:
             if id not in offerkeys:
                 return Order(OrderType.NOT_SUPPORTED)   #Faux ID leads to non-supported order response
-        return UrlRedirectOrder("dummy redirect")
+        return UrlRedirectOrder("http://www.example.com")
 
 
 

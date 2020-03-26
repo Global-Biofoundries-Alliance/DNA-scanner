@@ -3,6 +3,7 @@ from Pinger.AdvancedMock import AdvancedMockPinger
 from Pinger.Entities import *
 from Pinger.GeneArt import GeneArt
 from Pinger.IDT import IDT
+from Pinger.Twist import Twist
 from .parser import BoostClient
 from .session import SessionManager
 import traceback
@@ -106,7 +107,15 @@ class YmlConfigurator(Configurator):
         try:
             cfg_pinger = self.cfg["pinger"]
             if id == "PINGER_TWIST":
-                return BasePinger()
+                cfg_twist = cfg_pinger["twist"]
+                return Twist(cfg_twist["email"],
+                                cfg_twist["password"], 
+                                cfg_twist["apitoken"], 
+                                cfg_twist["eutoken"], 
+                                cfg_twist["username"], 
+                                cfg_twist["firstname"], 
+                                cfg_twist["lastname"], 
+                                host=cfg_twist["server"])
             if id == "PINGER_IDT":
                 cfg_idt = cfg_pinger["idt"]
                 pinger = IDT(idt_username=cfg_idt["username"],

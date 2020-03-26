@@ -15,7 +15,11 @@ pinger:
         server: https://twist-api.twistbioscience-staging.com
         email: YOUR_EMAIL
         username: YOUR_USERNAME
-        token: YOUR_TOKEN
+        password: YOUR_PASSWORD
+        apitoken: YOUR_API_TOKEN
+        eutoken: YOUR_EU_TOKEN
+        firstname: YOUR_FIRSTNAME
+        lastname: YOUR_LASTNAME
     idt:
         username: YOUR_USERNAME
         password: YOUR_PASSWORD
@@ -24,24 +28,25 @@ pinger:
         scope: YOUR_SCOPE
 
 controller:
-    # A complete list of vendors available
+    #   A complete list of vendors available.
+    #
+    #   Use Mock-Pinger: You can use Mock-Pinger with Random numbers, when
+    #   you change the value of the field 'pinger' to 'PINGER_MOCK' 
     vendors:
         [
-        {
-            name: Twist Bioscience,
-            shortName: Twist,
-            pinger: PINGER_MOCK
-        },
-        {
-            name: IDT DNA,
-            shortName: IDT,
-            pinger: PINGER_MOCK
-        },
-        {
-            name: ThermoFisher Scientific GeneArt,
-            shortName: GeneArt,
-            pinger: PINGER_MOCK
-        }
+            }
+                name: Twist Bioscience,
+                shortName: Twist,
+                pinger: PINGER_TWIST
+            },{
+                name: IDT DNA,
+                shortName: IDT,
+                pinger: PINGER_IDT
+            },{
+                name: ThermoFisher Scientific GeneArt,
+                shortName: GeneArt,
+                pinger: PINGER_GENEART
+            }
         ]
 
 # Configuration for the BOOST service

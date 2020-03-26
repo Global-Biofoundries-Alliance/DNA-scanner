@@ -153,33 +153,36 @@
                                     console.log(filter);
                                     // eslint-disable-next-line no-console
                                     console.log(response);
+                                }).then(() => {
+
+                                    let selectedOptimization = {
+                                        "strategy": this.strategy,
+                                        "host": this.host
+                                    };
+                                    this.$http.post('/api/codon_optimization', selectedOptimization)
+                                        .then(response => {
+                                            // eslint-disable-next-line no-console
+                                            console.log(response);
+                                        }).then(() => {
+                                            this.$http.post('/api/results', {
+                                            headers: {
+                                                'Access-Control-Allow-Origin': '*',
+                                                'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE, PUT',
+                                                'Access-Control-Allow-Headers': 'append,delete,entries,foreach,get,has,keys,set,values,Authorization',
+                                            }
+                                        })
+                                            .then(response => {
+                                                this.$store.state.StoreSearchResult = response.body.result;
+                                                // eslint-disable-next-line no-console
+                                                console.log(this.$store.state.StoreSearchResult);
+                                                this.$store.state.StoreCount = response.body.count;
+                                                this.loading = false;
+                                                this.$router.push('/result');
+                                            });
+                                        });
                                 });
 
-                                let selectedOptimization = {
-                                    "strategy": this.strategy,
-                                    "host": this.host
-                                };
-                                this.$http.post('/api/codon_optimization', selectedOptimization)
-                                    .then(response => {
-                                        // eslint-disable-next-line no-console
-                                        console.log(response);
-                                    });
-
-                                this.$http.post('/api/results', {
-                                    headers: {
-                                        'Access-Control-Allow-Origin': '*',
-                                        'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE, PUT',
-                                        'Access-Control-Allow-Headers': 'append,delete,entries,foreach,get,has,keys,set,values,Authorization',
-                                    }
-                                })
-                                    .then(response => {
-                                        this.$store.state.StoreSearchResult = response.body.result;
-                                        // eslint-disable-next-line no-console
-                                        console.log(this.$store.state.StoreSearchResult);
-                                        this.$store.state.StoreCount = response.body.count;
-                                        this.loading = false;
-                                        this.$router.push('/result');
-                                    });
+                                
                             } else {
                                 this.wrongFile = true
                             }

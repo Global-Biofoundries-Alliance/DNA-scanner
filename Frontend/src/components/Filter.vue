@@ -182,8 +182,8 @@
         methods: {
             reset() {
                 this.selectedVendors = [0, 1, 2];
-                this.priceRange = [0, 50];
-                this.deliveryDays = 30;
+                this.priceRange = [0, 1000];
+                this.deliveryDays = 100;
                 this.preselectByPrice = false;
                 this.preselectByTime = false;
             },

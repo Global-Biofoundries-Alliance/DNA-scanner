@@ -28,7 +28,6 @@ class SearchResponse(object):
                     ]
                 }
             ],
-            "globalMessage": [
-                "TWIST API currently unavailable"
-            ]
+            "globalMessage": [],
+            "vendorMessages": []
         }

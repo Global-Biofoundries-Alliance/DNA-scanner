@@ -37,15 +37,15 @@ controller:
             {
                 name: Twist Bioscience,
                 shortName: Twist,
-                pinger: PINGER_TWIST
+                pinger: PINGER_MOCK
             },{
                 name: IDT DNA,
                 shortName: IDT,
-                pinger: PINGER_IDT
+                pinger: PINGER_MOCK
             },{
                 name: ThermoFisher Scientific GeneArt,
                 shortName: GeneArt,
-                pinger: PINGER_GENEART
+                pinger: PINGER_MOCK
             }
         ]
 

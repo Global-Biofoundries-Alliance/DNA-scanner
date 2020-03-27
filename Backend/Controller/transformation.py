@@ -34,6 +34,8 @@ def buildSearchResponseJSON(seqvendoffers, vendors, selector=[], globalMessages=
     # Check if this is a lambda. Otherwise it has to be a list.
     selectByLambda = isinstance(selector, types.FunctionType)
 
+    vendorMessages = []
+
     # Put offers and other relevant data into JSON serializable dictionary
     for seqvendoff in seqvendoffers[offset: min(offset + size, len(seqvendoffers))]:
         result = {
@@ -51,7 +53,6 @@ def buildSearchResponseJSON(seqvendoffers, vendors, selector=[], globalMessages=
         selectedResult = {"price": maxsize - 1, "turnoverTime": maxsize - 1, "offerMessage": [], "selected": False}
         for vendoff in seqvendoff.vendorOffers:
             resultOffers = []
-            # TODO Use offer IDs as soon as they are implemented
             offerIndex = 0
             for offer in vendoff.offers:
                 messages = []
@@ -68,6 +69,8 @@ def buildSearchResponseJSON(seqvendoffers, vendors, selector=[], globalMessages=
                     "offerMessage": messages,
                     "selected": (not selectByLambda) and
                                 offer.key in selector})  # If not selected by lambda use selection list
+
+            vendorMessages.append({"key": vendoff.vendorInformation.key, "messages": vendoff.messages})
 
             # If there is a selection lambda use it to sort offers and select the best one
             # TODO: If offers are selected by list there should be some kind of sorting as well
@@ -89,6 +92,8 @@ def buildSearchResponseJSON(seqvendoffers, vendors, selector=[], globalMessages=
 
         # Put it in the outer result object
         resp.data["result"].append(result)
+
+    resp.data["vendorMessages"] = vendorMessages
 
     return json.jsonify(resp.data)
 

@@ -29,5 +29,5 @@ class SearchResponse(object):
                 }
             ],
             "globalMessage": [],
-            "vendorMessages": []
+            "vendorMessage": []
         }

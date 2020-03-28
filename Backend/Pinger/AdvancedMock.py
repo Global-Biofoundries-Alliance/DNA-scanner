@@ -12,6 +12,7 @@ class AdvancedMockPinger(BasePinger):
     def __init__(self):
         self.running = False
         self.offers = []
+        self.vendorMessages = ["Warning: This is a mock vendor!"]
 
     #
     #   After:
@@ -77,7 +78,7 @@ class AdvancedMockPinger(BasePinger):
                 return Order(OrderType.NOT_SUPPORTED)   #Faux ID leads to non-supported order response
         return UrlRedirectOrder("http://www.example.com")
 
-
-
+    def getVendorMessages(self):
+        return self.vendorMessages
 
 

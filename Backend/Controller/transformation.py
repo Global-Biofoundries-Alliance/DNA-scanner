@@ -93,7 +93,7 @@ def buildSearchResponseJSON(seqvendoffers, vendors, selector=[], globalMessages=
         # Put it in the outer result object
         resp.data["result"].append(result)
 
-    resp.data["vendorMessages"] = vendorMessages
+    resp.data["vendorMessage"] = vendorMessages
 
     return json.jsonify(resp.data)
 

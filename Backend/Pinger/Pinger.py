@@ -119,6 +119,23 @@ class BasePinger:
     def clear(self):
         raise NotImplementedError
 
+
+    #
+    #   Desc:   Returns this vendor's messages
+    #
+    #   @result
+    #           Type ArrayOf(str).
+    #           Array of messages populated by the pinger. May be empty.
+    #
+    #   @throws UnavailableError
+    #           if authentication response not matches pattern or not received.
+    #           Maybe the base url of the API is wrong? API could be only temporary
+    #           unavailable.
+    #
+    #TODO: Change this to raise NotImplementedError!!! The current state is just to get a testing version quickly!
+    def getVendorMessages(self):
+        return []
+
     #
     #   Desc:   Create a request to trigger an order.
     #
@@ -338,13 +355,14 @@ class CompositePinger(ManagedPinger):
             if(len(vendors) == 0 or vh.vendor.key in vendors):
                 try:
                     vh.handler.searchOffers(seqInf)
+                    self.vendorMessages[vh.vendor.key] = vh.handler.getVendorMessages()
                 except InvalidInputError as e:
                     # store Message and return when calling getOffers()
-                    self.vendorMessages[vh.vendor.key] = [Message(messageType = MessageType.INTERNAL_ERROR, text = str(e))]
+                    self.vendorMessages[vh.vendor.key].append(Message(messageType = MessageType.INTERNAL_ERROR, text = str(e)))
                 except UnavailableError as e:
-                    self.vendorMessages[vh.vendor.key] = [Message(messageType = MessageType.API_CURRENTLY_UNAVAILABLE, text = str(e))]
+                    self.vendorMessages[vh.vendor.key].append(Message(messageType = MessageType.API_CURRENTLY_UNAVAILABLE, text = str(e)))
                 except IsRunningError as e:
-                    self.vendorMessages[vh.vendor.key] = [Message(messageType = MessageType.INTERNAL_ERROR, text = str(e))]
+                    self.vendorMessages[vh.vendor.key].append(Message(messageType = MessageType.INTERNAL_ERROR, text = str(e)))
 
             # Clear vendor, if not accepted by the filter
             else:
@@ -379,10 +397,10 @@ class CompositePinger(ManagedPinger):
 
             # Check if vendor-message is available. Vendor messages can be available if a error occured calling searchOffers(...) 
             # at the specific vendor-pinger.
-            if vh.vendor.key in self.vendorMessages:
+            if vh.vendor.key in self.vendorMessages.keys():
                 vendorMessage = self.vendorMessages[vh.vendor.key]
-            else:
-                seqOffers = vh.handler.getOffers()
+
+            seqOffers = vh.handler.getOffers()
 
             # If output if the VendorPinger is invalid, then ignore and continue
             if (not isinstance(seqOffers, list)):

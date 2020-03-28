@@ -36,12 +36,13 @@ class AdvancedMockPinger(BasePinger):
         self.running = True
         self.offers = []
         counter = 0
+        currency = rand.choice(list(Currency))
         for s in seqInf:
             numOffers = randint(0, 10)
             tempOffers = []
             for i in range(0, numOffers):
                 tempOffer = Offer()
-                tempOffer.price = Price(currency=Currency.EUR, amount=float(int((random()) * 10000)) / 100)
+                tempOffer.price = Price(currency=currency, amount=float(int((random()) * 10000)) / 100)
                 tempOffer.turnovertime = randint(0, 20)
                 tempOffer.messages = []
                 if random() < 0.1:

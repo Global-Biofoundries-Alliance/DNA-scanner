@@ -18,10 +18,12 @@ class SearchResponse(object):
                             "offers": [
                                 {
                                     "price": 0.0,
+                                    "currency": "UNKNOWN",
                                     "turnoverTime": 0,
                                     "key": 0,
                                     "offerMessage": [],
                                     "selected": False
+
                                 },
                             ]
                         }

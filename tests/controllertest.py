@@ -195,6 +195,15 @@ class TestController(unittest.TestCase):
                             self.assertIn("text", message)
                             self.assertIn("messageType", message)
 
+                self.assertIn("vendorMessage", result.keys())
+                messageVendors = []     # tracks the vendors for which messages have already been encountered
+                for vendor in result["vendorMessage"]:
+                    self.assertIn("key", vendor.keys)
+                    self.assertIn("messages", vendor.keys)
+                    self.assertFalse(vendor["key"] in messageVendors)
+                    messageVendors.append(vendor["key"])
+
+
             self.assertEqual(expectedCount, searchResult["count"],
                              "Mismatch between declared and actual sequence count!")
 

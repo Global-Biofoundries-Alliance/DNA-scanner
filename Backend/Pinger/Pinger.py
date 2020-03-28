@@ -132,9 +132,8 @@ class BasePinger:
     #           Maybe the base url of the API is wrong? API could be only temporary
     #           unavailable.
     #
-    #TODO: Change this to raise NotImplementedError!!! The current state is just to get a testing version quickly!
     def getVendorMessages(self):
-        raise NotImplementedError
+        return []
 
     #
     #   Desc:   Create a request to trigger an order.

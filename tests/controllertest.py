@@ -198,10 +198,10 @@ class TestController(unittest.TestCase):
                 self.assertIn("vendorMessage", result.keys())
                 messageVendors = []     # tracks the vendors for which messages have already been encountered
                 for vendor in result["vendorMessage"]:
-                    self.assertIn("key", vendor.keys)
+                    self.assertIn("vendorKey", vendor.keys)
                     self.assertIn("messages", vendor.keys)
-                    self.assertFalse(vendor["key"] in messageVendors)
-                    messageVendors.append(vendor["key"])
+                    self.assertFalse(vendor["vendorKey"] in messageVendors)
+                    messageVendors.append(vendor["vendorKey"])
 
 
             self.assertEqual(expectedCount, searchResult["count"],

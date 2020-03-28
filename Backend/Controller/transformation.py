@@ -36,7 +36,7 @@ def buildSearchResponseJSON(seqvendoffers, vendors, selector=[], globalMessages=
 
     vendorMessages = []
     for vendor in vendors:
-        vendorMessages.append({"key": vendor.key, "messages": []})
+        vendorMessages.append({"vendorKey": vendor.key, "messages": []})
 
     # Put offers and other relevant data into JSON serializable dictionary
     for seqvendoff in seqvendoffers[offset: min(offset + size, len(seqvendoffers))]:

@@ -127,11 +127,6 @@ class BasePinger:
     #           Type ArrayOf(str).
     #           Array of messages populated by the pinger. May be empty.
     #
-    #   @throws UnavailableError
-    #           if authentication response not matches pattern or not received.
-    #           Maybe the base url of the API is wrong? API could be only temporary
-    #           unavailable.
-    #
     def getVendorMessages(self):
         return []
 

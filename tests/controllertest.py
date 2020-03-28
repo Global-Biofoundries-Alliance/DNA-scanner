@@ -190,7 +190,7 @@ class TestController(unittest.TestCase):
                     for offer in vendor["offers"]:
                         self.assertIn("price", offer.keys())
                         self.assertIn("currency", offer.keys())
-                        self.assertIn(offer["currency"], [elem.name for elem in Currency])
+                        self.assertIn(offer["currency"], ["$", "€", "?"])
                         self.assertIn("turnoverTime", offer.keys())
                         self.assertIn("offerMessage", offer.keys())
                         for message in offer["offerMessage"]:

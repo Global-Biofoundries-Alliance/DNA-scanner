@@ -90,6 +90,9 @@ class Currency(Enum):
     # Currency is unknown
     UNKNOWN = 2
 
+    def symbol(self):
+        return {"EUR": "€", "USD": "$", "UNKNOWN": "?"}[self.name]
+
 #########################################################
 #                                                       #
 #   Data-Classes                                        #

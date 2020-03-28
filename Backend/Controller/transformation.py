@@ -67,7 +67,7 @@ def buildSearchResponseJSON(seqvendoffers, vendors, selector=[], globalMessages=
                 resultOffers.append({
                     #TODO Use a user defined currency
                     "price": offer.price.getAmount(offer.price.currency),
-                    "currency": offer.price.currency.name,
+                    "currency": offer.price.currency.symbol(),
                     "turnoverTime": offer.turnovertime,
                     "key": offer.key,
                     "offerMessage": messages,

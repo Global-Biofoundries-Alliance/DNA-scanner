@@ -134,7 +134,7 @@ class BasePinger:
     #
     #TODO: Change this to raise NotImplementedError!!! The current state is just to get a testing version quickly!
     def getVendorMessages(self):
-        return []
+        raise NotImplementedError
 
     #
     #   Desc:   Create a request to trigger an order.

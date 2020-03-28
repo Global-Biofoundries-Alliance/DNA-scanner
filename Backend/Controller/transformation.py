@@ -35,6 +35,8 @@ def buildSearchResponseJSON(seqvendoffers, vendors, selector=[], globalMessages=
     selectByLambda = isinstance(selector, types.FunctionType)
 
     vendorMessages = []
+    for vendor in vendors:
+        vendorMessages.append({"key": vendor.key, "messages": []})
 
     # Put offers and other relevant data into JSON serializable dictionary
     for seqvendoff in seqvendoffers[offset: min(offset + size, len(seqvendoffers))]:
@@ -70,7 +72,12 @@ def buildSearchResponseJSON(seqvendoffers, vendors, selector=[], globalMessages=
                     "selected": (not selectByLambda) and
                                 offer.key in selector})  # If not selected by lambda use selection list
 
-            vendorMessages.append({"key": vendoff.vendorInformation.key, "messages": vendoff.messages})
+            # Avoid message duplication (would be guaranteed with more than one sequence otherwise)
+            vendor_messages_unfiltered = [message.text for message in vendoff.messages]
+            vendorKey = vendoff.vendorInformation.key
+            for vm in vendor_messages_unfiltered:
+                if vm not in vendorMessages[vendorKey]["messages"]:
+                    vendorMessages[vendorKey]["messages"].append(vm)
 
             # If there is a selection lambda use it to sort offers and select the best one
             # TODO: If offers are selected by list there should be some kind of sorting as well

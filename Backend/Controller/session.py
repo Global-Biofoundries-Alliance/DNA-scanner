@@ -245,8 +245,8 @@ class SingleSession(SessionManager):
         for res in results:
             if not isinstance(res, SequenceVendorOffers):
                 raise TypeError
-        #if not validator.validate(results):
-        #    raise TypeError
+        if not validator.validate(results):
+            raise TypeError
         self.results = results
 
     #

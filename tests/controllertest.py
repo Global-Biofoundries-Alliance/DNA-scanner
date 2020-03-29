@@ -5,7 +5,7 @@ from sys import maxsize
 from Controller.app import app
 from Controller.configurator import YmlConfigurator as Configurator
 from Controller.session import InMemorySessionManager
-from Pinger.Entities import SequenceInformation, SequenceVendorOffers
+from Pinger.Entities import SequenceInformation, SequenceVendorOffers, Currency
 from Pinger.Pinger import CompositePinger
 from flask import json
 from random import random
@@ -189,11 +189,22 @@ class TestController(unittest.TestCase):
                     self.assertIn("offers", vendor.keys())
                     for offer in vendor["offers"]:
                         self.assertIn("price", offer.keys())
+                        self.assertIn("currency", offer.keys())
+                        self.assertIn(offer["currency"], [currency.symbol for currency in Currency])
                         self.assertIn("turnoverTime", offer.keys())
                         self.assertIn("offerMessage", offer.keys())
                         for message in offer["offerMessage"]:
                             self.assertIn("text", message)
                             self.assertIn("messageType", message)
+
+                self.assertIn("vendorMessage", result.keys())
+                messageVendors = []     # tracks the vendors for which messages have already been encountered
+                for vendor in result["vendorMessage"]:
+                    self.assertIn("vendorKey", vendor.keys)
+                    self.assertIn("messages", vendor.keys)
+                    self.assertFalse(vendor["vendorKey"] in messageVendors)
+                    messageVendors.append(vendor["vendorKey"])
+
 
             self.assertEqual(expectedCount, searchResult["count"],
                              "Mismatch between declared and actual sequence count!")

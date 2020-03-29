@@ -90,6 +90,9 @@ class Currency(Enum):
     # Currency is unknown
     UNKNOWN = 2
 
+    def symbol(self):
+        return {"EUR": "€", "USD": "$", "UNKNOWN": "?"}[self.name]
+
 #########################################################
 #                                                       #
 #   Data-Classes                                        #
@@ -184,6 +187,16 @@ class Price:
 
         # Is this price specific for the user
         self.customerSpecific = customerSpecific
+
+    #
+    # Def: Returns the price in a given currency.
+    #
+    # @param currency type Currency
+    #                 Specifies the currency in which the price is returned.
+    #
+    #TODO: Implement conversion; Right now it's just an identity function.
+    def getAmount(self, currency):
+        return self.amount;
 
 #
 #   Desc:   Sequence and a list of offers for this sequence

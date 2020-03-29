@@ -202,6 +202,7 @@ class DefaultComparisonService(ComparisonService):
             while mainPinger.isRunning():
                 pass
             newoffers = mainPinger.getOffers()
+
             session.addSearchedVendors(vendorsToSearch)
             # TODO optimize the hell out of this
             for seqoff in seqoffers:
@@ -213,6 +214,7 @@ class DefaultComparisonService(ComparisonService):
                             for newvendoff in newseqoff.vendorOffers:
                                 if vendoff.vendorInformation.key == newvendoff.vendorInformation.key:
                                     vendoff.offers.extend(newvendoff.offers)
+                                    vendoff.messages.extend(newvendoff.messages)
 
             session.storeResults(seqoffers)
 

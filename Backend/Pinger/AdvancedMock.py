@@ -1,24 +1,27 @@
-from .Pinger import *
-from random import randint, random
 import random as rand
+from random import randint, random
+
 from .Entities import Order, OrderType, UrlRedirectOrder
+from .Pinger import *
+
 
 #
 #   The Dummy Pinger is for testing.
 #
 class AdvancedMockPinger(BasePinger):
 
-
     def __init__(self):
         self.running = False
         self.offers = []
+        self.vendorMessages = [Message(messageType=MessageType.VENDOR_INFO, text="Warning: This is a mock vendor!")]
 
-    #
-    #   After:
-    #       isRunning() -> true
-    #       getOffers() -> [SequenceOffer(seqInf[0], self.tempOffer), SequenceOffer(seqInf[1], self.tempOffer), ...
-    #                           SequenceOffer(seqInf[n], self.tempOffer)]
-    #
+        #
+        #   After:
+        #       isRunning() -> true
+        #       getOffers() -> [SequenceOffer(seqInf[0], self.tempOffer), SequenceOffer(seqInf[1], self.tempOffer), ...
+        #                           SequenceOffer(seqInf[n], self.tempOffer)]
+        #
+
     def searchOffers(self, seqInf):
 
         messages = [Message(MessageType.SYNTHESIS_ERROR, "Could not synthesize the sequence"),
@@ -33,12 +36,13 @@ class AdvancedMockPinger(BasePinger):
         self.running = True
         self.offers = []
         counter = 0
+        currency = rand.choice(list(Currency))
         for s in seqInf:
             numOffers = randint(0, 10)
             tempOffers = []
             for i in range(0, numOffers):
                 tempOffer = Offer()
-                tempOffer.price = Price(currency=Currency.EUR, amount=float(int((random()) * 10000)) / 100)
+                tempOffer.price = Price(currency=currency, amount=float(int((random()) * 10000)) / 100)
                 tempOffer.turnovertime = randint(0, 20)
                 tempOffer.messages = []
                 if random() < 0.1:
@@ -71,13 +75,11 @@ class AdvancedMockPinger(BasePinger):
             for offer in seqoffer.offers:
                 offerkeys.append(offer.key)
 
-        #Basically returns redirect if all IDs are valid and unsupported otherwise
+        # Basically returns redirect if all IDs are valid and unsupported otherwise
         for id in offerIds:
             if id not in offerkeys:
-                return Order(OrderType.NOT_SUPPORTED)   #Faux ID leads to non-supported order response
-        return UrlRedirectOrder("dummy redirect")
+                return Order(OrderType.NOT_SUPPORTED)  # Faux ID leads to non-supported order response
+        return UrlRedirectOrder("http://www.example.com")
 
-
-
-
-
+    def getVendorMessages(self):
+        return self.vendorMessages

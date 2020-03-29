@@ -276,7 +276,10 @@ class SingleSession(SessionManager):
     #   Desc: Adds a global message to this session
     #
     def addGlobalMessages(self, messages: List[Message]):
-        self.globalMessages.append(messages)
+        # Add messages unless they are already present
+        for message in messages:
+            if message not in self.globalMessages:
+                self.globalMessages.append(message)
 
     #
     #   Desc: Returns this session's global messages

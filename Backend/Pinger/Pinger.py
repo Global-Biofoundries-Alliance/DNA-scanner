@@ -348,8 +348,9 @@ class CompositePinger(ManagedPinger):
             # Start searching if vendor is accepted by the filter
             if(len(vendors) == 0 or vh.vendor.key in vendors):
                 try:
+                    self.vendorMessages[vh.vendor.key] = []
                     vh.handler.searchOffers(seqInf)
-                    self.vendorMessages[vh.vendor.key] = vh.handler.getVendorMessages()
+                    self.vendorMessages[vh.vendor.key].extend(vh.handler.getVendorMessages())
                 except InvalidInputError as e:
                     # store Message and return when calling getOffers()
                     self.vendorMessages[vh.vendor.key].append(Message(messageType = MessageType.INTERNAL_ERROR, text = str(e)))

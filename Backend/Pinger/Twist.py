@@ -189,7 +189,6 @@ class TwistClient():
 
         if resp['status_info']['status'] == 'SUCCESS':
             return resp
-        print(resp)
         raise ValueError(resp['status_info']['status'])
         
         # Submit order.
@@ -232,6 +231,7 @@ class Twist(BasePinger):
             raise UnavailableError("Request got an error: " + str(exc.message) + "and status code = " + str(exc.status_code)) from exc
 
         self.__address = self.client.address
+        self.vendorMessage = []
         self.offers = []
         self.validator = EntityValidator(raiseError=True)
 
@@ -505,7 +505,7 @@ class Twist(BasePinger):
             ids = [i['id'] for i in constructs]
             scores = self.get_scores(ids)
             counter = 0
-
+            idsforquoting = []
             for identifier in ids:
                 for constructscore in scores:
                     if(constructscore['id'] == identifier):
@@ -514,10 +514,10 @@ class Twist(BasePinger):
                         if (constructscore["score"] == "BUILDABLE" and len(issues) == 0):
                             messageText = constructscore["name"] + "_" + "accepted" + "->ConstructID =" + str(identifier)
                             message = Message(MessageType.INFO, messageText)
+                            idsforquoting.append(identifier)
+
                         # If the construct can not be produced
                         if (constructscore["score"] != "BUILDABLE" and len(issues) != 0):
-                            turnOverTime = -1
-                            price = Price()
                             messageText = constructscore["name"] + "_" + "rejected_"
                             for issue in issues:
                                  messageText = messageText + issue['title'] + "."
@@ -530,9 +530,20 @@ class Twist(BasePinger):
                         offers.append(seqOffer)
                         self.validator.validate(seqOffer)
                         counter = counter + 1
-            
+
             self.offers = offers
             self.running = False
+            quoteID = self.get_quote(idsforquoting, 
+                        external_id=str(uuid.uuid4()),
+                        address_id=self.__address,
+                        first_name=self.__firstname,
+                        last_name=self.__lastname)
+
+            quote = self.check_quote(quoteID)
+            turnOverTime = quote['tat']['business_days']
+            amount = quote['quote']['price']
+            self.delete_quote(quoteID)
+            self.vendorMessage = [Message(MessageType.VENDOR_INFO, "Twist can only provide the total price and time of the synthesizable sequences. Price: " + str(amount) + " $ , Time: " + str(turnOverTime) + " BD")]
 
         except TwistError as exc:
             self.running = False
@@ -564,6 +575,14 @@ class Twist(BasePinger):
         return self.offers
 
     #
+    #   Returns List with a Vendor Message from the last searchOffers(seqInf)-call.
+    #   The Vendor Message contains information regarding the price and delivery time of all the producible
+    #   sequences of the seqInf list which was previously used in the searchOffers(seqInf)-call.
+    #
+    def getVendorMessage(self):
+        return self.vendorMessage
+
+    #
     #   Desc:   Resets the pinger by
     #               - stop searching -> isRunning() = false
     #               - resets the offers to a empty list -> getOffers = []
@@ -571,6 +590,7 @@ class Twist(BasePinger):
     def clear(self):
         self.running = False
         self.offers = [] # Empty Offers List
+        self.vendorMessage = [] # Empty vendorMessage List
 
 
 

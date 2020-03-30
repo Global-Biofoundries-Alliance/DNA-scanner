@@ -340,6 +340,8 @@ class OrderType(Enum):
     NOT_SUPPORTED = 1
     # By redirect to an specific URL
     URL_REDIRECT = 2
+    # Plain message response to order
+    MESSAGE = 3
 
 #
 #   Desc:   General interface for orders.
@@ -361,6 +363,11 @@ class Order:
     def getType(self):
         return self.orderType
 
+    # Used for response format. Must be implemented by each order class.
+    def __dict__(self):
+        return {"type": self.orderType.name}
+
+
 #
 #   Desc:   Finish the order by redirect to a specific url.
 #
@@ -381,6 +388,28 @@ class UrlRedirectOrder(Order):
     def __init__(self, url):
         super().__init__(orderType=OrderType.URL_REDIRECT)
         self.url = url
+
+    # Used for response format. Must be implemented by each order class.
+    def __dict__(self):
+        return {"type": self.orderType.name, "url": self.url}
+
+
+class MessageOrder(Order):
+
+    #
+    #   Desc:   Constructor.
+    #
+    #   @param url
+    #           Type String. The redirect url to make the order.
+    #
+    def __init__(self, message):
+        super().__init__(orderType=OrderType.URL_REDIRECT)
+        self.message = message
+
+    # Used for response format. Must be implemented by each order class.
+    def __dict__(self):
+        return {"type": self.orderType.name, "message": self.message}
+
 
 #####################################################
 #                                                   #

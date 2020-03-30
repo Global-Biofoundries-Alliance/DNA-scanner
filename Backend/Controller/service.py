@@ -285,14 +285,9 @@ class DefaultComparisonService(ComparisonService):
         orders = []
         for vendor in self.config.vendors:
             order = pinger.order(offersPerVendor[vendor.key], vendor.key)
-
-            orderType = order.getType()
-            if orderType == OrderType.NOT_SUPPORTED:
-                orders.append({"vendor": vendor.key, "type": "NOT_SUPPORTED"})
-            elif orderType == OrderType.URL_REDIRECT:
-                orders.append({"vendor": vendor.key, "type": "URL_REDIRECT", "url": order.url})
-            else:
-                orders.append({"vendor": vendor.key, "type": "NOT_SUPPORTED"})
+            order_dict = order.__dict__()
+            order_dict["vendor"] = vendor.key
+            orders.append(order_dict)
 
         return orders
 

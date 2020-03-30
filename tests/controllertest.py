@@ -14,7 +14,7 @@ import random as rand
 
 class TestController(unittest.TestCase):
     name = "TestController"
-    iterations = 10  # How many iterations to perform on iterated tests
+    iterations = 100  # How many iterations to perform on iterated tests
 
     def setUp(self) -> None:
         app.config['TESTING'] = True
@@ -164,6 +164,15 @@ class TestController(unittest.TestCase):
             # AdvancedMockPingers are used for testing so there should be warning messages present.
             self.assertTrue(searchResult["globalMessage"])
 
+            self.assertIn("vendorMessage", searchResult.keys())
+
+            messageVendors = []  # tracks the vendors for which messages have already been encountered
+            for vendor in searchResult["vendorMessage"]:
+                self.assertIn("vendorKey", vendor.keys())
+                self.assertIn("messages", vendor.keys())
+                self.assertFalse(vendor["vendorKey"] in messageVendors)
+                messageVendors.append(vendor["vendorKey"])
+
             for result in searchResult["result"]:
                 expectedCount = expectedCount + 1
 
@@ -190,21 +199,12 @@ class TestController(unittest.TestCase):
                     for offer in vendor["offers"]:
                         self.assertIn("price", offer.keys())
                         self.assertIn("currency", offer.keys())
-                        self.assertIn(offer["currency"], [currency.symbol for currency in Currency])
+                        self.assertIn(offer["currency"], [currency.symbol() for currency in Currency])
                         self.assertIn("turnoverTime", offer.keys())
                         self.assertIn("offerMessage", offer.keys())
                         for message in offer["offerMessage"]:
                             self.assertIn("text", message)
                             self.assertIn("messageType", message)
-
-                self.assertIn("vendorMessage", result.keys())
-                messageVendors = []     # tracks the vendors for which messages have already been encountered
-                for vendor in result["vendorMessage"]:
-                    self.assertIn("vendorKey", vendor.keys)
-                    self.assertIn("messages", vendor.keys)
-                    self.assertFalse(vendor["vendorKey"] in messageVendors)
-                    messageVendors.append(vendor["vendorKey"])
-
 
             self.assertEqual(expectedCount, searchResult["count"],
                              "Mismatch between declared and actual sequence count!")
@@ -620,7 +620,7 @@ class TestController(unittest.TestCase):
             for sequence in response_json["result"]:
                 self.assertGreater(sequence["sequenceInformation"]["length"], 0)
 
-    def test_results_endpoint(self) -> None:
+    def test_order_endpoint(self) -> None:
         print("\nTesting /order endpoint")
 
         for i in range(self.iterations):
@@ -646,6 +646,8 @@ class TestController(unittest.TestCase):
                                         data=json.dumps({"offers": orderkeys})).get_json()
 
             for order in response:
+                self.assertIn("vendor", order.keys())
+                self.assertIn("type", order.keys())
                 if(order["type"] == "URL_REDIRECT"):
                     self.assertIn("url", order.keys())
 

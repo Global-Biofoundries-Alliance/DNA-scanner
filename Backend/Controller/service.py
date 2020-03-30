@@ -285,9 +285,9 @@ class DefaultComparisonService(ComparisonService):
         orders = []
         for vendor in self.config.vendors:
             order = pinger.order(offersPerVendor[vendor.key], vendor.key)
-
-            print(order.__dict__())
-            orders.append(order.__dict__())
+            order_dict = order.__dict__()
+            order_dict["vendor"] = vendor.key
+            orders.append(order_dict)
 
         return orders
 

@@ -363,6 +363,7 @@ class Order:
     def getType(self):
         return self.orderType
 
+    # Used for response format. Must be implemented by each order class.
     def __dict__(self):
         return {"type": self.orderType.name}
 
@@ -388,6 +389,7 @@ class UrlRedirectOrder(Order):
         super().__init__(orderType=OrderType.URL_REDIRECT)
         self.url = url
 
+    # Used for response format. Must be implemented by each order class.
     def __dict__(self):
         return {"type": self.orderType.name, "url": self.url}
 
@@ -404,6 +406,7 @@ class MessageOrder(Order):
         super().__init__(orderType=OrderType.URL_REDIRECT)
         self.message = message
 
+    # Used for response format. Must be implemented by each order class.
     def __dict__(self):
         return {"type": self.orderType.name, "message": self.message}
 

@@ -90,7 +90,7 @@ class IDTClient:
 						</Credential>
 					</To>
 					<Sender>
-						<Credential domain=""" + '"' + self.idt_username + '"' + u""">idt_username
+						<Credential domain=""" + '"' + self.idt_username + '"' + u""">
 							<Identity>""" + self.client_id + u"""</Identity>
 							<SharedSecret>""" + self.shared_secret + u"""</SharedSecret>
 						</Credential>
@@ -174,6 +174,7 @@ class IDTClient:
 	</soapenv:Body>
 </soapenv:Envelope>"""
         request = header + "\n" + footer
+        print(request)
         encoded_request = request.encode('utf-8')
 
         headers = {"Content-Type": "text/xml; charset=UTF-8",
@@ -186,6 +187,7 @@ class IDTClient:
 
 
         result = resp.text
+        print(result)
         return result
 
 #

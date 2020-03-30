@@ -1,6 +1,7 @@
 import unittest
 import json
 import yaml
+import xml.etree.ElementTree as ET
 from Pinger import IDT, Entities
 
 # Log-In Credentials
@@ -12,6 +13,7 @@ idt_username = cfg['idt']['idt_username']
 idt_password = cfg['idt']['idt_password']
 client_id = cfg['idt']['client_id']
 client_secret = cfg['idt']['client_secret']
+shared_secret = cfg['idt']['shared_secret']
 scope = cfg['idt']['scope']
 token = cfg['idt']['token']
 
@@ -28,7 +30,7 @@ class TestIDTClient(unittest.TestCase):
     timeout = 60
 
     # Object of type GeneArtClient used in these tests to communicate with the API.
-    idt = IDT.IDTClient(token_server, screening_server, idt_username, idt_password, client_id, client_secret, scope, timeout = timeout)
+    idt = IDT.IDTClient(token_server, screening_server, idt_username, idt_password, client_id, client_secret, shared_secret, scope, timeout = timeout)
 
     # Checks the authentication.
     def test_getToken(self):
@@ -37,9 +39,10 @@ class TestIDTClient(unittest.TestCase):
         username_dummy = "USERNAME"
         password_dummy = "PASSWORD"
         client_id_dummy = "ID"
-        client_secret = "SECRET"
+        client_secret = "CLIENT_SECRET"
         scope = "SCOPE"
-        with self.assertRaises(Entities.AuthenticationError): IDT.IDTClient(TestIDTClient.token_server, TestIDTClient.screening_server, username_dummy, password_dummy, client_id, client_secret, scope)
+        shared_secret = "SHARED_SECRET"
+        with self.assertRaises(Entities.AuthenticationError): IDT.IDTClient(TestIDTClient.token_server, TestIDTClient.screening_server, username_dummy, password_dummy, client_id, client_secret, shared_secret, scope)
         
         self.assertEqual(32, len(self.idt.token))
         
@@ -51,6 +54,17 @@ class TestIDTClient(unittest.TestCase):
         # Expected Response Lengths
         self.assertEqual(1, len(response))
         self.assertEqual(2, len(response[0]))
+        
+        print ("Start test for the method postorder of " + self.name + ".")
+        order = self.idt.postorder(listOfSequences)
+        dom = ET.fromstring(order)
+
+        returntext = dom.find('.//{http://www.idtdna.com/}ReturnText').text
+        returncode = dom.find('.//{http://www.idtdna.com/}ReturnCode').text
+        ordernumber = dom.find('.//{http://www.idtdna.com/}OrderNumber').text
+
+        self.assertEqual("Success", returntext)
+        self.assertEqual("200", returncode)
         
 if __name__ == '__main__':
     unittest.main()

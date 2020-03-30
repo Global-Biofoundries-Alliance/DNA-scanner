@@ -50,7 +50,7 @@ class BoostClient:
         response = self.getInformation(self.uuid)
         waitingRounds = 0
         while(response["job"]["job-status"] != "FINISHED" and waitingRounds < 20):
-            if(reponse["job"]["job-status"] == "FAILED" and "exception" in list(response["job"]["job-report"].keys())):
+            if(response["job"]["job-status"] == "FAILED" and "exception" in list(response["job"]["job-report"].keys())):
                 message = ""
                 for exc in response["job"]["job-report"]["exception"]:
                     message = message + str(exc) + "."

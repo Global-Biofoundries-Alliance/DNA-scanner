@@ -32,7 +32,7 @@
                     </v-col>
 
                     <v-card-text>
-                        <v-subheader>Select min and max price in Euros(€)</v-subheader>
+                        <v-subheader>Select min and max price</v-subheader>
                         <v-row>
                             <v-col class="px-4">
                                 <v-range-slider
@@ -68,7 +68,7 @@
                     </v-card-text>
 
                     <v-card-text>
-                        <v-subheader>Select max delivery time in days(d)</v-subheader>
+                        <v-subheader>Select max delivery time in business days(bd)</v-subheader>
                         <v-row>
                             <v-col class="pr-4">
                                 <v-slider

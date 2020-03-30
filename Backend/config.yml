@@ -25,6 +25,7 @@ pinger:
         password: YOUR_PASSWORD
         client_id: YOUR_CLIENT_ID
         client_secret: YOUR_CLIENT_SECRET
+        shared_secret: YOUR_SHARED_SECRET
         scope: YOUR_SCOPE
 
 controller:

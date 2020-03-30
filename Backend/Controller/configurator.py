@@ -86,7 +86,7 @@ class YmlConfigurator(Configurator):
 
         for pingerInfo in pingerIDTuples:
             newPinger = self.getPingerFromKey(pingerInfo[1])
-            #Catch pingers that could not be initialized for any reason
+            # Catch pingers that could not be initialized for any reason
             if isinstance(newPinger, Message):
                 session.addGlobalMessages([newPinger])
                 continue
@@ -103,26 +103,27 @@ class YmlConfigurator(Configurator):
     #
     #   @result A pinger of type as specified by id and configured to the capacity of the config
     #
-    def getPingerFromKey(self, id : str) -> BasePinger:
+    def getPingerFromKey(self, id: str) -> BasePinger:
         try:
             cfg_pinger = self.cfg["pinger"]
             if id == "PINGER_TWIST":
                 cfg_twist = cfg_pinger["twist"]
                 return Twist(cfg_twist["email"],
-                                cfg_twist["password"], 
-                                cfg_twist["apitoken"], 
-                                cfg_twist["eutoken"], 
-                                cfg_twist["username"], 
-                                cfg_twist["firstname"], 
-                                cfg_twist["lastname"], 
-                                host=cfg_twist["server"])
+                             cfg_twist["password"],
+                             cfg_twist["apitoken"],
+                             cfg_twist["eutoken"],
+                             cfg_twist["username"],
+                             cfg_twist["firstname"],
+                             cfg_twist["lastname"],
+                             host=cfg_twist["server"])
             if id == "PINGER_IDT":
                 cfg_idt = cfg_pinger["idt"]
                 pinger = IDT(idt_username=cfg_idt["username"],
-                           idt_password=cfg_idt["password"],
-                           client_id=cfg_idt["client_id"],
-                           client_secret=cfg_idt["client_secret"],
-                           scope=cfg_idt["scope"])
+                             idt_password=cfg_idt["password"],
+                             client_id=cfg_idt["client_id"],
+                             client_secret=cfg_idt["client_secret"],
+                             shared_secret=cfg_idt["shared_secret"],
+                             scope=cfg_idt["scope"])
                 token = pinger.getToken()
                 # This may return a message instead of a token in case of failure
                 if isinstance(token, Message):
@@ -153,16 +154,17 @@ class YmlConfigurator(Configurator):
     def initializeBoostClient(self):
         try:
             cfg_boost = self.cfg["boost"]
-            return BoostClient(url_job = cfg_boost["url_job"],
-                               url_hosts = cfg_boost["url_hosts"],
-                               url_submit = cfg_boost["url_submit"],
-                               url_login = cfg_boost["url_login"],
-                               username = cfg_boost["username"],
-                               password = cfg_boost["password"],
-                               timeout = cfg_boost["timeout"])
+            return BoostClient(url_job=cfg_boost["url_job"],
+                               url_hosts=cfg_boost["url_hosts"],
+                               url_submit=cfg_boost["url_submit"],
+                               url_login=cfg_boost["url_login"],
+                               username=cfg_boost["username"],
+                               password=cfg_boost["password"],
+                               timeout=cfg_boost["timeout"])
         except Exception as error:
             print(traceback.format_exc())
             return None
+
 
 #
 #   The InvalidPinger is used if a pinger could not be initialized due to a misconfiguration.

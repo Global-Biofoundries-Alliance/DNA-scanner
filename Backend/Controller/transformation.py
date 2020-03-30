@@ -61,7 +61,7 @@ def buildSearchResponseJSON(seqvendoffers, vendors, selector=[], globalMessages=
 
                 for message in offer.messages:
                     # Only output messages that are actually errors
-                    if message.messageType.value in range(1000, 1999):
+                    if message.messageType.value in range(1000, 3999):
                         messages.append({"text": message.text, "messageType": message.messageType.value})
 
                 resultOffers.append({

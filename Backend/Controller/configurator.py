@@ -175,7 +175,7 @@ class InvalidPinger(BasePinger):
     def __init__(self):
         self.tempOffer = Offer(price=Price(currency=Currency.EUR, amount=-1), turnovertime=-1)
         self.tempOffer.messages.append(
-            Message(MessageType.INFO, "Invalid vendor configuration. Please contact your administrator."))
+            Message(MessageType.WRONG_CREDENTIALS, "Invalid vendor configuration. Please contact your administrator."))
         self.offers = []
         self.running = False
 

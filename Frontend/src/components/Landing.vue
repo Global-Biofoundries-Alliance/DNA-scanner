@@ -13,8 +13,7 @@
                               rounded
                               prepend-icon=""
                               hide-details
-                              class="mb-4"
-                              accept=".fasta,.gb,.xml">
+                              class="mb-4">
                 </v-file-input>
             </v-container>
             <v-container>
@@ -37,13 +36,16 @@
                 <v-alert v-if="noSelection" type="error" class="mt-4 mx-auto" width="350px">
                     Please select your strategy and codon usage table
                 </v-alert>
+                <v-alert v-if="resultError" type="error" class="mt-4 mx-auto" width="350px">
+                    An error occurred while getting the results from the vendors
+                </v-alert>
                 <p class="text-center font-weight-light mt-4 mb-0">Please give your project a name:</p>
                 <v-row justify="center">
                     <v-col cols="5" class="pa-0">
                         <v-text-field placeholder="Project Name"
                                       v-model="projectName"
                                       class="pa-0 centered-input"
-                                      :error="projectName === '' && search">
+                                      :error="projectName === '' && noProjectName">
                         </v-text-field>
                     </v-col>
                 </v-row>
@@ -120,9 +122,10 @@
                 colors: ["red", "green", "orange"],
                 isAminoAcid: '0',
                 wrongFile: false,
-                search: false,
+                noProjectName: false,
                 loading: false,
-                noSelection: false
+                noSelection: false,
+                resultError: false
             }
         },
         methods: {
@@ -137,12 +140,11 @@
                 } else if (this.projectName === "") {
                     this.noFile = false;
                     this.noSelection = false;
-                    this.search = true;
+                    this.noProjectName = true;
                 } else {
                     this.noFile = false;
                     this.noSelection = false;
-                    this.search = false;
-                    this.loading = true;
+                    this.noProjectName = false;
 
                     let filter = {
                         "filter":
@@ -183,6 +185,7 @@
                                         // eslint-disable-next-line no-console
                                         console.log(response);
                                         if(response.body.length === 17) {
+                                            this.loading = true;
                                             this.$http.post('/api/results', {
                                                 headers: {
                                                     'Access-Control-Allow-Origin': '*',
@@ -206,6 +209,11 @@
                                                     }
                                                     this.loading = false;
                                                     this.$router.push('/result');
+                                                },response => {
+                                                    // eslint-disable-next-line no-console
+                                                    console.log(response);
+                                                    this.loading = false;
+                                                    this.resultError = true;
                                                 });
 
                                         }

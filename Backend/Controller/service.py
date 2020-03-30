@@ -284,10 +284,12 @@ class DefaultComparisonService(ComparisonService):
 
         orders = []
         for vendor in self.config.vendors:
-            order = pinger.order(offersPerVendor[vendor.key], vendor.key)
-            order_dict = order.__dict__()
-            order_dict["vendor"] = vendor.key
-            orders.append(order_dict)
+            # Only issue orders from vendors that actually have offers marked for ordering
+            if offersPerVendor[vendor.key]:
+                order = pinger.order(offersPerVendor[vendor.key], vendor.key)
+                order_dict = order.__dict__()
+                order_dict["vendor"] = vendor.key
+                orders.append(order_dict)
 
         return orders
 

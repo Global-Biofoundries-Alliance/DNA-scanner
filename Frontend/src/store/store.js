@@ -16,6 +16,8 @@ export const store = new Vuex.Store({
         StoreSearchResult: [],
         StoreVendors: [],
         StoreSelectedOffers: {},
+        StoreVendorMessage: [],
+        StoreGlobalMessage: ''
 
     },
     mutations: {

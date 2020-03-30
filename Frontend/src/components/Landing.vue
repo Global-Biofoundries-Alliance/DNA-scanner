@@ -13,8 +13,7 @@
                               rounded
                               prepend-icon=""
                               hide-details
-                              class="mb-4"
-                              accept=".fasta,.gb,.xml">
+                              class="mb-4">
                 </v-file-input>
             </v-container>
             <v-container>
@@ -34,13 +33,19 @@
                 <v-alert v-if="wrongFile" type="error" class="mt-4 mx-auto" width="350px">
                     Wrong File Format
                 </v-alert>
+                <v-alert v-if="noSelection" type="error" class="mt-4 mx-auto" width="350px">
+                    Please select your strategy and codon usage table
+                </v-alert>
+                <v-alert v-if="resultError" type="error" class="mt-4 mx-auto" width="350px">
+                    An error occurred while getting the results from the vendors
+                </v-alert>
                 <p class="text-center font-weight-light mt-4 mb-0">Please give your project a name:</p>
                 <v-row justify="center">
                     <v-col cols="5" class="pa-0">
                         <v-text-field placeholder="Project Name"
                                       v-model="projectName"
                                       class="pa-0 centered-input"
-                                      :error="projectName === '' && search">
+                                      :error="projectName === '' && noProjectName">
                         </v-text-field>
                     </v-col>
                 </v-row>
@@ -52,6 +57,8 @@
                         <v-radio value="0" label="No"></v-radio>
                     </v-radio-group>
                 </v-row>
+                <p v-if="isAminoAcid === '1'" class="text-center font-weight-light mt-4">After selecting your strategy and codon usage table your request will be processed by boost</p>
+                <v-img v-if="isAminoAcid === '1'" :src="require('../assets/BoostLogo.png')"></v-img>
                 <v-row v-if="isAminoAcid === '1'">
                     <v-col cols="6">
                         <p class="text-center">Select your Strategy</p>
@@ -67,7 +74,7 @@
                     <v-col cols="6">
                         <p class="text-center">Select your Codon Usage Table</p>
                         <v-overflow-btn
-                                class="my-2"
+                                class="my-2 font-italic"
                                 :items="hosts"
                                 label="Codon Usage Table"
                                 target="#dropdown-example"
@@ -77,15 +84,18 @@
                 </v-row>
             </v-container>
         </div>
-        <div v-if="loading">
+        <div v-if="loading" style="height: 100vh; display: flex; justify-content: center; align-items: center; flex-direction: column;">
             <v-progress-circular
                     :size="100"
                     :width="7"
                     color="blue"
                     indeterminate
-                    style="margin-left: 47%; margin-top: 15%"
+                    class="mb-4"
+                    style="margin-top: -15%"
             ></v-progress-circular>
-            <p style="text-align: center">Please Wait</p>
+            <p class="font-weight-light">Please Wait.</p>
+            <p class="font-weight-light">Contacting the Vendor APIs...</p>
+            <p v-if="isAminoAcid === '1'" class="font-weight-light">Contacting Boost...</p>
         </div>
     </div>
 </template>
@@ -112,8 +122,10 @@
                 colors: ["red", "green", "orange"],
                 isAminoAcid: '0',
                 wrongFile: false,
-                search: false,
-                loading: false
+                noProjectName: false,
+                loading: false,
+                noSelection: false,
+                resultError: false
             }
         },
         methods: {
@@ -122,74 +134,95 @@
                     this.noFile = true;
                 } else if (this.file.length === 0) {
                     this.noFile = true;
+                } else if (this.isAminoAcid === '1' && (this.strategy === "" || this.host === "")) {
+                    this.noFile = false;
+                    this.noSelection = true
                 } else if (this.projectName === "") {
-                    this.search = true;
+                    this.noFile = false;
+                    this.noSelection = false;
+                    this.noProjectName = true;
                 } else {
-                    this.loading = true;
-                    let data = new FormData();
-                    data.append('seqfile', this.file);
-                    data.append('prefix', this.projectName);
+                    this.noFile = false;
+                    this.noSelection = false;
+                    this.noProjectName = false;
 
-                    this.$http.post('/api/upload', data, {
-                        headers: {
-                            'Access-Control-Allow-Origin': '*',
-                            'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE, PUT',
-                            'Access-Control-Allow-Headers': 'append,delete,entries,foreach,get,has,keys,set,values,Authorization',
-                        }
-                    })
-                        .then(response => {
-                            if (response.body.length === 17) {
-                                let filter = {
-                                    "filter":
-                                        {
-                                            "vendors": this.$store.state.StoreSelectedVendors,
-                                            "price": this.$store.state.StorePriceFilterRange,
-                                            "deliveryDays": this.$store.state.StoreDeliveryDays,
-                                            "preselectByPrice": this.$store.state.StorePreselectByPrice,
-                                            "preselectByDeliveryDays": this.$store.state.StorePreselectByTime
-                                        }
-                                };
-
-                                this.$http.post('/api/filter', filter).then(response => {
-                                    // eslint-disable-next-line no-console
-                                    console.log(filter);
-                                    // eslint-disable-next-line no-console
-                                    console.log(response);
-                                }).then(() => {
-
-                                    let selectedOptimization = {
-                                        "strategy": this.strategy,
-                                        "host": this.host
-                                    };
-                                    this.$http.post('/api/codon_optimization', selectedOptimization)
-                                        .then(response => {
-                                            // eslint-disable-next-line no-console
-                                            console.log(response);
-                                        }).then(() => {
-                                            this.$http.post('/api/results', {
-                                            headers: {
-                                                'Access-Control-Allow-Origin': '*',
-                                                'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE, PUT',
-                                                'Access-Control-Allow-Headers': 'append,delete,entries,foreach,get,has,keys,set,values,Authorization',
-                                            }
-                                        })
-                                            .then(response => {
-                                                this.$store.state.StoreSearchResult = response.body.result;
-                                                // eslint-disable-next-line no-console
-                                                console.log(this.$store.state.StoreSearchResult);
-                                                this.$store.state.StoreCount = response.body.count;
-                                                this.loading = false;
-                                                this.$router.push('/result');
-                                            });
-                                        });
-                                });
-
-
-                            } else {
-                                this.wrongFile = true
+                    let filter = {
+                        "filter":
+                            {
+                                "vendors": this.$store.state.StoreSelectedVendors,
+                                "price": this.$store.state.StorePriceFilterRange,
+                                "deliveryDays": this.$store.state.StoreDeliveryDays,
+                                "preselectByPrice": this.$store.state.StorePreselectByPrice,
+                                "preselectByDeliveryDays": this.$store.state.StorePreselectByTime
                             }
+                    };
 
-                        });
+                    this.$http.post('/api/filter', filter).then(response => {
+                        // eslint-disable-next-line no-console
+                        console.log(filter);
+                        // eslint-disable-next-line no-console
+                        console.log(response);
+                        let selectedOptimization = {
+                            "strategy": this.strategy,
+                            "host": this.host
+                        };
+                        this.$http.post('/api/codon_optimization', selectedOptimization)
+                            .then(response => {
+                                // eslint-disable-next-line no-console
+                                console.log(response);
+
+                                let data = new FormData();
+                                data.append('seqfile', this.file);
+                                data.append('prefix', this.projectName);
+                                this.$http.post('/api/upload', data, {
+                                    headers: {
+                                        'Access-Control-Allow-Origin': '*',
+                                        'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE, PUT',
+                                        'Access-Control-Allow-Headers': 'append,delete,entries,foreach,get,has,keys,set,values,Authorization',
+                                    }
+                                })
+                                    .then(response => {
+                                        // eslint-disable-next-line no-console
+                                        console.log(response);
+                                        if(response.body.length === 17) {
+                                            this.loading = true;
+                                            this.$http.post('/api/results', {
+                                                headers: {
+                                                    'Access-Control-Allow-Origin': '*',
+                                                    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE, PUT',
+                                                    'Access-Control-Allow-Headers': 'append,delete,entries,foreach,get,has,keys,set,values,Authorization',
+                                                }
+                                            })
+                                                .then(response => {
+                                                    // eslint-disable-next-line no-console
+                                                    console.log(response);
+                                                    this.$store.state.StoreSearchResult = response.body.result;
+                                                    // eslint-disable-next-line no-console
+                                                    console.log(this.$store.state.StoreSearchResult);
+                                                    this.$store.state.StoreVendorMessage = response.body.vendorMessage;
+                                                    if(response.body.globalMessage.length !== 0) {
+                                                        let msg = "";
+                                                        response.body.globalMessage.forEach(i => {
+                                                            msg = msg + i
+                                                        });
+                                                        this.$store.state.StoreGlobalMessage = msg;
+                                                    }
+                                                    this.loading = false;
+                                                    this.$router.push('/result');
+                                                },response => {
+                                                    // eslint-disable-next-line no-console
+                                                    console.log(response);
+                                                    this.loading = false;
+                                                    this.resultError = true;
+                                                });
+
+                                        }
+                                        else {
+                                            this.wrongFile = true;
+                                        }
+                                    })
+                            })
+                    });
                 }
             },
         },

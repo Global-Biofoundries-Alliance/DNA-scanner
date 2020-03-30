@@ -14,7 +14,7 @@ import random as rand
 
 class TestController(unittest.TestCase):
     name = "TestController"
-    iterations = 100  # How many iterations to perform on iterated tests
+    iterations = 10  # How many iterations to perform on iterated tests
 
     def setUp(self) -> None:
         app.config['TESTING'] = True

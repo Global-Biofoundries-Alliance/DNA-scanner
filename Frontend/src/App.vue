@@ -11,23 +11,17 @@ handled by the router.
                 color="primary"
                 dark
         >
-            <!-- The app-bar-nav-icon and the finish order button are only displayed after the user clicked on search
-            This is handled by the v-if directive in the according tag-->
-            <v-row>
-                <v-col>
-                    <v-app-bar-nav-icon v-if="this.$route.path !== '/'" @click.stop="drawer = true"></v-app-bar-nav-icon>
-                </v-col>
-                <v-col cols="6">
-                    <v-toolbar-title class="display-1 font-weight-medium">
-                        <p class="mb-0" style="text-align: center">DNA Scanner</p>
-                    </v-toolbar-title>
-                </v-col>
-                <v-col>
-                    <v-btn style="float: right" v-if="this.$route.path !== '/'" @click="order()">
-                        FINISH ORDER
-                    </v-btn>
-                </v-col>
-            </v-row>
+            <v-app-bar-nav-icon v-if="this.$route.path !== '/'" @click.stop="drawer = true"></v-app-bar-nav-icon>
+            <v-toolbar-title v-if="this.$route.path !== '/'" class="display-1 mx-auto font-weight-medium pl-0" style="padding-left: 270px !important">DNA Scanner</v-toolbar-title>
+            <v-toolbar-title v-else class="display-1 mx-auto font-weight-medium pl-0">DNA Scanner</v-toolbar-title>
+            <v-btn v-if="this.$route.path !== '/'" @click="reload()">UPLOAD NEW FILE</v-btn>
+            <v-tooltip v-if="this.$route.path !== '/'" :disabled="disableErrorMsg" bottom open-on-click>
+                <template v-slot:activator="{ on }">
+                    <v-btn class="ml-5" @click="order()" v-on="on">FINISH ORDER</v-btn>
+                </template>
+                <span>{{errorMessage}}</span>
+            </v-tooltip>
+
         </v-app-bar>
 
         <v-content>
@@ -65,6 +59,8 @@ handled by the router.
             return {
                 filter: false,
                 drawer: false,
+                errorMessage: "",
+                disableErrorMsg: true,
             }
         },
         computed: {
@@ -85,8 +81,8 @@ handled by the router.
             order() {
                 let selected = [];
 
-                for(let i = 0; i < this.$store.state.StoreSearchResult.length; i++) {
-                    if(this.selectBox[this.$store.state.StoreSearchResult[i].sequenceInformation.id]) {
+                for (let i = 0; i < this.$store.state.StoreSearchResult.length; i++) {
+                    if (this.selectBox[this.$store.state.StoreSearchResult[i].sequenceInformation.id]) {
                         selected.push(this.selectBox[this.$store.state.StoreSearchResult[i].sequenceInformation.id])
                     }
                 }
@@ -101,8 +97,33 @@ handled by the router.
                 this.$http.post('/api/order', selection)
                     .then(response => {
                         //eslint-disable-next-line no-console
-                        console.log(response)
+                        console.log(response);
+                        let vendorErrors = [];
+                        response.body.forEach(i => {
+                           if(i.type !== "NOT_SUPPORTED") {
+                               window.open(i.url, '_blank');
+                           }
+                           else {
+                               vendorErrors.push(i.vendor)
+                           }
+                        });
+                        this.disableErrorMsg = true;
+                        if(vendorErrors.length !== 0) {
+                            let msg = "";
+                            for(let i = 0; i < vendorErrors.length; i++) {
+                                if(i === 0) {
+                                    msg = msg + this.$store.state.StoreVendors[vendorErrors[i]].name
+                                } else {
+                                    msg = msg + ", " + this.$store.state.StoreVendors[vendorErrors[i]].name
+                                }
+                            }
+                            this.errorMessage = "An error occurred while ordering from the vendor(s):" + msg;
+                            this.disableErrorMsg = false;
+                        }
                     })
+            },
+            reload() {
+                this.$router.back()
             }
         }
     };

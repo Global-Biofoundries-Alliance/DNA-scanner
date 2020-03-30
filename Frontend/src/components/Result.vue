@@ -1,6 +1,7 @@
 <template>
     <div>
         <div>
+            <p v-if="globalMessage !== ''" class="text-center font-weight-light headline">{{globalMessage}}</p>
             <v-app id="inspire">
                 <v-data-table
                         :headers="headers"
@@ -12,22 +13,31 @@
                 >
 
                     <template v-for="(n,i) in slots.length" v-slot:[slots[i].name]="{header}">
-                        <v-chip :color=vendors[slots[i].key].color :key="slots[i].name" @click="selectAll(slots[i].key)">
+                        <v-chip :color=vendors[slots[i].key].color :key="slots[i].name"
+                                @click="selectAll(slots[i].key)">
                             {{header.text}}
                         </v-chip>
+                        <v-tooltip right :key="slots[i].key" v-if="vendorMessage[slots[i].key].messages.length !== 0 ">
+                            <template v-slot:activator="{ on }">
+                                <v-icon v-on="on">mdi-alert</v-icon>
+                            </template>
+                            <span>{{vendorMessage[slots[i].key].messages[0]}}</span>
+                        </v-tooltip>
                     </template>
 
                     <template v-for="(n,i) in slots.length" v-slot:[slots[i].price]="{header}">
                         <div :key="i">
                             <p class="mb-0">Price</p>
-                            <p class="mb-0">{{computedPriceTotal[slots[i].key]}} ({{computedPriceOverview[slots[i].key]}})</p>
+                            <p class="mb-0" v-if="slots[i].key === 2">{{computedPriceTotal[slots[i].key]}}
+                                ({{computedPriceOverview[slots[i].key]}})</p>
                         </div>
                     </template>
 
                     <template v-for="(n,i) in slots.length" v-slot:[slots[i].time]="{header}">
                         <div :key="i">
                             <p class="mb-0">Time</p>
-                            <p class="mb-0">{{computedTimeTotal[slots[i].key]}} ({{computedTimeOverview[slots[i].key]}})</p>
+                            <p class="mb-0" v-if="slots[i].key === 2">{{computedTimeTotal[slots[i].key]}}
+                                ({{computedTimeOverview[slots[i].key]}})</p>
                         </div>
                     </template>
 
@@ -35,13 +45,13 @@
                         <div :key="i">
                             <v-tooltip v-if="item.vendors[slots[i].key].offers.length === 0" left>
                                 <template v-slot:activator="{ on }">
-                                    <v-icon :color=vendors[slots[i].key].color v-on="on">mdi-message</v-icon>
+                                    <v-icon :color=vendors[slots[i].key].color v-on="on">mdi-comment-alert</v-icon>
                                 </template>
                                 <span>No offer available</span>
                             </v-tooltip>
                             <v-tooltip v-else-if="item.vendors[slots[i].key].offers[0].offerMessage.length !== 0" left>
                                 <template v-slot:activator="{ on }">
-                                    <v-icon :color=vendors[slots[i].key].color v-on="on">mdi-message</v-icon>
+                                    <v-icon :color=vendors[slots[i].key].color v-on="on">mdi-comment-alert</v-icon>
                                 </template>
                                 <span>{{item.vendors[slots[i].key].offers[0].offerMessage[0].text}}</span>
                             </v-tooltip>
@@ -57,26 +67,42 @@
 
                     <template v-for="(n,i) in slots.length" v-slot:[slots[i].priceItem]="{item, value}">
                         <div :key="i">
-                            <p v-if="item.vendors[slots[i].key].offers.length === 0 || item.vendors[slots[i].key].offers[0].offerMessage.length !== 0"
+                            <p v-if="slots[i].key === 0 || slots[i].key === 1" class="pb-0 mb-0">
+                                <v-tooltip left>
+                                    <template v-slot:activator="{ on }">
+                                        <v-icon :color=vendors[slots[i].key].color v-on="on">mdi-comment-alert</v-icon>
+                                    </template>
+                                    <span>Price not available from vendor</span>
+                                </v-tooltip>
+                            </p>
+                            <p v-else-if="item.vendors[slots[i].key].offers.length === 0 || item.vendors[slots[i].key].offers[0].offerMessage.length !== 0"
                                class="mb-0">
                                 0
                             </p>
                             <v-chip v-else-if="selectBox[item.sequenceInformation.id] === item.vendors[slots[i].key].offers[0].key"
                                     :color=vendors[slots[i].key].color>
-                                {{value}}
+                                {{value}} {{item.vendors[slots[i].key].offers[0].currency}}
                             </v-chip>
-                            <p v-else class="mb-0">{{value}}</p>
+                            <p v-else class="mb-0">{{value}} {{item.vendors[slots[i].key].offers[0].currency}}</p>
                         </div>
                     </template>
 
                     <template v-for="(n,i) in slots.length" v-slot:[slots[i].timeItem]="{item, value}">
                         <div :key="i">
-                            <p v-if="item.vendors[slots[i].key].offers.length === 0 || item.vendors[slots[i].key].offers[0].offerMessage.length !== 0"
+                            <p v-if="slots[i].key === 0 || slots[i].key === 1" class="pb-0 mb-0">
+                                <v-tooltip left>
+                                    <template v-slot:activator="{ on }">
+                                        <v-icon :color=vendors[slots[i].key].color v-on="on">mdi-comment-alert</v-icon>
+                                    </template>
+                                    <span>Time not available from vendor</span>
+                                </v-tooltip>
+                            </p>
+                            <p v-else-if="item.vendors[slots[i].key].offers.length === 0 || item.vendors[slots[i].key].offers[0].offerMessage.length !== 0"
                                class="mb-0">0</p>
                             <v-chip v-else-if="selectBox[item.sequenceInformation.id] === item.vendors[slots[i].key].offers[0].key"
-                                    :color=vendors[slots[i].key].color>{{value}}
+                                    :color=vendors[slots[i].key].color>{{value}} bd.
                             </v-chip>
-                            <p v-else class="mb-0">{{value}}</p>
+                            <p v-else class="mb-0">{{value}} bd.</p>
                         </div>
                     </template>
 
@@ -94,7 +120,9 @@
                                         <template v-slot:[slots[i].item]="props">
                                             <v-tooltip v-if="props.item.offerMessage.length !== 0" left>
                                                 <template v-slot:activator="{ on }">
-                                                    <v-icon :color=vendors[selectedVendors[i]].color v-on="on">mdi-message</v-icon>
+                                                    <v-icon :color=vendors[selectedVendors[i]].color v-on="on">
+                                                        mdi-comment-alert
+                                                    </v-icon>
                                                 </template>
                                                 <span>{{props.item.offerMessage[0].text}}</span>
                                             </v-tooltip>
@@ -108,23 +136,43 @@
                                         </template>
 
                                         <template v-slot:item.price="props">
-                                            <p v-if="props.item.offerMessage.length !== 0"
+                                            <p v-if="selectedVendors[i] === 0 || selectedVendors[i] === 1" class="pb-0">
+                                                <v-tooltip left>
+                                                    <template v-slot:activator="{ on }">
+                                                        <v-icon :color=vendors[selectedVendors[i]].color v-on="on">
+                                                            mdi-comment-alert
+                                                        </v-icon>
+                                                    </template>
+                                                    <span>Price not available from vendor</span>
+                                                </v-tooltip>
+                                            </p>
+                                            <p v-else-if="props.item.offerMessage.length !== 0"
                                                class="mb-0">0</p>
                                             <v-chip v-else-if="selectBox[item.sequenceInformation.id] === props.item.key"
                                                     :color=vendors[selectedVendors[i]].color>
-                                                {{props.value}}
+                                                {{props.value}} {{props.item.currency}}
                                             </v-chip>
-                                            <p v-else class="mb-0">{{props.value}}</p>
+                                            <p v-else class="mb-0">{{props.value}} {{props.item.currency}}</p>
                                         </template>
 
                                         <template v-slot:item.turnoverTime="props">
-                                            <p v-if="props.item.offerMessage.length !== 0"
+                                            <p v-if="selectedVendors[i] === 0 || selectedVendors[i] === 1" class="pb-0">
+                                                <v-tooltip left>
+                                                    <template v-slot:activator="{ on }">
+                                                        <v-icon :color=vendors[selectedVendors[i]].color v-on="on">
+                                                            mdi-comment-alert
+                                                        </v-icon>
+                                                    </template>
+                                                    <span>Time not available from vendor</span>
+                                                </v-tooltip>
+                                            </p>
+                                            <p v-else-if="props.item.offerMessage.length !== 0"
                                                class="mb-0">0</p>
                                             <v-chip v-else-if="selectBox[item.sequenceInformation.id] === props.item.key"
                                                     :color=vendors[selectedVendors[i]].color>
-                                                {{props.value}}
+                                                {{props.value}} bd.
                                             </v-chip>
-                                            <p v-else class="mb-0">{{props.value}}</p>
+                                            <p v-else class="mb-0">{{props.value}} bd.</p>
                                         </template>
                                     </v-data-table>
                                 </v-col>
@@ -176,7 +224,7 @@
                     this.results.forEach(i => {
                         if (i.vendors[vendorKey].offers.length !== 0 && i.vendors[vendorKey].offers[0].offerMessage.length === 0) {
                             this.selectBox[i.sequenceInformation.id] = i.vendors[vendorKey].offers[0].key;
-                            if(i.vendors[vendorKey].offers[0].price > 0){
+                            if (i.vendors[vendorKey].offers[0].price > 0) {
                                 this.computedPriceOverview[vendorKey] = Math.round((this.computedPriceOverview[vendorKey] + i.vendors[vendorKey].offers[0].price) * 100) / 100;
                             }
                             if (i.vendors[vendorKey].offers[0].turnoverTime > this.computedTimeOverview[vendorKey]) {
@@ -193,7 +241,7 @@
                             this.results.forEach(i => {
                                 if (i.vendors[j].offers.length !== 0 && i.vendors[j].offers[0].offerMessage.length === 0) {
                                     if (this.selectBox[i.sequenceInformation.id] === i.vendors[j].offers[0].key) {
-                                        if(i.vendors[j].offers[0].price > 0){
+                                        if (i.vendors[j].offers[0].price > 0) {
                                             this.computedPriceOverview[j] = Math.round((this.computedPriceOverview[j] + i.vendors[j].offers[0].price) * 100) / 100;
                                         }
                                         if (i.vendors[j].offers[0].turnoverTime > this.computedTimeOverview[j]) {
@@ -221,14 +269,14 @@
                     this.computedTimeTotal[j] = 0;
                     this.results.forEach(i => {
                         if (i.vendors[j].offers.length !== 0 && i.vendors[j].offers[0].offerMessage.length === 0) {
-                            if(i.vendors[j].offers[0].price > 0){
+                            if (i.vendors[j].offers[0].price > 0) {
                                 this.computedPriceTotal[j] = Math.round((this.computedPriceTotal[j] + i.vendors[j].offers[0].price) * 100) / 100;
                             }
                             if (i.vendors[j].offers[0].turnoverTime > this.computedTimeTotal[j]) {
                                 this.computedTimeTotal[j] = i.vendors[j].offers[0].turnoverTime
                             }
                             if (this.selectBox[i.sequenceInformation.id] === i.vendors[j].offers[0].key) {
-                                if(i.vendors[j].offers[0].price > 0){
+                                if (i.vendors[j].offers[0].price > 0) {
                                     this.computedPriceOverview[j] = Math.round((this.computedPriceOverview[j] + i.vendors[j].offers[0].price) * 100) / 100;
                                 }
                                 if (i.vendors[j].offers[0].turnoverTime > this.computedTimeOverview[j]) {
@@ -263,6 +311,12 @@
             slots() {
                 return this.computedSlots
             },
+            vendorMessage() {
+                return this.$store.state.StoreVendorMessage
+            },
+            globalMessage() {
+                return this.$store.state.StoreGlobalMessage
+            },
             selectBox: {
                 get() {
                     return this.$store.state.StoreSelectedOffers;
@@ -275,7 +329,7 @@
 
         },
         created() {
-            for(let j = 0; j < this.vendors.length; j++) {
+            for (let j = 0; j < this.vendors.length; j++) {
                 this.computedPriceOverview[j] = 0;
                 this.computedPriceTotal[j] = 0;
                 this.computedTimeOverview[j] = 0;
@@ -284,11 +338,11 @@
             }
             this.selectBox = [];
             this.results.forEach(i => {
-                for(let j = 0; j < i.vendors.length; j++) {
+                for (let j = 0; j < i.vendors.length; j++) {
                     for (let k = 0; k < i.vendors[j].offers.length; k++) {
                         if (i.vendors[j].offers[k].selected) {
                             this.selectBox[i.sequenceInformation.id] = i.vendors[j].offers[k].key;
-                            if(i.vendors[j].offers[k].price > 0){
+                            if (i.vendors[j].offers[k].price > 0) {
                                 this.computedPriceOverview[i.vendors[j].key] = Math.round((this.computedPriceOverview[i.vendors[j].key] + i.vendors[j].offers[k].price) * 100) / 100;
                             }
                             if (i.vendors[j].offers[k].turnoverTime > this.computedTimeOverview[i.vendors[j].key]) {
@@ -296,7 +350,7 @@
                             }
                         }
                         if (k === 0 && i.vendors[j].offers[0].offerMessage.length === 0 && i.vendors[j].offers.length !== 0) {
-                            if(i.vendors[j].offers[k].price > 0){
+                            if (i.vendors[j].offers[k].price > 0) {
                                 this.computedPriceTotal[i.vendors[j].key] = Math.round((this.computedPriceTotal[i.vendors[j].key] + i.vendors[j].offers[k].price) * 100) / 100;
                             }
                             if (i.vendors[j].offers[k].turnoverTime > this.computedTimeTotal[i.vendors[j].key]) {

@@ -70,6 +70,9 @@ class AdvancedMockPinger(BasePinger):
         self.running = False
 
     def order(self, offerIds):
+        # This must not happen. Crash so it's visible in the tests
+        if not offerIds:
+            raise RuntimeError
         offerkeys = []
         for seqoffer in self.offers:
             for offer in seqoffer.offers:

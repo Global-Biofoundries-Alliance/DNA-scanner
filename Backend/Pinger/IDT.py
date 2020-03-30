@@ -174,7 +174,6 @@ class IDTClient:
 	</soapenv:Body>
 </soapenv:Envelope>"""
         request = header + "\n" + footer
-        print(request)
         encoded_request = request.encode('utf-8')
 
         headers = {"Content-Type": "text/xml; charset=UTF-8",
@@ -187,7 +186,6 @@ class IDTClient:
 
 
         result = resp.text
-        print(result)
         return result
 
 #

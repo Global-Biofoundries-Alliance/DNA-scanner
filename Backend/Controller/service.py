@@ -204,7 +204,6 @@ class DefaultComparisonService(ComparisonService):
             newoffers = mainPinger.getOffers()
 
             session.addSearchedVendors(vendorsToSearch)
-            # TODO optimize the hell out of this
             for seqoff in seqoffers:
                 for newseqoff in newoffers:
                     if seqoff.sequenceInformation.key == newseqoff.sequenceInformation.key:

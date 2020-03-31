@@ -350,7 +350,6 @@ class CompositePinger(ManagedPinger):
                 try:
                     self.vendorMessages[vh.vendor.key] = []
                     vh.handler.searchOffers(seqInf)
-                    self.vendorMessages[vh.vendor.key].extend(vh.handler.getVendorMessages())
                 except InvalidInputError as e:
                     # store Message and return when calling getOffers()
                     self.vendorMessages[vh.vendor.key].append(Message(messageType = MessageType.INTERNAL_ERROR, text = str(e)))
@@ -358,6 +357,8 @@ class CompositePinger(ManagedPinger):
                     self.vendorMessages[vh.vendor.key].append(Message(messageType = MessageType.API_CURRENTLY_UNAVAILABLE, text = str(e)))
                 except IsRunningError as e:
                     self.vendorMessages[vh.vendor.key].append(Message(messageType = MessageType.INTERNAL_ERROR, text = str(e)))
+
+                self.vendorMessages[vh.vendor.key].extend(vh.handler.getVendorMessages())
 
             # Clear vendor, if not accepted by the filter
             else:

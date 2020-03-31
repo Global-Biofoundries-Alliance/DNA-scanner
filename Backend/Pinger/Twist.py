@@ -493,7 +493,8 @@ class Twist(BasePinger):
             offers = [] # Empty Offers List
             twistSequences  = []
             constrcutIds = []
-            
+            self.vendorMessage = []
+
             for s in seqInf:
                 # Encode each element in JSON-Format with fields readable by the TWISTClient and add it to the list.
                 self.validator.validate(s)

@@ -212,3 +212,6 @@ class InvalidPinger(BasePinger):
 
     def order(self, offerIds):
         return Order(OrderType.NOT_SUPPORTED)
+
+    def getVendorMessages(self):
+        return [Message(MessageType.VENDOR_INFO, "Invalid vendor configuration. Please contact your administrator.")]

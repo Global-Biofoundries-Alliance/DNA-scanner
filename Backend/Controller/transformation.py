@@ -78,7 +78,7 @@ def buildSearchResponseJSON(seqvendoffers, vendors, selector=[], globalMessages=
             vendor_messages_unfiltered = [message.text for message in vendoff.messages]
             vendorKey = vendoff.vendorInformation.key
             for vm in vendor_messages_unfiltered:
-                if vm not in vendorMessages[vendorKey]["messages"]:
+                if vm and vm not in vendorMessages[vendorKey]["messages"]:
                     vendorMessages[vendorKey]["messages"].append(vm)
 
             # If there is a selection lambda use it to sort offers and select the best one

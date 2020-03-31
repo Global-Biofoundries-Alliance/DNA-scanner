@@ -82,7 +82,7 @@ class TwistClient():
         names = [y['name'] for y in seqInf]
         for idx, (seq, name) in enumerate(zip(sequences, names)):
             construct = {'sequences': seq,
-                         'name': name,
+                         'name': name[:32],
                          'type': typ,
                          'insertion_point_mes_uid': 'na',
                          'vector_mes_uid': 'na',
@@ -533,7 +533,6 @@ class Twist(BasePinger):
                         counter = counter + 1
 
             self.offers = offers
-            self.running = False
             quoteID = self.get_quote(idsforquoting, 
                         external_id=str(uuid.uuid4()),
                         address_id=self.__address,
@@ -545,6 +544,7 @@ class Twist(BasePinger):
             amount = quote['quote']['price']
             self.delete_quote(quoteID)
             self.vendorMessage = [Message(MessageType.VENDOR_INFO, "Twist can only provide the total price and time of the synthesizable sequences. Price: " + str(amount) + " $ , Time: " + str(turnOverTime) + " BD")]
+            self.running = False
 
         except TwistError as exc:
             self.running = False
@@ -557,7 +557,7 @@ class Twist(BasePinger):
             raise UnavailableError("Request got a error") from err
         except UnavailableError as err:
             self.running = False
-            raise UnavailableError from err
+            raise UnavailableError(str(err))
         except Exception as err:
             self.running = False
             raise UnavailableError from err
@@ -683,7 +683,7 @@ class Twist(BasePinger):
                 raise UnavailableError("Request got a error") from err
             except UnavailableError as err:
                 self.running = False
-                raise UnavailableError from err
+                raise UnavailableError(str(err))
             except Exception as err:
                 self.running = False
                 raise UnavailableError from err

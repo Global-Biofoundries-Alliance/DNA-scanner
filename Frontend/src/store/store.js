@@ -3,6 +3,9 @@ import Vuex from 'vuex';
 
 Vue.use(Vuex);
 
+// in our store we have a state which holds the variables, and mutations with which we can
+// change the states from any component.
+
 export const store = new Vuex.Store({
     state: {
         StoreSelectedVendors: [0, 1, 2],

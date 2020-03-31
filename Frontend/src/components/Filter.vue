@@ -180,6 +180,7 @@
             }
         },
         methods: {
+            // resets the selection from the user
             reset() {
                 this.selectedVendors = [0, 1, 2];
                 this.priceRange = [0, 1000];

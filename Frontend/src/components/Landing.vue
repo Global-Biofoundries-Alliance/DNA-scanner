@@ -1,7 +1,13 @@
-<!-- This Landing component is displayed on the front page. It
+<!-- This Landing component is displayed on the front page.
+The template is divided in two parts. One part is displayed when before the user clicked on search (loading = false)
+and the other part is displayed when the user clicked on search and the loading circle appears (loading = true).
 -->
 <template>
     <div>
+        <!-- The first div just includes the elements first displayed when you open the webpage. These are the paragraphs
+        which include the text, the file input, the buttons, the alerts if an error occurred, the selection for the strategy and codon usage table, and the logo.
+        The second div just includes the loading circle and the text underneath it.
+        -->
         <div v-if="!loading">
             <p class="text-center display-1 font-weight-thin" style="margin-top: 13%">Upload your DNA sequences</p>
             <p class="text-center display-1 font-weight-thin">and get it synthesized with the best offers from different
@@ -119,7 +125,7 @@
                 file: [],
                 dialog: false,
                 noFile: false,
-                colors: ["red", "green", "orange"],
+                colors: ["#B8DE29FF", "#2D708EFF", "#3CBB75FF"],
                 isAminoAcid: '0',
                 wrongFile: false,
                 noProjectName: false,
@@ -129,6 +135,17 @@
             }
         },
         methods: {
+            // This method is executed when the user clicked on search. It checks at first, if a file was chosen, then
+            // if the user clicked on yes at the selection but didn't choose any strategy or codon usage table. After that
+            // it checks if the project name is empty. If any error occurred it changes the according variable and an error
+            // alert will be displayed. If there is no error we come to the last else part where we make the following requests:
+            // 1. /filter with the chosen filter from the user
+            // 2. /codon_optimization with the chosen strategy and the codon usage table
+            // 3. /upload with the chosen file
+            // 4. /results without any data
+            // If there is an error by uploading a wrong file or the results throw an error it will be displayed.
+            // If there is no error '/result' is added to the url so that the router changes to the Result component.
+
             searchNow() {
                 if (this.file === null) {
                     this.noFile = true;
@@ -226,6 +243,9 @@
                 }
             },
         },
+        // This part is executed when the user loads the website. Here we make two requests. One to get the available
+        // vendors and one to get the codon usage tables.
+
         created() {
             this.$http.get('/api/vendors', {
                 headers: {
@@ -260,6 +280,7 @@
 </script>
 
 <style>
+    /*This class is used for the project name field to show the entered text in the center of the field */
     .centered-input input {
         text-align: center;
     }

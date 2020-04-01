@@ -8,10 +8,12 @@ echo "Install dependencies"
 ./venv/bin/pip3 install -r requirements.txt
 
 echo "run tests"
-venv/bin/python3 validatortest.py -v
-venv/bin/python3 compositepingertest.py -v
-venv/bin/python3 geneartclienttest.py -v
-venv/bin/python3 geneartpingertest.py -v
-venv/bin/python3 idtclienttest.py -v
-venv/bin/python3 idtpingertest.py -v
-venv/bin/python3 controllertest.py -v
+
+# Discover all tests and run them
+venv/bin/coverage run -m unittest discover -p "*test.py"
+
+# Just for Info: With the following command you can run a single test
+# venv/bin/coverage run entitiestest.py -v
+
+echo "show coverage"
+venv/bin/coverage report --include='*Backend*' -m

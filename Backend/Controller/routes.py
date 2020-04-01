@@ -44,8 +44,10 @@ def uploadFile():
         if 'seqfile' not in request.files or request.files['seqfile'] == "":
             return json.jsonify({'error': 'No file specified'})
 
+        seqPrefix = request.form.get("prefix", default="")     # Sequence prefix for this file's sequences
+
         # Actually parse the file and save the sequences
-        return service.setSequencesFromFile(request.files["seqfile"])
+        return service.setSequencesFromFile(request.files["seqfile"], seqPrefix)
     except:
         return {"error": "Encountered error during file upload\n" + (traceback.format_exc() if __debug__ else "")}
 
@@ -102,4 +104,48 @@ def getSearchResults():
         return service.getResults(size=size, offset=offset)
     except Exception as error:
         return {"error": "Encountered error while fetching search results\n" + (
+            traceback.format_exc() if __debug__ else "")}
+
+@app.route('/select', methods=['POST'])
+def setSelection():
+    try:
+        service.setSelection(request.get_json()["selection"])
+        return 'selection set'
+    except Exception as error:
+        return {"error": "Encountered error while selecting offers\n" + (
+            traceback.format_exc() if __debug__ else "")}
+
+@app.route('/available_hosts', methods=['GET'])
+def getAvailableHosts():
+    try:
+        return json.jsonify(service.getAvailableHosts())
+    except Exception as error:
+        return {"error": "Encountered error while fetching list of available hosts\n" + (
+            traceback.format_exc() if __debug__ else "")}
+
+@app.route('/codon_optimization', methods=['POST'])
+def setCodonOptimizationOptions():
+    try:
+        request_json = request.get_json()
+        if "strategy" not in request_json or "host" not in request_json:
+            return {"error": "Request is missing fields"}
+
+        service.setCodonOptimizationOptions(request_json["host"], request_json["strategy"])
+
+
+        return 'codon optimization options set'
+    except Exception as error:
+        return {"error": "Encountered error while setting codon optimization options\n" + (
+            traceback.format_exc() if __debug__ else "")}
+
+@app.route('/order', methods=['POST'])
+def order():
+    try:
+        request_json = request.get_json()
+        if "offers" not in request_json:
+            return {"error": "Request is missing fields"}
+
+        return json.jsonify(service.issueOrder(request_json["offers"]))
+    except Exception as error:
+        return {"error": "Encountered error while issuing order\n" + (
             traceback.format_exc() if __debug__ else "")}

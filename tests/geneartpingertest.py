@@ -180,9 +180,24 @@ class TestGeneArtPinger(unittest.TestCase):
         self.assertEqual(messages3[0].text, "hqDnaStrings_rejected_homology.")
         self.assertEqual(offers3.turnovertime, -1)
     
-        # Test the method order. All the sequences in listOfSequences can be synthesised as dnaStrings
-        messageorder = self.pinger_example.order(listOfSequences)
-        self.assertEqual(messageorder.messageType, Entities.MessageType.INFO)
+        #
+        # Test the method order
+        #
+
+        # Check Success Order with two known and unique Offer-Keys
+        offer2order = [sequenceOffer1.offers[0].key, sequenceOffer0.offers[0].key]
+        order = self.pinger_example.order(offer2order)
+        self.assertEqual(order.orderType, Entities.OrderType.URL_REDIRECT)
+
+        print("")
+        print("Here is the redirect URL of the offer. You can open it and login to check it manually.")
+        print("Redirect URL: ", order.url)
+        print("")
+
+        # Check error when using unknown offerId
+        offer2order = [sequenceOffer1.offers[0].key, 12345]
+        with self.assertRaises(Entities.InvalidInputError): self.pinger_example.order(offer2order)
+        
 
 if __name__ == '__main__':
     unittest.main()

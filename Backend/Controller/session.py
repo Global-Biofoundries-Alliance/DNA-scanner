@@ -14,14 +14,6 @@ validator = EntityValidator()
 #
 class SessionManager:
 
-    def __init__(self):
-        self.sequences = []
-        self.pinger = None
-        self.filter = {}
-        self.results = []
-        self.searchedVendors = []
-        self.globalMessages = []
-
     #
     #   Desc:   Loades the Pinger out of the session-store
     #
@@ -113,6 +105,54 @@ class SessionManager:
         raise NotImplementedError
 
     #
+    #   Desc: Stores the current selection
+    #
+    def storeSelection(self, selection):
+        raise NotImplementedError
+
+    #
+    #   Desc: Returns the current selection
+    #
+    def loadSelection(self):
+        raise NotImplementedError
+
+    #
+    #   Desc: Sets the BOOST client
+    #
+    def storeBoostClient(self, boostClient):
+        raise NotImplementedError
+
+    #
+    #   Desc: Returns the BOOST client
+    #
+    def loadBoostClient(self):
+        raise NotImplementedError
+
+    #
+    #   Desc: Sets the host to be used for codon optimization
+    #
+    def storeHostOrganism(self, host: str):
+        raise NotImplementedError
+
+    #
+    #   Desc: Returns the host to be used for codon optimization
+    #
+    def loadHostOrganism(self) -> str:
+        raise NotImplementedError
+
+    #
+    #   Desc: Sets the juggling strategy used for codon optimization
+    #
+    def storeJugglingStrategy(self, strategy: str):
+        raise NotImplementedError
+
+    #
+    #   Desc: Returns the juggling strategy used for codon optimization
+    #
+    def loadJugglingStrategy(self) -> str:
+        raise NotImplementedError
+
+    #
     #   Desc:   Free memory by Free all or old sessions. Can
     #           be different for every StoreManager.
     #
@@ -132,6 +172,10 @@ class SingleSession(SessionManager):
         self.results = []
         self.searchedVendors = []
         self.globalMessages = []
+        self.selection = []
+        self.boostClient = None
+        self.hostOrganism = ""
+        self.jugglingStrategy = ""
 
     #
     #   Desc:   Loades the Pinger out of the session-store
@@ -232,7 +276,10 @@ class SingleSession(SessionManager):
     #   Desc: Adds a global message to this session
     #
     def addGlobalMessages(self, messages: List[Message]):
-        self.globalMessages.append(messages)
+        # Add messages unless they are already present
+        for message in messages:
+            if message not in self.globalMessages:
+                self.globalMessages.append(message)
 
     #
     #   Desc: Returns this session's global messages
@@ -245,6 +292,54 @@ class SingleSession(SessionManager):
     #
     def clearGlobalMessages(self):
         self.globalMessages = []
+
+    #
+    #   Desc: Stores the current selection
+    #
+    def storeSelection(self, selection):
+        self.selection = selection
+
+    #
+    #   Desc: Returns the current selection
+    #
+    def loadSelection(self):
+        return self.selection
+
+    #
+    #   Desc: Sets the BOOST client
+    #
+    def storeBoostClient(self, boostClient):
+        self.boostClient = boostClient
+
+    #
+    #   Desc: Returns the BOOST client
+    #
+    def loadBoostClient(self):
+        return self.boostClient
+
+    #
+    #   Desc: Sets the host to be used for codon optimization
+    #
+    def storeHostOrganism(self, host: str):
+        self.hostOrganism = host
+
+    #
+    #   Desc: Returns the host to be used for codon optimization
+    #
+    def loadHostOrganism(self) -> str:
+        return self.hostOrganism
+
+    #
+    #   Desc: Sets the juggling strategy used for codon optimization
+    #
+    def storeJugglingStrategy(self, strategy: str):
+        self.jugglingStrategy = strategy
+
+    #
+    #   Desc: Returns the juggling strategy used for codon optimization
+    #
+    def loadJugglingStrategy(self) -> str:
+        return self.jugglingStrategy
 
     def free(self):
         self.sequences = []
@@ -372,6 +467,55 @@ class InMemorySessionManager(SessionManager):
     #
     def clearGlobalMessages(self):
         self.session.clearGlobalMessages()
+
+    #
+    #   Desc: Stores the current selection
+    #
+    def storeSelection(self, selection):
+        self.session.storeSelection(selection)
+
+    #
+    #   Desc: Returns the current selection
+    #
+    def loadSelection(self):
+        return self.session.loadSelection()
+
+    #
+    #   Desc: Sets the BOOST client
+    #
+    def storeBoostClient(self, boostClient):
+        self.session.storeBoostClient(boostClient)
+
+    #
+    #   Desc: Returns the BOOST client
+    #
+    def loadBoostClient(self):
+        return self.session.loadBoostClient()
+
+    #
+    #   Desc: Sets the host to be used for codon optimization
+    #
+    def storeHostOrganism(self, host: str):
+        self.session.storeHostOrganism(host)
+
+    #
+    #   Desc: Returns the host to be used for codon optimization
+    #
+    def loadHostOrganism(self) -> str:
+        return self.session.loadHostOrganism()
+
+    #
+    #   Desc: Sets the juggling strategy used for codon optimization
+    #
+    def storeJugglingStrategy(self, strategy: str):
+        self.session.storeJugglingStrategy(strategy)
+
+    #
+    #   Desc: Returns the juggling strategy used for codon optimization
+    #
+    def loadJugglingStrategy(self) -> str:
+        return self.session.loadJugglingStrategy()
+
 
     #
     #   Desc: Frees all sessions

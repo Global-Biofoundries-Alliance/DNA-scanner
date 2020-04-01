@@ -1,34 +1,91 @@
 import unittest
 
-from Pinger.Entities import *
-from Pinger.Validator import entityValidator as Validator
+from Pinger import Entities, Validator
 
+#
+#   Tests for the following files:
+#       Backend/Pinger/Entities.py
+#
+class TestEntities(unittest.TestCase):
 
-class TestCompositePinger(unittest.TestCase):
+    name = "Validator test"
 
-    # Checks the isRunning() method.
-    def test_vendorinformation(self):
+    #
+    #   Desc:   Check Validation of SequenceVendorOffers   
+    #
+    def test_sequencevendoroffers(self):
 
-        # Check Fals for Types that are not part of the Entities
-        self.assertFalse(Validator.validate(1))
-        self.assertFalse(Validator.validate("test"))
+        validator = Validator.EntityValidator(printError=True)
 
-        # Check true for the valid Subject
-        subject = VendorInformation(key=1, name="ABC", shortName="abc")
-        self.assertTrue(Validator.validate(subject))
+        # SequenceInformation has wrong type
+        ott = Entities.SequenceVendorOffers(sequenceInformation=1, vendorOffers=[])
+        self.assertFalse(validator.validate(ott))
 
-        # False if key is not a number
-        subject = VendorInformation(key="", name="BCD", shortName="efg")
-        self.assertFalse(Validator.validate(subject))
+        # vendorOffers has wrong type
+        ott = Entities.SequenceVendorOffers(sequenceInformation=Entities.SequenceInformation(key="1", name="1", sequence="ACTACG"), vendorOffers=1)
+        self.assertFalse(validator.validate(ott))
 
-        # False if name is not type str
-        subject = VendorInformation(key=1, name=1, shortName="efg")
-        self.assertFalse(Validator.validate(subject))
+        # vendorOffers has element with wrong type
+        ott = Entities.SequenceVendorOffers(sequenceInformation=Entities.SequenceInformation(key="1", name="1", sequence="ACTACG"), vendorOffers=[1])
+        self.assertFalse(validator.validate(ott))
 
-        # False if shortName is not type str
-        subject = VendorInformation(key=1, shortName=1, name="efg")
-        self.assertFalse(Validator.validate(subject))
+        # success
+        ott = Entities.SequenceVendorOffers(sequenceInformation=Entities.SequenceInformation(key="1", name="1", sequence="ACTACG"), vendorOffers=[Entities.VendorOffers(vendorInformation=Entities.VendorInformation(key=1, name="1", shortName="1"))])
+        self.assertTrue(validator.validate(ott))
 
+    #
+    #   Desc:   Check validation of SequenceOffers
+    #
+    def test_sequenceoffers(self):
+
+        validator = Validator.EntityValidator(printError=True)
+
+        # SequenceInformation has wrong type
+        ott = Entities.SequenceOffers(sequenceInformation=1, offers=[])
+        self.assertFalse(validator.validate(ott))
+
+        # offers has wrong type
+        ott = Entities.SequenceOffers(sequenceInformation=Entities.SequenceInformation(key="1", name="1", sequence="ACTACG"), offers=1)
+        self.assertFalse(validator.validate(ott))
+
+        # vendorOffers has element with wrong type
+        ott = Entities.SequenceOffers(sequenceInformation=Entities.SequenceInformation(key="1", name="1", sequence="ACTACG"), offers=[1])
+        self.assertFalse(validator.validate(ott))
+
+        # success
+        ott = Entities.SequenceOffers(sequenceInformation=Entities.SequenceInformation(key="1", name="1", sequence="ACTACG"), offers=[Entities.Offer()])
+        self.assertTrue(validator.validate(ott))
+
+    #
+    #   Desc:   Check validation of SequenceOffers
+    #
+    def test_vendoroffers(self):
+
+        validator = Validator.EntityValidator(printError=True)
+
+        # VendorInformation has wrong type
+        ott = Entities.VendorOffers(vendorInformation=1, offers=[])
+        self.assertFalse(validator.validate(ott))
+
+        # offers has wrong type
+        ott = Entities.VendorOffers(vendorInformation=Entities.VendorInformation(key=1, name="1", shortName="1"), offers=1)
+        self.assertFalse(validator.validate(ott))
+
+        # vendorOffers has element with wrong type
+        ott = Entities.VendorOffers(vendorInformation=Entities.VendorInformation(key=1, name="1", shortName="1"), offers=[1])
+        self.assertFalse(validator.validate(ott))
+
+        # wrong messages type
+        ott = Entities.VendorOffers(vendorInformation=Entities.VendorInformation(key=1, name="1", shortName="1"), offers=[], messages=1)
+        self.assertFalse(validator.validate(ott))
+
+        # wrong message in messages
+        ott = Entities.VendorOffers(vendorInformation=Entities.VendorInformation(key=1, name="1", shortName="1"), offers=[], messages=[1])
+        self.assertFalse(validator.validate(ott))
+
+        # success
+        ott = Entities.VendorOffers(vendorInformation=Entities.VendorInformation(key=1, name="1", shortName="1"), offers=[Entities.Offer()], messages=[Entities.Message()])
+        self.assertTrue(validator.validate(ott))
 
 if __name__ == '__main__':
     unittest.main()

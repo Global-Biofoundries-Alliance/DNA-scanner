@@ -1,4 +1,5 @@
 from enum import Enum
+from .atomiccounter import *
 
 #########################################################
 #                                                       #
@@ -86,6 +87,11 @@ class Currency(Enum):
     EUR = 0
     # United States Dollar
     USD = 1
+    # Currency is unknown
+    UNKNOWN = 2
+
+    def symbol(self):
+        return {"EUR": "€", "USD": "$", "UNKNOWN": "?"}[self.name]
 
 #########################################################
 #                                                       #
@@ -98,7 +104,7 @@ class Currency(Enum):
 #   Desc:   Representation of a Sequence
 #
 #   @attribute key
-#       Type String. Identifies a specific sequence.
+#       Type Integer. Identifies a specific sequence.
 #
 #   @attribute name
 #       Type String. Gives the sequence an human readable name.
@@ -108,13 +114,26 @@ class Currency(Enum):
 #
 class SequenceInformation:
 
-    def __init__(self, sequence, name = "", key = ""):
+    # Define counter for IDs
+    # Atomic Counter is a threadsafe counter
+    idcounter = AtomicCounter()
+
+    def __init__(self, sequence, name = "", key = 0):
         # ID of the sequence.
         self.key = key
         # Name of the sequence. Readable representation of the sequence for users
         self.name = name
         # The sequence
         self.sequence = sequence
+
+    #
+    #   Static Method to generate a unique id
+    #   NOTE: Only used during external initialization.
+    #
+    def generateId():
+        return SequenceInformation.idcounter.increment()
+
+
 
         
 
@@ -168,6 +187,16 @@ class Price:
 
         # Is this price specific for the user
         self.customerSpecific = customerSpecific
+
+    #
+    # Def: Returns the price in a given currency.
+    #
+    # @param currency type Currency
+    #                 Specifies the currency in which the price is returned.
+    #
+    #TODO: Implement conversion; Right now it's just an identity function.
+    def getAmount(self, currency):
+        return self.amount;
 
 #
 #   Desc:   Sequence and a list of offers for this sequence
@@ -229,6 +258,10 @@ class VendorOffers:
 #   Desc:   Representation of a Offer. A Offer can also only represent a error, when it contains a
 #           message with an error type.
 #
+#   @attribute key
+#           Type int. Unique Id to identify the current offer.
+#
+#
 #   @attribute price
 #           Type Price. Represents the price of the offer. If less then 0, then no price is available 
 #           or price is unknown.
@@ -243,7 +276,14 @@ class VendorOffers:
 #
 class Offer:
 
+    # Define counter for IDs
+    # Atomic Counter is a threadsafe counter
+    idcounter = AtomicCounter()
+
     def __init__(self, price=Price(), turnovertime=-1, messages = []):
+
+        # Unique id of the offer
+        self.key = Offer.generateId()
 
         # price of the offer
         self.price = price
@@ -253,6 +293,12 @@ class Offer:
 
         # for example syntesis-errors
         self.messages = messages
+
+    #
+    #   Static Method to generate a unique id
+    #
+    def generateId():
+        return Offer.idcounter.increment()
 
 #
 #   Desc:   Messages with specific type and text.
@@ -294,20 +340,19 @@ class OrderType(Enum):
     NOT_SUPPORTED = 1
     # By redirect to an specific URL
     URL_REDIRECT = 2
+    # Plain message response to order
+    MESSAGE = 3
 
 #
 #   Desc:   General interface for orders.
-#
-#   @attribute seqInf
 #
 #   @attribute orderType
 #           Type OrderType. The type of the concrete order.
 #
 class Order:
 
-    def __init__(self, seqInf, orderType = OrderType.NOT_SUPPORTED):
+    def __init__(self, orderType = OrderType.NOT_SUPPORTED):
         self.orderType = orderType
-        self.seqInf = seqInf
 
     #
     #   Desc:   Returns the type of the concrete order.
@@ -318,11 +363,19 @@ class Order:
     def getType(self):
         return self.orderType
 
+    # Used for response format. Must be implemented by each order class.
+    def __dict__(self):
+        return {"type": self.orderType.name}
+
+
 #
 #   Desc:   Finish the order by redirect to a specific url.
 #
 #   @attribute url
 #           Type String. The redirect url to make the order.
+#
+#   @attribute orderType
+#           Type OrderType. The type of the concrete order.
 #
 class UrlRedirectOrder(Order):
 
@@ -332,9 +385,31 @@ class UrlRedirectOrder(Order):
     #   @param url
     #           Type String. The redirect url to make the order.
     #
-    def __init__(self, url, seqInf):
-        Order(seqInf=seqInf, orderType=OrderType.URL_REDIRECT)
+    def __init__(self, url):
+        super().__init__(orderType=OrderType.URL_REDIRECT)
         self.url = url
+
+    # Used for response format. Must be implemented by each order class.
+    def __dict__(self):
+        return {"type": self.orderType.name, "url": self.url}
+
+
+class MessageOrder(Order):
+
+    #
+    #   Desc:   Constructor.
+    #
+    #   @param url
+    #           Type String. The redirect url to make the order.
+    #
+    def __init__(self, message):
+        super().__init__(orderType=OrderType.MESSAGE)
+        self.message = message
+
+    # Used for response format. Must be implemented by each order class.
+    def __dict__(self):
+        return {"type": self.orderType.name, "message": self.message}
+
 
 #####################################################
 #                                                   #
@@ -368,3 +443,4 @@ class IsRunningError(Exception):
 #
 class AuthenticationError(Exception):
     pass
+

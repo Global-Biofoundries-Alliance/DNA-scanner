@@ -22,6 +22,7 @@ idt_username_real = cfg['idt']['idt_username']
 idt_password_real = cfg['idt']['idt_password']
 client_id_real = cfg['idt']['client_id']
 client_secret_real = cfg['idt']['client_secret']
+shared_secret = cfg['idt']['shared_secret']
 scope_real = cfg['idt']['scope']
 token_real = cfg['idt']['token']
 
@@ -30,7 +31,7 @@ class TestIDTPinger(unittest.TestCase):
 
     name = "IDTPinger"
     # Pinger Object used for theses tests.
-    pinger_example = IDT.IDT(idt_username = idt_username_real, idt_password = idt_password_real, client_id = client_id_real, client_secret = client_secret_real, token = token_real)
+    pinger_example = IDT.IDT(idt_username = idt_username_real, idt_password = idt_password_real, client_id = client_id_real, client_secret = client_secret_real, shared_secret = shared_secret, token = token_real)
     
     # Checks the getToken method.
     def test_getToken(self):
@@ -73,9 +74,9 @@ class TestIDTPinger(unittest.TestCase):
 
     # Check the BasePinger Functions methods.
     def test_pingerFunctions(self):
-        print ("Start test for the methods searchOffers, getOffers and clear of " + self.name + ".")
+        print ("Start test for the methods searchOffers, getOffers, order and clear of " + self.name + ".")
 
-        with self.assertRaises(Entities.AuthenticationError): IDT.IDT(idt_username = "test", idt_password = "test", client_id = "test", client_secret = "test")
+        with self.assertRaises(Entities.AuthenticationError): IDT.IDT(idt_username = "test", idt_password = "test", client_id = "test", client_secret = "test", shared_secret = "test")
         with self.assertRaises(Entities.InvalidInputError): self.pinger_example.searchOffers([1])
 
         listOfSequences = example_list
@@ -106,7 +107,22 @@ class TestIDTPinger(unittest.TestCase):
 
         self.assertEqual(Entities.MessageType.SYNTHESIS_ERROR, offers[2].offers[0].messages[0].messageType)
         self.assertEqual("Example_Name_2_rejected_Overall Repeat.Repeat Length.Single Repeat Overall Bases.Single Repeat Percentage.Windowed Repeat Percentage.SSA Repeat 3'.SSA Low GC 3'.", offers[2].offers[0].messages[0].text)
-        
+
+
+        #
+        # Test the method order
+        #
+
+        # Check Success Order with two known and unique Offer-Keys
+        offersToOrder = [offers[0].offers[0].key, offers[1].offers[0].key]
+        order = self.pinger_example.order(offersToOrder)
+        self.assertEqual(order.orderType, Entities.OrderType.MESSAGE)
+
+        print("")
+        print("Here is the message of the offer.")
+        print("Message: ", order.message)
+        print("")
+
         self.pinger_example.clear()
         self.assertEqual([], self.pinger_example.getOffers())
 

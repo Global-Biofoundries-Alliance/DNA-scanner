@@ -101,6 +101,10 @@ class TestCompositePinger(unittest.TestCase):
         self.assertEqual(1, len(p.getOffers()[0].vendorOffers))
         self.assertEqual(1, len(p.getOffers()[0].vendorOffers[0].offers))
 
+        # Create a correct order
+        order = p.order(vendor = 1, offerIds = [p.getOffers()[0].vendorOffers[0].offers[0].key])
+        self.assertEqual(Entities.OrderType.NOT_SUPPORTED, order.getType())
+
         # search with 1 sequence and 2 vendors
         p.registerVendor(Entities.VendorInformation(name="Dummy", shortName="Dummy", key=2), pingerDummy2)
         p.searchOffers([Entities.SequenceInformation("ACTG", "TestSequence", "ts1")])

@@ -1,12 +1,13 @@
-# python imports
-from typing import Tuple
-
 import yaml
 from Pinger.AdvancedMock import AdvancedMockPinger
 from Pinger.Entities import *
 from Pinger.GeneArt import GeneArt
 from Pinger.IDT import IDT
+from Pinger.Twist import Twist
+from .parser import BoostClient
 from .session import SessionManager
+import traceback
+
 # project imports
 from Pinger.Pinger import BasePinger, ManagedPinger, CompositePinger
 
@@ -62,6 +63,7 @@ class YmlConfigurator(Configurator):
 
         cfg_controller = self.cfg["controller"]
 
+        # Initialize static vendor list and assign IDs.
         if "vendors" in cfg_controller:
             key = 0
             for vendor in cfg_controller["vendors"]:
@@ -84,10 +86,12 @@ class YmlConfigurator(Configurator):
 
         for pingerInfo in pingerIDTuples:
             newPinger = self.getPingerFromKey(pingerInfo[1])
-            #Catch pingers that could not be initialized for any reason
+            # Catch pingers that could not be initialized for any reason
             if isinstance(newPinger, Message):
                 session.addGlobalMessages([newPinger])
                 continue
+            if isinstance(newPinger, AdvancedMockPinger):
+                session.addGlobalMessages(["Warning: A mock vendor is being used. Contact an administrator."])
             pinger.registerVendor(vendorInformation=pingerInfo[0], vendorPinger=newPinger)
         return pinger
 
@@ -99,19 +103,29 @@ class YmlConfigurator(Configurator):
     #
     #   @result A pinger of type as specified by id and configured to the capacity of the config
     #
-    def getPingerFromKey(self, id : str) -> BasePinger:
+    def getPingerFromKey(self, id: str) -> BasePinger:
         try:
             cfg_pinger = self.cfg["pinger"]
             if id == "PINGER_TWIST":
-                return BasePinger()
+                cfg_twist = cfg_pinger["twist"]
+                return Twist(cfg_twist["email"],
+                             cfg_twist["password"],
+                             cfg_twist["apitoken"],
+                             cfg_twist["eutoken"],
+                             cfg_twist["username"],
+                             cfg_twist["firstname"],
+                             cfg_twist["lastname"],
+                             host=cfg_twist["server"])
             if id == "PINGER_IDT":
                 cfg_idt = cfg_pinger["idt"]
                 pinger = IDT(idt_username=cfg_idt["username"],
-                           idt_password=cfg_idt["password"],
-                           client_id=cfg_idt["client_id"],
-                           client_secret=cfg_idt["client_secret"],
-                           scope=cfg_idt["scope"])
+                             idt_password=cfg_idt["password"],
+                             client_id=cfg_idt["client_id"],
+                             client_secret=cfg_idt["client_secret"],
+                             shared_secret=cfg_idt["shared_secret"],
+                             scope=cfg_idt["scope"])
                 token = pinger.getToken()
+                # This may return a message instead of a token in case of failure
                 if isinstance(token, Message):
                     return token
                 else:
@@ -137,6 +151,20 @@ class YmlConfigurator(Configurator):
         except:
             return InvalidPinger()
 
+    def initializeBoostClient(self):
+        try:
+            cfg_boost = self.cfg["boost"]
+            return BoostClient(url_job=cfg_boost["url_job"],
+                               url_hosts=cfg_boost["url_hosts"],
+                               url_submit=cfg_boost["url_submit"],
+                               url_login=cfg_boost["url_login"],
+                               username=cfg_boost["username"],
+                               password=cfg_boost["password"],
+                               timeout=cfg_boost["timeout"])
+        except Exception as error:
+            print(traceback.format_exc())
+            return None
+
 
 #
 #   The InvalidPinger is used if a pinger could not be initialized due to a misconfiguration.
@@ -147,7 +175,7 @@ class InvalidPinger(BasePinger):
     def __init__(self):
         self.tempOffer = Offer(price=Price(currency=Currency.EUR, amount=-1), turnovertime=-1)
         self.tempOffer.messages.append(
-            Message(MessageType.INFO, "Invalid vendor configuration. Please contact your administrator."))
+            Message(MessageType.WRONG_CREDENTIALS, "Invalid vendor configuration. Please contact your administrator."))
         self.offers = []
         self.running = False
 
@@ -181,3 +209,9 @@ class InvalidPinger(BasePinger):
     def clear(self):
         self.offers = []
         self.running = False
+
+    def order(self, offerIds):
+        return Order(OrderType.NOT_SUPPORTED)
+
+    def getVendorMessages(self):
+        return [Message(MessageType.VENDOR_INFO, "Invalid vendor configuration. Please contact your administrator.")]

@@ -1,4 +1,4 @@
-
+# Configuration for all pingers that need it
 pinger:
     geneart:
         server: https://www.thermofisher.com/order/gene-design-ordering/api
@@ -15,33 +15,52 @@ pinger:
         server: https://twist-api.twistbioscience-staging.com
         email: YOUR_EMAIL
         username: YOUR_USERNAME
-        token: YOUR_TOKEN
+        password: YOUR_PASSWORD
+        apitoken: YOUR_API_TOKEN
+        eutoken: YOUR_EU_TOKEN
+        firstname: YOUR_FIRSTNAME
+        lastname: YOUR_LASTNAME
     idt:
         username: YOUR_USERNAME
         password: YOUR_PASSWORD
         client_id: YOUR_CLIENT_ID
         client_secret: YOUR_CLIENT_SECRET
+        shared_secret: YOUR_SHARED_SECRET
         scope: YOUR_SCOPE
+
 controller:
+    #   A complete list of vendors available.
+    #
+    #   Use Mock-Pinger: You can use Mock-Pinger with Random numbers, when
+    #   you change the value of the field 'pinger' to 'PINGER_MOCK' 
     vendors:
         [
-        {
-            name: Twist Bioscience,
-            shortName: Twist,
-            pinger: PINGER_MOCK
-        },
-        {
-            name: IDT DNA,
-            shortName: IDT,
-            pinger: PINGER_MOCK
-        },
-        {
-            name: ThermoFisher Scientific GeneArt,
-            shortName: GeneArt,
-            pinger: PINGER_MOCK
-        }
+            {
+                name: Twist Bioscience,
+                shortName: Twist,
+                pinger: PINGER_MOCK
+            },{
+                name: IDT DNA,
+                shortName: IDT,
+                pinger: PINGER_MOCK
+            },{
+                name: ThermoFisher Scientific GeneArt,
+                shortName: GeneArt,
+                pinger: PINGER_MOCK
+            }
         ]
 
+# Configuration for the BOOST service
+boost:
+    url_job: "https://boost.jgi.doe.gov/rest/jobs/"
+    url_hosts: "https://boost.jgi.doe.gov/rest/files/predefined_hosts"
+    url_submit: "https://boost.jgi.doe.gov/rest/jobs/submit"
+    url_login: "https://boost.jgi.doe.gov/rest/auth/login"
+    username: YOUR_USERNAME
+    password: YOUR_PASSWORD
+    timeout: 60
+
+# Configuration for the review database
 review:
     db: 
         # https://docs.sqlalchemy.org/en/13/core/engines.html

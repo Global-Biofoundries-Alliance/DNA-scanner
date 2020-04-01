@@ -5,9 +5,11 @@ from sys import maxsize
 from Controller.app import app
 from Controller.configurator import YmlConfigurator as Configurator
 from Controller.session import InMemorySessionManager
-from Pinger.Entities import SequenceInformation, SequenceVendorOffers
+from Pinger.Entities import SequenceInformation, SequenceVendorOffers, Currency
 from Pinger.Pinger import CompositePinger
 from flask import json
+from random import random
+import random as rand
 
 
 class TestController(unittest.TestCase):
@@ -137,9 +139,14 @@ class TestController(unittest.TestCase):
     def test_results_endpoint(self) -> None:
         print("\nTesting /results endpoint")
 
+        # Sequence names and IDs that have already occured; Used to ensure unique names IDs
+        sequenceNames = []
+        sequenceIDs = []
+
         for i in range(self.iterations):
             handle = open(self.sequence_path, 'rb')
-            self.client.post('/api/upload', content_type='multipart/form-data', data={'seqfile': handle})
+            self.client.post('/api/upload', content_type='multipart/form-data',
+                             data={'seqfile': handle, 'prefix': "Zucchini" + str(i)})
             filter = '{"filter": {"vendors": [1],"price": [0, 100],"deliveryDays": 5,"preselectByPrice": True,"preselectByDeliveryDays": False}}'
             self.client.post('/api/filter', data=filter)
             searchResult = self.client.post('/api/results', content_type='multipart/form-data',
@@ -154,6 +161,18 @@ class TestController(unittest.TestCase):
             self.assertIn("result", searchResult.keys())
             self.assertIn("globalMessage", searchResult.keys())
 
+            # AdvancedMockPingers are used for testing so there should be warning messages present.
+            self.assertTrue(searchResult["globalMessage"])
+
+            self.assertIn("vendorMessage", searchResult.keys())
+
+            messageVendors = []  # tracks the vendors for which messages have already been encountered
+            for vendor in searchResult["vendorMessage"]:
+                self.assertIn("vendorKey", vendor.keys())
+                self.assertIn("messages", vendor.keys())
+                self.assertFalse(vendor["vendorKey"] in messageVendors)
+                messageVendors.append(vendor["vendorKey"])
+
             for result in searchResult["result"]:
                 expectedCount = expectedCount + 1
 
@@ -163,15 +182,26 @@ class TestController(unittest.TestCase):
                 self.assertIn("sequence", result["sequenceInformation"].keys())
                 self.assertIn("length", result["sequenceInformation"].keys())
 
+                # Test uniqueness of names and IDs
+                self.assertNotIn(result["sequenceInformation"]["name"], sequenceNames)
+                self.assertNotIn(result["sequenceInformation"]["id"], sequenceIDs)
+                sequenceNames.append(result["sequenceInformation"]["name"])
+                sequenceNames.append(result["sequenceInformation"]["name"])
+                sequenceIDs.append(result["sequenceInformation"]["id"])
+
+                self.assertTrue(result["sequenceInformation"]["name"].startswith(
+                    str(result["sequenceInformation"]["id"]) + "_Zucchini" + str(i) + "_"))
+
                 self.assertIn("vendors", result.keys())
                 for vendor in result["vendors"]:
                     self.assertIn("key", vendor.keys())
                     self.assertIn("offers", vendor.keys())
                     for offer in vendor["offers"]:
                         self.assertIn("price", offer.keys())
+                        self.assertIn("currency", offer.keys())
+                        self.assertIn(offer["currency"], [currency.symbol() for currency in Currency])
                         self.assertIn("turnoverTime", offer.keys())
                         self.assertIn("offerMessage", offer.keys())
-                        # self.assertTrue(offer["offerMessage"])
                         for message in offer["offerMessage"]:
                             self.assertIn("text", message)
                             self.assertIn("messageType", message)
@@ -517,6 +547,109 @@ class TestController(unittest.TestCase):
         session.free()
         for i in range(0, n_sessions):
             self.assertFalse(session.hasSession(i))
+
+    def testSelectionEndpoint(self) -> None:
+        print("\nTesting /select endpoint")
+
+        for iteration in range(self.iterations):
+            # upload file
+            handle = open(self.sequence_path, 'rb')
+            response = self.client.post('/api/upload', content_type='multipart/form-data', data={'seqfile': handle})
+            self.assertIn(b"upload successful", response.data)
+
+            # This shouldn't select anything
+            filter = {
+                "filter": {"vendors": self.vendors, "price": [0, 100], "deliveryDays": 100, "preselectByPrice": False,
+                           "preselectByDeliveryDays": False}}
+            filter_response = self.client.post('/api/filter', content_type='application/json',
+                                               data=json.dumps(filter))
+            self.assertIn(b"filter submission successful", filter_response.data)
+            response_json = self.client.post('/api/results', content_type='multipart/form-data',
+                                             data={'size': 1000, 'offset': 0}).get_json()
+
+            selection = []
+            # Verify that nothing is selected and choose what shall be selected next time at random
+            for sequence in response_json["result"]:
+                for vendor in sequence["vendors"]:
+                    for offer in vendor["offers"]:
+                        # Check that the offer was not selected by the dry run
+                        self.assertFalse(offer["selected"])
+                        # Random selection
+                        if random() <= 0.4:
+                            selection.append(offer["key"])
+
+            response = self.client.post("/api/select", content_type='application/json',
+                                        data=json.dumps({"selection": selection}))
+            self.assertIn(b"selection set", response.data)
+
+            response_json = self.client.post('/api/results', content_type='multipart/form-data',
+                                             data={'size': 1000, 'offset': 0}).get_json()
+
+            for sequence in response_json["result"]:
+                for vendor in sequence["vendors"]:
+                    for offer in vendor["offers"]:
+                        # An offer should be selected if and only if it was in the selection list
+                        self.assertEqual(offer["selected"], offer["key"] in selection)
+
+    def test_available_hosts_endpoint(self):
+        print("\nTesting /available_hosts endpoint")
+        response_json = self.client.get("/api/available_hosts").get_json()
+        self.assertGreater(len(response_json), 0)
+
+    # NOTE: This must not be made into an iterated test as it accesses the BOOST service
+    #       which we don't want to overload with requests.
+    def test_codon_optimization(self):
+        print("\nTesting codon optimization")
+
+        host_list = self.client.get("/api/available_hosts").get_json()
+        strategies = ["Random", "Balanced", "MostlyUsed"]
+
+        for strategy in strategies:
+            response = self.client.post('/api/codon_optimization', content_type='application/json',
+                                        data=json.dumps({'host': rand.choice(host_list), 'strategy': strategy}))
+            self.assertIn(b"codon optimization options set", response.data)
+
+            # upload protein sequence file
+            handle = open("examples/low_temp_yeast.gb", 'rb')
+            response = self.client.post('/api/upload', content_type='multipart/form-data', data={'seqfile': handle})
+            self.assertIn(b"upload successful", response.data)
+
+            response_json = self.client.post('/api/results', content_type='multipart/form-data',
+                                             data={'size': 1000, 'offset': 0}).get_json()
+
+            for sequence in response_json["result"]:
+                self.assertGreater(sequence["sequenceInformation"]["length"], 0)
+
+    def test_order_endpoint(self) -> None:
+        print("\nTesting /order endpoint")
+
+        for i in range(self.iterations):
+            handle = open(self.sequence_path, 'rb')
+            self.client.post('/api/upload', content_type='multipart/form-data',
+                             data={'seqfile': handle, 'prefix': "Zucchini" + str(i)})
+            filter = '{"filter": {"vendors": [1],"price": [0, 100],"deliveryDays": 5,"preselectByPrice": True,"preselectByDeliveryDays": False}}'
+            self.client.post('/api/filter', data=filter)
+            searchResult = self.client.post('/api/results', content_type='multipart/form-data',
+                                            data={'size': 1000, 'offset': 0}).get_json()
+
+            self.assertNotIn("error", searchResult, "Results endpoint returned error: " + str(searchResult))
+
+            offerkeys = []
+
+            for result in searchResult["result"]:
+                for vendor in result["vendors"]:
+                    for offer in vendor["offers"]:
+                        offerkeys.append(offer["key"])
+
+            orderkeys = rand.sample(offerkeys, rand.randint(0, len(offerkeys) - 1))
+            response = self.client.post("/api/order", content_type="application/json",
+                                        data=json.dumps({"offers": orderkeys})).get_json()
+
+            for order in response:
+                self.assertIn("vendor", order.keys())
+                self.assertIn("type", order.keys())
+                if(order["type"] == "URL_REDIRECT"):
+                    self.assertIn("url", order.keys())
 
 
 if __name__ == '__main__':

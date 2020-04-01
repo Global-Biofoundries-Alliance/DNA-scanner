@@ -1,16 +1,22 @@
 geneart: 
     username: YOUR_USERNAME
     token: YOUR_TOKEN  
+
 twist:                                                                                                                                                                                                           
-    email: YOUR_EMAIL                                                                                                                                                                                            
+    email: YOUR_EMAIL
+    password: YOUR_PASSWORD
+    apitoken: YOUR_APITOKEN
+    eutoken: YOUR_EUTOKEN
     username: YOUR_USERNAME
-    token: YOUR_TOKEN
+    firstname: YOUR_FIRSTNAME
+    lastname: YOUR_LASTNAME
 
 idt:
     idt_username: YOUR_USERNAME
     idt_password: YOUR_PASSWORD
     client_id: YOUR_CLIENT_ID
     client_secret: YOUR_CLIENT_SECRET
+    shared_secret: YOUR_SHARED_SECRET
     scope: YOUR_SCOPE
     token: YOUR_TOKEN
 
@@ -54,6 +60,15 @@ controller:
             pinger: PINGER_WRONGBEARD
         }
         ]
+
+boost:
+    url_job: "https://boost.jgi.doe.gov/rest/jobs/"
+    url_hosts: "https://boost.jgi.doe.gov/rest/files/predefined_hosts"
+    url_submit: "https://boost.jgi.doe.gov/rest/jobs/submit"
+    url_login: "https://boost.jgi.doe.gov/rest/auth/login"
+    username: YOUR_USERNAME
+    password: YOUR_PASSWORD
+    timeout: 60
 
 review:
     db: 

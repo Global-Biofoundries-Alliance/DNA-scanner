@@ -584,6 +584,16 @@ class Twist(BasePinger):
         return self.vendorMessage
 
     #
+    #   Desc:   Adds a vendor message to this vendor's message store.
+    #
+    #   @result
+    #           Type Message
+    #           The message to be added
+    #
+    def addVendorMessage(self, message):
+        self.vendorMessage.append(message)
+
+    #
     #   Desc:   Resets the pinger by
     #               - stop searching -> isRunning() = false
     #               - resets the offers to a empty list -> getOffers = []

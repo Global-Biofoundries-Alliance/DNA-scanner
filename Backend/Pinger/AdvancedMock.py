@@ -67,6 +67,7 @@ class AdvancedMockPinger(BasePinger):
 
     def clear(self):
         self.offers = []
+        self.vendorMessages = [Message(messageType=MessageType.VENDOR_INFO, text="Warning: This is a mock vendor!")]
         self.running = False
 
     def order(self, offerIds):
@@ -86,3 +87,13 @@ class AdvancedMockPinger(BasePinger):
 
     def getVendorMessages(self):
         return self.vendorMessages
+
+    #
+    #   Desc:   Adds a vendor message to this vendor's message store.
+    #
+    #   @result
+    #           Type Message
+    #           The message to be added
+    #
+    def addVendorMessage(self, message):
+        self.vendorMessages.append(message)

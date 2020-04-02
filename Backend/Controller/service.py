@@ -147,6 +147,7 @@ class DefaultComparisonService(ComparisonService):
 
         # Clear results and state concerning them
         session.storeResults(seqoffers)
+        session.storeVendorMessages({})
         session.resetSearchedVendors()
         session.storeSelection([])
 
@@ -202,6 +203,16 @@ class DefaultComparisonService(ComparisonService):
             while mainPinger.isRunning():
                 pass
             newoffers = mainPinger.getOffers()
+            newVendorMessages = mainPinger.getVendorMessages()
+
+            vendorMessages = session.loadVendorMessages()
+            # Replace exactly the messages of vendors to be searched
+            # and don't care what Pingers are doing with theirs in the meantime
+            for key in newVendorMessages.keys():
+                if key in vendorsToSearch:
+                    vendorMessages[key] = newVendorMessages[key]
+
+            session.storeVendorMessages(vendorMessages)
 
             session.addSearchedVendors(vendorsToSearch)
             for seqoff in seqoffers:
@@ -213,9 +224,16 @@ class DefaultComparisonService(ComparisonService):
                             for newvendoff in newseqoff.vendorOffers:
                                 if vendoff.vendorInformation.key == newvendoff.vendorInformation.key:
                                     vendoff.offers.extend(newvendoff.offers)
-                                    vendoff.messages.extend(newvendoff.messages)
 
             session.storeResults(seqoffers)
+
+        # These are the vendor messages to be shown in the result.
+        # Vendors excluded from the search will not be in here.
+        vendorMessages_unfiltered = session.loadVendorMessages()
+        resultVendorMessages = {}
+        for vendor in self.config.vendors:
+            if not filter or vendor.key in filter["vendors"]:
+                resultVendorMessages[vendor.key] = vendorMessages_unfiltered[vendor.key]
 
         # build response from offers stored in the session
         if not filter or filter["preselectByPrice"] or filter["preselectByDeliveryDays"]:
@@ -231,12 +249,12 @@ class DefaultComparisonService(ComparisonService):
                             ((x["turnoverTime"] % maxsize) if not x["offerMessage"] else maxsize)))
             # Preselection by lambda
             result = buildSearchResponseJSON(filterOffers(filter, seqoffers), self.config.vendors, selector,
-                                             session.loadGlobalMessages(),
+                                             session.loadGlobalMessages(), resultVendorMessages,
                                              offset, size)
         else:
             # Use selection list
             result = buildSearchResponseJSON(filterOffers(filter, seqoffers), self.config.vendors,
-                                             session.loadSelection(), session.loadGlobalMessages(),
+                                             session.loadSelection(), session.loadGlobalMessages(), resultVendorMessages,
                                              offset, size)
 
         return result

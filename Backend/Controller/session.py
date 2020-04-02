@@ -99,6 +99,20 @@ class SessionManager:
         raise NotImplementedError
 
     #
+    #   Desc: Store per vendor messages as a dictionary of the form {key: [<messages>]}
+    #         where key is the vendor key.
+    #
+    def loadVendorMessages(self):
+        raise NotImplementedError
+
+    #
+    #   Desc: Returns per vendor messages as a dictionary of the form {key: [<messages>]}
+    #         where key is the vendor key.
+    #
+    def storeVendorMessages(self, vendorMessages):
+        raise NotImplementedError
+
+    #
     #   Desc: Deletes all global messages for this session
     #
     def clearGlobalMessages(self):
@@ -172,6 +186,7 @@ class SingleSession(SessionManager):
         self.results = []
         self.searchedVendors = []
         self.globalMessages = []
+        self.vendorMessages = {}
         self.selection = []
         self.boostClient = None
         self.hostOrganism = ""
@@ -292,6 +307,20 @@ class SingleSession(SessionManager):
     #
     def clearGlobalMessages(self):
         self.globalMessages = []
+
+    #
+    #   Desc: Store per vendor messages as a dictionary of the form {key: [<messages>]}
+    #         where key is the vendor key.
+    #
+    def loadVendorMessages(self):
+        return self.vendorMessages
+
+    #
+    #   Desc: Returns per vendor messages as a dictionary of the form {key: [<messages>]}
+    #         where key is the vendor key.
+    #
+    def storeVendorMessages(self, vendorMessages):
+        self.vendorMessages = vendorMessages
 
     #
     #   Desc: Stores the current selection
@@ -467,6 +496,20 @@ class InMemorySessionManager(SessionManager):
     #
     def clearGlobalMessages(self):
         self.session.clearGlobalMessages()
+
+    #
+    #   Desc: Store per vendor messages as a dictionary of the form {key: [<messages>]}
+    #         where key is the vendor key.
+    #
+    def loadVendorMessages(self):
+        return self.session.loadVendorMessages()
+
+    #
+    #   Desc: Returns per vendor messages as a dictionary of the form {key: [<messages>]}
+    #         where key is the vendor key.
+    #
+    def storeVendorMessages(self, vendorMessages):
+        self.session.storeVendorMessages(vendorMessages)
 
     #
     #   Desc: Stores the current selection

@@ -247,12 +247,9 @@ class SequenceOffers:
 #
 class VendorOffers:
 
-    def __init__(self, vendorInformation, offers = [], messages = []):
+    def __init__(self, vendorInformation, offers = []):
         self.vendorInformation = vendorInformation
-        
         self.offers = offers
-
-        self.messages = messages
 
 #
 #   Desc:   Representation of a Offer. A Offer can also only represent a error, when it contains a

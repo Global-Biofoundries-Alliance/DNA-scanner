@@ -225,6 +225,13 @@ class ManagedPinger:
         raise NotImplementedError
 
     #
+    #   Desc: Returns the collected vendor messages for all registered vendors.
+    #         The format is {(vendorkey: [message*])*}
+    #
+    def getVendorMessages(self):
+        raise NotImplementedError
+
+    #
     #   Desc:   Register a new Vendor with information and pinger. Then actions like searching for offers can be done
     #           for the vendor.
     #

@@ -580,7 +580,7 @@ class Twist(BasePinger):
     #   The Vendor Message contains information regarding the price and delivery time of all the producible
     #   sequences of the seqInf list which was previously used in the searchOffers(seqInf)-call.
     #
-    def getVendorMessage(self):
+    def getVendorMessages(self):
         return self.vendorMessage
 
     #

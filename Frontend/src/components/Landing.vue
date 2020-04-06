@@ -102,7 +102,7 @@ and the other part is displayed when the user clicked on search and the loading 
             <v-progress-circular
                     :size="100"
                     :width="7"
-                    color="blue"
+                    color="#39568CFF"
                     indeterminate
                     class="mb-4"
                     style="margin-top: -15%"

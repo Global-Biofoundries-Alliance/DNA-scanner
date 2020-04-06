@@ -26,13 +26,14 @@
                                             :key="vendor.name"
                                             :label="`${vendor.name}`"
                                             :value="vendor.id"
-                                            v-model="selectedVendors"></v-checkbox>
+                                            v-model="selectedVendors"
+                                            color="#39568CFF"></v-checkbox>
                             </v-col>
                         </v-container>
                     </v-col>
 
                     <v-card-text>
-                        <v-subheader>Select min and max price</v-subheader>
+                        <v-subheader>Select min and max price (€/$)</v-subheader>
                         <v-row>
                             <v-col class="px-4">
                                 <v-range-slider
@@ -41,6 +42,8 @@
                                         :min="minVal"
                                         hide-details
                                         class="align-center"
+                                        color="#39568CFF"
+                                        track-color="#404788FF"
                                 >
                                     <template v-slot:prepend>
                                         <v-text-field
@@ -50,6 +53,8 @@
                                                 single-line
                                                 type="number"
                                                 style="width: 60px"
+                                                id="1"
+                                                color="#39568CFF"
                                         ></v-text-field>
                                     </template>
                                     <template v-slot:append>
@@ -60,6 +65,7 @@
                                                 single-line
                                                 type="number"
                                                 style="width: 60px"
+                                                color="#39568CFF"
                                         ></v-text-field>
                                     </template>
                                 </v-range-slider>
@@ -77,6 +83,8 @@
                                         :max="maxVal"
                                         :min="minVal"
                                         hide-details
+                                        color="#39568CFF"
+                                        track-color="#404788FF"
                                 >
                                     <template v-slot:append>
                                         <v-text-field
@@ -86,6 +94,7 @@
                                                 single-line
                                                 type="number"
                                                 style="width: 60px"
+                                                color="#39568CFF"
                                         ></v-text-field>
                                     </template>
                                 </v-slider>
@@ -94,17 +103,23 @@
                     </v-card-text>
 
                     <v-checkbox v-model="preselectByPrice" label="Preselect by price" class="ml-8 mr-4"
-                                :disabled="preselectByTime"></v-checkbox>
+                                :disabled="preselectByTime"
+                                color="#39568CFF"></v-checkbox>
 
                     <v-checkbox v-model="preselectByTime" label="Preselect by time"
-                                :disabled="preselectByPrice"></v-checkbox>
+                                :disabled="preselectByPrice"
+                                color="#39568CFF"></v-checkbox>
                 </v-row>
             </v-container>
         </v-card-text>
         <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" text @click="reset()">Reset</v-btn>
-            <v-btn color="blue darken-1" text @click="save()">Save</v-btn>
+            <v-btn color="blue darken-1" text @click="reset()">
+                <p class="mb-0" style="color: #39568CFF">Reset</p>
+            </v-btn>
+            <v-btn color="blue darken-1" text @click="save()">
+                <p class="mb-0" style="color: #39568CFF">Save</p>
+            </v-btn>
         </v-card-actions>
     </v-card>
 </template>

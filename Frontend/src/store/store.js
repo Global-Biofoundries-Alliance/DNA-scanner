@@ -10,7 +10,7 @@ export const store = new Vuex.Store({
     state: {
         StoreSelectedVendors: [0, 1, 2],
         StoreFilterMin: 1,
-        StoreFilterMax: 1000,
+        StoreFilterMax: 10000,
         StorePriceFilterRange: [1, 1000],
         StoreDeliveryDays: 100,
         StorePreselectByTime: false,

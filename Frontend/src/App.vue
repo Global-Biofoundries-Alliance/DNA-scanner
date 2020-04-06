@@ -11,7 +11,7 @@ handled by the router.
         -->
         <v-app-bar
                 app
-                color="primary"
+                color="#39568CFF"
                 dark
         >
             <v-app-bar-nav-icon v-if="this.$route.path !== '/'" @click.stop="drawer = true"></v-app-bar-nav-icon>

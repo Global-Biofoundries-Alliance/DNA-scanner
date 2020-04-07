@@ -492,4 +492,7 @@
 </style>
 
 <style>
+    .v-data-table {
+        border-radius: 10px;
+    }
 </style>

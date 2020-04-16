@@ -22,7 +22,7 @@ from flask import json
 #
 # @param size
 #       How many results to show per page
-def buildSearchResponseJSON(seqvendoffers, vendors, selector=[], globalMessages=[], offset=0, size=10):
+def buildSearchResponseJSON(seqvendoffers, vendors, selector=[], globalMessages=[], vendorMessages = {}, offset=0, size=10):
     resp = SearchResponse()
     resp.data["result"] = []
     resp.data["globalMessage"] = globalMessages
@@ -33,10 +33,6 @@ def buildSearchResponseJSON(seqvendoffers, vendors, selector=[], globalMessages=
 
     # Check if this is a lambda. Otherwise it has to be a list.
     selectByLambda = isinstance(selector, types.FunctionType)
-
-    vendorMessages = []
-    for vendor in vendors:
-        vendorMessages.append({"vendorKey": vendor.key, "messages": []})
 
     # Put offers and other relevant data into JSON serializable dictionary
     for seqvendoff in seqvendoffers[offset: min(offset + size, len(seqvendoffers))]:
@@ -74,13 +70,6 @@ def buildSearchResponseJSON(seqvendoffers, vendors, selector=[], globalMessages=
                     "selected": (not selectByLambda) and
                                 offer.key in selector})  # If not selected by lambda use selection list
 
-            # Avoid message duplication (would be guaranteed with more than one sequence otherwise)
-            vendor_messages_unfiltered = [message.text for message in vendoff.messages]
-            vendorKey = vendoff.vendorInformation.key
-            for vm in vendor_messages_unfiltered:
-                if vm and vm not in vendorMessages[vendorKey]["messages"]:
-                    vendorMessages[vendorKey]["messages"].append(vm)
-
             # If there is a selection lambda use it to sort offers and select the best one
             # TODO: If offers are selected by list there should be some kind of sorting as well
             if selectByLambda:
@@ -102,7 +91,16 @@ def buildSearchResponseJSON(seqvendoffers, vendors, selector=[], globalMessages=
         # Put it in the outer result object
         resp.data["result"].append(result)
 
-    resp.data["vendorMessage"] = vendorMessages
+    vendorMessageList = []
+    for vendor in vendors:
+        key = vendor.key
+        messages = []
+        if key in vendorMessages.keys():
+            messages = [message.text for message in vendorMessages[key]]
+        vendorMessageList.append({"vendorKey": key, "messages": messages})
+
+
+    resp.data["vendorMessage"] = vendorMessageList
 
     return json.jsonify(resp.data)
 

@@ -221,6 +221,7 @@ class IDT(BasePinger):
                       self.token, self.timeout)
         self.token = self.client.token # Set the token (Token is now valid because it was generated using the client)
         self.offers = []
+        self.vendorMessages = []
         self.validator = EntityValidator(raiseError=True)
 
     #
@@ -301,6 +302,28 @@ class IDT(BasePinger):
         except Exception as err:
             self.running = False
             raise UnavailableError from err
+
+
+    #
+    #   Desc:   Returns this vendor's messages
+    #
+    #   @result
+    #           Type ArrayOf(str).
+    #           Array of messages populated by the pinger. May be empty.
+    #
+    def getVendorMessages(self):
+        return self.vendorMessages
+
+    #
+    #   Desc:   Adds a vendor message to this vendor's message store.
+    #
+    #   @result
+    #           Type Message
+    #           The message to be added
+    #
+    def addVendorMessage(self, message):
+        self.vendorMessages.append(message)
+
 
     #
     #   Desc:   Create a request to trigger an order.
@@ -413,6 +436,7 @@ class IDT(BasePinger):
     def clear(self):
         self.running = False
         self.offers = [] # Empty Offers List
+        self.vendorMessages = []
 
     #    
     #   Screening-API

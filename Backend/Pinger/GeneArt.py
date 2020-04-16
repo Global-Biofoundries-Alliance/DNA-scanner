@@ -235,6 +235,7 @@ class GeneArt(BasePinger):
 
 
         self.offers = []
+        self.vendorMessages = []
         self.validator = EntityValidator(raiseError=True)
     
 
@@ -451,6 +452,28 @@ class GeneArt(BasePinger):
     def clear(self):
         self.running = False
         self.offers = [] # Empty Offers List
+        self.vendorMessages = []
+
+
+    #
+    #   Desc:   Returns this vendor's messages
+    #
+    #   @result
+    #           Type ArrayOf(str).
+    #           Array of messages populated by the pinger. May be empty.
+    #
+    def getVendorMessages(self):
+        return self.vendorMessages
+
+    #
+    #   Desc:   Adds a vendor message to this vendor's message store.
+    #
+    #   @result
+    #           Type Message
+    #           The message to be added
+    #
+    def addVendorMessage(self, message):
+        self.vendorMessages.append(message)
 
 
     #

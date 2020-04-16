@@ -103,3 +103,9 @@ It is designed that it can later be multithreaded or asynchronous. Thats why sea
 With getOffers you can get the Offers. Take a look at `Pinger.py` and `Entities.py` to understand the structure of the return values.
 
 The other functions and explainations are described in `Pinger.py`.
+
+## Adding a Vendor
+Use the following steps to add a new Vendor to the Pinger:
+1. In the most cases the API of the Provider is not open. Mostly you have to contact them to get credentials to access their API.
+2. Create a new Pyhton-file in the folder Backend/Pinger/. This file will contain your implementation of the Vendor.
+3. You have to implement a class with super-type BasePinger. A BasePinger is a represtation of a vendor. You can find the BasePinger in Backend/Pinger/Pinger.py. You have to respect the descriptions of the functions. Inside of the BasePinger you implement the communication with the API of the vendor.

@@ -177,6 +177,7 @@ class InvalidPinger(BasePinger):
         self.tempOffer.messages.append(
             Message(MessageType.WRONG_CREDENTIALS, "Invalid vendor configuration. Please contact your administrator."))
         self.offers = []
+        self.vendorMessages = [Message(MessageType.VENDOR_INFO, "Invalid vendor configuration. Please contact your administrator.")]
         self.running = False
 
     #
@@ -208,10 +209,21 @@ class InvalidPinger(BasePinger):
 
     def clear(self):
         self.offers = []
+        self.vendorMessages = [Message(MessageType.VENDOR_INFO, "Invalid vendor configuration. Please contact your administrator.")]
         self.running = False
 
     def order(self, offerIds):
         return Order(OrderType.NOT_SUPPORTED)
 
     def getVendorMessages(self):
-        return [Message(MessageType.VENDOR_INFO, "Invalid vendor configuration. Please contact your administrator.")]
+        return self.vendorMessages
+
+    #
+    #   Desc:   Adds a vendor message to this vendor's message store.
+    #
+    #   @result
+    #           Type Message
+    #           The message to be added
+    #
+    def addVendorMessage(self, message):
+        self.vendorMessages.append(message)

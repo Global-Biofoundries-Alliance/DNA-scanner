@@ -128,7 +128,18 @@ class BasePinger:
     #           Array of messages populated by the pinger. May be empty.
     #
     def getVendorMessages(self):
-        return []
+        raise NotImplementedError
+
+    #
+    #   Desc:   Adds a vendor message to this vendor's message store.
+    #
+    #   @result
+    #           Type Message
+    #           The message to be added
+    #
+    def addVendorMessage(self, message):
+        raise NotImplementedError
+
 
     #
     #   Desc:   Create a request to trigger an order.
@@ -211,6 +222,13 @@ class ManagedPinger:
     #           Vendors excluded by the filter while calling searchOffers wont have VendorOffer.
     #
     def getOffers(self):
+        raise NotImplementedError
+
+    #
+    #   Desc: Returns the collected vendor messages for all registered vendors.
+    #         The format is {(vendorkey: [message*])*}
+    #
+    def getVendorMessages(self):
         raise NotImplementedError
 
     #
@@ -335,8 +353,7 @@ class CompositePinger(ManagedPinger):
             if(not isinstance(vendor, int)):
                 raise InvalidInputError("parameter vendors should only contain integers")
 
-        # reset vendorMessages
-        self.vendorMessages = {}
+
         self.curVendors = vendors
 
         # initialize empty sequenceOffers
@@ -348,17 +365,14 @@ class CompositePinger(ManagedPinger):
             # Start searching if vendor is accepted by the filter
             if(len(vendors) == 0 or vh.vendor.key in vendors):
                 try:
-                    self.vendorMessages[vh.vendor.key] = []
                     vh.handler.searchOffers(seqInf)
                 except InvalidInputError as e:
                     # store Message and return when calling getOffers()
-                    self.vendorMessages[vh.vendor.key].append(Message(messageType = MessageType.INTERNAL_ERROR, text = str(e)))
+                    vh.handler.addVendorMessage(Message(messageType = MessageType.INTERNAL_ERROR, text = str(e)))
                 except UnavailableError as e:
-                    self.vendorMessages[vh.vendor.key].append(Message(messageType = MessageType.API_CURRENTLY_UNAVAILABLE, text = str(e)))
+                    vh.handler.addVendorMessage(Message(messageType = MessageType.API_CURRENTLY_UNAVAILABLE, text = str(e)))
                 except IsRunningError as e:
-                    self.vendorMessages[vh.vendor.key].append(Message(messageType = MessageType.INTERNAL_ERROR, text = str(e)))
-
-                self.vendorMessages[vh.vendor.key].extend(vh.handler.getVendorMessages())
+                    vh.handler.addVendorMessage(Message(messageType = MessageType.INTERNAL_ERROR, text = str(e)))
 
             # Clear vendor, if not accepted by the filter
             else:
@@ -419,7 +433,7 @@ class CompositePinger(ManagedPinger):
 
                     for curSO in self.sequenceVendorOffers:
                         if newSO.sequenceInformation.key == curSO.sequenceInformation.key:
-                            curSO.vendorOffers.append(VendorOffers(vendorInformation=vh.vendor, offers=newSO.offers, messages = vendorMessage))
+                            curSO.vendorOffers.append(VendorOffers(vendorInformation=vh.vendor, offers=newSO.offers))
             except InvalidInputError:
                 # If Invalid values was found ignore this vendor and coninue with the next one
                 print("CompositePinger.getOffers(...): Vendor", vh.vendor.name, "returns invalid offers")
@@ -429,9 +443,22 @@ class CompositePinger(ManagedPinger):
             # then create the VendorOffer and save it
             if(len(seqOffers) == 0 and (len(self.curVendors) == 0 or vh.vendor.key in self.curVendors)):
                 for curSO in self.sequenceVendorOffers:
-                    curSO.vendorOffers.append(VendorOffers(vh.vendor, offers=seqOffers, messages = vendorMessage))
+                    curSO.vendorOffers.append(VendorOffers(vh.vendor, offers=seqOffers))
 
         return self.sequenceVendorOffers
+
+    #
+    #   Desc: Returns the collected vendor messages for all registered vendors.
+    #         The format is {(vendorkey: [message*])*}
+    #
+    def getVendorMessages(self):
+        vendorMessages = {}
+        for vh in self.vendorHandler:
+            vendorMessages[vh.vendor.key] = []
+            for message in vh.handler.getVendorMessages():
+                if message not in vendorMessages[vh.vendor.key]:
+                    vendorMessages[vh.vendor.key].append(message)
+        return vendorMessages
 
     #
     #   see ManagedPinger.order

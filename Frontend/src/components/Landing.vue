@@ -19,30 +19,33 @@ and the other part is displayed when the user clicked on search and the loading 
                               rounded
                               prepend-icon=""
                               hide-details
-                              class="mb-4">
+                              class="mb-4"
+                              color="#39568CFF">
                 </v-file-input>
             </v-container>
             <v-container>
                 <v-row justify="center">
                     <v-dialog v-model="dialog" persistent max-width="600px">
                         <template v-slot:activator="{ on }">
-                            <v-btn @click="dialog = true">Set Filter</v-btn>
+                            <v-btn @click="dialog = true" color="#1F968BFF">Set Filter</v-btn>
                         </template>
                         <!-- The Filter component is called and if the saved button is clicked in the Filter then it emits a saved event, after which the dialog is closed-->
                         <FilterDNA @saved="dialog = false"></FilterDNA>
                     </v-dialog>
-                    <v-btn color="primary" style="width: 25%;" class="ml-2" @click="searchNow()">Search</v-btn>
+                    <v-btn color="#39568CFF" style="width: 25%;" class="ml-2" @click="searchNow()">
+                        <p class="mb-0" style="color: white">Search</p>
+                    </v-btn>
                 </v-row>
-                <v-alert v-if="noFile" type="error" class="mt-4 mx-auto" width="350px">
+                <v-alert v-if="noFile" type="error" class="mt-4 mx-auto" width="350px" color="#1F968BFF">
                     Please upload a file
                 </v-alert>
-                <v-alert v-if="wrongFile" type="error" class="mt-4 mx-auto" width="350px">
+                <v-alert v-if="wrongFile" type="error" class="mt-4 mx-auto" width="350px" color="#1F968BFF">
                     Wrong File Format
                 </v-alert>
-                <v-alert v-if="noSelection" type="error" class="mt-4 mx-auto" width="350px">
+                <v-alert v-if="noSelection" type="error" class="mt-4 mx-auto" width="350px" color="#1F968BFF">
                     Please select your strategy and codon usage table
                 </v-alert>
-                <v-alert v-if="resultError" type="error" class="mt-4 mx-auto" width="350px">
+                <v-alert v-if="resultError" type="error" class="mt-4 mx-auto" width="350px" color="#1F968BFF">
                     An error occurred while getting the results from the vendors
                 </v-alert>
                 <p class="text-center font-weight-light mt-4 mb-0">Please give your project a name:</p>
@@ -51,7 +54,8 @@ and the other part is displayed when the user clicked on search and the loading 
                         <v-text-field placeholder="Project Name"
                                       v-model="projectName"
                                       class="pa-0 centered-input"
-                                      :error="projectName === '' && noProjectName">
+                                      :error="projectName === '' && noProjectName"
+                                      color="#39568CFF">
                         </v-text-field>
                     </v-col>
                 </v-row>
@@ -59,14 +63,13 @@ and the other part is displayed when the user clicked on search and the loading 
                     Sequences?</p>
                 <v-row justify="center" class="mt-n4">
                     <v-radio-group v-model="isAminoAcid" hide-details row>
-                        <v-radio value="1" label="Yes"></v-radio>
-                        <v-radio value="0" label="No"></v-radio>
+                        <v-radio value="1" label="Yes" color="#39568CFF"></v-radio>
+                        <v-radio value="0" label="No" color="#39568CFF"></v-radio>
                     </v-radio-group>
                 </v-row>
                 <p v-if="isAminoAcid === '1'" class="text-center font-weight-light mt-4">After selecting your strategy and codon usage table your request will be processed by boost</p>
-                <v-img v-if="isAminoAcid === '1'" :src="require('../assets/BoostLogo.png')"></v-img>
                 <v-row v-if="isAminoAcid === '1'">
-                    <v-col cols="6">
+                    <v-col cols="6" class="pb-0">
                         <p class="text-center">Select your Strategy</p>
                         <v-overflow-btn
                                 class="my-2"
@@ -74,10 +77,12 @@ and the other part is displayed when the user clicked on search and the loading 
                                 label="Strategies"
                                 target="#dropdown-example"
                                 v-model="strategy"
+                                color="#39568CFF"
+                                item-color="#39568CFF"
                         ></v-overflow-btn>
                     </v-col>
                     <v-spacer></v-spacer>
-                    <v-col cols="6">
+                    <v-col cols="6" class="pb-0">
                         <p class="text-center">Select your Codon Usage Table</p>
                         <v-overflow-btn
                                 class="my-2 font-italic"
@@ -85,16 +90,19 @@ and the other part is displayed when the user clicked on search and the loading 
                                 label="Codon Usage Table"
                                 target="#dropdown-example"
                                 v-model="host"
+                                color="#39568CFF"
+                                item-color="#39568CFF"
                         ></v-overflow-btn>
                     </v-col>
                 </v-row>
+                <v-img v-if="isAminoAcid === '1'" :src="require('../assets/BoostLogo.png')"></v-img>
             </v-container>
         </div>
         <div v-if="loading" style="height: 100vh; display: flex; justify-content: center; align-items: center; flex-direction: column;">
             <v-progress-circular
                     :size="100"
                     :width="7"
-                    color="blue"
+                    color="#39568CFF"
                     indeterminate
                     class="mb-4"
                     style="margin-top: -15%"

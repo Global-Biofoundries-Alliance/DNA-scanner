@@ -1,11 +1,13 @@
 import threading
 
 #
-#   Desc:   This is a threadsafe counter. 
+#   Desc:   This is a threadsafe counter.
 #           If you need an unique id, then call the increment function and use the result.
 #
+
+
 class AtomicCounter:
-    # 
+    #
     #   Desc:   Constructor to initialize the counter.
     #
     def __init__(self, initialValue=1):

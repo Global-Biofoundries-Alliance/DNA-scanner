@@ -5,12 +5,13 @@ import requests
 from .Pinger import *
 from .Validator import *
 
-class GeneArtClient: 
+
+class GeneArtClient:
     # Constructur for a GeneArtClient ()
-    # Takes as input the configuration's parameters 
+    # Takes as input the configuration's parameters
     # dnaStrings and hqDnaStrings have per defualt the value True
 
-    def __init__(self, server, validate, status, addToCart, upload, username, token, dnaStrings = True, hqDnaStrings = True, timeout = 60): 
+    def __init__(self, server, validate, status, addToCart, upload, username, token, dnaStrings=True, hqDnaStrings=True, timeout=60):
         self.server = server
         self.validate = validate
         self.status = status
@@ -18,14 +19,14 @@ class GeneArtClient:
         self.upload = upload
         self.username = username
         self.token = token
-        self.dnaStrings = dnaStrings 
+        self.dnaStrings = dnaStrings
         self.hqDnaStrings = hqDnaStrings
         self.timeout = timeout
         self.validAcc = self.authenticate()
         if(self.validAcc == False):
             raise AuthenticationError('User Credentials are wrong')
-        
-    # Defines the destination address for the action defined in the parameter     
+
+    # Defines the destination address for the action defined in the parameter
     def destination(self, action):
         if(action == "validate"):
             return self.server + self.validate
@@ -35,23 +36,23 @@ class GeneArtClient:
             return self.server + self.addToCart
         if(action == "upload"):
             return self.server + self.upload
-    
+
     # Returns the authentication field which is used in several requests.
     def getAuthPart(self, projectId):
         request = {
             "authentication":
-         { "username": self.username,
-           "token": self.token
-         }, 
-         "projectId": projectId
+            {"username": self.username,
+             "token": self.token
+             },
+            "projectId": projectId
         }
         return request
-    
+
     # Authentication Operation
     # Checks if the username and password are correct
     # Distinguishes based on the error message
     def authenticate(self):
-        result = self.statusReview("2019AAAAAX") # Dummy projectId
+        result = self.statusReview("2019AAAAAX")  # Dummy projectId
         if("errortype" in result.keys() and result["errortype"] == "authenticationFailed"):
             return False
         else:
@@ -61,7 +62,7 @@ class GeneArtClient:
     def statusReview(self, projectId):
         request = self.getAuthPart(projectId)
         dest = self.destination("status")
-        resp = requests.post(dest, json = request, timeout = self.timeout)
+        resp = requests.post(dest, json=request, timeout=self.timeout)
         result = resp.json()
         return result
 
@@ -69,13 +70,13 @@ class GeneArtClient:
     def toCart(self, projectId):
         request = self.getAuthPart(projectId)
         dest = self.destination("addToCart")
-        resp = requests.post(dest, json = request, timeout = self.timeout)
+        resp = requests.post(dest, json=request, timeout=self.timeout)
         result = resp.json()
         return result
-    
+
     # Upload Project with constructs
     def constUpload(self, listOfSequences, product):
-        now = datetime.now() 
+        now = datetime.now()
         dt_string = now.strftime("%d-%m-%Y_%H_%M")
         projectname = "ect-" + str(dt_string)
         dest = self.destination("upload")
@@ -86,28 +87,28 @@ class GeneArtClient:
                 "sequence": construct["sequence"],
                 "product": product,
                 "comment": "idN: " + construct["idN"] + " , name: " + construct["name"]
-              }
+            }
             constructsList.append(sequence)
         request = {
             "authentication":
-         { "username": self.username,
-           "token": self.token
-         },
+            {"username": self.username,
+             "token": self.token
+             },
             "project": {
                 "name": projectname,
                 "constructs": constructsList
             }
         }
-        resp = requests.post(dest, json = request, timeout = self.timeout)
+        resp = requests.post(dest, json=request, timeout=self.timeout)
         result = resp.json()
         return result
 
-    #   
-    #   Desc:   Upload a list sequences with specific types (HQDnaStrings / DnaStrings). This creates a Project with 
+    #
+    #   Desc:   Upload a list sequences with specific types (HQDnaStrings / DnaStrings). This creates a Project with
     #           given sequences at GeneArt.
     #
     #   @param listOfSequences
-    #           type [(dict, str)]. The dictionary in every tuple represents a sequence. The string in every tuples 
+    #           type [(dict, str)]. The dictionary in every tuple represents a sequence. The string in every tuples
     #           represents the product type, which tells if HQ or not HQDnaString.
     #
     def constUploadMixedProduct(self, listOfSequences):
@@ -115,7 +116,7 @@ class GeneArtClient:
         dt_string = now.strftime("%d-%m-%Y_%H_%M")
         projectname = "ect-" + str(dt_string)
         dest = self.destination("upload")
-        
+
         # Create list of Constructs
         constructsList = []
         for (construct, product) in listOfSequences:
@@ -124,15 +125,15 @@ class GeneArtClient:
                 "sequence": construct["sequence"],
                 "product": product,
                 "comment": "idN: " + construct["idN"] + " , name: " + construct["name"]
-              }
+            }
             constructsList.append(sequence)
 
         # Put all together to the full requests
         request = {
             "authentication":
-         { "username": self.username,
-           "token": self.token
-         },
+            {"username": self.username,
+             "token": self.token
+             },
             "project": {
                 "name": projectname,
                 "constructs": constructsList
@@ -140,15 +141,15 @@ class GeneArtClient:
         }
 
         # Create Request
-        resp = requests.post(dest, json = request, timeout = self.timeout)
+        resp = requests.post(dest, json=request, timeout=self.timeout)
 
         # Return result
         result = resp.json()
         return result
-    
+
     # Validate Project
     def projectValidate(self, listOfSequences, product):
-        now = datetime.now() 
+        now = datetime.now()
         dt_string = now.strftime("%d-%m-%Y_%H_%M")
         projectname = "project-" + str(dt_string)
         dest = self.destination("validate")
@@ -159,29 +160,30 @@ class GeneArtClient:
                 "sequence": construct["sequence"],
                 "product": product,
                 "comment": "idN: " + construct["idN"] + " , name: " + construct["name"]
-              }
+            }
             constructsList.append(sequence)
-        request = { 
+        request = {
             "authentication": {
                 "username": self.username,
                 "token": self.token
             },
-           "project": {
+            "project": {
                 "name": projectname,
                 "constructs": constructsList
             }
         }
-        resp = requests.post(dest, json = request, timeout = self.timeout)
+        resp = requests.post(dest, json=request, timeout=self.timeout)
         result = resp.json()
         return result
-    
-    # Name-Generator used to define project name if none is given and adjust the given name if it isn't conform the documentation
+
+    # Name-Generator used to define project name if none is given and adjust
+    # the given name if it isn't conform the documentation
     def generateName(self, prevName):
         if(len(prevName) == 0):
-            now = datetime.now() 
+            now = datetime.now()
             dt_string = now.strftime("%d/%m/%Y_%H:%M")
             prevName = "consname-" + str(dt_string)
-        else: 
+        else:
             if(len(prevName) > 20):
                 prevName = prevName[:20]
         clean_consName = re.sub(r'[^.A-z0-9_\-]', "_", prevName)
@@ -192,7 +194,7 @@ class GeneArtClient:
 #   The GeneArt Pinger
 #
 class GeneArt(BasePinger):
-    # The configuration's parameters 
+    # The configuration's parameters
     # dnaStrings and hqDnaStrings have per defualt the value True
 
     server_default = "https://www.thermofisher.com/order/gene-design-ordering/api"
@@ -204,12 +206,13 @@ class GeneArt(BasePinger):
     hqDnaStrings_default = True
     timeout_default = 60
     cartBaseUrl_default = "https://www.thermofisher.com/order/catalog/en/US/direct/lt?cmd=ViewCart&ShoppingCartKey="
-    currencies = {"EUR":Currency.EUR, "USD":Currency.USD}
+    currencies = {"EUR": Currency.EUR, "USD": Currency.USD}
     #
     # Constructur for a GeneArt-Pinger
     # Takes as input the log-in parameters.
     #
-    def __init__(self, username, token, server = server_default, validate = validate_default, status = status_default, addToCart = addToCart_default, upload = upload_default, dnaStrings = dnaStrings_default, hqDnaStrings = hqDnaStrings_default, timeout = timeout_default, cartBaseUrl = cartBaseUrl_default):
+
+    def __init__(self, username, token, server=server_default, validate=validate_default, status=status_default, addToCart=addToCart_default, upload=upload_default, dnaStrings=dnaStrings_default, hqDnaStrings=hqDnaStrings_default, timeout=timeout_default, cartBaseUrl=cartBaseUrl_default):
         self.running = False
 
         self.server = server
@@ -219,25 +222,23 @@ class GeneArt(BasePinger):
         self.upload = upload
         self.username = username
         self.token = token
-        self.dnaStrings = dnaStrings 
+        self.dnaStrings = dnaStrings
         self.hqDnaStrings = hqDnaStrings
         self.timeout = timeout
         self.cartBaseUrl = cartBaseUrl
-       
+
         try:
-            self.client = GeneArtClient(self.server, 
-                      self.validate, self.status, self.addToCart,
-                      self.upload, 
-                      self.username, self.token, 
-                      self.dnaStrings, self.hqDnaStrings, self.timeout)
+            self.client = GeneArtClient(self.server,
+                                        self.validate, self.status, self.addToCart,
+                                        self.upload,
+                                        self.username, self.token,
+                                        self.dnaStrings, self.hqDnaStrings, self.timeout)
         except requests.exceptions.RequestException as err:
             raise UnavailableError("Request got timeout") from err
-
 
         self.offers = []
         self.vendorMessages = []
         self.validator = EntityValidator(raiseError=True)
-    
 
     #
     #   Encodes a 'SequenceInformation' object into JSON-Format with fields readable by the GeneArtClient.
@@ -246,11 +247,12 @@ class GeneArt(BasePinger):
     def encode_sequence(self, seqInf):
         if isinstance(seqInf, SequenceInformation):
             if self.validator.validate(seqInf):
-                return { "idN": seqInf.key, "name": seqInf.name, "sequence": seqInf.sequence}
+                return {"idN": seqInf.key, "name": seqInf.name, "sequence": seqInf.sequence}
         else:
             type_name = seqInf.__class__.__name__
-            raise InvalidInputError(f"Parameter must be of type SequenceInformation but is of type '{type_name}'.")
-    
+            raise InvalidInputError(
+                f"Parameter must be of type SequenceInformation but is of type '{type_name}'.")
+
     #
     #   Authenticates the instance
     #       Returns True if the authentication was successful and False otherwise.
@@ -268,7 +270,7 @@ class GeneArt(BasePinger):
             return Message(MessageType.WRONG_CREDENTIALS, messageText)
         else:
             return response
-        
+
     #
     #   After:
     #       isRunning() -> true
@@ -279,22 +281,24 @@ class GeneArt(BasePinger):
 
         # Check pinger is not running
         if(self.isRunning()):
-            raise IsRunningError("Pinger is currently running and can not perform a other action")
-        
-        try: 
+            raise IsRunningError(
+                "Pinger is currently running and can not perform a other action")
+
+        try:
             self.running = True
-            offers = [] # Empty Offers List
-            for product in "dnaStrings", "hqDnaStrings": # Two possible Product Types. 
+            offers = []  # Empty Offers List
+            for product in "dnaStrings", "hqDnaStrings":  # Two possible Product Types.
                 try:
                     response = self.projectValidate(seqInf, product)
-                except requests.exceptions.RequestException as err:  # If request timeout             
+                except requests.exceptions.RequestException as err:  # If request timeout
                     self.running = False
                     raise UnavailableError from err
-    
-                count = 0 # Count the sequences
+
+                count = 0  # Count the sequences
                 for seq in seqInf:
-                    accepted = response["constructs"][count]["accepted"] # See if the API accepted the sequence
-                    # If the sequence was accepted                    
+                    # See if the API accepted the sequence
+                    accepted = response["constructs"][count]["accepted"]
+                    # If the sequence was accepted
                     if accepted == True:
                         messageText = product + "_" + "accepted"
                         message = Message(MessageType.INFO, messageText)
@@ -303,34 +307,45 @@ class GeneArt(BasePinger):
                         cost = response["constructs"][count]["eComInfo"]["lineItems"][0]["customerSpecificPrice"]
                         # If the currencycode is known.
                         if(currencycode in list(self.currencies.keys())):
-                            price = Price(amount = cost, currency = self.currencies[currencycode], customerSpecific = True)
+                            price = Price(
+                                amount=cost, currency=self.currencies[currencycode], customerSpecific=True)
                         # If the currencycode is unknown.
                         else:
-                            price = Price(amount = cost, currency = UNKNOWN, customerSpecific = True)
+                            price = Price(
+                                amount=cost, currency=UNKNOWN, customerSpecific=True)
                     # If the sequence was rejected
                     else:
                         turnOverTime = -1
                         price = Price()
-                        # If there was only one reason why it got rejected. Identify the reason and costumize the message text.
+                        # If there was only one reason why it got rejected.
+                        # Identify the reason and costumize the message text.
                         if(len(response["constructs"][count]["reasons"]) == 1):
                             reason = response["constructs"][count]["reasons"][0]
-                            messageText = product + "_" + "rejected_" + str(reason) + "."
+                            messageText = product + "_" + \
+                                "rejected_" + str(reason) + "."
                             if (reason == "length"):
-                                message = Message(MessageType.INVALID_LENGTH, messageText)
+                                message = Message(
+                                    MessageType.INVALID_LENGTH, messageText)
                             elif (reason == "homology"):
-                                message = Message(MessageType.HOMOLOGY, messageText)
+                                message = Message(
+                                    MessageType.HOMOLOGY, messageText)
                             elif (reason == "problems"):
-                                message = Message(MessageType.INVALID_LENGTH, messageText)
+                                message = Message(
+                                    MessageType.INVALID_LENGTH, messageText)
                             else:
-                                message = Message(MessageType.SYNTHESIS_ERROR, messageText)
-                        # If there was were several reasons why it got rejected. Costumize the message text.
+                                message = Message(
+                                    MessageType.SYNTHESIS_ERROR, messageText)
+                        # If there was were several reasons why it got
+                        # rejected. Costumize the message text.
                         else:
                             messageText = product + "_" + "rejected_"
                             for reason in response["constructs"][count]["reasons"]:
                                 messageText = messageText + str(reason) + "."
-                            message = Message(MessageType.SYNTHESIS_ERROR, messageText)
-    
-                    currentOffer = Offer(price = price, turnovertime = turnOverTime, messages = [message])
+                            message = Message(
+                                MessageType.SYNTHESIS_ERROR, messageText)
+
+                    currentOffer = Offer(
+                        price=price, turnovertime=turnOverTime, messages=[message])
                     currentOffer.isHq = product == "hqDnaStrings"
                     seqOffer = SequenceOffers(seq, [currentOffer])
                     offers.append(seqOffer)
@@ -347,28 +362,29 @@ class GeneArt(BasePinger):
             raise UnavailableError from err
         except Exception as err:
             self.running = False
-            raise UnavailableError from err    
-        
-    
-    # 
+            raise UnavailableError from err
+
+    #
     #   Upload Project with constructs
-    #       Takes as input a list of 'SequenceInformation' objects and the desired product type 
+    #       Takes as input a list of 'SequenceInformation' objects and the desired product type
     #           (The parameter "product" can only have the value: 'dnaStrings' or 'hqDnaStrings')
-    #       Returns the API-Response 
-    # 
+    #       Returns the API-Response
+    #
     def constUpload(self, seqInf, product):
-        # Sequences in JSON-Format with fields readable by the GeneArtClient. At first is empty.
-        gaSequences  = []
+        # Sequences in JSON-Format with fields readable by the GeneArtClient.
+        # At first is empty.
+        gaSequences = []
         for s in seqInf:
-            # Encode each element in JSON-Format with fields readable by the GeneArtClient and add it to the list.
+            # Encode each element in JSON-Format with fields readable by the
+            # GeneArtClient and add it to the list.
             seq = self.encode_sequence(s)
             gaSequences.append(seq)
         # Upload the construct by calling the corresponding method.
         response = self.client.constUpload(gaSequences, product)
         return response
 
-    #   
-    #   Desc:   Upload a list sequences with specific types (HQDnaStrings / DnaStrings). 
+    #
+    #   Desc:   Upload a list sequences with specific types (HQDnaStrings / DnaStrings).
     #           1.  Encode every SequenceInformation into the API format
     #           2.  Construct Upload via GeneArtClient to create a project with the given sequences.
     #
@@ -377,33 +393,37 @@ class GeneArt(BasePinger):
     #           The string in every tuples represents the product type, which tells if HQ or not HQDnaString.
     #
     def constUploadMixedProduct(self, seqInf):
-        # Sequences in JSON-Format with fields readable by the GeneArtClient. At first is empty.
-        gaSequences  = []
+        # Sequences in JSON-Format with fields readable by the GeneArtClient.
+        # At first is empty.
+        gaSequences = []
         for (s, product) in seqInf:
-            # Encode each element in JSON-Format with fields readable by the GeneArtClient and add it to the list.
+            # Encode each element in JSON-Format with fields readable by the
+            # GeneArtClient and add it to the list.
             seq = self.encode_sequence(s)
-            gaSequences.append( (seq, product) )
+            gaSequences.append((seq, product))
         # Upload the construct by calling the corresponding method.
         response = self.client.constUploadMixedProduct(gaSequences)
         return response
-    
-    #    
+
+    #
     #   Validate Project
-    #       Takes as input a list of 'SequenceInformation' objects and the desired product type 
+    #       Takes as input a list of 'SequenceInformation' objects and the desired product type
     #           (The parameter "product" can only have the value: 'dnaStrings' or 'hqDnaStrings')
-    #       Returns the API-Response     
+    #       Returns the API-Response
     #
     def projectValidate(self, seqInf, product):
-        # Sequences in JSON-Format with fields readable by the GeneArtClient. At first is empty.
-        gaSequences  = []
+        # Sequences in JSON-Format with fields readable by the GeneArtClient.
+        # At first is empty.
+        gaSequences = []
         for s in seqInf:
-            # Encode each element in JSON-Format with fields readable by the GeneArtClient and add it to the list.
+            # Encode each element in JSON-Format with fields readable by the
+            # GeneArtClient and add it to the list.
             seq = self.encode_sequence(s)
             gaSequences.append(seq)
         # Validate the project by calling the corresponding method.
         response = self.client.projectValidate(gaSequences, product)
         return response
-        
+
     #
     #   Checks if the Pinger is Running.
     #
@@ -416,10 +436,10 @@ class GeneArt(BasePinger):
     #
     def getOffers(self):
         return self.offers
-    
+
     #
     #   Add to Cart
-    #       Takes as parameter a projectId       
+    #       Takes as parameter a projectId
     #       Returns the API-Response
     #
     def toCart(self, projectId):
@@ -430,10 +450,10 @@ class GeneArt(BasePinger):
             raise UnavailableError("Request got Timeout") from err
 
         return response
-        
+
     #
     #   Status Review
-    #       Takes as parameter a projectId       
+    #       Takes as parameter a projectId
     #       Returns the API-Response
     #
     def statusReview(self, projectId):
@@ -449,11 +469,11 @@ class GeneArt(BasePinger):
     #               - stop searching -> isRunning() = false
     #               - resets the offers to a empty list -> getOffers = []
     #
+
     def clear(self):
         self.running = False
-        self.offers = [] # Empty Offers List
+        self.offers = []  # Empty Offers List
         self.vendorMessages = []
-
 
     #
     #   Desc:   Returns this vendor's messages
@@ -474,7 +494,6 @@ class GeneArt(BasePinger):
     #
     def addVendorMessage(self, message):
         self.vendorMessages.append(message)
-
 
     #
     #   Desc:   Create a request to trigger an order.
@@ -500,8 +519,9 @@ class GeneArt(BasePinger):
 
         # Check pinger is not running
         if(self.isRunning()):
-            raise IsRunningError("Pinger is currently running and can not perform a other action")
-        
+            raise IsRunningError(
+                "Pinger is currently running and can not perform a other action")
+
         # Check type of offersIds
         if (not isinstance(offerIds, list)):
             raise InvalidInputError("offerIds is not a list")
@@ -510,9 +530,10 @@ class GeneArt(BasePinger):
                 raise InvalidInputError("offerIds contains not-integer value")
 
         self.running = True
-        
+
         try:
-            # List to collect tuples of type (SequenceInformation, product-type)
+            # List to collect tuples of type (SequenceInformation,
+            # product-type)
             offersToBuy = []
 
             # find offers with id in given offerIds
@@ -526,11 +547,12 @@ class GeneArt(BasePinger):
                             product = "hqDnaStrings"
 
                         # add to list
-                        offersToBuy.append( (sequenceOffer.sequenceInformation, product) )
-    
+                        offersToBuy.append(
+                            (sequenceOffer.sequenceInformation, product))
+
             if len(offersToBuy) != len(offerIds):
                 raise InvalidInputError("Some of the offerIds are not found")
-            
+
             print("Order", len(offersToBuy), "sequences at GeneArt")
             # Upload to a project at geneart
             constructUpload = self.constUploadMixedProduct(offersToBuy)
@@ -539,7 +561,8 @@ class GeneArt(BasePinger):
             # If not all sequences are in the response?
             if(len(constructUpload["project"]["constructs"]) != len(offersToBuy)):
                 print("Someone tried to order sequences that are not synthesizeable")
-                raise InvalidInputError("The given offers cannot be synthesised")
+                raise InvalidInputError(
+                    "The given offers cannot be synthesised")
             else:
 
                 # Create Cart
@@ -549,7 +572,8 @@ class GeneArt(BasePinger):
                 # Check Cart-Response
                 expectedKeys = ["projectId", "cartId"]
                 if(expectedKeys == list(toCartResponse.keys())):
-                    order = UrlRedirectOrder(url = self.cartBaseUrl + str(toCartResponse["cartId"]))
+                    order = UrlRedirectOrder(
+                        url=self.cartBaseUrl + str(toCartResponse["cartId"]))
                 else:
                     # Failed to create Cart
                     raise UnavailableError("Failed to create toCart request")

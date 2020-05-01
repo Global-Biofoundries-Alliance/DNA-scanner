@@ -37,8 +37,9 @@ class VendorHandler:
 #
 #   Desc:   Interface representing a Vendor-API with unified methods.
 #
-class BasePinger:
 
+
+class BasePinger:
 
     #
     #   Desc:   Contructor.
@@ -86,7 +87,7 @@ class BasePinger:
     #   Desc:   True if Pinger is currently in progress,
     #           else false.
     #
-    #   @result 
+    #   @result
     #           Boolean. True if in progress, else false.
     #
     def isRunning(self):
@@ -96,10 +97,10 @@ class BasePinger:
     #   Desc:   Returns the current offers. If isRunning() is True, then searching is not finished and maybe you can
     #           get a partial result. After searching is finished isRunning() is False and the result will be complete.
     #
-    #   @result 
+    #   @result
     #           Type ArrayOf(Entities.SequenceOffers). Number of SequenceOffers are equal to the number
-    #           of sequences from the last call of searchOffers(seqInf). For every sequenceInformation from 
-    #           the last searchOffers(seqInf) call exists exactly one SequenceOffer. SequenceOffers must be available, 
+    #           of sequences from the last call of searchOffers(seqInf). For every sequenceInformation from
+    #           the last searchOffers(seqInf) call exists exactly one SequenceOffer. SequenceOffers must be available,
     #           even if there is no offer for the sequence. Empty Array, if it was not searching before.
     #
     #   @throws UnavailableError
@@ -118,7 +119,6 @@ class BasePinger:
     #
     def clear(self):
         raise NotImplementedError
-
 
     #
     #   Desc:   Returns this vendor's messages
@@ -139,7 +139,6 @@ class BasePinger:
     #
     def addVendorMessage(self, message):
         raise NotImplementedError
-
 
     #
     #   Desc:   Create a request to trigger an order.
@@ -166,7 +165,6 @@ class BasePinger:
         return Order()
 
 
-
 #
 #   Desc:   Interface for represent a fully Pinger. Fully Pinger means managing multiple vendor (represented by
 #           BasePingers) and add advanced functionalities e.g. search offers only for specific vendors.
@@ -187,8 +185,8 @@ class ManagedPinger:
     #           Sequence-Keys must be unique.
     #
     #   @param vendors
-    #           Type ArrayOf(int). Search will be started only for vendors, which VendorInformation.key exists in given list. If 
-    #           the list is empty, then searching for every vendor. Vendor-Keys must be unique. If vendor is not registered it 
+    #           Type ArrayOf(int). Search will be started only for vendors, which VendorInformation.key exists in given list. If
+    #           the list is empty, then searching for every vendor. Vendor-Keys must be unique. If vendor is not registered it
     #           will be ignored.
     #
     #   @throws InvalidInputError
@@ -204,7 +202,7 @@ class ManagedPinger:
     #   Desc:   True if Pinger is currently in progress,
     #           else false.
     #
-    #   @result 
+    #   @result
     #           Type Boolean. True if in progress, else false.
     #
     def isRunning(self):
@@ -217,8 +215,8 @@ class ManagedPinger:
     #
     #   @result ArrayOf(Entities.SequenceVendorOffers). For each sequence passed in the seachOffer(seqInf, vendor) call,
     #           there is exactly one SequenceVendorOffer-Object in the array. It contains one VendorOffer for every vendor
-    #           included in searchOffers. If a VendorPinger raises an Error, then the VendorOffer will contain a 
-    #           ErrorMessage and no offers. 
+    #           included in searchOffers. If a VendorPinger raises an Error, then the VendorOffer will contain a
+    #           ErrorMessage and no offers.
     #           Vendors excluded by the filter while calling searchOffers wont have VendorOffer.
     #
     def getOffers(self):
@@ -239,7 +237,7 @@ class ManagedPinger:
     #           Type Entities. VendorInformation. Contains the Information of the Vendor. If a vendor with the same key
     #           already exists, the VendorInformation and the Vendor-Pinger will be overriden by the given one.
     #
-    #   @param vendorPinger 
+    #   @param vendorPinger
     #           Type BasePinger. The Pinger handling the actions for the vendor.
     #
     #   @throws InvalidInputError
@@ -305,22 +303,25 @@ class CompositePinger(ManagedPinger):
         if(isinstance(vendorInformation, VendorInformation)):
             Validator.validate(vendorInformation)
         else:
-            raise InvalidInputError("Invalid Input: vendorInformation has not type VendorInformation")
+            raise InvalidInputError(
+                "Invalid Input: vendorInformation has not type VendorInformation")
 
         if(not isinstance(vendorPinger, BasePinger)):
-            raise InvalidInputError("Invalid Input: vendorPinger has not type BasePinger but" + str(type(vendorPinger)))
+            raise InvalidInputError(
+                "Invalid Input: vendorPinger has not type BasePinger but" + str(type(vendorPinger)))
 
         # if vendor-key already exists, then override this vendorhandler
-        if len(self.vendorHandler)>0:
+        if len(self.vendorHandler) > 0:
             for counter in range(0, len(self.vendorHandler)):
                 if (self.vendorHandler[counter].vendor.key == vendorInformation.key):
-                    self.vendorHandler[counter] = VendorHandler(vendorInformation, vendorPinger)
+                    self.vendorHandler[counter] = VendorHandler(
+                        vendorInformation, vendorPinger)
                     return
 
-        # Vendor-key is a new one. 
-        # Append the new vendorHandler 
-        self.vendorHandler.append(VendorHandler(vendorInformation, vendorPinger))
-
+        # Vendor-key is a new one.
+        # Append the new vendorHandler
+        self.vendorHandler.append(VendorHandler(
+            vendorInformation, vendorPinger))
 
     #
     #   see ManagedPinger.getVendors
@@ -337,7 +338,8 @@ class CompositePinger(ManagedPinger):
     def searchOffers(self, seqInf, vendors=[]):
         # Check pinger is not running
         if(self.isRunning()):
-            raise IsRunningError("Pinger is currently running and can not perform a other action")
+            raise IsRunningError(
+                "Pinger is currently running and can not perform a other action")
 
         # check input: seqInf
         if(isinstance(seqInf, list)):
@@ -345,14 +347,15 @@ class CompositePinger(ManagedPinger):
 
         for seq in seqInf:
             if (not isinstance(seq, SequenceInformation)):
-                raise InvalidInputError("parameter seqInf contains elements which are not of type SequenceInformation")
+                raise InvalidInputError(
+                    "parameter seqInf contains elements which are not of type SequenceInformation")
         # check input: vendors
         if (not isinstance(vendors, list)):
             raise InvalidInputError("parameter vendors should be a list")
         for vendor in vendors:
             if(not isinstance(vendor, int)):
-                raise InvalidInputError("parameter vendors should only contain integers")
-
+                raise InvalidInputError(
+                    "parameter vendors should only contain integers")
 
         self.curVendors = vendors
 
@@ -368,11 +371,14 @@ class CompositePinger(ManagedPinger):
                     vh.handler.searchOffers(seqInf)
                 except InvalidInputError as e:
                     # store Message and return when calling getOffers()
-                    vh.handler.addVendorMessage(Message(messageType = MessageType.INTERNAL_ERROR, text = str(e)))
+                    vh.handler.addVendorMessage(
+                        Message(messageType=MessageType.INTERNAL_ERROR, text=str(e)))
                 except UnavailableError as e:
-                    vh.handler.addVendorMessage(Message(messageType = MessageType.API_CURRENTLY_UNAVAILABLE, text = str(e)))
+                    vh.handler.addVendorMessage(
+                        Message(messageType=MessageType.API_CURRENTLY_UNAVAILABLE, text=str(e)))
                 except IsRunningError as e:
-                    vh.handler.addVendorMessage(Message(messageType = MessageType.INTERNAL_ERROR, text = str(e)))
+                    vh.handler.addVendorMessage(
+                        Message(messageType=MessageType.INTERNAL_ERROR, text=str(e)))
 
             # Clear vendor, if not accepted by the filter
             else:
@@ -405,7 +411,7 @@ class CompositePinger(ManagedPinger):
             vendorMessage = []
             seqOffers = []
 
-            # Check if vendor-message is available. Vendor messages can be available if a error occured calling searchOffers(...) 
+            # Check if vendor-message is available. Vendor messages can be available if a error occured calling searchOffers(...)
             # at the specific vendor-pinger.
             if vh.vendor.key in self.vendorMessages.keys():
                 vendorMessage = self.vendorMessages[vh.vendor.key]
@@ -413,19 +419,25 @@ class CompositePinger(ManagedPinger):
             try:
                 seqOffers = vh.handler.getOffers()
             except Exception as e:
-                # If it has a message, then a error occured at calling searchOffers()
+                # If it has a message, then a error occured at calling
+                # searchOffers()
                 if len(vendorMessage) == 0:
-                    print("CompositePinger.getOffers(...): Vendor", vh.vendor.name, "raises an error calling getOffers()")
+                    print("CompositePinger.getOffers(...): Vendor",
+                          vh.vendor.name, "raises an error calling getOffers()")
                     print(e)
-                    vendorMessage.append(Message(messageType = MessageType.INTERNAL_ERROR, text = "Cannot get Offers of " + vh.vendor.name + " " + str(e)))
+                    vendorMessage.append(Message(messageType=MessageType.INTERNAL_ERROR,
+                                                 text="Cannot get Offers of " + vh.vendor.name + " " + str(e)))
                 seqOffers = []
 
-            # If output if the VendorPinger is invalid, then ignore and continue
+            # If output if the VendorPinger is invalid, then ignore and
+            # continue
             if (not isinstance(seqOffers, list)):
-                print("CompositePinger.getOffers(...): Vendor", vh.vendor.name, "returns", type(seqOffers), "instead of list")
+                print("CompositePinger.getOffers(...): Vendor", vh.vendor.name,
+                      "returns", type(seqOffers), "instead of list")
                 continue
 
-            # Check the output of the vendor pinger to make sure to return valid output
+            # Check the output of the vendor pinger to make sure to return
+            # valid output
             try:
                 Validator.validate(seqOffers)
 
@@ -433,17 +445,21 @@ class CompositePinger(ManagedPinger):
 
                     for curSO in self.sequenceVendorOffers:
                         if newSO.sequenceInformation.key == curSO.sequenceInformation.key:
-                            curSO.vendorOffers.append(VendorOffers(vendorInformation=vh.vendor, offers=newSO.offers))
+                            curSO.vendorOffers.append(VendorOffers(
+                                vendorInformation=vh.vendor, offers=newSO.offers))
             except InvalidInputError:
-                # If Invalid values was found ignore this vendor and coninue with the next one
-                print("CompositePinger.getOffers(...): Vendor", vh.vendor.name, "returns invalid offers")
+                # If Invalid values was found ignore this vendor and coninue
+                # with the next one
+                print("CompositePinger.getOffers(...): Vendor",
+                      vh.vendor.name, "returns invalid offers")
                 continue
-            
+
             # If vendor has no sequence offers and filter allows the current selected vendor
             # then create the VendorOffer and save it
             if(len(seqOffers) == 0 and (len(self.curVendors) == 0 or vh.vendor.key in self.curVendors)):
                 for curSO in self.sequenceVendorOffers:
-                    curSO.vendorOffers.append(VendorOffers(vh.vendor, offers=seqOffers))
+                    curSO.vendorOffers.append(
+                        VendorOffers(vh.vendor, offers=seqOffers))
 
         return self.sequenceVendorOffers
 
@@ -466,17 +482,19 @@ class CompositePinger(ManagedPinger):
     def order(self, offerIds, vendor):
         # Check pinger is not running
         if(self.isRunning()):
-            raise IsRunningError("Pinger is currently running and can not perform a other action")
+            raise IsRunningError(
+                "Pinger is currently running and can not perform a other action")
 
         # check input: seqInf
         if(not isinstance(offerIds, list)):
             raise InvalidInputError("parameter offerIds is not of type list")
         for offerId in offerIds:
             if (not isinstance(offerId, int)):
-                raise InvalidInputError("parameter offerIds contains elements which are not of type integer")
+                raise InvalidInputError(
+                    "parameter offerIds contains elements which are not of type integer")
         # check input: vendors
         if(not isinstance(vendor, int)):
-                raise InvalidInputError("parameter vendor should be a integer")
+            raise InvalidInputError("parameter vendor should be a integer")
 
         # find VendorPinger and call order
         for vh in self.vendorHandler:
@@ -484,5 +502,5 @@ class CompositePinger(ManagedPinger):
             if(vh.vendor.key == vendor):
                 return vh.handler.order(offerIds)
 
-        raise InvalidInputError("Parameter vendor does not match any key of a registered vendor")
-
+        raise InvalidInputError(
+            "Parameter vendor does not match any key of a registered vendor")

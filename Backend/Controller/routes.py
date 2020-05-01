@@ -19,7 +19,8 @@ def get_vendors():
         # Convert vendors into form used by frontend
         vendors = []
         for vendor in service.getVendors():
-            vendors.append({"name": vendor.name, "shortName": vendor.shortName, "key": vendor.key})
+            vendors.append(
+                {"name": vendor.name, "shortName": vendor.shortName, "key": vendor.key})
         return json.jsonify(vendors)
     except:
         return {"error": "Encountered error while getting vendors\n" + (traceback.format_exc() if __debug__ else "")}
@@ -44,7 +45,8 @@ def uploadFile():
         if 'seqfile' not in request.files or request.files['seqfile'] == "":
             return json.jsonify({'error': 'No file specified'})
 
-        seqPrefix = request.form.get("prefix", default="")     # Sequence prefix for this file's sequences
+        # Sequence prefix for this file's sequences
+        seqPrefix = request.form.get("prefix", default="")
 
         # Actually parse the file and save the sequences
         return service.setSequencesFromFile(request.files["seqfile"], seqPrefix)
@@ -92,7 +94,8 @@ def filterResults():
 @app.route('/results', methods=['POST'])
 def getSearchResults():
     try:
-        # Get size and offset fields if available and set them to default otherwise
+        # Get size and offset fields if available and set them to default
+        # otherwise
         size = 10000000  # Nobody has plates this large
         offset = 0
         if request.form.get('size'):
@@ -106,6 +109,7 @@ def getSearchResults():
         return {"error": "Encountered error while fetching search results\n" + (
             traceback.format_exc() if __debug__ else "")}
 
+
 @app.route('/select', methods=['POST'])
 def setSelection():
     try:
@@ -115,6 +119,7 @@ def setSelection():
         return {"error": "Encountered error while selecting offers\n" + (
             traceback.format_exc() if __debug__ else "")}
 
+
 @app.route('/available_hosts', methods=['GET'])
 def getAvailableHosts():
     try:
@@ -123,6 +128,7 @@ def getAvailableHosts():
         return {"error": "Encountered error while fetching list of available hosts\n" + (
             traceback.format_exc() if __debug__ else "")}
 
+
 @app.route('/codon_optimization', methods=['POST'])
 def setCodonOptimizationOptions():
     try:
@@ -130,13 +136,14 @@ def setCodonOptimizationOptions():
         if "strategy" not in request_json or "host" not in request_json:
             return {"error": "Request is missing fields"}
 
-        service.setCodonOptimizationOptions(request_json["host"], request_json["strategy"])
-
+        service.setCodonOptimizationOptions(
+            request_json["host"], request_json["strategy"])
 
         return 'codon optimization options set'
     except Exception as error:
         return {"error": "Encountered error while setting codon optimization options\n" + (
             traceback.format_exc() if __debug__ else "")}
+
 
 @app.route('/order', methods=['POST'])
 def order():

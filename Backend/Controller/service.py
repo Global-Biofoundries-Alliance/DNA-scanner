@@ -129,7 +129,8 @@ class DefaultComparisonService(ComparisonService):
         realSequences = []
         for seq in sequences:
             if not isinstance(seq, SequenceInformation):
-                print("Invalid input in DefaultComparisonService.setSequences: Type is not SequenceInformation.")
+                print(
+                    "Invalid input in DefaultComparisonService.setSequences: Type is not SequenceInformation.")
                 continue
             if not validator.validate(seq):
                 continue
@@ -195,7 +196,8 @@ class DefaultComparisonService(ComparisonService):
                 if vendor.key not in session.loadSearchedVendors():
                     vendorsToSearch.append(vendor.key)
 
-        # Only do a search if any vendors are to be contacted as everything else would be quite pointless
+        # Only do a search if any vendors are to be contacted as everything
+        # else would be quite pointless
         if vendorsToSearch:
             mainPinger = session.loadPinger()
             mainPinger.searchOffers(seqInf=sequences, vendors=vendorsToSearch)
@@ -241,7 +243,8 @@ class DefaultComparisonService(ComparisonService):
             # selection criterion; Default is selection by price
             # The '% maxsize's are there to ensure that negative numbers wrap around to
             # very high numbers, making them inferior to offers that provide this information
-            # If the offer contains an error message it is to be treated as inferior as well.
+            # If the offer contains an error message it is to be treated as
+            # inferior as well.
             selector = (lambda x: (((x["turnoverTime"] % maxsize) if not x["offerMessage"] else maxsize),
                                    (x["price"] % maxsize) if not x["offerMessage"] else maxsize)) \
                 if "preselectByDeliveryDays" in filter and filter["preselectByDeliveryDays"] else \
@@ -297,11 +300,13 @@ class DefaultComparisonService(ComparisonService):
             for vendoffer in seqoffer.vendorOffers:
                 for offer in vendoffer.offers:
                     if offer.key in offer_ids:
-                        offersPerVendor[vendoffer.vendorInformation.key].append(offer.key)
+                        offersPerVendor[vendoffer.vendorInformation.key].append(
+                            offer.key)
 
         orders = []
         for vendor in self.config.vendors:
-            # Only issue orders from vendors that actually have offers marked for ordering
+            # Only issue orders from vendors that actually have offers marked
+            # for ordering
             if offersPerVendor[vendor.key]:
                 order = pinger.order(offersPerVendor[vendor.key], vendor.key)
                 order_dict = order.__dict__()

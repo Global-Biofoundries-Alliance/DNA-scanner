@@ -22,7 +22,7 @@ from flask import json
 #
 # @param size
 #       How many results to show per page
-def buildSearchResponseJSON(seqvendoffers, vendors, selector=[], globalMessages=[], vendorMessages = {}, offset=0, size=10):
+def buildSearchResponseJSON(seqvendoffers, vendors, selector=[], globalMessages=[], vendorMessages={}, offset=0, size=10):
     resp = SearchResponse()
     resp.data["result"] = []
     resp.data["globalMessage"] = globalMessages
@@ -47,8 +47,10 @@ def buildSearchResponseJSON(seqvendoffers, vendors, selector=[], globalMessages=
             result["vendors"].append({"key": vendor.key, "offers": []})
 
         # Abysmal starting offer so the first offer will get selected right away
-        # NOTE: Do not set this to maxsize! This will break the selection as this uses % maxsize.
-        selectedResult = {"price": maxsize - 1, "turnoverTime": maxsize - 1, "offerMessage": [], "selected": False}
+        # NOTE: Do not set this to maxsize! This will break the selection as
+        # this uses % maxsize.
+        selectedResult = {"price": maxsize - 1, "turnoverTime": maxsize -
+                          1, "offerMessage": [], "selected": False}
         for vendoff in seqvendoff.vendorOffers:
             resultOffers = []
             offerIndex = 0
@@ -58,33 +60,38 @@ def buildSearchResponseJSON(seqvendoffers, vendors, selector=[], globalMessages=
                 for message in offer.messages:
                     # Only output messages that are actually errors
                     if message.messageType.value in range(1000, 3999):
-                        messages.append({"text": message.text, "messageType": message.messageType.value})
+                        messages.append(
+                            {"text": message.text, "messageType": message.messageType.value})
 
                 resultOffers.append({
-                    #TODO Use a user defined currency
+                    # TODO Use a user defined currency
                     "price": offer.price.getAmount(offer.price.currency),
                     "currency": offer.price.currency.symbol(),
                     "turnoverTime": offer.turnovertime,
                     "key": offer.key,
                     "offerMessage": messages,
                     "selected": (not selectByLambda) and
-                                offer.key in selector})  # If not selected by lambda use selection list
+                    offer.key in selector})  # If not selected by lambda use selection list
 
             # If there is a selection lambda use it to sort offers and select the best one
-            # TODO: If offers are selected by list there should be some kind of sorting as well
+            # TODO: If offers are selected by list there should be some kind of
+            # sorting as well
             if selectByLambda:
                 for offer in sorted(resultOffers, key=selector):
-                    result["vendors"][vendoff.vendorInformation.key]["offers"].append(offer)
+                    result["vendors"][vendoff.vendorInformation.key]["offers"].append(
+                        offer)
                 resultList = result["vendors"][vendoff.vendorInformation.key]["offers"]
-                # Compare previously selected result with the best one from this result list
+                # Compare previously selected result with the best one from
+                # this result list
                 selectedResult = selectedResult if not resultList or \
-                                                   (selector(selectedResult) <= selector(resultList[0])) else \
+                    (selector(selectedResult) <= selector(resultList[0])) else \
                     resultList[0]
 
             else:
                 result["vendors"][vendoff.vendorInformation.key]["offers"] = resultOffers
 
-        # Only select the best offer if it is valid (otherwise it would select garbage if all offers are invalid in some way)
+        # Only select the best offer if it is valid (otherwise it would select
+        # garbage if all offers are invalid in some way)
         if selectedResult["price"] >= 0 and selectedResult["turnoverTime"] >= 0:
             selectedResult["selected"] = True
 
@@ -98,7 +105,6 @@ def buildSearchResponseJSON(seqvendoffers, vendors, selector=[], globalMessages=
         if key in vendorMessages.keys():
             messages = [message.text for message in vendorMessages[key]]
         vendorMessageList.append({"vendorKey": key, "messages": messages})
-
 
     resp.data["vendorMessage"] = vendorMessageList
 
@@ -125,10 +131,12 @@ def filterOffers(filter, seqvendoffers):
     filteredOffers = []
     # Iterate through the quite deep offer structure
     for seqvendoff in seqvendoffers:
-        filteredSeqVendOff = SequenceVendorOffers(seqvendoff.sequenceInformation, [])
+        filteredSeqVendOff = SequenceVendorOffers(
+            seqvendoff.sequenceInformation, [])
         for vendoff in seqvendoff.vendorOffers:
             filteredVendOff = VendorOffers(vendoff.vendorInformation, [])
-            # If existent apply the filtering criteria. Otherwise just let everything in.
+            # If existent apply the filtering criteria. Otherwise just let
+            # everything in.
             if "vendors" not in filter or \
                     vendoff.vendorInformation.key in filter["vendors"]:
                 for offer in vendoff.offers:

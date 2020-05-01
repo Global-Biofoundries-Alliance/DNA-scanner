@@ -13,8 +13,8 @@ from Pinger.Pinger import BasePinger, ManagedPinger, CompositePinger
 
 
 #
-#   Desc:   Interface for configuration-objects. These objects 
-#           are managing all values of the controller, that can be stored 
+#   Desc:   Interface for configuration-objects. These objects
+#           are managing all values of the controller, that can be stored
 #           outside in a configuration-file.
 #
 class Configurator:
@@ -41,7 +41,7 @@ class YmlConfigurator(Configurator):
     #   Desc:   Constructor
     #
     #   @param filename
-    #           Type String. Specifies the file with the configuration 
+    #           Type String. Specifies the file with the configuration
     #           properties.
     #
     #   @throws IOError
@@ -67,7 +67,8 @@ class YmlConfigurator(Configurator):
         if "vendors" in cfg_controller:
             key = 0
             for vendor in cfg_controller["vendors"]:
-                vendorInfo = VendorInformation(name=vendor["name"], shortName=vendor["shortName"], key=key)
+                vendorInfo = VendorInformation(
+                    name=vendor["name"], shortName=vendor["shortName"], key=key)
                 self.vendors.append(vendorInfo)
                 key = key + 1
 
@@ -80,7 +81,8 @@ class YmlConfigurator(Configurator):
         pingerIDTuples = []
         key = 0
         for vendor in cfg_controller["vendors"]:
-            vendorInfo = VendorInformation(name=vendor["name"], shortName=vendor["shortName"], key=key)
+            vendorInfo = VendorInformation(
+                name=vendor["name"], shortName=vendor["shortName"], key=key)
             pingerIDTuples.append((vendorInfo, vendor["pinger"]))
             key = key + 1
 
@@ -91,8 +93,10 @@ class YmlConfigurator(Configurator):
                 session.addGlobalMessages([newPinger])
                 continue
             if isinstance(newPinger, AdvancedMockPinger):
-                session.addGlobalMessages(["Warning: A mock vendor is being used. Contact an administrator."])
-            pinger.registerVendor(vendorInformation=pingerInfo[0], vendorPinger=newPinger)
+                session.addGlobalMessages(
+                    ["Warning: A mock vendor is being used. Contact an administrator."])
+            pinger.registerVendor(
+                vendorInformation=pingerInfo[0], vendorPinger=newPinger)
         return pinger
 
     #
@@ -125,7 +129,8 @@ class YmlConfigurator(Configurator):
                              shared_secret=cfg_idt["shared_secret"],
                              scope=cfg_idt["scope"])
                 token = pinger.getToken()
-                # This may return a message instead of a token in case of failure
+                # This may return a message instead of a token in case of
+                # failure
                 if isinstance(token, Message):
                     return token
                 else:
@@ -173,11 +178,13 @@ class YmlConfigurator(Configurator):
 class InvalidPinger(BasePinger):
 
     def __init__(self):
-        self.tempOffer = Offer(price=Price(currency=Currency.EUR, amount=-1), turnovertime=-1)
+        self.tempOffer = Offer(price=Price(
+            currency=Currency.EUR, amount=-1), turnovertime=-1)
         self.tempOffer.messages.append(
             Message(MessageType.WRONG_CREDENTIALS, "Invalid vendor configuration. Please contact your administrator."))
         self.offers = []
-        self.vendorMessages = [Message(MessageType.VENDOR_INFO, "Invalid vendor configuration. Please contact your administrator.")]
+        self.vendorMessages = [Message(
+            MessageType.VENDOR_INFO, "Invalid vendor configuration. Please contact your administrator.")]
         self.running = False
 
     #
@@ -190,7 +197,8 @@ class InvalidPinger(BasePinger):
         self.running = True
         self.offers = []
         for s in seqInf:
-            self.offers.append(SequenceOffers(sequenceInformation=s, offers=[self.tempOffer]))
+            self.offers.append(SequenceOffers(
+                sequenceInformation=s, offers=[self.tempOffer]))
         self.running = False
 
     #
@@ -209,7 +217,8 @@ class InvalidPinger(BasePinger):
 
     def clear(self):
         self.offers = []
-        self.vendorMessages = [Message(MessageType.VENDOR_INFO, "Invalid vendor configuration. Please contact your administrator.")]
+        self.vendorMessages = [Message(
+            MessageType.VENDOR_INFO, "Invalid vendor configuration. Please contact your administrator.")]
         self.running = False
 
     def order(self, offerIds):

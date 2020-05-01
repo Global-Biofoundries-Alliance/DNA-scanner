@@ -17,6 +17,8 @@ import numbers
 #
 #   @method validate(obj: Any): boolean
 #
+
+
 class Validator:
 
     #
@@ -44,14 +46,16 @@ class Validator:
 #   Desc:   A Concrete Validator to validate Entities from the Pinger Library.
 #
 #           You can configure the validator to print the errors to the console or
-#           to raise a specific errors. To configure set the specific variables 
+#           to raise a specific errors. To configure set the specific variables
 #           in the constructor.
 #
+
+
 class EntityValidator(Validator):
 
     #
     #   Desc:   Constructor
-    #           
+    #
     #   @param raiseError
     #           Default False. If True the validator will raise errors when a
     #           object to validate is invalid.
@@ -60,7 +64,7 @@ class EntityValidator(Validator):
     #           The class of the error thrown if raiseError is True.
     #
     #   @param printError
-    #           If True error messages will be printed to the console. If False 
+    #           If True error messages will be printed to the console. If False
     #           nothing will be printed to the console.
     #
     def __init__(self, raiseError=False, errorClass=Exception, printError=False):
@@ -152,23 +156,23 @@ class EntityValidator(Validator):
                         return self.raiseFalse("one object in offers is not of type Offer")
             else:
                 return self.raiseFalse("offers is not of type List")
-        
+
         # Offer
         elif isinstance(obj, Offer):
             # key
             if (not isinstance(obj.key, int)):
                 return self.raiseFalse("key is not of type int")
-            
+
             # price
             if (not isinstance(obj.price, Price)):
                 return self.raiseFalse("Attribute price is not of type Price")
             if (not self.validate(obj.price)):
                 return self.raiseFalse("Attribute price is invalid")
-            
-            #turnovertime
+
+            # turnovertime
             if (not isinstance(obj.turnovertime, int)):
                 return self.raiseFalse("turnovertime is not of type int")
-            
+
             # messages
             if isinstance(obj.messages, list):
                 for message in obj.messages:
@@ -189,8 +193,9 @@ class EntityValidator(Validator):
 
         # List
         elif isinstance(obj, list):
-            # Check that all elements in the list have the same type and that keys are unique
-            
+            # Check that all elements in the list have the same type and that
+            # keys are unique
+
             elemType = None
             firstElem = True
             keys = []
@@ -202,7 +207,8 @@ class EntityValidator(Validator):
                     return self.raiseFalse("List contains invalid elements")
 
                 if firstElem:
-                    # Take the type of the first element to compare with the other types
+                    # Take the type of the first element to compare with the
+                    # other types
                     elemType = type(elem)
                     firstElem = False
                 elif elemType != type(elem):
@@ -233,7 +239,7 @@ class EntityValidator(Validator):
     #   @result
     #           False if self.raiseError is False, else raises a error of type self.errorClass.
     #
-    def raiseFalse(self, text = ""):
+    def raiseFalse(self, text=""):
         if self.printError:
             print("EntityValidator.validate(...): Validation Failed >>>", text, "<<<")
         if self.raiseError:
@@ -246,9 +252,11 @@ class EntityValidator(Validator):
     #   @result
     #           True
     #
-    def raiseTrue(self, text = ""):
+    def raiseTrue(self, text=""):
         return True
 
+
 # Some predefined Validator that can be used imediately
-entityValidatorThrowing = EntityValidator(raiseError=True, errorClass=InvalidInputError)
+entityValidatorThrowing = EntityValidator(
+    raiseError=True, errorClass=InvalidInputError)
 entityValidator = EntityValidator()

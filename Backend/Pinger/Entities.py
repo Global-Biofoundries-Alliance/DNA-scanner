@@ -7,6 +7,7 @@ from .atomiccounter import *
 #                                                       #
 #########################################################
 
+
 class MessageType(Enum):
     #
     #   1xxx - Synthesis Errors
@@ -26,11 +27,13 @@ class MessageType(Enum):
     SEQUENCE_TOO_SHORT = 1004
     # Sequence is too long
     SEQUENCE_TOO_LONG = 1005
-    # Sequence is good, but vendor is unable to produce (maybe it works with optimization)
+    # Sequence is good, but vendor is unable to produce (maybe it works with
+    # optimization)
     UNABLE_TO_PRODUCE = 1006
     # Too many repeats in the sequence
     TOO_MANY_REPEATS = 1007
-    # Homology is the existence of shared ancestry between a pair of structures, or genes
+    # Homology is the existence of shared ancestry between a pair of
+    # structures, or genes
     HOMOLOGY = 1008
 
     #
@@ -39,12 +42,12 @@ class MessageType(Enum):
     #   Desc:   Errors that are not related to the sequence. Mostly technical Error with
     #           the vendor API.
     #
-    
+
     # General Vendor Error
     VENDOR_ERROR = 2000
     # Vendor-API is currently unavailable
     API_CURRENTLY_UNAVAILABLE = 2001
-    
+
     #
     #   3xxx - Internal Error
     #
@@ -74,7 +77,7 @@ class MessageType(Enum):
     #
     #   Desc:   Used for debug messges. Maybe interesting while development.
     #
-    
+
     # General Debug Message
     DEBUG = 5000
 
@@ -118,10 +121,11 @@ class SequenceInformation:
     # Atomic Counter is a threadsafe counter
     idcounter = AtomicCounter()
 
-    def __init__(self, sequence, name = "", key = 0):
+    def __init__(self, sequence, name="", key=0):
         # ID of the sequence.
         self.key = key
-        # Name of the sequence. Readable representation of the sequence for users
+        # Name of the sequence. Readable representation of the sequence for
+        # users
         self.name = name
         # The sequence
         self.sequence = sequence
@@ -134,15 +138,11 @@ class SequenceInformation:
         return SequenceInformation.idcounter.increment()
 
 
-
-        
-
-
 #
 #   Desc:   Represantation of a Vendor
 #
-#   Every VendorInformation needs key, shortName and name. 
-#   
+#   Every VendorInformation needs key, shortName and name.
+#
 #   @param key
 #       Type Integer. Will be used as identifier
 #   @param shortname
@@ -175,6 +175,8 @@ class VendorInformation:
 #           Type Boolean. If True the price is specified for the customer.
 #           If False the price is not for the specific customer.
 #
+
+
 class Price:
 
     def __init__(self, amount=-1, currency=Currency.EUR, customerSpecific=False):
@@ -194,24 +196,26 @@ class Price:
     # @param currency type Currency
     #                 Specifies the currency in which the price is returned.
     #
-    #TODO: Implement conversion; Right now it's just an identity function.
+    # TODO: Implement conversion; Right now it's just an identity function.
     def getAmount(self, currency):
-        return self.amount;
+        return self.amount
 
 #
 #   Desc:   Sequence and a list of offers for this sequence
 #
 #   @attribute vendorOffers
-#           Type ArrayOf(VendorOffers). A list of VendorOffers, which represent 
+#           Type ArrayOf(VendorOffers). A list of VendorOffers, which represent
 #           a vendor with his offers for the given sequenceInformation.
 #
 #   @attribute sequenceInformation
-#           Type SequenceInformation. A single SequenceInformation represents a 
-#           a sequence. 
+#           Type SequenceInformation. A single SequenceInformation represents a
+#           a sequence.
 #
+
+
 class SequenceVendorOffers:
 
-    def __init__(self, sequenceInformation, vendorOffers = []):
+    def __init__(self, sequenceInformation, vendorOffers=[]):
 
         # Sequence information
         self.sequenceInformation = sequenceInformation
@@ -220,7 +224,7 @@ class SequenceVendorOffers:
         self.vendorOffers = vendorOffers
 
 #
-#   Desc:   Represents a list of offers for a specific sequence. 
+#   Desc:   Represents a list of offers for a specific sequence.
 #
 #   @attribute sequenceInformation
 #       Type SequenceInformation. Specifies the Sequence of the offers.
@@ -228,8 +232,10 @@ class SequenceVendorOffers:
 #   @attribute offers
 #       Type ArrayOf(Offer). Represents the offers for the sequence specified by attribute sequenceInformation.
 #
+
+
 class SequenceOffers:
-    def __init__(self, sequenceInformation, offers = []):
+    def __init__(self, sequenceInformation, offers=[]):
         self.sequenceInformation = sequenceInformation
         self.offers = offers
 
@@ -245,9 +251,11 @@ class SequenceOffers:
 #   @attribute messages
 #           Type ArrayOf(Message). Vendor specific Messages (see MessageType 2XXX)
 #
+
+
 class VendorOffers:
 
-    def __init__(self, vendorInformation, offers = []):
+    def __init__(self, vendorInformation, offers=[]):
         self.vendorInformation = vendorInformation
         self.offers = offers
 
@@ -260,24 +268,26 @@ class VendorOffers:
 #
 #
 #   @attribute price
-#           Type Price. Represents the price of the offer. If less then 0, then no price is available 
+#           Type Price. Represents the price of the offer. If less then 0, then no price is available
 #           or price is unknown.
 #
 #   @attribute turnovertime
-#           Type int. Turnovertime is the number of days it needs to synthesize the sequence. If less then 
+#           Type int. Turnovertime is the number of days it needs to synthesize the sequence. If less then
 #           0, then no turnovertime is available or turnovertime is unknown.
 #
 #   @attribute messages
 #           Type ArrayOf(Message). Offer specific messages. Can be used to return debug information
 #           or to output errors from the vendor-APIs.
 #
+
+
 class Offer:
 
     # Define counter for IDs
     # Atomic Counter is a threadsafe counter
     idcounter = AtomicCounter()
 
-    def __init__(self, price=Price(), turnovertime=-1, messages = []):
+    def __init__(self, price=Price(), turnovertime=-1, messages=[]):
 
         # Unique id of the offer
         self.key = Offer.generateId()
@@ -305,9 +315,11 @@ class Offer:
 #   @attribute text
 #           Type str. Can contain text additional to the MessageType. By default it is a empty string.
 #
+
+
 class Message:
 
-    def __init__(self, messageType = MessageType.DEBUG, text = ""):
+    def __init__(self, messageType=MessageType.DEBUG, text=""):
         self.messageType = messageType
         self.text = text
 
@@ -346,9 +358,11 @@ class OrderType(Enum):
 #   @attribute orderType
 #           Type OrderType. The type of the concrete order.
 #
+
+
 class Order:
 
-    def __init__(self, orderType = OrderType.NOT_SUPPORTED):
+    def __init__(self, orderType=OrderType.NOT_SUPPORTED):
         self.orderType = orderType
 
     #
@@ -425,19 +439,24 @@ class InvalidInputError(Exception):
 #   Desc:   Used if it is not possible to make a request to a specific url.
 #           Maybe destination not exists or is temporary unavailable.
 #
+
+
 class UnavailableError(Exception):
     pass
 
 #
-#   Desc:   Pinger is running. You cannot make multiple actions at the same 
+#   Desc:   Pinger is running. You cannot make multiple actions at the same
 #           time.
 #
+
+
 class IsRunningError(Exception):
     pass
 
 #
 #   Desc:   Authentication failed. Credentials are wrong or has not enough rights.
 #
+
+
 class AuthenticationError(Exception):
     pass
-

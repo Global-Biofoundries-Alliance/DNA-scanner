@@ -13,7 +13,8 @@ class AdvancedMockPinger(BasePinger):
     def __init__(self):
         self.running = False
         self.offers = []
-        self.vendorMessages = [Message(messageType=MessageType.VENDOR_INFO, text="Warning: This is a mock vendor!")]
+        self.vendorMessages = [Message(
+            messageType=MessageType.VENDOR_INFO, text="Warning: This is a mock vendor!")]
 
         #
         #   After:
@@ -27,10 +28,14 @@ class AdvancedMockPinger(BasePinger):
         messages = [Message(MessageType.SYNTHESIS_ERROR, "Could not synthesize the sequence"),
                     Message(MessageType.INVALID_SEQUENCE, "Invalid sequence"),
                     Message(MessageType.GC_PROBLEM, "GC problem"),
-                    Message(MessageType.INVALID_LENGTH, "Sequence length invalid"),
-                    Message(MessageType.SEQUENCE_TOO_SHORT, "Sequence too short"),
-                    Message(MessageType.SEQUENCE_TOO_LONG, "Sequence too long"),
-                    Message(MessageType.UNABLE_TO_PRODUCE, "This vendor cannot synthesize this sequence"),
+                    Message(MessageType.INVALID_LENGTH,
+                            "Sequence length invalid"),
+                    Message(MessageType.SEQUENCE_TOO_SHORT,
+                            "Sequence too short"),
+                    Message(MessageType.SEQUENCE_TOO_LONG,
+                            "Sequence too long"),
+                    Message(MessageType.UNABLE_TO_PRODUCE,
+                            "This vendor cannot synthesize this sequence"),
                     Message(MessageType.HOMOLOGY, "Homology problem")]
 
         self.running = True
@@ -42,7 +47,8 @@ class AdvancedMockPinger(BasePinger):
             tempOffers = []
             for i in range(0, numOffers):
                 tempOffer = Offer()
-                tempOffer.price = Price(currency=currency, amount=float(int((random()) * 10000)) / 100)
+                tempOffer.price = Price(currency=currency, amount=float(
+                    int((random()) * 10000)) / 100)
                 tempOffer.turnovertime = randint(0, 20)
                 tempOffer.messages = []
                 if random() < 0.1:
@@ -67,7 +73,8 @@ class AdvancedMockPinger(BasePinger):
 
     def clear(self):
         self.offers = []
-        self.vendorMessages = [Message(messageType=MessageType.VENDOR_INFO, text="Warning: This is a mock vendor!")]
+        self.vendorMessages = [Message(
+            messageType=MessageType.VENDOR_INFO, text="Warning: This is a mock vendor!")]
         self.running = False
 
     def order(self, offerIds):
@@ -79,10 +86,12 @@ class AdvancedMockPinger(BasePinger):
             for offer in seqoffer.offers:
                 offerkeys.append(offer.key)
 
-        # Basically returns redirect if all IDs are valid and unsupported otherwise
+        # Basically returns redirect if all IDs are valid and unsupported
+        # otherwise
         for id in offerIds:
             if id not in offerkeys:
-                return Order(OrderType.NOT_SUPPORTED)  # Faux ID leads to non-supported order response
+                # Faux ID leads to non-supported order response
+                return Order(OrderType.NOT_SUPPORTED)
         return UrlRedirectOrder("http://www.example.com")
 
     def getVendorMessages(self):

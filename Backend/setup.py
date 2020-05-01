@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="dnabackend", 
+    name="dnabackend",
     version="0.0.1",
     author="GBA",
     author_email="",
@@ -28,4 +28,3 @@ setuptools.setup(
         'pyyaml'
     ]
 )
-

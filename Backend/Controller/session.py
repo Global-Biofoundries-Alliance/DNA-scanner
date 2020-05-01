@@ -12,18 +12,20 @@ validator = EntityValidator()
 #
 #   Desc:   Interface for handling of sessions.
 #
+
+
 class SessionManager:
 
     #
     #   Desc:   Loades the Pinger out of the session-store
     #
     #   @result
-    #           Type ManagedPinger. 
+    #           Type ManagedPinger.
     #
     def loadPinger(self) -> ManagedPinger:
         raise NotImplementedError
 
-    # 
+    #
     #   Desc:   Stores the Pinger in the session-store
     #
     #   @param pinger
@@ -558,7 +560,6 @@ class InMemorySessionManager(SessionManager):
     #
     def loadJugglingStrategy(self) -> str:
         return self.session.loadJugglingStrategy()
-
 
     #
     #   Desc: Frees all sessions

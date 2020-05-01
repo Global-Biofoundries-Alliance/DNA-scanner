@@ -5,36 +5,39 @@ Licensed under the MIT License.
 
 To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 '''
+# pylint: disable=invalid-name
 from random import randint, random
 
 import random as rand
 
-from .Entities import SequenceOffers
-from .Pinger import BasePinger, Currency, Message, MessageType, Offer, \
-    Order, OrderType, Price, UrlRedirectOrder
+from .Entities import Currency, Offer, OrderType, Price, SequenceOffers, \
+    UrlRedirectOrder
+from .Pinger import BasePinger, Message, MessageType, Order
 
 
-#
-#   The Dummy Pinger is for testing.
-#
 class AdvancedMockPinger(BasePinger):
+    '''The Dummy Pinger is for testing.'''
 
     def __init__(self):
+        super().__init__()
         self.running = False
         self.offers = []
         self.vendorMessages = [Message(
-            messageType=MessageType.VENDOR_INFO, text="Warning: This is a mock vendor!")]
+            messageType=MessageType.VENDOR_INFO,
+            text="Warning: This is a mock vendor!")]
 
         #
         #   After:
         #       isRunning() -> true
-        #       getOffers() -> [SequenceOffer(seqInf[0], self.tempOffer), SequenceOffer(seqInf[1], self.tempOffer), ...
-        #                           SequenceOffer(seqInf[n], self.tempOffer)]
+        #       getOffers() -> [SequenceOffer(seqInf[0], self.tempOffer),
+        #            SequenceOffer(seqInf[1], self.tempOffer), ...
+        #            SequenceOffer(seqInf[n], self.tempOffer)]
         #
 
     def searchOffers(self, seqInf):
 
-        messages = [Message(MessageType.SYNTHESIS_ERROR, "Could not synthesize the sequence"),
+        messages = [Message(MessageType.SYNTHESIS_ERROR,
+                            "Could not synthesize the sequence"),
                     Message(MessageType.INVALID_SEQUENCE, "Invalid sequence"),
                     Message(MessageType.GC_PROBLEM, "GC problem"),
                     Message(MessageType.INVALID_LENGTH,
@@ -54,7 +57,7 @@ class AdvancedMockPinger(BasePinger):
         for s in seqInf:
             numOffers = randint(0, 10)
             tempOffers = []
-            for i in range(0, numOffers):
+            for _ in range(0, numOffers):
                 tempOffer = Offer()
                 tempOffer.price = Price(currency=currency, amount=float(
                     int((random()) * 10000)) / 100)
@@ -74,8 +77,10 @@ class AdvancedMockPinger(BasePinger):
         return self.running
 
     #
-    #   Returns List with a  SequenceOffer for every sequence in last searchOffers(seqInf)-call.
-    #   Every SequenceOffer contains the same offers. Default 1 see self.tempOffer and self.offers.
+    #   Returns List with a  SequenceOffer for every sequence in last
+    #        searchOffers(seqInf)-call.
+    #   Every SequenceOffer contains the same offers. Default 1 see
+    #        self.tempOffer and self.offers.
     #
     def getOffers(self):
         return self.offers
@@ -83,7 +88,8 @@ class AdvancedMockPinger(BasePinger):
     def clear(self):
         self.offers = []
         self.vendorMessages = [Message(
-            messageType=MessageType.VENDOR_INFO, text="Warning: This is a mock vendor!")]
+            messageType=MessageType.VENDOR_INFO,
+            text="Warning: This is a mock vendor!")]
         self.running = False
 
     def order(self, offerIds):
@@ -97,8 +103,8 @@ class AdvancedMockPinger(BasePinger):
 
         # Basically returns redirect if all IDs are valid and unsupported
         # otherwise
-        for id in offerIds:
-            if id not in offerkeys:
+        for offer_id in offerIds:
+            if offer_id not in offerkeys:
                 # Faux ID leads to non-supported order response
                 return Order(OrderType.NOT_SUPPORTED)
         return UrlRedirectOrder("http://www.example.com")

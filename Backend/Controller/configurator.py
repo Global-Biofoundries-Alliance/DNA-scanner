@@ -31,7 +31,7 @@ class Configurator:
     configuration-file.'''
 
     def __init__(self):
-        raise NotImplementedError
+        pass
 
     def initializePinger(self, session: SessionManager) -> ManagedPinger:
         '''Desc:   Initialize the Pinger.
@@ -45,7 +45,7 @@ class Configurator:
 #
 class YmlConfigurator(Configurator):
     '''
-        Desc:   Constructor
+        Constructor
 
         @param filename
             Type String. Specifies the file with the configuration

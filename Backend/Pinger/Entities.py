@@ -5,6 +5,10 @@ Licensed under the MIT License.
 
 To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 '''
+# pylint: disable=dangerous-default-value
+# pylint: disable=fixme
+# pylint: disable=invalid-name
+# pylint: disable=too-few-public-methods
 from enum import Enum
 
 from .atomiccounter import AtomicCounter
@@ -15,7 +19,10 @@ from .atomiccounter import AtomicCounter
 #   Static                                              #
 #                                                       #
 #########################################################
+
+
 class MessageType(Enum):
+    '''MessageType.'''
     #
     #   1xxx - Synthesis Errors
     #
@@ -46,8 +53,8 @@ class MessageType(Enum):
     #
     #   2xxx - Vendor Error
     #
-    #   Desc:   Errors that are not related to the sequence. Mostly technical Error with
-    #           the vendor API.
+    #   Desc:   Errors that are not related to the sequence. Mostly technical
+    #            Error with the vendor API.
     #
 
     # General Vendor Error
@@ -89,10 +96,8 @@ class MessageType(Enum):
     DEBUG = 5000
 
 
-#
-#   Desc:   Representation of various currencies
-#
 class Currency(Enum):
+    '''Representation of various currencies.'''
     # Euro
     EUR = 0
     # United States Dollar
@@ -101,6 +106,7 @@ class Currency(Enum):
     UNKNOWN = 2
 
     def symbol(self):
+        '''Symbol.'''
         return {"EUR": "€", "USD": "$", "UNKNOWN": "?"}[self.name]
 
 #########################################################
@@ -110,19 +116,19 @@ class Currency(Enum):
 #########################################################
 
 
-#
-#   Desc:   Representation of a Sequence
-#
-#   @attribute key
-#       Type Integer. Identifies a specific sequence.
-#
-#   @attribute name
-#       Type String. Gives the sequence an human readable name.
-#
-#   @attribute sequence
-#       Type String. The represented sequence.
-#
 class SequenceInformation:
+    '''
+    Representation of a Sequence
+
+    @attribute key
+        Type Integer. Identifies a specific sequence.
+
+    @attribute name
+        Type String. Gives the sequence an human readable name.
+
+    @attribute sequence
+        Type String. The represented sequence.
+    '''
 
     # Define counter for IDs
     # Atomic Counter is a threadsafe counter
@@ -137,27 +143,28 @@ class SequenceInformation:
         # The sequence
         self.sequence = sequence
 
-    #
-    #   Static Method to generate a unique id
-    #   NOTE: Only used during external initialization.
-    #
+    @staticmethod
     def generateId():
+        '''
+         Static Method to generate a unique id
+        NOTE: Only used during external initialization.
+        '''
         return SequenceInformation.idcounter.increment()
 
 
-#
-#   Desc:   Represantation of a Vendor
-#
-#   Every VendorInformation needs key, shortName and name.
-#
-#   @param key
-#       Type Integer. Will be used as identifier
-#   @param shortname
-#       string. Name represent the vendor.
-#   @param name
-#       string. Fully-Name of the vendor. Can be equal to shortname.
-#
 class VendorInformation:
+    '''
+    Represantation of a Vendor
+
+    Every VendorInformation needs key, shortName and name.
+
+    @param key
+        Type Integer. Will be used as identifier
+    @param shortname
+        string. Name represent the vendor.
+    @param name
+        string. Fully-Name of the vendor. Can be equal to shortname.
+    '''
 
     def __init__(self, name, shortName, key):
         # ID of an Vendor. Will be static for every vendor
@@ -169,24 +176,24 @@ class VendorInformation:
         # Short version name of the vendor. Maybe equal to full name.
         self.shortName = shortName
 
-#
-#   Desc:   Representation of a price
-#
-#   @attribute currency
-#           Type Currency. The currency of the amount.
-#
-#   @attribute amount
-#           Numeric Value. The amount of the represented price.
-#
-#   @attribute customerSpecific
-#           Type Boolean. If True the price is specified for the customer.
-#           If False the price is not for the specific customer.
-#
-
 
 class Price:
+    '''
+    Representation of a price
 
-    def __init__(self, amount=-1, currency=Currency.EUR, customerSpecific=False):
+    @attribute currency
+        Type Currency. The currency of the amount.
+
+    @attribute amount
+        Numeric Value. The amount of the represented price.
+
+    @attribute customerSpecific
+        Type Boolean. If True the price is specified for the customer.
+        If False the price is not for the specific customer.
+    '''
+
+    def __init__(self, amount=-1, currency=Currency.EUR,
+                 customerSpecific=False):
 
         # the currency of the price
         self.currency = currency
@@ -197,30 +204,30 @@ class Price:
         # Is this price specific for the user
         self.customerSpecific = customerSpecific
 
-    #
-    # Def: Returns the price in a given currency.
-    #
-    # @param currency type Currency
-    #                 Specifies the currency in which the price is returned.
-    #
-    # TODO: Implement conversion; Right now it's just an identity function.
-    def getAmount(self, currency):
-        return self.amount
+    def getAmount(self, _):
+        '''
+        Returns the price in a given currency.
 
-#
-#   Desc:   Sequence and a list of offers for this sequence
-#
-#   @attribute vendorOffers
-#           Type ArrayOf(VendorOffers). A list of VendorOffers, which represent
-#           a vendor with his offers for the given sequenceInformation.
-#
-#   @attribute sequenceInformation
-#           Type SequenceInformation. A single SequenceInformation represents a
-#           a sequence.
-#
+        @param currency type Currency
+            Specifies the currency in which the price is returned.
+
+        TODO: Implement conversion; Right now it's just an identity function.
+        '''
+        return self.amount
 
 
 class SequenceVendorOffers:
+    '''
+    Sequence and a list of offers for this sequence
+
+    @attribute vendorOffers
+        Type ArrayOf(VendorOffers). A list of VendorOffers, which represent
+        a vendor with his offers for the given sequenceInformation.
+
+    @attribute sequenceInformation
+        Type SequenceInformation. A single SequenceInformation represents a
+        a sequence.
+    '''
 
     def __init__(self, sequenceInformation, vendorOffers=[]):
 
@@ -230,65 +237,70 @@ class SequenceVendorOffers:
         # Multiple offers for the sequence information
         self.vendorOffers = vendorOffers
 
-#
-#   Desc:   Represents a list of offers for a specific sequence.
-#
-#   @attribute sequenceInformation
-#       Type SequenceInformation. Specifies the Sequence of the offers.
-#
-#   @attribute offers
-#       Type ArrayOf(Offer). Represents the offers for the sequence specified by attribute sequenceInformation.
-#
-
 
 class SequenceOffers:
+    '''
+    Represents a list of offers for a specific sequence.
+
+    @attribute sequenceInformation
+        Type SequenceInformation. Specifies the Sequence of the offers.
+
+    @attribute offers
+        Type ArrayOf(Offer). Represents the offers for the sequence specified
+        by attribute sequenceInformation.
+    '''
+
     def __init__(self, sequenceInformation, offers=[]):
         self.sequenceInformation = sequenceInformation
         self.offers = offers
 
-#
-#   Desc:   Represents a list of offers for a specific vendor.
-#
-#   @attribute vendorInformation
-#           Type VendorInformation. Represents the Vendor which offers are listed in 'offers'.
-#
-#   @attribute offers
-#           Type ArrayOf(Offer). The list of offers from the vendor represented from 'vendorInformation'.
-#
-#   @attribute messages
-#           Type ArrayOf(Message). Vendor specific Messages (see MessageType 2XXX)
-#
-
 
 class VendorOffers:
+    '''
+    Represents a list of offers for a specific vendor.
+
+    @attribute vendorInformation
+        Type VendorInformation. Represents the Vendor which offers are listed
+        in 'offers'.
+
+    @attribute offers
+        Type ArrayOf(Offer). The list of offers from the vendor represented
+        from 'vendorInformation'.
+
+    @attribute messages
+        Type ArrayOf(Message). Vendor specific Messages (see MessageType 2XXX)
+    '''
 
     def __init__(self, vendorInformation, offers=[]):
         self.vendorInformation = vendorInformation
         self.offers = offers
 
 #
-#   Desc:   Representation of a Offer. A Offer can also only represent a error, when it contains a
-#           message with an error type.
-#
-#   @attribute key
-#           Type int. Unique Id to identify the current offer.
-#
-#
-#   @attribute price
-#           Type Price. Represents the price of the offer. If less then 0, then no price is available
-#           or price is unknown.
-#
-#   @attribute turnovertime
-#           Type int. Turnovertime is the number of days it needs to synthesize the sequence. If less then
-#           0, then no turnovertime is available or turnovertime is unknown.
-#
-#   @attribute messages
-#           Type ArrayOf(Message). Offer specific messages. Can be used to return debug information
-#           or to output errors from the vendor-APIs.
+#   Desc:
 #
 
 
 class Offer:
+    '''
+    Representation of a Offer. A Offer can also only represent a error, when it
+        contains a message with an error type.
+
+    @attribute key
+        Type int. Unique Id to identify the current offer.
+
+    @attribute price
+        Type Price. Represents the price of the offer. If less then 0, then no
+        price is available or price is unknown.
+
+    @attribute turnovertime
+        Type int. Turnovertime is the number of days it needs to synthesize
+        the  sequence. If less then 0, then no turnovertime is available or
+        turnovertime is unknown.
+
+    @attribute messages
+        Type ArrayOf(Message). Offer specific messages. Can be used to return
+        debug information or to output errors from the vendor-APIs.
+    '''
 
     # Define counter for IDs
     # Atomic Counter is a threadsafe counter
@@ -308,23 +320,26 @@ class Offer:
         # for example syntesis-errors
         self.messages = messages
 
-    #
-    #   Static Method to generate a unique id
-    #
+    @staticmethod
     def generateId():
+        '''
+        Static Method to generate a unique id
+        NOTE: Only used during external initialization.
+        '''
         return Offer.idcounter.increment()
-
-#
-#   Desc:   Messages with specific type and text.
-#
-#   @attribute type
-#           Type MessgageType (Enum). Specified the type of the message. By default it is DEBUG.
-#   @attribute text
-#           Type str. Can contain text additional to the MessageType. By default it is a empty string.
-#
 
 
 class Message:
+    '''
+    Messages with specific type and text.
+
+    @attribute type
+        Type MessgageType (Enum). Specified the type of the message. By default
+        it is DEBUG.
+    @attribute text
+        Type str. Can contain text additional to the MessageType. By default it
+        is a empty string.
+    '''
 
     def __init__(self, messageType=MessageType.DEBUG, text=""):
         self.messageType = messageType
@@ -348,10 +363,9 @@ class Message:
 #                                                   #
 #####################################################
 
-#
-#   Desc:   Types of the way to make the order.
-#
+
 class OrderType(Enum):
+    '''Types of the way to make the order.'''
     # Not supported
     NOT_SUPPORTED = 1
     # By redirect to an specific URL
@@ -359,73 +373,75 @@ class OrderType(Enum):
     # Plain message response to order
     MESSAGE = 3
 
-#
-#   Desc:   General interface for orders.
-#
-#   @attribute orderType
-#           Type OrderType. The type of the concrete order.
-#
-
 
 class Order:
+    '''
+    General interface for orders.
+
+    @attribute orderType
+        Type OrderType. The type of the concrete order.
+    '''
 
     def __init__(self, orderType=OrderType.NOT_SUPPORTED):
         self.orderType = orderType
 
-    #
-    #   Desc:   Returns the type of the concrete order.
-    #
-    #   @result
-    #           Type OrderType
-    #
     def getType(self):
+        '''
+        Returns the type of the concrete order.
+
+        @result
+            Type OrderType
+        '''
         return self.orderType
 
-    # Used for response format. Must be implemented by each order class.
     def __dict__(self):
+        '''Used for response format.
+        Must be implemented by each order class.'''
         return {"type": self.orderType.name}
 
 
-#
-#   Desc:   Finish the order by redirect to a specific url.
-#
-#   @attribute url
-#           Type String. The redirect url to make the order.
-#
-#   @attribute orderType
-#           Type OrderType. The type of the concrete order.
-#
 class UrlRedirectOrder(Order):
+    '''
+    Finish the order by redirect to a specific url.
 
-    #
-    #   Desc:   Constructor.
-    #
-    #   @param url
-    #           Type String. The redirect url to make the order.
-    #
+    @attribute url
+        Type String. The redirect url to make the order.
+
+    @attribute orderType
+        Type OrderType. The type of the concrete order.
+    '''
+
     def __init__(self, url):
+        '''
+        Constructor.
+
+        @param url
+            Type String. The redirect url to make the order.
+        '''
         super().__init__(orderType=OrderType.URL_REDIRECT)
         self.url = url
 
-    # Used for response format. Must be implemented by each order class.
     def __dict__(self):
+        '''Used for response format. Must be implemented by each orderclass.'''
         return {"type": self.orderType.name, "url": self.url}
 
 
 class MessageOrder(Order):
+    '''MessageOrder.'''
 
-    #
-    #   Desc:   Constructor.
-    #
-    #   @param url
-    #           Type String. The redirect url to make the order.
-    #
     def __init__(self, message):
+        '''
+        Constructor.
+
+        @param url
+            Type String. The redirect url to make the order.
+        '''
         super().__init__(orderType=OrderType.MESSAGE)
         self.message = message
 
-    # Used for response format. Must be implemented by each order class.
     def __dict__(self):
+        '''Used for response format. Must be implemented by each order
+        class.'''
         return {"type": self.orderType.name, "message": self.message}
 
 
@@ -435,35 +451,20 @@ class MessageOrder(Order):
 #                                                   #
 #####################################################
 
-#
-#   Desc:   Input of a used function is not like exxpected. Should be like
-#           described in the description.
-#
 class InvalidInputError(Exception):
-    pass
-
-#
-#   Desc:   Used if it is not possible to make a request to a specific url.
-#           Maybe destination not exists or is temporary unavailable.
-#
+    '''Input of a used function is not like exxpected. Should be like
+    described in the description.'''
 
 
 class UnavailableError(Exception):
-    pass
-
-#
-#   Desc:   Pinger is running. You cannot make multiple actions at the same
-#           time.
-#
+    '''Used if it is not possible to make a request to a specific url.
+    Maybe destination not exists or is temporary unavailable.'''
 
 
 class IsRunningError(Exception):
-    pass
-
-#
-#   Desc:   Authentication failed. Credentials are wrong or has not enough rights.
-#
+    '''Pinger is running. You cannot make multiple actions at the same time.'''
 
 
 class AuthenticationError(Exception):
-    pass
+    '''Authentication failed. Credentials are wrong or has not enough
+    rights.'''

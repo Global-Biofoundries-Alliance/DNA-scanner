@@ -6,13 +6,15 @@ Licensed under the MIT License.
 To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 '''
 from datetime import datetime
-import json
 import re
 
 import requests
 
-from .Pinger import *
-from .Validator import *
+from .Entities import AuthenticationError, Currency, InvalidInputError, \
+    Message, MessageType, Offer, Order, Price, SequenceInformation, \
+    SequenceOffers, UnavailableError, UrlRedirectOrder
+from .Pinger import BasePinger, IsRunningError
+from .Validator import EntityValidator
 
 
 class GeneArtClient:
@@ -321,7 +323,7 @@ class GeneArt(BasePinger):
                         # If the currencycode is unknown.
                         else:
                             price = Price(
-                                amount=cost, currency=UNKNOWN, customerSpecific=True)
+                                amount=cost, currency=Currency.UNKNOWN, customerSpecific=True)
                     # If the sequence was rejected
                     else:
                         turnOverTime = -1

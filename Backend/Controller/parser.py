@@ -5,7 +5,6 @@ Licensed under the MIT License.
 
 To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 '''
-import json
 import os
 import tempfile
 import time

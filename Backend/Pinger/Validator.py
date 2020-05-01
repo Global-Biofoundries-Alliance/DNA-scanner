@@ -18,7 +18,9 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 
 import numbers
 
-from .Entities import *
+from .Entities import Currency, InvalidInputError, \
+    Message, MessageType, Offer, Price, SequenceInformation, \
+    SequenceOffers, SequenceVendorOffers, VendorInformation, VendorOffers
 
 
 #

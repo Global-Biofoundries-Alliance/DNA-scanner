@@ -9,8 +9,9 @@ from random import randint, random
 
 import random as rand
 
-from .Entities import Order, OrderType, UrlRedirectOrder
-from .Pinger import *
+from .Entities import SequenceOffers
+from .Pinger import BasePinger, Currency, Message, MessageType, Offer, \
+    Order, OrderType, Price, UrlRedirectOrder
 
 
 #

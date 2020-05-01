@@ -16,9 +16,8 @@ from flask import session as session_cookie
 from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
 
-from Pinger.Entities import *
-from Pinger.Entities import VendorInformation, SequenceInformation
-from Pinger.Pinger import *
+from Pinger.Entities import VendorInformation, SequenceInformation, \
+    SequenceVendorOffers, VendorOffers
 from Pinger.Validator import EntityValidator
 
 from .parser import parse, BoostClient
@@ -26,6 +25,8 @@ from .session import InMemorySessionManager as SessionManager
 from .transformation import buildSearchResponseJSON, sequenceInfoFromObjects, filterOffers
 
 
+# from Pinger.Entities import *
+# from Pinger.Pinger import *
 # This doesn't actually hold state so it can be global
 validator = EntityValidator()
 

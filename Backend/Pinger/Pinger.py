@@ -5,7 +5,10 @@ Licensed under the MIT License.
 
 To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 '''
-from .Entities import *
+from .Entities import InvalidInputError, IsRunningError, Message, \
+    MessageType, Order, \
+    SequenceInformation, SequenceVendorOffers, UnavailableError, \
+    VendorInformation, VendorOffers
 from .Validator import entityValidatorThrowing as Validator
 
 
@@ -14,7 +17,6 @@ from .Validator import entityValidatorThrowing as Validator
 #   Classes only used inside of the Pinger              #
 #                                                       #
 #########################################################
-
 #
 #   Desc:   Class to make tupples of VendorInformations with VendorPingers.
 #

@@ -9,8 +9,6 @@ import traceback
 
 from flask import request, json
 
-from Pinger.Pinger import *
-
 from .app import app
 from .configurator import YmlConfigurator as Configurator
 from .service import DefaultComparisonService as Service

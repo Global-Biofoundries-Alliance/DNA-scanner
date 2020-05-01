@@ -5,13 +5,6 @@ Licensed under the MIT License.
 
 To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 '''
-import optparse
-import sys
-import time
-
-from flask import Flask
-
-from Controller import routes
 from Controller.app import app
 
 

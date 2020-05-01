@@ -6,15 +6,15 @@ Licensed under the MIT License.
 To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 '''
 from enum import Enum
-from .atomiccounter import *
+
+from .atomiccounter import AtomicCounter
+
 
 #########################################################
 #                                                       #
 #   Static                                              #
 #                                                       #
 #########################################################
-
-
 class MessageType(Enum):
     #
     #   1xxx - Synthesis Errors

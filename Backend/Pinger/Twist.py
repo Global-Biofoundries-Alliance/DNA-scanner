@@ -5,16 +5,16 @@ Licensed under the MIT License.
 
 To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 '''
-from datetime import datetime
-import json
-import re
 import time
 import uuid
 
 import requests
 
-from .Pinger import *
-from .Validator import *
+from .Entities import AuthenticationError, Currency, InvalidInputError, \
+    Message, MessageType, Offer, Order, Price, SequenceInformation, \
+    SequenceOffers, UnavailableError, UrlRedirectOrder
+from .Pinger import BasePinger, IsRunningError
+from .Validator import EntityValidator
 
 
 # Class to represent a TwistException.

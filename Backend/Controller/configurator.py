@@ -1,17 +1,26 @@
-import yaml
-from Pinger.AdvancedMock import AdvancedMockPinger
-from Pinger.Entities import *
-from Pinger.GeneArt import GeneArt
-from Pinger.IDT import IDT
-from Pinger.Twist import Twist
-from .parser import BoostClient
-from .session import SessionManager
+'''
+(c) Global Biofoundries Alliance 2020
+
+Licensed under the MIT License.
+
+To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
+'''
 import traceback
 
-# project imports
+import yaml
+
+from Pinger.AdvancedMock import AdvancedMockPinger
+from Pinger.GeneArt import GeneArt
+from Pinger.IDT import IDT
 from Pinger.Pinger import BasePinger, ManagedPinger, CompositePinger
+from Pinger.Twist import Twist
+
+from .parser import BoostClient
+from .session import SessionManager
 
 
+# from Pinger.Entities import *
+# project imports
 #
 #   Desc:   Interface for configuration-objects. These objects
 #           are managing all values of the controller, that can be stored

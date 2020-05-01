@@ -14,6 +14,7 @@ from Pinger.Entities import SequenceInformation, SequenceVendorOffers, Message
 from Pinger.Pinger import ManagedPinger
 from Pinger.Validator import EntityValidator
 
+
 validator = EntityValidator()
 
 #

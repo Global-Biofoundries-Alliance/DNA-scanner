@@ -7,12 +7,11 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 '''
 import threading
 
+
 #
 #   Desc:   This is a threadsafe counter.
 #           If you need an unique id, then call the increment function and use the result.
 #
-
-
 class AtomicCounter:
     #
     #   Desc:   Constructor to initialize the counter.

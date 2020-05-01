@@ -7,7 +7,7 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 '''
 from secrets import token_urlsafe
 
-from flask import Flask, session
+from flask import Flask
 
 from .prefixmiddleware import PrefixMiddleWare
 

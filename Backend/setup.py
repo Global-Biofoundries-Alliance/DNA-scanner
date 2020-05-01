@@ -7,6 +7,7 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 '''
 import setuptools
 
+
 with open("README.md", "r") as fh:
     long_description = fh.read()
 

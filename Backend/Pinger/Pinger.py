@@ -211,7 +211,7 @@ class ManagedPinger:
     '''
 
     def __init__(self):
-        raise NotImplementedError
+        pass
 
     def searchOffers(self, seqInf, vendors=[]):
         '''

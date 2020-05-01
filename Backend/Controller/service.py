@@ -56,7 +56,7 @@ class ComparisonService:
     '''
 
     def __init__(self, configurator):
-        raise NotImplementedError
+        pass
 
     def setSequencesFromFile(self, seqfile: FileStorage, prefix: str) -> None:
         '''Receives a werkzeug FileStorage, extracts sequences from it and

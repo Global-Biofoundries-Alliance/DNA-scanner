@@ -26,16 +26,12 @@ class AdvancedMockPinger(BasePinger):
             messageType=MessageType.VENDOR_INFO,
             text="Warning: This is a mock vendor!")]
 
-        #
-        #   After:
-        #       isRunning() -> true
-        #       getOffers() -> [SequenceOffer(seqInf[0], self.tempOffer),
-        #            SequenceOffer(seqInf[1], self.tempOffer), ...
-        #            SequenceOffer(seqInf[n], self.tempOffer)]
-        #
-
     def searchOffers(self, seqInf):
-
+        ''' After:
+                isRunning() -> true
+                getOffers() -> [SequenceOffer(seqInf[0], self.tempOffer),
+                    SequenceOffer(seqInf[1], self.tempOffer), ...
+                    SequenceOffer(seqInf[n], self.tempOffer)]'''
         messages = [Message(MessageType.SYNTHESIS_ERROR,
                             "Could not synthesize the sequence"),
                     Message(MessageType.INVALID_SEQUENCE, "Invalid sequence"),
@@ -70,22 +66,21 @@ class AdvancedMockPinger(BasePinger):
             self.offers.append(SequenceOffers(s, tempOffers))
         self.running = False
 
-    #
-    # True iff a search is still running
-    #
     def isRunning(self):
+        '''True iff a search is still running.'''
         return self.running
 
-    #
-    #   Returns List with a  SequenceOffer for every sequence in last
-    #        searchOffers(seqInf)-call.
-    #   Every SequenceOffer contains the same offers. Default 1 see
-    #        self.tempOffer and self.offers.
-    #
     def getOffers(self):
+        '''
+        Returns List with a  SequenceOffer for every sequence in last
+            searchOffers(seqInf)-call.
+        Every SequenceOffer contains the same offers. Default 1 see
+            self.tempOffer and self.offers.
+    '''
         return self.offers
 
     def clear(self):
+        '''Clear.'''
         self.offers = []
         self.vendorMessages = [Message(
             messageType=MessageType.VENDOR_INFO,
@@ -93,6 +88,7 @@ class AdvancedMockPinger(BasePinger):
         self.running = False
 
     def order(self, offerIds):
+        '''Order.'''
         # This must not happen. Crash so it's visible in the tests
         if not offerIds:
             raise RuntimeError
@@ -110,14 +106,14 @@ class AdvancedMockPinger(BasePinger):
         return UrlRedirectOrder("http://www.example.com")
 
     def getVendorMessages(self):
+        '''Get vendor messages.'''
         return self.vendorMessages
 
-    #
-    #   Desc:   Adds a vendor message to this vendor's message store.
-    #
-    #   @result
-    #           Type Message
-    #           The message to be added
-    #
     def addVendorMessage(self, message):
+        '''Adds a vendor message to this vendor's message store.
+
+        @result
+            Type Message
+            The message to be added
+        '''
         self.vendorMessages.append(message)

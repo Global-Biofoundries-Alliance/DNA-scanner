@@ -1,11 +1,20 @@
+'''
+(c) Global Biofoundries Alliance 2020
+
+Licensed under the MIT License.
+
+To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
+'''
 import traceback
 
-from Pinger.Pinger import *
 from flask import request, json
+
+from Pinger.Pinger import *
 
 from .app import app
 from .configurator import YmlConfigurator as Configurator
 from .service import DefaultComparisonService as Service
+
 
 service = Service(Configurator("config.yml"))
 

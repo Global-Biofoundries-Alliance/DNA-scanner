@@ -1,3 +1,10 @@
+'''
+(c) Global Biofoundries Alliance 2020
+
+Licensed under the MIT License.
+
+To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
+'''
 #########################################################
 #                                                       #
 #   This file contains an Validator to check            #
@@ -9,16 +16,16 @@
 #                                                       #
 #########################################################
 
-from .Entities import *
 import numbers
+
+from .Entities import *
+
 
 #
 #   Desc:   Interface of a standard Validator
 #
 #   @method validate(obj: Any): boolean
 #
-
-
 class Validator:
 
     #

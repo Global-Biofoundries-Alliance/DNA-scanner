@@ -1,9 +1,17 @@
-import types
+'''
+(c) Global Biofoundries Alliance 2020
+
+Licensed under the MIT License.
+
+To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
+'''
 from sys import maxsize
+import types
+
+from flask import json
 
 from Controller.dataformats import SearchResponse
 from Pinger.Entities import SequenceInformation, VendorOffers, SequenceVendorOffers
-from flask import json
 
 
 # Builds a search response in JSON format from a list of offers.

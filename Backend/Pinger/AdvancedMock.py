@@ -1,5 +1,13 @@
-import random as rand
+'''
+(c) Global Biofoundries Alliance 2020
+
+Licensed under the MIT License.
+
+To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
+'''
 from random import randint, random
+
+import random as rand
 
 from .Entities import Order, OrderType, UrlRedirectOrder
 from .Pinger import *

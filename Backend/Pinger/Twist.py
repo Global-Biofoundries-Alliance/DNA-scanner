@@ -1,15 +1,23 @@
+'''
+(c) Global Biofoundries Alliance 2020
+
+Licensed under the MIT License.
+
+To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
+'''
+from datetime import datetime
 import json
 import re
-from datetime import datetime
-import requests
 import time
 import uuid
+
+import requests
+
 from .Pinger import *
 from .Validator import *
 
+
 # Class to represent a TwistException.
-
-
 class TwistError(Exception):
 
     def __init__(self, message, status_code):

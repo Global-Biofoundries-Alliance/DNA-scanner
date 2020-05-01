@@ -1,14 +1,21 @@
-from Bio import SeqIO
+'''
+(c) Global Biofoundries Alliance 2020
+
+Licensed under the MIT License.
+
+To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
+'''
+import json
 import os
 import tempfile
-import json
-import sbol
 import time
+
+from Bio import SeqIO
 import requests
+import sbol
+
 
 # Object representing a sequence
-
-
 class SeqObject():
     def __init__(self, idN, name, sequence):
         self.idN = idN

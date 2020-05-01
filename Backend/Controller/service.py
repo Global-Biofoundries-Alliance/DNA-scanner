@@ -1,21 +1,30 @@
-from sys import maxsize
+'''
+(c) Global Biofoundries Alliance 2020
 
+Licensed under the MIT License.
+
+To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
+'''
 import os
+from secrets import token_urlsafe
+from sys import maxsize
 import tempfile
+from typing import List
+
+from flask import json
+from flask import session as session_cookie
+from werkzeug.datastructures import FileStorage
+from werkzeug.utils import secure_filename
+
 from Pinger.Entities import *
 from Pinger.Entities import VendorInformation, SequenceInformation
 from Pinger.Pinger import *
 from Pinger.Validator import EntityValidator
-from flask import json
-from flask import session as session_cookie
-from secrets import token_urlsafe
-from typing import List
-from werkzeug.datastructures import FileStorage
-from werkzeug.utils import secure_filename
 
 from .parser import parse, BoostClient
 from .session import InMemorySessionManager as SessionManager
 from .transformation import buildSearchResponseJSON, sequenceInfoFromObjects, filterOffers
+
 
 # This doesn't actually hold state so it can be global
 validator = EntityValidator()

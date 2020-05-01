@@ -1,18 +1,26 @@
-from Pinger.Pinger import *
+'''
+(c) Global Biofoundries Alliance 2020
+
+Licensed under the MIT License.
+
+To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
+'''
 from Pinger.Entities import *
+from Pinger.Pinger import *
+
 
 #
 #   The Dummy Pinger is for testing.
 #
 class DummyPinger(BasePinger):
 
-
     def __init__(self):
         self.running = False
 
-
-        self.tempOffer = Offer(price=Price(currency=Currency.EUR,amount=120),turnovertime=14)
-        self.tempOffer.messages.append(Message(MessageType.DEBUG, "This offer is created from Dummy"))
+        self.tempOffer = Offer(price=Price(
+            currency=Currency.EUR, amount=120), turnovertime=14)
+        self.tempOffer.messages.append(
+            Message(MessageType.DEBUG, "This offer is created from Dummy"))
         self.offers = []
 
     #
@@ -24,7 +32,8 @@ class DummyPinger(BasePinger):
     def searchOffers(self, seqInf):
         self.offers = []
         for s in seqInf:
-            self.offers.append(SequenceOffers(sequenceInformation=s, offers=[self.tempOffer]))
+            self.offers.append(SequenceOffers(
+                sequenceInformation=s, offers=[self.tempOffer]))
         self.running = True
 
     #
@@ -52,6 +61,7 @@ class DummyPinger(BasePinger):
     def order(self, offerIds):
         return Order()
 
+
 class NotAvailablePinger(BasePinger):
 
     def __init__(self):
@@ -71,6 +81,7 @@ class NotAvailablePinger(BasePinger):
 
     def order(self, seqInf):
         raise UnavailableError("This is a unavailable Dummy")
+
 
 class AlwaysRunningPinger(BasePinger):
 

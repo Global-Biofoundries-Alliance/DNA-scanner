@@ -5,6 +5,11 @@ Licensed under the MIT License.
 
 To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 '''
+# pylint: disable=broad-except
+# pylint: disable=invalid-name
+# pylint: disable=too-many-branches
+# pylint: disable=too-many-locals
+# pylint: disable=too-many-nested-blocks
 import os
 from secrets import token_urlsafe
 from sys import maxsize
@@ -22,7 +27,8 @@ from Pinger.Validator import EntityValidator
 
 from .parser import parse, BoostClient
 from .session import InMemorySessionManager as SessionManager
-from .transformation import buildSearchResponseJSON, sequenceInfoFromObjects, filterOffers
+from .transformation import buildSearchResponseJSON, sequenceInfoFromObjects, \
+    filterOffers
 
 
 # from Pinger.Entities import *
@@ -31,70 +37,67 @@ from .transformation import buildSearchResponseJSON, sequenceInfoFromObjects, fi
 validator = EntityValidator()
 
 
-#
-#   Abstract representation of a service containing the central functionality of the application.
-#   It should only ever contain functionality but not state.
-#   For state it holds a Configurator object for static information obtained via global configuration
-#   and a SessionManager object which holds session specific information between calls.
-#
-#   Note that not every method here has to correspond to exactly one end point.
-#   Some methods might be useful for more than one end point while some may only be part of an endpoint
-#   but deserves its own method for atomicity reasons
-#
 class ComparisonService:
+    '''
+    Abstract representation of a service containing the central functionality
+    of the application.
+
+    It should only ever contain functionality but not state.
+
+    For state it holds a Configurator object for static information obtained
+    via global configuration and a SessionManager object which holds session
+    specific information between calls.
+
+    Note that not every method here has to correspond to exactly one end point.
+
+    Some methods might be useful for more than one end point while some may
+    only be part of an endpoint but deserves its own method for atomicity
+    reasons.
+    '''
 
     def __init__(self, configurator):
         raise NotImplementedError
 
-    #
-    #   Receives a werkzeug FileStorage, extracts sequences from it and stores them in the session
-    #
     def setSequencesFromFile(self, seqfile: FileStorage, prefix: str) -> None:
+        '''Receives a werkzeug FileStorage, extracts sequences from it and
+        stores them in the session.'''
         raise NotImplementedError
 
-    #
-    #   Directly stores a list of sequences in the session
-    #
     def setSequences(self, sequences: List[SequenceInformation]) -> None:
+        '''Directly stores a list of sequences in the session.'''
         raise NotImplementedError
 
-    #
-    #   Sets the filter settings
-    #
-    def setFilter(self, filter: dict) -> None:
+    def setFilter(self, fltr: dict) -> None:
+        '''Sets the filter settings.'''
         raise NotImplementedError
 
-    #
-    #   Returns all search results packed into a JSON response
-    #
     def getResults(self, size: int, offset: int):
+        '''Returns all search results packed into a JSON response.'''
         raise NotImplementedError
 
-    #
-    #   Returns the list of available vendors
-    #
     def getVendors(self) -> List[VendorInformation]:
+        '''Returns the list of available vendors.'''
         raise NotImplementedError
 
-    #
-    #   Returns a list of available host organisms
-    #
     def getAvailableHosts(self):
+        '''Returns a list of available host organisms.'''
         raise NotImplementedError
 
     def setCodonOptimizationOptions(self, host, strategy):
+        '''Set cooon optimization options.'''
         raise NotImplementedError
 
 
 class DefaultComparisonService(ComparisonService):
+    '''DefaultComparisonService.'''
 
     def __init__(self, configurator):
+        super().__init__()
         self.config = configurator
 
-    #
-    # Parses an uploaded sequence file and stores the sequences in the session
-    #
     def setSequencesFromFile(self, seqfile: FileStorage, prefix: str):
+        '''Parses an uploaded sequence file and stores the sequences in the
+        session.'''
         # Store the input in a temporary file for the parser to process
         tempf, tpath = tempfile.mkstemp(
             '.' + secure_filename(seqfile.filename).rsplit('.', 1)[1].lower())
@@ -106,7 +109,8 @@ class DefaultComparisonService(ComparisonService):
             session = self.getSession()
             isProtein = session.loadHostOrganism() != ""
             # Parse sequence file
-            objSequences = parse(tpath, isProtein, self.getBoostClient(), session.loadHostOrganism(),
+            objSequences = parse(tpath, isProtein, self.getBoostClient(),
+                                 session.loadHostOrganism(),
                                  session.loadJugglingStrategy())
         except Exception as e:
             print(e)
@@ -129,10 +133,8 @@ class DefaultComparisonService(ComparisonService):
 
         return 'upload successful'
 
-    #
-    # Stores an explicit list of sequences in the session
-    #
     def setSequences(self, sequences: List[SequenceInformation]):
+        '''Stores an explicit list of sequences in the session.'''
         session = self.getSession()
 
         # Input check
@@ -140,7 +142,8 @@ class DefaultComparisonService(ComparisonService):
         for seq in sequences:
             if not isinstance(seq, SequenceInformation):
                 print(
-                    "Invalid input in DefaultComparisonService.setSequences: Type is not SequenceInformation.")
+                    "Invalid input in DefaultComparisonService.setSequences: "
+                    "Type is not SequenceInformation.")
                 continue
             if not validator.validate(seq):
                 continue
@@ -162,24 +165,18 @@ class DefaultComparisonService(ComparisonService):
         session.resetSearchedVendors()
         session.storeSelection([])
 
-    #
-    # Sets the filter settings
-    #
-    def setFilter(self, filter: dict):
+    def setFilter(self, fltr: dict):
+        '''Sets the filter settings.'''
         session = self.getSession()
-        session.storeFilter(filter)
+        session.storeFilter(fltr)
         session.storeSelection([])
 
-    #
-    # Sets which sequences are marked as selected
-    #
     def setSelection(self, selection: List[List]):
+        '''Sets which sequences are marked as selected.'''
         self.getSession().storeSelection(selection)
 
-    #
-    #   Returns all search results packed into a JSON response
-    #
     def getResults(self, size: int, offset: int):
+        '''Returns all search results packed into a JSON response.'''
         session = self.getSession()
 
         if not session.loadSequences():
@@ -188,16 +185,16 @@ class DefaultComparisonService(ComparisonService):
         sequences = session.loadSequences()
         seqoffers = session.loadResults()
 
-        filter = session.loadFilter()
+        fltr = session.loadFilter()
 
         # Create a list of vendors to contact in the search process.
         # Only vendors that are to be searched by the filter settings
         # and that have not been contacted yet are to be contacted.
         # This is for saving network overhead on both sides.
         vendorsToSearch = []
-        if "vendors" in filter:
+        if "vendors" in fltr:
             # Only contact vendors that are allowed in the filter
-            for key in filter["vendors"]:
+            for key in fltr["vendors"]:
                 if key not in session.loadSearchedVendors():
                     vendorsToSearch.append(key)
         else:
@@ -229,12 +226,15 @@ class DefaultComparisonService(ComparisonService):
             session.addSearchedVendors(vendorsToSearch)
             for seqoff in seqoffers:
                 for newseqoff in newoffers:
-                    if seqoff.sequenceInformation.key == newseqoff.sequenceInformation.key:
+                    if seqoff.sequenceInformation.key == \
+                            newseqoff.sequenceInformation.key:
                         for vendoff in seqoff.vendorOffers:
-                            if vendoff.vendorInformation.key not in vendorsToSearch:
+                            if vendoff.vendorInformation.key not in \
+                                    vendorsToSearch:
                                 continue
                             for newvendoff in newseqoff.vendorOffers:
-                                if vendoff.vendorInformation.key == newvendoff.vendorInformation.key:
+                                if vendoff.vendorInformation.key == \
+                                        newvendoff.vendorInformation.key:
                                     vendoff.offers.extend(newvendoff.offers)
 
             session.storeResults(seqoffers)
@@ -244,73 +244,85 @@ class DefaultComparisonService(ComparisonService):
         vendorMessages_unfiltered = session.loadVendorMessages()
         resultVendorMessages = {}
         for vendor in self.config.vendors:
-            if not filter or vendor.key in filter["vendors"]:
-                resultVendorMessages[vendor.key] = vendorMessages_unfiltered[vendor.key]
+            if not fltr or vendor.key in fltr["vendors"]:
+                resultVendorMessages[vendor.key] = \
+                    vendorMessages_unfiltered[vendor.key]
 
         # build response from offers stored in the session
-        if not filter or filter["preselectByPrice"] or filter["preselectByDeliveryDays"]:
+        if not fltr or fltr["preselectByPrice"] \
+                or fltr["preselectByDeliveryDays"]:
 
             # selection criterion; Default is selection by price
-            # The '% maxsize's are there to ensure that negative numbers wrap around to
-            # very high numbers, making them inferior to offers that provide this information
+            # The '% maxsize's are there to ensure that negative numbers wrap
+            # around to very high numbers, making them inferior to offers that
+            # provide this information.
+
             # If the offer contains an error message it is to be treated as
             # inferior as well.
-            selector = (lambda x: (((x["turnoverTime"] % maxsize) if not x["offerMessage"] else maxsize),
-                                   (x["price"] % maxsize) if not x["offerMessage"] else maxsize)) \
-                if "preselectByDeliveryDays" in filter and filter["preselectByDeliveryDays"] else \
-                (lambda x: (((x["price"] % maxsize) if not x["offerMessage"] else maxsize),
-                            ((x["turnoverTime"] % maxsize) if not x["offerMessage"] else maxsize)))
+            selector = (lambda x: (((x["turnoverTime"] % maxsize)
+                                    if not x["offerMessage"] else maxsize),
+                                   (x["price"] % maxsize)
+                                   if not x["offerMessage"] else maxsize)) \
+                if "preselectByDeliveryDays" in fltr \
+                and fltr["preselectByDeliveryDays"] else \
+                (lambda x: (((x["price"] % maxsize)
+                             if not x["offerMessage"] else maxsize),
+                            ((x["turnoverTime"] % maxsize)
+                             if not x["offerMessage"] else maxsize)))
             # Preselection by lambda
-            result = buildSearchResponseJSON(filterOffers(filter, seqoffers), self.config.vendors, selector,
-                                             session.loadGlobalMessages(), resultVendorMessages,
-                                             offset, size)
+            result = buildSearchResponseJSON(
+                filterOffers(fltr, seqoffers),
+                self.config.vendors, selector,
+                session.loadGlobalMessages(),
+                resultVendorMessages,
+                offset, size)
         else:
             # Use selection list
-            result = buildSearchResponseJSON(filterOffers(filter, seqoffers), self.config.vendors,
-                                             session.loadSelection(), session.loadGlobalMessages(), resultVendorMessages,
-                                             offset, size)
+            result = buildSearchResponseJSON(
+                filterOffers(fltr, seqoffers),
+                self.config.vendors,
+                session.loadSelection(),
+                session.loadGlobalMessages(),
+                resultVendorMessages,
+                offset, size)
 
         return result
 
-    #
-    #   Returns the list of available vendors
-    #
     def getVendors(self):
+        '''Returns the list of available vendors.'''
         return self.config.vendors
 
-    #
-    #   Returns a list of available host organisms
-    #
     def getAvailableHosts(self):
+        '''Returns a list of available host organisms.'''
         boost = self.getBoostClient()
         return boost.getPreDefinedHosts()
 
-    #
-    #   Sets the host organism and juggling strategy to be used in subsequent codon optimizations
-    #
     def setCodonOptimizationOptions(self, host, strategy):
+        '''Sets the host organism and juggling strategy to be used in
+        subsequent codon optimizations.'''
         session = self.getSession()
         session.storeHostOrganism(host)
         session.storeJugglingStrategy(strategy)
 
-    #
-    #   Orders a list of offer ids
-    #
-    #   @param offer_ids A list of offer ids to order
-    #
     def issueOrder(self, offer_ids):
+        '''
+        Orders a list of offer ids
+
+        @param offer_ids A list of offer ids to order
+        '''
         session = self.getSession()
 
         pinger = self.getSession().loadPinger()
 
         seqoffers = session.loadResults()
-        offersPerVendor = [[] for v in self.config.vendors]
+        offersPerVendor = [[] for _ in self.config.vendors]
 
         for seqoffer in seqoffers:
             for vendoffer in seqoffer.vendorOffers:
                 for offer in vendoffer.offers:
                     if offer.key in offer_ids:
-                        offersPerVendor[vendoffer.vendorInformation.key].append(
+                        offersPerVendor[
+                            vendoffer.vendorInformation.key].append(
                             offer.key)
 
         orders = []
@@ -325,16 +337,17 @@ class DefaultComparisonService(ComparisonService):
 
         return orders
 
-    #
-    #   Returns the current session or creates it if it hasn't been already.
-    #
     def getSession(self) -> SessionManager:
-        # Store a session identifier in the client-side cookie if not already present.
+        '''Returns the current session or creates it if it hasn't been
+        already.'''
+        # Store a session identifier in the client-side cookie if not already
+        # present.
         # This is used to identify the server-side session later on.
         if "sessionKey" not in session_cookie:
             token = token_urlsafe(64)
             # Session collision prevention
-            # (yes it's still random guessing but with that range it should not need many tries)
+            # (yes it's still random guessing but with that range it should not
+            # need many tries)
             while SessionManager.hasSession(token):
                 token = token_urlsafe(64)
             session_cookie["sessionKey"] = token
@@ -344,10 +357,9 @@ class DefaultComparisonService(ComparisonService):
             session.storePinger(self.config.initializePinger(session))
         return session
 
-    #
-    #   Returns the current session's BOOST client and configures it if nonexistent
-    #
     def getBoostClient(self) -> BoostClient:
+        '''Returns the current session's BOOST client and configures it if
+        nonexistent.'''
         session = self.getSession()
         boost = session.loadBoostClient()
         if not boost:

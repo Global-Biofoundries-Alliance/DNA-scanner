@@ -5,9 +5,12 @@ Licensed under the MIT License.
 
 To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 '''
+# pylint: disable=too-few-public-methods
 
 
-class SearchResponse(object):
+class SearchResponse():
+    '''Search response.'''
+
     def __init__(self):
         self.data = {
             "size": 10,

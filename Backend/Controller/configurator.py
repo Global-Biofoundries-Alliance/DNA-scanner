@@ -5,11 +5,17 @@ Licensed under the MIT License.
 
 To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 '''
+# pylint: disable=broad-except
+# pylint: disable=invalid-name
+# pylint: disable=too-few-public-methods
+# pylint: disable=too-many-return-statements
 import traceback
 
 import yaml
 
 from Pinger.AdvancedMock import AdvancedMockPinger
+from Pinger.Entities import Currency, Message, MessageType, Offer, Order, \
+    OrderType, Price, SequenceOffers, VendorInformation
 from Pinger.GeneArt import GeneArt
 from Pinger.IDT import IDT
 from Pinger.Pinger import BasePinger, ManagedPinger, CompositePinger
@@ -19,25 +25,18 @@ from .parser import BoostClient
 from .session import SessionManager
 
 
-# from Pinger.Entities import *
-# project imports
-#
-#   Desc:   Interface for configuration-objects. These objects
-#           are managing all values of the controller, that can be stored
-#           outside in a configuration-file.
-#
 class Configurator:
+    '''Interface for configuration-objects. These objects are managing all
+    values of the controller, that can be stored  outside in a
+    configuration-file.'''
 
     def __init__(self):
         raise NotImplementedError
 
-    #
-    #   Desc:   Initialize the Pinger.
-    #
-    #   @result
-    #           Returns a managedPinger with registered BasePingers.
-    #
     def initializePinger(self, session: SessionManager) -> ManagedPinger:
+        '''Desc:   Initialize the Pinger.
+
+        @result Returns a managedPinger with registered BasePingers.'''
         raise NotImplementedError
 
 
@@ -45,23 +44,25 @@ class Configurator:
 #   Desc:   Takes a yaml-file with all configuration-properties
 #
 class YmlConfigurator(Configurator):
+    '''
+        Desc:   Constructor
 
-    #
-    #   Desc:   Constructor
-    #
-    #   @param filename
-    #           Type String. Specifies the file with the configuration
-    #           properties.
-    #
-    #   @throws IOError
-    #           if the file could not be opened
-    #
-    #   @throws KeyError
-    #           if there is a required configuration item missing
-    #
-    #   @throws YAMLError
-    #           if the YAML file is invalid
+        @param filename
+            Type String. Specifies the file with the configuration
+            properties.
+
+        @throws IOError
+            if the file could not be opened
+
+        @throws KeyError
+            if there is a required configuration item missing
+
+        @throws YAMLError
+            if the YAML file is invalid
+    '''
+
     def __init__(self, filename) -> None:
+        super().__init__()
         self.vendors = []
         self.cfg = None
 
@@ -77,7 +78,8 @@ class YmlConfigurator(Configurator):
             key = 0
             for vendor in cfg_controller["vendors"]:
                 vendorInfo = VendorInformation(
-                    name=vendor["name"], shortName=vendor["shortName"], key=key)
+                    name=vendor["name"], shortName=vendor["shortName"],
+                    key=key)
                 self.vendors.append(vendorInfo)
                 key = key + 1
 
@@ -103,23 +105,25 @@ class YmlConfigurator(Configurator):
                 continue
             if isinstance(newPinger, AdvancedMockPinger):
                 session.addGlobalMessages(
-                    ["Warning: A mock vendor is being used. Contact an administrator."])
+                    ["Warning: A mock vendor is being used. Contact an "
+                     "administrator."])
             pinger.registerVendor(
                 vendorInformation=pingerInfo[0], vendorPinger=newPinger)
         return pinger
 
-    #
-    #   Gets the right pinger for a given pinger identifier.
-    #   Put pinger specific initialization here.
-    #
-    #   @param id A valid pinger identifier
-    #
-    #   @result A pinger of type as specified by id and configured to the capacity of the config
-    #
-    def getPingerFromKey(self, id: str) -> BasePinger:
+    def getPingerFromKey(self, pinger_id: str) -> BasePinger:
+        '''
+        Gets the right pinger for a given pinger identifier.
+        Put pinger specific initialization here.
+
+        @param pinger_id A valid pinger identifier
+
+        @result A pinger of type as specified by id and configured to the
+            capacity of the config
+        '''
         try:
             cfg_pinger = self.cfg["pinger"]
-            if id == "PINGER_TWIST":
+            if pinger_id == "PINGER_TWIST":
                 cfg_twist = cfg_pinger["twist"]
                 return Twist(cfg_twist["email"],
                              cfg_twist["password"],
@@ -129,7 +133,7 @@ class YmlConfigurator(Configurator):
                              cfg_twist["firstname"],
                              cfg_twist["lastname"],
                              host=cfg_twist["server"])
-            if id == "PINGER_IDT":
+            if pinger_id == "PINGER_IDT":
                 cfg_idt = cfg_pinger["idt"]
                 pinger = IDT(idt_username=cfg_idt["username"],
                              idt_password=cfg_idt["password"],
@@ -142,11 +146,13 @@ class YmlConfigurator(Configurator):
                 # failure
                 if isinstance(token, Message):
                     return token
-                else:
-                    pinger.token = token
+
+                # else:
+                pinger.token = token
+
                 return pinger
 
-            if id == "PINGER_GENEART":
+            if pinger_id == "PINGER_GENEART":
                 cfg_geneart = cfg_pinger["geneart"]
                 return GeneArt(username=cfg_geneart["username"],
                                token=cfg_geneart["token"],
@@ -158,14 +164,17 @@ class YmlConfigurator(Configurator):
                                dnaStrings=cfg_geneart["dnaStrings"],
                                hqDnaStrings=cfg_geneart["hqDnaStrings"],
                                timeout=cfg_geneart["timeout"])
-            if id == "PINGER_MOCK":
+            if pinger_id == "PINGER_MOCK":
                 return AdvancedMockPinger()
-            else:
-                return InvalidPinger()
-        except:
+
+            # else:
+            return InvalidPinger()
+
+        except Exception:
             return InvalidPinger()
 
     def initializeBoostClient(self):
+        '''Initialize Boost client.'''
         try:
             cfg_boost = self.cfg["boost"]
             return BoostClient(url_job=cfg_boost["url_job"],
@@ -175,31 +184,37 @@ class YmlConfigurator(Configurator):
                                username=cfg_boost["username"],
                                password=cfg_boost["password"],
                                timeout=cfg_boost["timeout"])
-        except Exception as error:
+        except Exception:
             print(traceback.format_exc())
             return None
 
 
-#
-#   The InvalidPinger is used if a pinger could not be initialized due to a misconfiguration.
-#   Its purpose is to tell the user to contact the system's admin.
-#
 class InvalidPinger(BasePinger):
+    '''
+    The InvalidPinger is used if a pinger could not be initialized due to a
+    misconfiguration.
+
+    Its purpose is to tell the user to contact the system's admin.
+    '''
 
     def __init__(self):
+        super().__init__()
         self.tempOffer = Offer(price=Price(
             currency=Currency.EUR, amount=-1), turnovertime=-1)
         self.tempOffer.messages.append(
-            Message(MessageType.WRONG_CREDENTIALS, "Invalid vendor configuration. Please contact your administrator."))
+            Message(MessageType.WRONG_CREDENTIALS, "Invalid vendor "
+                    "configuration. Please contact your administrator."))
         self.offers = []
         self.vendorMessages = [Message(
-            MessageType.VENDOR_INFO, "Invalid vendor configuration. Please contact your administrator.")]
+            MessageType.VENDOR_INFO, "Invalid vendor configuration. Please "
+            "contact your administrator.")]
         self.running = False
 
     #
     #   After:
     #       isRunning() -> true
-    #       getOffers() -> [SequenceOffer(seqInf[0], self.tempOffer), SequenceOffer(seqInf[1], self.tempOffer), ...
+    #       getOffers() -> [SequenceOffer(seqInf[0], self.tempOffer),
+    #           SequenceOffer(seqInf[1], self.tempOffer), ...
     #                           SequenceOffer(seqInf[n], self.tempOffer)]
     #
     def searchOffers(self, seqInf):
@@ -218,8 +233,10 @@ class InvalidPinger(BasePinger):
         return self.running
 
     #
-    #   Returns List with a  SequenceOffer for every sequence in last searchOffers(seqInf)-call.
-    #   Every SequenceOffer contains the same offers. Default 1 see self.tempOffer and self.offers.
+    #   Returns List with a  SequenceOffer for every sequence in last
+    #        searchOffers(seqInf)-call.
+    #   Every SequenceOffer contains the same offers. Default 1 see
+    #        self.tempOffer and self.offers.
     #
     def getOffers(self):
         return self.offers
@@ -227,10 +244,11 @@ class InvalidPinger(BasePinger):
     def clear(self):
         self.offers = []
         self.vendorMessages = [Message(
-            MessageType.VENDOR_INFO, "Invalid vendor configuration. Please contact your administrator.")]
+            MessageType.VENDOR_INFO, "Invalid vendor configuration. Please "
+            "contact your administrator.")]
         self.running = False
 
-    def order(self, offerIds):
+    def order(self, _):
         return Order(OrderType.NOT_SUPPORTED)
 
     def getVendorMessages(self):

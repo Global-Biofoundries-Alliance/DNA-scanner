@@ -1,188 +1,151 @@
-#
-#   A collection of classes related to session handling
-#
+'''
+(c) Global Biofoundries Alliance 2020
+
+Licensed under the MIT License.
+
+To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
+'''
+# pylint: disable=invalid-name
+# pylint: disable=too-many-instance-attributes
+# pylint: disable=too-many-public-methods
 from typing import List
 
 from Pinger.Entities import SequenceInformation, SequenceVendorOffers, Message
 from Pinger.Pinger import ManagedPinger
 from Pinger.Validator import EntityValidator
 
+
 validator = EntityValidator()
 
 #
-#   Desc:   Interface for handling of sessions.
+#   A collection of classes related to session handling
 #
+
+
 class SessionManager:
+    '''Interface for handling of sessions.'''
 
-    #
-    #   Desc:   Loades the Pinger out of the session-store
-    #
-    #   @result
-    #           Type ManagedPinger. 
-    #
     def loadPinger(self) -> ManagedPinger:
+        '''
+        Loades the Pinger out of the session-store
+
+        @result
+            Type ManagedPinger.
+        '''
         raise NotImplementedError
 
-    # 
-    #   Desc:   Stores the Pinger in the session-store
-    #
-    #   @param pinger
-    #           Type ManagedPinger. The pinger to store.
-    #
     def storePinger(self, pinger: ManagedPinger) -> None:
+        '''
+        Stores the Pinger in the session-store
+
+        @param pinger
+            Type ManagedPinger. The pinger to store.
+        '''
         raise NotImplementedError
 
-    #
-    #   Desc:   Loads the sequences out of the session-store.
-    #
     def loadSequences(self) -> List[SequenceInformation]:
+        '''Loads the sequences out of the session-store.'''
         raise NotImplementedError
 
-    #
-    #   Desc:   Loads the sequences out of the session-store
-    #
     def storeSequences(self, sequences: List[SequenceInformation]) -> None:
+        '''Loads the sequences out of the session-store.'''
         raise NotImplementedError
 
-    #
-    #   Desc: Loads the session's filter settings
-    #
     def loadFilter(self) -> dict:
+        '''Loads the session's fltr settings.'''
         raise NotImplementedError
 
-    #
-    #   Desc: Stores filter settings in the session
-    #
-    def storeFilter(self, filter: dict) -> None:
+    def storeFilter(self, fltr: dict) -> None:
+        '''Stores fltr settings in the session.'''
         raise NotImplementedError
 
-    #
-    #   Desc: Loads search results from the session
-    #
     def loadResults(self) -> List[SequenceVendorOffers]:
+        '''Loads search results from the session.'''
         raise NotImplementedError
 
-    #
-    #   Desc: Stores a list of search results for later use
-    #
     def storeResults(self, results: List[SequenceVendorOffers]) -> None:
+        '''Stores a list of search results for later use.'''
         raise NotImplementedError
 
-    #
-    #   Desc: Adds a list of vendors that have already been searched
-    #
     def addSearchedVendors(self, vendors: List[int]):
+        '''Adds a list of vendors that have already been searched.'''
         raise NotImplementedError
 
-    #
-    #   Desc: Returns a list of vendors that have already been searched
-    #
     def loadSearchedVendors(self) -> List[int]:
+        '''Returns a list of vendors that have already been searched.'''
         raise NotImplementedError
 
-    #
-    #   Desc: Sets all vendors to not searched yet
-    #
     def resetSearchedVendors(self):
+        '''Sets all vendors to not searched yet.'''
         raise NotImplementedError
 
-    #
-    #   Desc: Adds a global message to this session
-    #
     def addGlobalMessages(self, messages: List[Message]):
+        '''Adds a global message to this session.'''
         raise NotImplementedError
 
-    #
-    #   Desc: Returns this session's global messages
-    #
     def loadGlobalMessages(self) -> List[Message]:
+        '''Returns this session's global messages.'''
         raise NotImplementedError
 
-    #
-    #   Desc: Store per vendor messages as a dictionary of the form {key: [<messages>]}
-    #         where key is the vendor key.
-    #
     def loadVendorMessages(self):
+        '''Store per vendor messages as a dictionary of the form
+        {key: [<messages>]} where key is the vendor key.'''
         raise NotImplementedError
 
-    #
-    #   Desc: Returns per vendor messages as a dictionary of the form {key: [<messages>]}
-    #         where key is the vendor key.
-    #
     def storeVendorMessages(self, vendorMessages):
+        '''Returns per vendor messages as a dictionary of the form
+        {key: [<messages>]} where key is the vendor key.'''
         raise NotImplementedError
 
-    #
-    #   Desc: Deletes all global messages for this session
-    #
     def clearGlobalMessages(self):
+        '''Deletes all global messages for this session.'''
         raise NotImplementedError
 
-    #
-    #   Desc: Stores the current selection
-    #
     def storeSelection(self, selection):
+        '''Stores the current selection.'''
         raise NotImplementedError
 
-    #
-    #   Desc: Returns the current selection
-    #
     def loadSelection(self):
+        '''Returns the current selection.'''
         raise NotImplementedError
 
-    #
-    #   Desc: Sets the BOOST client
-    #
     def storeBoostClient(self, boostClient):
+        '''Sets the BOOST client.'''
         raise NotImplementedError
 
-    #
-    #   Desc: Returns the BOOST client
-    #
     def loadBoostClient(self):
+        '''Returns the BOOST client.'''
         raise NotImplementedError
 
-    #
-    #   Desc: Sets the host to be used for codon optimization
-    #
     def storeHostOrganism(self, host: str):
+        '''Sets the host to be used for codon optimization.'''
         raise NotImplementedError
 
-    #
-    #   Desc: Returns the host to be used for codon optimization
-    #
     def loadHostOrganism(self) -> str:
+        '''Returns the host to be used for codon optimization.'''
         raise NotImplementedError
 
-    #
-    #   Desc: Sets the juggling strategy used for codon optimization
-    #
     def storeJugglingStrategy(self, strategy: str):
+        '''Sets the juggling strategy used for codon optimization.'''
         raise NotImplementedError
 
-    #
-    #   Desc: Returns the juggling strategy used for codon optimization
-    #
     def loadJugglingStrategy(self) -> str:
+        '''Returns the juggling strategy used for codon optimization.'''
         raise NotImplementedError
 
-    #
-    #   Desc:   Free memory by Free all or old sessions. Can
-    #           be different for every StoreManager.
-    #
     def free(self):
+        '''Free memory by Free all or old sessions. Can be different for
+        every StoreManager.'''
         raise NotImplementedError
 
 
-#
-#   Representation of a single session.
-#
 class SingleSession(SessionManager):
+    '''Representation of a single session.'''
 
     def __init__(self):
         self.sequences = []
         self.pinger = None
-        self.filter = {}
+        self.fltr = {}
         self.results = []
         self.searchedVendors = []
         self.globalMessages = []
@@ -192,34 +155,34 @@ class SingleSession(SessionManager):
         self.hostOrganism = ""
         self.jugglingStrategy = ""
 
-    #
-    #   Desc:   Loades the Pinger out of the session-store
-    #
-    #   @result
-    #           Type ManagedPinger.
-    #
     def loadPinger(self) -> ManagedPinger:
+        '''
+        Loades the Pinger out of the session-store
+
+        @result
+            Type ManagedPinger.
+        '''
         return self.pinger
 
-    #
-    #   Desc:   Stores the Pinger in the session-store
-    #
-    #   @param pinger
-    #           Type ManagedPinger. The pinger to store.
-    #
-    #   @raises TypeError if the object to store is of the wrong type
-    #
     def storePinger(self, pinger: ManagedPinger) -> None:
+        '''
+        Stores the Pinger in the session-store
+
+        @param pinger
+            Type ManagedPinger. The pinger to store.
+
+        @raises TypeError if the object to store is of the wrong type
+        '''
         if not isinstance(pinger, ManagedPinger):
             raise TypeError
         self.pinger = pinger
 
-    #
-    #   Desc:   Loads the sequences out of the session-store
-    #
-    #   @raises TypeError if there is a malformed sequence in the list
-    #
     def storeSequences(self, sequences: List[SequenceInformation]) -> None:
+        '''
+        Loads the sequences out of the session-store
+
+        @raises TypeError if there is a malformed sequence in the list
+        '''
         for seq in sequences:
             if not isinstance(seq, SequenceInformation):
                 raise TypeError
@@ -227,36 +190,28 @@ class SingleSession(SessionManager):
             raise TypeError
         self.sequences = sequences
 
-    #
-    #   Desc:   Loads the sequences out of the session-store.
-    #
     def loadSequences(self) -> List[SequenceInformation]:
+        '''Loads the sequences out of the session-store.'''
         return self.sequences
 
-    #
-    #   Desc: Stores filter settings in the session
-    #
-    def storeFilter(self, filter: dict) -> None:
-        self.filter = filter
+    def storeFilter(self, fltr: dict) -> None:
+        '''Stores fltr settings in the session.'''
+        self.fltr = fltr
 
-    #
-    #   Desc: Loads the session's filter settings
-    #
     def loadFilter(self) -> dict:
-        return self.filter
+        '''Loads the session's fltr settings.'''
+        return self.fltr
 
-    #
-    #   Desc: Loads search results from the session
-    #
     def loadResults(self) -> List[SequenceVendorOffers]:
+        '''Loads search results from the session.'''
         return self.results
 
-    #
-    #   Desc: Stores a list of search results for later use
-    #
-    #   @raises TypeError if one the objects to store is of the wrong type
-    #
     def storeResults(self, results: List[SequenceVendorOffers]) -> None:
+        '''
+        Stores a list of search results for later use
+
+        @raises TypeError if one the objects to store is of the wrong type.
+        '''
         for res in results:
             if not isinstance(res, SequenceVendorOffers):
                 raise TypeError
@@ -264,86 +219,64 @@ class SingleSession(SessionManager):
             raise TypeError
         self.results = results
 
-    #
-    #   Desc: Adds a list of vendors that have already been searched
-    #
-    #   @raises TypeError if one of the vendor IDs is not int
-    #
     def addSearchedVendors(self, vendors: List[int]):
+        '''
+        Adds a list of vendors that have already been searched
+
+        @raises TypeError if one of the vendor IDs is not int
+        '''
         for vendor in vendors:
             if not isinstance(vendor, int):
                 raise TypeError
         self.searchedVendors.extend(vendors)
 
-    #
-    #   Desc: Returns a list of vendors that have already been searched
-    #
     def loadSearchedVendors(self) -> List[int]:
+        '''Returns a list of vendors that have already been searched.'''
         return self.searchedVendors
 
-    #
-    #   Desc: Sets all vendors to not searched yet
-    #
     def resetSearchedVendors(self):
+        '''Sets all vendors to not searched yet.'''
         self.searchedVendors = []
 
-    #
-    #   Desc: Adds a global message to this session
-    #
     def addGlobalMessages(self, messages: List[Message]):
+        '''Adds a global message to this session.'''
         # Add messages unless they are already present
         for message in messages:
             if message not in self.globalMessages:
                 self.globalMessages.append(message)
 
-    #
-    #   Desc: Returns this session's global messages
-    #
     def loadGlobalMessages(self) -> List[Message]:
+        '''Returns this session's global messages.'''
         return self.globalMessages
 
-    #
-    #   Desc: Deletes all global messages for this session
-    #
     def clearGlobalMessages(self):
+        '''Deletes all global messages for this session.'''
         self.globalMessages = []
 
-    #
-    #   Desc: Store per vendor messages as a dictionary of the form {key: [<messages>]}
-    #         where key is the vendor key.
-    #
     def loadVendorMessages(self):
+        '''Store per vendor messages as a dictionary of the form
+        {key: [<messages>]} where key is the vendor key.'''
         return self.vendorMessages
 
-    #
-    #   Desc: Returns per vendor messages as a dictionary of the form {key: [<messages>]}
-    #         where key is the vendor key.
-    #
     def storeVendorMessages(self, vendorMessages):
+        '''Returns per vendor messages as a dictionary of the form
+        {key: [<messages>]} where key is the vendor key.'''
         self.vendorMessages = vendorMessages
 
-    #
-    #   Desc: Stores the current selection
-    #
     def storeSelection(self, selection):
+        '''Stores the current selection.'''
         self.selection = selection
 
-    #
-    #   Desc: Returns the current selection
-    #
     def loadSelection(self):
+        '''Returns the current selection.'''
         return self.selection
 
-    #
-    #   Desc: Sets the BOOST client
-    #
     def storeBoostClient(self, boostClient):
+        '''Sets the BOOST client.'''
         self.boostClient = boostClient
 
-    #
-    #   Desc: Returns the BOOST client
-    #
     def loadBoostClient(self):
+        '''Returns the BOOST client.'''
         return self.boostClient
 
     #
@@ -373,197 +306,151 @@ class SingleSession(SessionManager):
     def free(self):
         self.sequences = []
         self.pinger = None
-        self.filter = {}
+        self.fltr = {}
         self.results = []
 
 
 class InMemorySessionManager(SessionManager):
+    '''InMemorySessionManager.'''
     sessions = []
 
     def __init__(self, sessionId):
         self.session = None
 
         for (sid, sm) in InMemorySessionManager.sessions:
-            if (sid == sessionId):
+            if sid == sessionId:
                 self.session = sm
 
-        if (self.session == None):
+        if self.session is None:
             self.session = SingleSession()
             InMemorySessionManager.sessions.append((sessionId, self.session))
 
-    #
-    #   Desc: Returns whether a session ID is already present
-    #
-    #   @param id
-    #       The session ID to check for
-    #
-    #   @result
-    #       True if the ID is already taken, False otherwise
-    #
     @staticmethod
-    def hasSession(id):
-        for (sid, sm) in InMemorySessionManager.sessions:
-            if sid == id:
+    def hasSession(session_id):
+        '''
+        Returns whether a session ID is already present
+
+        @param session_id
+            The session ID to check for
+
+        @result
+            True if the ID is already taken, False otherwise
+        '''
+        for (sid, _) in InMemorySessionManager.sessions:
+            if sid == session_id:
                 return True
         return False
 
-    #
-    #   Desc:   Loades the Pinger out of the session-store
-    #
-    #   @result
-    #           Type ManagedPinger.
-    #
     def loadPinger(self) -> ManagedPinger:
+        '''
+        Loades the Pinger out of the session-store
+
+        @result
+            Type ManagedPinger.
+        '''
         return self.session.loadPinger()
 
-    #
-    #   Desc:   Stores the Pinger in the session-store
-    #
-    #   @param pinger
-    #           Type ManagedPinger. The pinger to store.
-    #
     def storePinger(self, pinger: ManagedPinger) -> None:
+        '''
+        Stores the Pinger in the session-store
+
+        @param pinger
+            Type ManagedPinger. The pinger to store.
+        '''
         return self.session.storePinger(pinger)
 
-    #
-    #   Desc:   Loads the sequences out of the session-store.
-    #
     def loadSequences(self) -> List[SequenceInformation]:
+        '''Loads the sequences out of the session-store.'''
         return self.session.loadSequences()
 
-    #
-    #   Desc:   Loads the sequences out of the session-store
-    #
     def storeSequences(self, sequences: List[SequenceInformation]) -> None:
+        '''Loads the sequences out of the session-store.'''
         self.session.storeSequences(sequences)
 
-    #
-    #   Desc: Loads the session's filter settings
-    #
     def loadFilter(self) -> dict:
+        '''Loads the session's fltr settings.'''
         return self.session.loadFilter()
 
-    #
-    #   Desc: Stores filter settings in the session
-    #
-    def storeFilter(self, filter: dict) -> None:
-        self.session.storeFilter(filter)
+    def storeFilter(self, fltr: dict) -> None:
+        '''Stores fltr settings in the session.'''
+        self.session.storeFilter(fltr)
 
-    #
-    #   Desc: Loads search results from the session
-    #
     def loadResults(self) -> List[SequenceVendorOffers]:
+        '''Loads search results from the session.'''
         return self.session.loadResults()
 
-    #
-    #   Desc: Stores a list of search results for later use
-    #
     def storeResults(self, results: List[SequenceVendorOffers]) -> None:
+        '''Stores a list of search results for later use.'''
         self.session.storeResults(results)
 
-    #
-    #   Desc: Adds a list of vendors that have already been searched
-    #
     def addSearchedVendors(self, vendors: List[int]):
+        '''Adds a list of vendors that have already been searched.'''
         self.session.addSearchedVendors(vendors)
 
-    #
-    #   Desc: Returns a list of vendors that have already been searched
-    #
     def loadSearchedVendors(self) -> List[int]:
+        '''Returns a list of vendors that have already been searched.'''
         return self.session.loadSearchedVendors()
 
-    #
-    #   Desc: Sets all vendors to not searched yet
-    #
     def resetSearchedVendors(self):
+        '''Sets all vendors to not searched yet.'''
         self.session.resetSearchedVendors()
 
-    #
-    #   Desc: Adds a global message to this session
-    #
     def addGlobalMessages(self, messages: List[Message]):
+        '''Adds a global message to this session.'''
         self.session.addGlobalMessages(messages)
 
-    #
-    #   Desc: Returns this session's global messages
-    #
     def loadGlobalMessages(self) -> List[Message]:
+        '''Returns this session's global messages.'''
         return self.session.loadGlobalMessages()
 
-    #
-    #   Desc: Deletes all global messages for this session
-    #
     def clearGlobalMessages(self):
+        '''Deletes all global messages for this session.'''
         self.session.clearGlobalMessages()
 
-    #
-    #   Desc: Store per vendor messages as a dictionary of the form {key: [<messages>]}
-    #         where key is the vendor key.
-    #
     def loadVendorMessages(self):
+        '''Store per vendor messages as a dictionary of the form
+        {key: [<messages>]} where key is the vendor key.'''
         return self.session.loadVendorMessages()
 
-    #
-    #   Desc: Returns per vendor messages as a dictionary of the form {key: [<messages>]}
-    #         where key is the vendor key.
-    #
     def storeVendorMessages(self, vendorMessages):
+        '''Returns per vendor messages as a dictionary of the form
+        {key: [<messages>]} where key is the vendor key.'''
         self.session.storeVendorMessages(vendorMessages)
 
-    #
-    #   Desc: Stores the current selection
-    #
     def storeSelection(self, selection):
+        '''Stores the current selection.'''
         self.session.storeSelection(selection)
 
-    #
-    #   Desc: Returns the current selection
-    #
     def loadSelection(self):
+        '''Returns the current selection.'''
         return self.session.loadSelection()
 
-    #
-    #   Desc: Sets the BOOST client
-    #
     def storeBoostClient(self, boostClient):
+        '''Sets the BOOST client.'''
         self.session.storeBoostClient(boostClient)
 
-    #
-    #   Desc: Returns the BOOST client
-    #
     def loadBoostClient(self):
+        '''Returns the BOOST client.'''
         return self.session.loadBoostClient()
 
-    #
-    #   Desc: Sets the host to be used for codon optimization
-    #
     def storeHostOrganism(self, host: str):
+        '''Sets the host to be used for codon optimization.'''
         self.session.storeHostOrganism(host)
 
-    #
-    #   Desc: Returns the host to be used for codon optimization
-    #
     def loadHostOrganism(self) -> str:
+        '''Returns the host to be used for codon optimization.'''
         return self.session.loadHostOrganism()
 
-    #
-    #   Desc: Sets the juggling strategy used for codon optimization
-    #
     def storeJugglingStrategy(self, strategy: str):
+        '''Sets the juggling strategy used for codon optimization.'''
         self.session.storeJugglingStrategy(strategy)
 
-    #
-    #   Desc: Returns the juggling strategy used for codon optimization
-    #
     def loadJugglingStrategy(self) -> str:
+        '''Returns the juggling strategy used for codon optimization.'''
         return self.session.loadJugglingStrategy()
 
-
-    #
-    #   Desc: Frees all sessions
-    #
     def free(self):
-        for (sid, sm) in InMemorySessionManager.sessions:
+        '''Frees all sessions.'''
+        for (_, sm) in InMemorySessionManager.sessions:
             sm.free()
         InMemorySessionManager.sessions = []

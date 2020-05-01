@@ -1,10 +1,18 @@
+'''
+(c) Global Biofoundries Alliance 2020
+
+Licensed under the MIT License.
+
+To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
+'''
 import setuptools
+
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="dnabackend", 
+    name="dnabackend",
     version="0.0.1",
     author="GBA",
     author_email="",
@@ -28,4 +36,3 @@ setuptools.setup(
         'pyyaml'
     ]
 )
-

@@ -1,0 +1,1401 @@
+LOCUS       d34a664c59317c53dc40ac06fc75914b         231 aa            linear   UNA 12-NOV-2013
+DEFINITION  d34a664c59317c53dc40ac06fc75914b.
+ACCESSION   urn.local...1387533899680.693
+VERSION     urn.local...1387533899680.693
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 mqqlveqiek tdfqsakykd aysrinaivi egeqeaheny ltlgellppn keelsklskm
+       61 esrhkkgfes cgrnlsvnpd mefarqffsp lhnnfqiaaq qgkvvtclli qsliiecfai
+      121 aayniyipva dpfarkiteg vvkeeythln fgevwlkekf easkeeleva nrenlpivwq
+      181 mlnqvaedak vlgmekdalv edfmiqygea lsnigfttrd imrlsaygla s
+//
+LOCUS       f304b6e4fe25cfc9c00e3e65f69f2807         230 aa            linear   UNA 12-NOV-2013
+DEFINITION  f304b6e4fe25cfc9c00e3e65f69f2807.
+ACCESSION   urn.local...1387533899666.661
+VERSION     urn.local...1387533899666.661
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 mpqleatpti dyqsdtykda ysrinaivie geneaydnfv klaemlpenk delislakme
+       61 rrhakgfqac grnlevtpdm dfareffskl hgnfekaaee ddivtclviq aliiecfais
+      121 ayniyipvad dfarkitegv vkdeythlny geewlkanfd dvkerietan renlplvwkm
+      181 lnqvendarv lnmekeelie dftiaygeal anvgfntret vrmlthglrs
+//
+LOCUS       eee5b3cb95650491777e8df4bdc27807         230 aa            linear   UNA 12-NOV-2013
+DEFINITION  eee5b3cb95650491777e8df4bdc27807.
+ACCESSION   urn.local...1387533899676.684
+VERSION     urn.local...1387533899676.684
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 mpelavssel dftsetyksa ysrinaivie geyeansnyi qladiltdnk eelhrlakme
+       61 nrhmkgfqac gqnlqitpdm dyareffssl hdnfqiayae gkvvtclliq sliieafaia
+      121 ayniyipvad pfarkitesv vkdeylhlnf geewlkanfe takeeleaan ranlpivwrm
+      181 lnqveddarv lamekealve dfmisygeal snigfstrdi mrmsayglta
+//
+LOCUS       e8506519a5d303b4aa20e5dc9c5f1257         230 aa            linear   UNA 12-NOV-2013
+DEFINITION  e8506519a5d303b4aa20e5dc9c5f1257.
+ACCESSION   urn.local...1387533899674.679
+VERSION     urn.local...1387533899674.679
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 mpelavplel dftsetyksa ysrinaivie geyeansnyi qladiltdnk eelhrlakme
+       61 nrhmkgfqac gqnlkitpdm eyakeffssl hnnfqiayae gkivtclliq sliieafaia
+      121 ayniyipvad pfarkitesv vkdeylhlnf geewlkanfe takeeleaan ranlpivwrm
+      181 lnqveddarv lamekealve dfmisygeal snigfstrdi mrmsayglta
+//
+LOCUS       db48d406f05cb8c6639b4a7c6a74c055         230 aa            linear   UNA 12-NOV-2013
+DEFINITION  db48d406f05cb8c6639b4a7c6a74c055.
+ACCESSION   urn.local...1387533899674.680
+VERSION     urn.local...1387533899674.680
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 mpelavplel dftsetyksa ysrinaivie geyeansnyi qladiltdnk eelhrlakme
+       61 nrhmkgfqac gqnlqitpdm dyareffssl hdnfqiayae gkvvtclliq sliieafaia
+      121 ayniyipvad pfarkitesv vkdeylhlnf geewlkanfe takeeleaan ranipivwrm
+      181 lnqveddarv lamekealve dfmisygeal snigfstrdi mrmsayglta
+//
+LOCUS       d9af02f043d7b3efda37972747707107         230 aa            linear   UNA 12-NOV-2013
+DEFINITION  d9af02f043d7b3efda37972747707107.
+ACCESSION   urn.local...1387533899676.683
+VERSION     urn.local...1387533899676.683
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 mqqletmstl dyqsehyrda ysrinaivie geqeaydnyc klaeslpdak ddllrlakme
+       61 srhmkgfqac gknlavtpdm efaakffaql hqnfqqawae gkivtclliq sliietfais
+      121 ayniyipvad afarkitegv vkdeyshlnf geewlkanfe sakaeleaan rqnlpiiwam
+      181 lnevaddaav lgmekdalve dfmitygeal anigfssrev mklsaqglaa
+//
+LOCUS       cadd81ca5fb30099d53d5c847d11d245         230 aa            linear   UNA 12-NOV-2013
+DEFINITION  cadd81ca5fb30099d53d5c847d11d245.
+ACCESSION   urn.local...1387533899670.670
+VERSION     urn.local...1387533899670.670
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 mpqtqaisei dfysdtykda ysridgivie geqeahenyi rlgemlpehq ddfirlskme
+       61 arhkkgfeac grnlkvtcdl dfarrffsdl hknfqdaase dkvptclviq sliiecfaia
+      121 ayniyipvad dfarkitesv vkdeyqhlny geewlkahfd dvkaeiqean rknlpivwrm
+      181 lnevdkdaav lgmekealve dfmiqygeal snigfstgei mrmsayglva
+//
+LOCUS       c9780c1be23733d05e2ca5f962096909         230 aa            linear   UNA 12-NOV-2013
+DEFINITION  c9780c1be23733d05e2ca5f962096909.
+ACCESSION   urn.local...1387533899675.681
+VERSION     urn.local...1387533899675.681
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 mpelavplel dftsetyksa ysrinaivie geyeansnyi qladiltdnk eelhrlakme
+       61 nrhmkgfqac gqnlkitpdm eyakeffssl hnnfqiayae gkivtclliq sliieafaia
+      121 ayniyipvad pfarkitesv vkdeylhlnf geewlkanfe takeeleaan ranlpivwkm
+      181 lnqveddarv lamekealve dfmisygeal snigfstrdi mrmsayglta
+//
+LOCUS       bc38fee734cb643fc4f2e84eb4a6cd31         230 aa            linear   UNA 12-NOV-2013
+DEFINITION  bc38fee734cb643fc4f2e84eb4a6cd31.
+ACCESSION   urn.local...1387533899681.694
+VERSION     urn.local...1387533899681.694
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 mpelavplel dftsetyksa ysrinaivie geyeansnyi qladiltdkk eelhrlakme
+       61 nrhmkgfqac grnlqitpdm dyakeffssl hnnfqiayae gkvvtclliq sliieafaia
+      121 ayniyipvad pfarkitegv vkdeylhlnf geewlkanfe takdeleaan ranlpivwrm
+      181 lnqveddarv lamekealve dfmisygeal snigfstrdi mrmsayglta
+//
+LOCUS       b7dac3b6521ea5dc4054901aff5a1fa7         230 aa            linear   UNA 12-NOV-2013
+DEFINITION  b7dac3b6521ea5dc4054901aff5a1fa7.
+ACCESSION   urn.local...1387533899677.685
+VERSION     urn.local...1387533899677.685
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 mpqleaspti dfqtetykda ysrinaivie geqeahdnyl tlaelladkk aeliglskme
+       61 nrhmkgfqac grnlkvtpdm afakqffsdl hrnfqtaaae gqivtclliq sliiecfaia
+      121 ayniyipvad dfarkitegv vkeeyshlnf gevwlqahfe eskaeleaan rqnlpiiwkl
+      181 lnavaddarv lgmekdalie dfmiaygeal gnigfnnrdi mrmsaqglaa
+//
+LOCUS       a7c3909a0ac01b7b2d380a658d03063a         230 aa            linear   UNA 12-NOV-2013
+DEFINITION  a7c3909a0ac01b7b2d380a658d03063a.
+ACCESSION   urn.local...1387533899682.697
+VERSION     urn.local...1387533899682.697
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 mpelavplel dftsetyksa ysrinaivie geyeansnyi qladiladnk eelhrlakme
+       61 nrhmkgfqac gqnlqitpdm dyareffssl henfqiayae gkvvtclliq sliieafaia
+      121 ayniyipvad pfarkitegv vkdeylhlnf geewlkanfe takkeleaan ranlpivwrm
+      181 lnqveddarv lgmekealve dfmisygeal snigfstrdi mrmsayglta
+//
+LOCUS       a4c21c0754d982946e7cf5352a573e81         230 aa            linear   UNA 12-NOV-2013
+DEFINITION  a4c21c0754d982946e7cf5352a573e81.
+ACCESSION   urn.local...1387533899669.667
+VERSION     urn.local...1387533899669.667
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 mqelavrpel dftsetykda ysrinaivie geqeaynnyi amgellpdhk delttlakme
+       61 krhmkgfqsc grnltvtpdm efakeyfarl hgnfktahae gnvvacfviq sliieafaia
+      121 ayniyipvad efarkitegv vkdeykhlnf gevwlnehfe asktaleaan kenlpivwqm
+      181 lnaveedaat lgmekaalve dfmvsygdal gnigfntrei mrmssyglta
+//
+LOCUS       4791963818c8e568b12085ca63b87d81         230 aa            linear   UNA 12-NOV-2013
+DEFINITION  4791963818c8e568b12085ca63b87d81.
+ACCESSION   urn.local...1387533899671.673
+VERSION     urn.local...1387533899671.673
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 mqelispsel dyrsetyksa fsrinaivve geqeayenyl slgqllpdkk ddlvrlskme
+       61 mrhkkgfqac aknlevtadm efakeffaql hqnfqeaaae gkvvtclliq sliiecfaia
+      121 ayhifipvad dfsrkitegv vkdeythlnf gevwlkehfe eskaeleean aqnlpivwkm
+      181 lnevetdaev mampkdalve dfmiqygeal snigfttrdi mrlsayglra
+//
+LOCUS       87546a2b0f93e2d7312f1d2f5c1dbeda         230 aa            linear   UNA 12-NOV-2013
+DEFINITION  87546a2b0f93e2d7312f1d2f5c1dbeda.
+ACCESSION   urn.local...1387533899680.692
+VERSION     urn.local...1387533899680.692
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 mqqlaaqsei dftsqtykda ysrinaivie geqqahenyl klaellpehk delvglskme
+       61 srhkkgfeac grnlqvtpdt efaqqffael hqnfqqaaae gkvvsclliq sliiecfaia
+      121 ayhryipvad pfarkitegv vkdeythlnf gevwlkehfl eakaeleqan rqnlpivwkm
+      181 lnkveqdaet lgmekealve dfmiqyseal snigfsnrei vrlsvyglka
+//
+LOCUS       50535d4ccc779e89d85c1743571a03ab         230 aa            linear   UNA 12-NOV-2013
+DEFINITION  50535d4ccc779e89d85c1743571a03ab.
+ACCESSION   urn.local...1387533899681.695
+VERSION     urn.local...1387533899681.695
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 mqqleaspai dfetatykda ysrinaivie geqeaydnyi rlgemlpdqk dvlialskme
+       61 nrhmkgfqac grnlkvtpdm efakdffaal hsnfqeaaaa gkvvtclviq aliiecfaia
+      121 ayniyipvad dfarkitegv vkdeynhlnf geewlkahfe eskaevdtan rqnlpivwrm
+      181 lnqveddarv lgmekdalve dfmiaygeal snigfttrdi mrmsayglta
+//
+LOCUS       15591fa9b05ba7bae2823ea471c5d5e6         230 aa            linear   UNA 12-NOV-2013
+DEFINITION  15591fa9b05ba7bae2823ea471c5d5e6.
+ACCESSION   urn.local...1387533899670.669
+VERSION     urn.local...1387533899670.669
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 mpqvqspsai dfysetyqda ysridaivie geqeahdnyl kltellpdcq edlvrlakme
+       61 arhkkgfeac grnlkvtpdm efaqqffadl hnnfqkaaaa nkiatclviq aliiecfaia
+      121 ayniyipvad dfarkitenv vkdeythlnf geewlkanfd sqreeveaan renlpivwrm
+      181 lnqvetdahv lgmekealve sfmiqygeal enigfstrei mrmsvyglsa
+//
+LOCUS       9949fe996d453f01d8568d20d9054b25         230 aa            linear   UNA 12-NOV-2013
+DEFINITION  9949fe996d453f01d8568d20d9054b25.
+ACCESSION   urn.local...1387533899679.691
+VERSION     urn.local...1387533899679.691
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 mqelvqrsel dftnptykda ysrinaivie geqeahqnyi dmaqllpehq eelirlskme
+       61 nrhkkgfeac gnnlsvtpdm qyaqeffssl hgnfqkakae gkivtclliq sliieafaia
+      121 ayniyipvad pfarkitegv vkdeythlnf gevwlqehfe eskaeleean kanlpivwem
+      181 lnqvegdakv lgmekealve dfmisygeal snigfstrdi mrmsshglva
+//
+LOCUS       635e429bc07e989dd4f0e6fe3996661b         230 aa            linear   UNA 12-NOV-2013
+DEFINITION  635e429bc07e989dd4f0e6fe3996661b.
+ACCESSION   urn.local...1387533899673.676
+VERSION     urn.local...1387533899673.676
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 mpqleaspti dfqtetykda ysrinaivie geqeahdnyl tlaelladkk aelvglskme
+       61 nrhmkgfqac grnlkvtpdm afakeffsel hrnfqtaaaq gqivtclliq sliiecfaia
+      121 ayniyipvad dfarkitegv vkeeyshlnf gevwlqahfe eskaeleaan rqnlpiiwkl
+      181 lnavaddarv lgmekdalie dfmiaygeal gnigfnnrdi mrmsaqglaa
+//
+LOCUS       259dfa752714540412433891c6274eca         230 aa            linear   UNA 12-NOV-2013
+DEFINITION  259dfa752714540412433891c6274eca.
+ACCESSION   urn.local...1387533899683.698
+VERSION     urn.local...1387533899683.698
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 mpelavplel dftsetyksa ysrinaivie geyeansnyi qladiltdnk eelhrlakme
+       61 nrhmkgfqac grnlqitpdm dyaraffssl henfqiayae gkvvtclliq sliieafaia
+      121 ayniyipvad pfarkitegv vkdeylhlnf geewlkanfe takkeleaan ranlpivwrm
+      181 lnqveddarv lgmekealve dfmisygeal snigfstrdi mrmsayglta
+//
+LOCUS       82edc974608a497a1ee5241556df5c58         230 aa            linear   UNA 12-NOV-2013
+DEFINITION  82edc974608a497a1ee5241556df5c58.
+ACCESSION   urn.local...1387533899675.682
+VERSION     urn.local...1387533899675.682
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 mpelavplel dftsetyksa ysrinaivie geyeansnyi qladiltdnk eelhrlakme
+       61 nrhmkgfqac gqnlkiipdm eyakeffssl hnnfqiayae gkivtclliq sliieafaia
+      121 ayniyipvad pfarkitesv vkdeylhlnf geewlkanfe takeeleaan ranlpivwrm
+      181 lnqveddarv lamekealve dfmisygeal snigfstrdi mrmsayglta
+//
+LOCUS       51bff7d260955d3b736ee53531b487ae         230 aa            linear   UNA 12-NOV-2013
+DEFINITION  51bff7d260955d3b736ee53531b487ae.
+ACCESSION   urn.local...1387533899682.696
+VERSION     urn.local...1387533899682.696
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 mpelavplel dftsetyksa ysrinaivie geyeansnyi qladiltdnk eelhrlakme
+       61 nrhmkgfqac grnlqitpdm dyakeffssl hnnfqiayae gkvvtclliq sliieafaia
+      121 ayniyipvad pfarkitegv vkdeylhlnf geewlkanfe takeeleaan ranlpivwkm
+      181 lnqveddarv lamekealve dfmisygeal snigfstrdi mrmsayglta
+//
+LOCUS       37e2df986aefd9eedf89f9d2e962fe6c         230 aa            linear   UNA 12-NOV-2013
+DEFINITION  37e2df986aefd9eedf89f9d2e962fe6c.
+ACCESSION   urn.local...1387533899672.674
+VERSION     urn.local...1387533899672.674
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 mpqtqaisei dfysdtykda ysridgivie geqeahenyi rlgemlpehq ddfirlskme
+       61 arhkkgfeac grnlkvtcdl dfarrffsdl hknfqdaaae dkvptclviq sliiecfaia
+      121 ayniyipvad dfarkitesv vkdeyqhlny geewlkahfd dvkaeiqean rknlpivwrm
+      181 lnevdkdaav lgmekealve dfmiqygeal snigfstgei mrmsayglva
+//
+LOCUS       6e4ef8f795f31517f62f9525c841f55a         230 aa            linear   UNA 12-NOV-2013
+DEFINITION  6e4ef8f795f31517f62f9525c841f55a.
+ACCESSION   urn.local...1387533899671.672
+VERSION     urn.local...1387533899671.672
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 mgqtleavai dyqtenyrda ysrinaivie geaeahsnyl qlaelmpefn eelhrlakme
+       61 drhkkgftac gknlnvtpdm dfaekffsel hdnfqkafai gdivtclliq sliiecfaia
+      121 ayniyipvad pfarkitegv vkdeylhlnf geewlqdhfe nsratleqan rqnlplvwkm
+      181 lnqvetdakv lgmekealve dfmiqygesl gkigfntrdi mrmsamglva
+//
+LOCUS       5bbd845deeffbb1f1b9d028b4d1a247a         230 aa            linear   UNA 12-NOV-2013
+DEFINITION  5bbd845deeffbb1f1b9d028b4d1a247a.
+ACCESSION   urn.local...1387533899679.689
+VERSION     urn.local...1387533899679.689
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 mpelavplel dftsetyksa ysrinaivie geyeansnyi qladiltdnk eelhrlakme
+       61 nrhmkgfqac gqnlqitpdm dyareffssl hdnfqiayae gkvvtclliq sliieafaia
+      121 ayniyipvad pfarkitesv vkdeylhlnf geewlkanfe takeeleaan ranlpivwrm
+      181 lnqveddarv lamekealve dfmisygeal snigfstrdi mrmsayglta
+//
+LOCUS       4bb462ac7ff31911efee0dff37185fcf         230 aa            linear   UNA 12-NOV-2013
+DEFINITION  4bb462ac7ff31911efee0dff37185fcf.
+ACCESSION   urn.local...1387533899678.688
+VERSION     urn.local...1387533899678.688
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 mpelavplel dftsetyksa ysrinaivie geyeansnyi qladiltdnk eelhrlakme
+       61 nrhmkgfqac gqnlqitpdm dyareffssl henfqiayae gkvvtclliq sliieafaia
+      121 ayniyipvad pfarkitesv vkdeylhlnf geewlkanfe takeeleaan ranlpivwrm
+      181 lnqveddarv lgmekealve dfmisygeal snigfstrdi mrmsayglta
+//
+LOCUS       3ad03a0c3a057c1ad9535354625c3369         230 aa            linear   UNA 12-NOV-2013
+DEFINITION  3ad03a0c3a057c1ad9535354625c3369.
+ACCESSION   urn.local...1387533899678.687
+VERSION     urn.local...1387533899678.687
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 mpelavplel dftsetyksa ysrinaivie geyeansnyi qladiltdnk eelhrlakme
+       61 nrhmkgfqac gqnlqitpdm eyakeffssl hnnfqiayae gkvvtclliq sliieafaia
+      121 ayniyipvad pfarkitesv vkdeylhlnf geewlkanfe takeeleaan ranlpivwrm
+      181 lnqveddarv lamekealve dfmisygeal nnigfstrdi mrmsayglta
+//
+LOCUS       2ea9ae6e95fad7396c6a699215111a4b         230 aa            linear   UNA 12-NOV-2013
+DEFINITION  2ea9ae6e95fad7396c6a699215111a4b.
+ACCESSION   urn.local...1387533899672.675
+VERSION     urn.local...1387533899672.675
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 mpevavrseq dfsseiykda ysrinaivie geqeaynnyl smgemlpehk delitlakme
+       61 nrhkkgfqac gnnlsvtpdm afaeeyfsql hgnfktaydn gnivtcfliq sliieafaia
+      121 ayniyipvad pfarkitegv vkdeykhlnf geewlkahfe eskaeleaan renlplvwkm
+      181 lnqvekdakv lgmekealve dfmisygeal anigfstrei mkmsayglta
+//
+LOCUS       1d82cfb8082e3c6bbe9dd21457638de1         230 aa            linear   UNA 12-NOV-2013
+DEFINITION  1d82cfb8082e3c6bbe9dd21457638de1.
+ACCESSION   urn.local...1387533899683.699
+VERSION     urn.local...1387533899683.699
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 mpelavplel dftsetyksa ysrinaivie geyeansnyi qladiltdnk eelhrlakme
+       61 nrhmkgfqac gqnlkitpdm dyareffssl hnnfqiayae gkvvtclliq sliieafaia
+      121 ayniyipvad pfarkitegv vkdeylhlnf geewlkanfe takeeleaan ranlpivwrm
+      181 lnqvendarv lgmekealve dfmisygeal snigfstrdi mrmsayglta
+//
+LOCUS       dbe08f40ca600766db2f9c5db14f60b0         228 aa            linear   UNA 12-NOV-2013
+DEFINITION  dbe08f40ca600766db2f9c5db14f60b0.
+ACCESSION   urn.local...1387533899684.701
+VERSION     urn.local...1387533899684.701
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 mvqmaaslel nftseiykda ysridaivie geqeahenyi tlsgllpdfq ddlvklskme
+       61 lrhkkgfeac arnlavtpdl gfakeffaql henfqvaaaa gnivtclliq sliiecfaia
+      121 ayniyipvad dfakkiteav vkdeymhlnf gevwlhdnfe askaelqtan rqnlplvwkm
+      181 lnnvakdakv lgmekdalve dfmiaygeal snigfntgei mrmsaygl
+//
+LOCUS       ce9abe03344d8e38d58cfb58aca588b0         228 aa            linear   UNA 12-NOV-2013
+DEFINITION  ce9abe03344d8e38d58cfb58aca588b0.
+ACCESSION   urn.local...1387533899674.678
+VERSION     urn.local...1387533899674.678
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 mpelavrtef dysseiykda ysrinaivie geqeaysnyl qmaellpedk eeltrlakme
+       61 nrhkkgfqac gnnlqvnpdm pyaqeffagl hgnfqhafse gkvvtclliq aliieafaia
+      121 ayniyipvad dfarkitegv vkdeythlny geewlkanfa takeeleqan kenlplvwkm
+      181 lnqvqgdakv lgmekealve dfmisygeal snigfstrei mrmssygl
+//
+LOCUS       c177548609a18a95a8184afd79eaa0dd         228 aa            linear   UNA 12-NOV-2013
+DEFINITION  c177548609a18a95a8184afd79eaa0dd.
+ACCESSION   urn.local...1387533899679.690
+VERSION     urn.local...1387533899679.690
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 mpqleaspal dfqseaykda ysrinaivie geweandnyq klaehlgehk deliklarme
+       61 krhmkgfqac gknlnvtpdm kfakeffakl hdnfkqarde gkvvtclliq sliietfais
+      121 ayniyipvad dfarkitegv vkdeymhlnf geewlkanfd sakkeleean rqnlplvwqm
+      181 lnqvaddaai lgmekdalve dfmitygeal gnigfssrdv mrlsaqgl
+//
+LOCUS       b9662c7fed8c3486cc9e6c068c374131         228 aa            linear   UNA 12-NOV-2013
+DEFINITION  b9662c7fed8c3486cc9e6c068c374131.
+ACCESSION   urn.local...1387533899668.666
+VERSION     urn.local...1387533899668.666
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 mttatatpvl dyhsdrykda ysrinaivie geqeahdnyi dlakllpqhq eeltrlakme
+       61 arhkkgfeac grnlsvtpdm efakaffekl ranfqralae gktatclliq aliiesfaia
+      121 ayniyipmad pfarkitesv vkdeyshlnf geiwlkehfe svkgeleean ranlplvwkm
+      181 lnqveadakv lgmekdalve dfmiqysgal enigfttrei mkmsvygl
+//
+LOCUS       7d6ec7344bbcd5ca1638873f5f9ada59         228 aa            linear   UNA 12-NOV-2013
+DEFINITION  7d6ec7344bbcd5ca1638873f5f9ada59.
+ACCESSION   urn.local...1387533899670.671
+VERSION     urn.local...1387533899670.671
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 mqeltmprel dyqspeykda ysrinaivie geheayqnyi tlgdmlpdvq aelvrlakme
+       61 srhakgfqsc gknlnvtpdm eyakkffakl hgnfqqaaae gkivtcfviq sliieafaia
+      121 ayhlyipvad pfarkitenv vkdeythlnf geewlkgnfa sakaeleean renlpivwqm
+      181 lnevaedaai lamekdalve dfmisygeal gnigfntrei mrlssqgl
+//
+LOCUS       1e4d816fc0f70bbece19c24448535653         228 aa            linear   UNA 12-NOV-2013
+DEFINITION  1e4d816fc0f70bbece19c24448535653.
+ACCESSION   urn.local...1387533899677.686
+VERSION     urn.local...1387533899677.686
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 mpqleaspai dfqtatykda ysrinaivie geqeahdnyl tlaemladkk eeliglskme
+       61 nrhmkgfqac gknlkvtpdm vfakeffsel henfqkasae gkvvtclliq sliiecfaia
+      121 ayniyipvad dfarkitegv vkeeyshlnf gevwlnahfe eskaeleaan rqnlpiiwrl
+      181 lndvaddakv lgmekdalie dfmiaygeal gnigfnnrdi mrmsaqgl
+//
+LOCUS       fdf39e421b9899d36d6c5c73edcb6217         223 aa            linear   UNA 12-NOV-2013
+DEFINITION  fdf39e421b9899d36d6c5c73edcb6217.
+ACCESSION   urn.local...1387533899673.677
+VERSION     urn.local...1387533899673.677
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 ididyrsdty rdaysrinai viegeqeahd nylqlgellp elktelagla kmenrhkkgf
+       61 eacgrnlsvi pdmqfakeff nalhgnfqka faitdvvtcl liqsliiecf aiaayniyip
+      121 vaddfarkit egvvkdeylh lnfgevwlqe nfetaknqle ianrqnlplv wkmlnqvakd
+      181 akvlgmekda lvedfmiqyg eslgkigfnt reimkmsamg lva
+//
+LOCUS       97b0db6e5aebb5e967803a8bff1668d5         223 aa            linear   UNA 12-NOV-2013
+DEFINITION  97b0db6e5aebb5e967803a8bff1668d5.
+ACCESSION   urn.local...1387533899660.648
+VERSION     urn.local...1387533899660.648
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 ldyqsegykd aysrinamvi egeleanrny lklaellpde aselqklakm elrhmkgfqa
+       61 cgrnldvtpd kafaveyfsq lrqnfeiaaa agdvvtclvi qalliecfai aayniyipva
+      121 ddfarkiteg viadeylhln fgqvwlqahf ddpdvkarve ranaenlpiv wsmftqvtsd
+      181 adalgmdpda iiedfmiayg ealgeigfsn retmklaaqg lka
+//
+LOCUS       d227d340a2829cef83d7580e7e6d9f58         221 aa            linear   UNA 12-NOV-2013
+DEFINITION  d227d340a2829cef83d7580e7e6d9f58.
+ACCESSION   urn.local...1387533899645.617
+VERSION     urn.local...1387533899645.617
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 ldyysetyrn ayrrvngivi egekqaydnf irlaellpey qaeltrlakm earhqksfva
+       61 cgqnlkvspd ldfaaqffae lhqifasaan agqvatclvv qaliiecfai aayntylpva
+      121 defarkvtas vvqdeyshln fgevwlqnaf eqckdeiita nrlalpliwk mlnqvtgelr
+      181 ilgmdkaslv edfstrygea lgqigfklse ilslsvqglq a
+//
+LOCUS       b8095ecaa97a70ea7dcf7bdbdd83454d         221 aa            linear   UNA 12-NOV-2013
+DEFINITION  b8095ecaa97a70ea7dcf7bdbdd83454d.
+ACCESSION   urn.local...1387533899669.668
+VERSION     urn.local...1387533899669.668
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 ldytsetykd aysringivi egekeaheny isltklipdy eedllrlskm earhkkgfea
+       61 cgrnlavspd ldfaekffad lhnnfqvaaa egkiatclvi qaliiecfai aayniyipma
+      121 ddfarkiteg vvkdeyshln fgevwlqenf eavkaeveta nkdnlplvwr mlnevekdak
+      181 vlgmdkdalv edfmiqysga lenigfttre imkmsmhglv a
+//
+LOCUS       51952810c7b33d2aaa6a900a2a30104c         221 aa            linear   UNA 12-NOV-2013
+DEFINITION  51952810c7b33d2aaa6a900a2a30104c.
+ACCESSION   urn.local...1387533899668.665
+VERSION     urn.local...1387533899668.665
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 ldygsavyrq aysringivi egeqeahdny lklaemlpeg aeelhklakm elrhmkgfqs
+       61 cgknlqvepd refartffap lrnnfqkaaa agdlvtclvi qsliiecfai aayniyipva
+      121 defarkiteg vvkdeylhln fgerwlgehf gevkgqieaa naqnlplvwq mlqqvdqdve
+      181 aiymdreaiv edfmiaygea lanigfstre vmrlsaqglr a
+//
+LOCUS       296846deb3cfd05329584a5cf4c93a34         221 aa            linear   UNA 12-NOV-2013
+DEFINITION  296846deb3cfd05329584a5cf4c93a34.
+ACCESSION   urn.local...1387533899684.700
+VERSION     urn.local...1387533899684.700
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 mdfqsetykd aysrinaivi egeleannny kqlsehlgdf kddllklarm enrhmkgfqa
+       61 cgknlsvnpd mpfakeffaq lhdnfqtala egkivtclli qsliietfai sayniyipva
+      121 ddfarkiteg vvkdeymhln fgeewlkanf easkaeleta nranlpliwk mlnqveedaa
+      181 vlgmekdali edfmitygea lanigfsard vmrlsaqgla a
+//
+LOCUS       10352ac545b4a25a08da1fd5c3297082         221 aa            linear   UNA 12-NOV-2013
+DEFINITION  10352ac545b4a25a08da1fd5c3297082.
+ACCESSION   urn.local...1387533899667.664
+VERSION     urn.local...1387533899667.664
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 ldygsavyrq aysringivi egeqeahdny lklaemlpeg aeelhklakm elrhmkgfqs
+       61 cgknlqvepd refartffap lrnnfqkaaa agdlvtclvi qsliiecfai aayniyipva
+      121 defarkiteg vvkdeylhln fgerwlgehf gevkgqieaa naqnlplvwq mlqqvdqdve
+      181 aiymdreaiv edfmiaygea lanigfstre vmrlsaqglr a
+//
+LOCUS       623a88adb15657c3ec778c00141bcadc         221 aa            linear   UNA 12-NOV-2013
+DEFINITION  623a88adb15657c3ec778c00141bcadc.
+ACCESSION   urn.local...1387533899667.663
+VERSION     urn.local...1387533899667.663
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 ldysspryrq aysringivi egeqeahdny lklaemlpea aeelrklakm elrhmkgfqa
+       61 cgknlqvepd vefaraffap lrdnfqsaaa agdlvscfvi qsliiecfai aayniyipva
+      121 ddfarkiteg vvkdeylhln fgerwlgehf aevkaqieaa naqnlplvrq mlqqveadve
+      181 aiymdreaiv edfmiaygea lasigfntre vmrlsaqglr a
+//
+LOCUS       75d9678dfa8e8181ca983f94f39e89b3         221 aa            linear   UNA 12-NOV-2013
+DEFINITION  75d9678dfa8e8181ca983f94f39e89b3.
+ACCESSION   urn.local...1387533899652.631
+VERSION     urn.local...1387533899652.631
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 ldyrsdtyrd aysrinaivl egereahany ltlaemlpdh aealkklaam enrhfkgfqs
+       61 carnlevtpd dpfarayfeq ldgnfqqaaa egdlttcmvi qaliiecfai aaynvyipva
+      121 dafarkvteg vvkdeythln fgqqwlkerf vtvregiera naqnlpivwr mlnaveadte
+      181 vlqmdkeaiv edfmiaygea lgdigfsmrd vmkmsargla s
+//
+LOCUS       5c3b0bb387ee859142be61fb3853c6ed         221 aa            linear   UNA 12-NOV-2013
+DEFINITION  5c3b0bb387ee859142be61fb3853c6ed.
+ACCESSION   urn.local...1387533899642.609
+VERSION     urn.local...1387533899642.609
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 qfkssiyida ysringmvvv gegladrhfr llaraipedq qelerlaame grhasnfvgc
+       61 grnlgvkpdv glarqlfapl halflerdra gdlagclviq glvvecfava ayrhylpvad
+      121 ayaapitaav iadegehlgy aehwlrerfa avetsaaaia kralpitlsi lqsltadlqa
+      181 igmdpielva sfselfqqtl etigfeppaa rrilagaaaa m
+//
+LOCUS       5bceb26145984ee6f77a6f399b4fb237         221 aa            linear   UNA 12-NOV-2013
+DEFINITION  5bceb26145984ee6f77a6f399b4fb237.
+ACCESSION   urn.local...1387533899651.629
+VERSION     urn.local...1387533899651.629
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 ldfhsdtyrd aftringivi egeqaaydnf lcladllpeq aeelvrlgkm egrhrksfea
+       61 cgrnldvipd ltfanqffad lcqafqtsat drkvatclli qsliiecfai aaynvyipva
+      121 defaqkvtkg vvadeyhhln fgevwlkahf etvkaeleta nrqvlpliwq mlnqvdadlq
+      181 tvgmdkqtli esflvhysea lkeigfssre ilrmashgla s
+//
+LOCUS       2a324870f288bfece794979dfa441146         221 aa            linear   UNA 12-NOV-2013
+DEFINITION  2a324870f288bfece794979dfa441146.
+ACCESSION   urn.local...1387533899642.610
+VERSION     urn.local...1387533899642.610
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 qldfasaayr eaysringvv ivgeglanrh fqmlarripa drdelqrlgr megdhasafv
+       61 gcgrnlgvva dlplarrlfq plhdlfkrhd hdgnraeclv iqglivecfa vaayrhylpv
+      121 adayarpita avmndesehl dyaetwlqrh fdqvkarvsa vvvealpltl amlqslaadm
+      181 rqigmdpvet lasfselfre alesvgfeav earrllmraa a
+//
+LOCUS       ea05cfadfac8ac63b88206dedc0434ba         220 aa            linear   UNA 12-NOV-2013
+DEFINITION  ea05cfadfac8ac63b88206dedc0434ba.
+ACCESSION   urn.local...1387533899654.635
+VERSION     urn.local...1387533899654.635
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dftsdrykda ysrinaivie geqeahdnyi aigtllpdhv eelkrlakme mrhkkgftac
+       61 gknlgveadm dfareffapl rdnfqtalgq gktptclliq allieafais ayhtyipvsd
+      121 pfarkitegv vkdeythlny geawlkanle screellean renlplirrm ldqvagdaav
+      181 lqmdkedlie dfliayqesl teigfntrei trmaaaalvs
+//
+LOCUS       e1f9f48972c8c6a670f545d51767fa65         220 aa            linear   UNA 12-NOV-2013
+DEFINITION  e1f9f48972c8c6a670f545d51767fa65.
+ACCESSION   urn.local...1387533899653.633
+VERSION     urn.local...1387533899653.633
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dftsdaykda ysrinaivie geqeahdnyi aigtllpdhv eelkrlakme mrhkkgftac
+       61 gknlgvtadm dfareffapl rdnfqtaleq gktptclliq allieafais ayhtyipvsd
+      121 pfarkitegv vkdeythlny geawlkanle screellean renlplirrm ldqvagdaav
+      181 lqmdkedlie dfliayqesl teigfntrei trmaaaalvs
+//
+LOCUS       16d91da7e3247a269d7fa80725e07d9f         220 aa            linear   UNA 12-NOV-2013
+DEFINITION  16d91da7e3247a269d7fa80725e07d9f.
+ACCESSION   urn.local...1387533899653.634
+VERSION     urn.local...1387533899653.634
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dftsdaykda ysrinaivie geqeahdnyi aigtllpdhv eelkrlakme mrhkkgftac
+       61 gknlgvtadm dfareffapl rdnfqtaleq gktptclliq allieafais ayhtyipvsd
+      121 pfarkitegv vkdeythlny geawlkanle screellean renlplirrm ldqvagdaav
+      181 lqmdkedlie dfliayqesl teigfntrei trmaaaalvs
+//
+LOCUS       5b991a706c5ac1e251175c03ff375336         220 aa            linear   UNA 12-NOV-2013
+DEFINITION  5b991a706c5ac1e251175c03ff375336.
+ACCESSION   urn.local...1387533899655.637
+VERSION     urn.local...1387533899655.637
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dftteayksa ysrinaivie geqeahdnyi slgtlipdqa delaqlarme mkhmkgfqac
+       61 gknlsvepdm vfakeffsdl hgnfrsalee nkvvtclviq almieafaia ayhiyipvad
+      121 pfarkitegv vkdeythlny gqewlkanfd ssrdeiiean kanlpiirrm leevaddaae
+      181 lkmekeslie dfliayqeal mdigfnsrdl armsaaalva
+//
+LOCUS       fd7b0b6c3f639e6d39dc0f79f1a4d3af         218 aa            linear   UNA 12-NOV-2013
+DEFINITION  fd7b0b6c3f639e6d39dc0f79f1a4d3af.
+ACCESSION   urn.local...1387533899656.640
+VERSION     urn.local...1387533899656.640
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dfstaaykda ysrinaivie geqeahdnym slgtllpdqa eelarlarme lkhmkgftac
+       61 gnnlgvtadm pfaqeffspl rnnfqaalke gkvvtclliq allieafais ayhiyipvad
+      121 pfarkitegv vkdeythlny gqewlkahle esraeleqan rdnlphvrrm ldrvaadaav
+      181 lhmekedlie dfliayqdal tdigftprei armaaaal
+//
+LOCUS       ed6b2445051a133ccc57db89746d3aa0         218 aa            linear   UNA 12-NOV-2013
+DEFINITION  ed6b2445051a133ccc57db89746d3aa0.
+ACCESSION   urn.local...1387533899658.644
+VERSION     urn.local...1387533899658.644
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dftcanykda ysrinaivie geqeahdnym sigtllpeqa geltklarme lkhmkgftac
+       61 annlgvtadm afakeffapl hgnfqkalke gkvptclliq allieafais ayhiyipvad
+      121 pfarkitegv vkdeythlny gevwlkanle screeleean renlplirrm ldqvagdaav
+      181 lqmdkedlie dfliayqeal teigfttrei armaaaal
+//
+LOCUS       c7614a0717deace4ec20b745076b80b1         218 aa            linear   UNA 12-NOV-2013
+DEFINITION  c7614a0717deace4ec20b745076b80b1.
+ACCESSION   urn.local...1387533899661.651
+VERSION     urn.local...1387533899661.651
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dfsseaykda ysrinaivie geqeahdnyi slgtlipeqa delarlarme mkhmkgfmsc
+       61 grnlgveadm pfakeffgpl hgnfqtalke gkvvtclliq allieafais ayhiyipvad
+      121 pfarkitegv vkdeythlny gqewlkanfe asreelmean kvnlplirsm leqvakdaav
+      181 lkmekedlie dfliayqeal eeigftsrdi armaaaal
+//
+LOCUS       c20b0a1bdabab493a12738fc347bafdf         218 aa            linear   UNA 12-NOV-2013
+DEFINITION  c20b0a1bdabab493a12738fc347bafdf.
+ACCESSION   urn.local...1387533899659.645
+VERSION     urn.local...1387533899659.645
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dfttaaykda ysrinaivie geqeahdnyi slgtlipdqa delnklarme mkhmkgftsc
+       61 grnlgvkadm efaktffepl hgnfqaamke gkvvtclliq allieafais ayhiyipvad
+      121 pfarkitegv vkdeythlny gqewlkanfe askdelfean kanlplirsm leevsadaav
+      181 lhmekedlie dfliayqeal seigfssrdi armaaaal
+//
+LOCUS       ac30005043eac4b69f96cd8b7826770d         218 aa            linear   UNA 12-NOV-2013
+DEFINITION  ac30005043eac4b69f96cd8b7826770d.
+ACCESSION   urn.local...1387533899656.639
+VERSION     urn.local...1387533899656.639
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dfttdaykda ysrinaivie gekeahdnyl slgtlipeqa eelaklakme mkhmkgftac
+       61 aknldvvadm pfaqeffapl hgnfqsalke gkvvtclliq allieafais ayhiyipvad
+      121 pfarkitegv vkdeythlny gqewlkanfe asrdelmean kvnlplirsm leqvaadasv
+      181 lhmekedlie dfliayqeal neigfssrdi armaaaal
+//
+LOCUS       66137ba14429f00540382ee7b3ec1c80         218 aa            linear   UNA 12-NOV-2013
+DEFINITION  66137ba14429f00540382ee7b3ec1c80.
+ACCESSION   urn.local...1387533899654.636
+VERSION     urn.local...1387533899654.636
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dfttetykda ysrinaivie geqeahdnyi aigtllpdqa eeltklarme lkhmkgftac
+       61 annlgvtadm afakeffapl hnnfttalea gkvptclliq allieafais ayhiyipvad
+      121 pfarkitegv vkdeythlny gqewlkanle screeleqan rdnlplirrm ldqvaadaav
+      181 lhmdkedlie dfliayqeal teigfstrei armaaaal
+//
+LOCUS       8952fcb5c8efcb57987e7094be8801ac         218 aa            linear   UNA 12-NOV-2013
+DEFINITION  8952fcb5c8efcb57987e7094be8801ac.
+ACCESSION   urn.local...1387533899655.638
+VERSION     urn.local...1387533899655.638
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dfssstykda ysrinaivie geqeahdnyi slghlipdqa eelerlarme lkhkkgftac
+       61 aknlsviadm dfakeffspl hgnfqaalae gkvvtclliq ailieafais ayhiyipvad
+      121 pfarkitegv vkdeythlny gqewlkanle ssrgeleqan rvnlplvrkm leqvagdaav
+      181 lhmdqedlma dfmtsyqeal tdigfttrei akmataal
+//
+LOCUS       4845fd71cb37160514b05a3149c31439         218 aa            linear   UNA 12-NOV-2013
+DEFINITION  4845fd71cb37160514b05a3149c31439.
+ACCESSION   urn.local...1387533899659.646
+VERSION     urn.local...1387533899659.646
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dfttdaykda ysrinaivie geqeahdnyi slgtlipdqa eelaklakme mkhmkgftac
+       61 aknlnvvadm pfaqeffapl hgnfqsalke gkvvtclliq allieafais ayhiyipvad
+      121 pfarkitegv vkdeythlny gqewlkanfe asrdelmean kvnlplirsm leqvaadasv
+      181 lhmekedlie dfliayqeal neigfssrdi armaaaal
+//
+LOCUS       2583f6813616e7564e2b2143440bd2c5         218 aa            linear   UNA 12-NOV-2013
+DEFINITION  2583f6813616e7564e2b2143440bd2c5.
+ACCESSION   urn.local...1387533899653.632
+VERSION     urn.local...1387533899653.632
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dfssdtykda ysrinaivie geqeahdnyi algtlipdqa delaklarme lkhmkgftac
+       61 annlgvtadm pfakeffapl hgnfqralae gkvttclliq ailieafais ayhiyipvad
+      121 pfarritegv vkdeythlny gqewlkanla dvreeleqan renlplvrkm leqvagdaav
+      181 lqmdkedlma dflssyqeal mdigftgrei aklaaaal
+//
+LOCUS       2455e50b9d68c9542fcbd4a701a3f5f9         218 aa            linear   UNA 12-NOV-2013
+DEFINITION  2455e50b9d68c9542fcbd4a701a3f5f9.
+ACCESSION   urn.local...1387533899644.614
+VERSION     urn.local...1387533899644.614
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dfsssqykda ysrinaivie gekeahdnym sigtlipdka delkklavme lkhmrgftac
+       61 gknlgvkadi pfaekffspl hgnfqkafke enlttcfliq ailieafais ayhvyirvad
+      121 pfakkitenv vkdeylhlny gqqwlkanld tckeelmkan kenlpliksm ldqvaddacs
+      181 lsmdkeelme efmiayqdsl leigldsrei armalaal
+//
+LOCUS       983441571da09de5165070f9dda2e587         215 aa            linear   UNA 12-NOV-2013
+DEFINITION  983441571da09de5165070f9dda2e587.
+ACCESSION   urn.local...1387533899661.650
+VERSION     urn.local...1387533899661.650
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 asllpdfsse aykdaysrin aiviegeqea hdnyislgtl ipdqadelar larmemkhmk
+       61 gftscgrnlg vdadmpfakt ffaplhgnfq talkdgkvvt clliqallie afaisayhiy
+      121 ipvadpfark itegvvkdey thlnygqewl kanfdasree lmeankvnlp lirsmleqva
+      181 edaavlkmek edliedflia yqealeqigf tsrdi
+//
+LOCUS       54a0cde092b0af9eb2df05055be1da9d         215 aa            linear   UNA 12-NOV-2013
+DEFINITION  54a0cde092b0af9eb2df05055be1da9d.
+ACCESSION   urn.local...1387533899660.649
+VERSION     urn.local...1387533899660.649
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 asllpdfsse aykdaysrin aiviegeqea hdnyislgtl ipdqadelar larmemkhmk
+       61 gftscgrnlg vdadmpfakt ffaplhgnfq talkdgkvvt clliqallie afaisayhiy
+      121 ipvadpfark itegvvkdey thlnygqewl kanfdasree lmeankvnlp lirsmleqva
+      181 edaavlkmek edliedflia yqealeqigf tsrdi
+//
+LOCUS       cfaf7336b8cda94b79ca51d60af40916         214 aa            linear   UNA 12-NOV-2013
+DEFINITION  cfaf7336b8cda94b79ca51d60af40916.
+ACCESSION   urn.local...1387533899646.618
+VERSION     urn.local...1387533899646.618
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dftteqykda ysrinaivie gekeahdnyv aigtvipeka delkklaime lrhmkgftac
+       61 gknlgvvadm efaqrffapl hgnfqkalen gkittcfliq ailieafais ayhvyirvad
+      121 pfakkitegv vkdeylhlny gqewlkanla tckdeliaan kenlplinsm ldqvandaqv
+      181 lymekeelme efmiayqdsl meigldarei arma
+//
+LOCUS       fb14578d8492e1c703756a6ca53bcfc6         212 aa            linear   UNA 12-NOV-2013
+DEFINITION  fb14578d8492e1c703756a6ca53bcfc6.
+ACCESSION   urn.local...1387533899649.624
+VERSION     urn.local...1387533899649.624
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dfttdsykda ysrinaivie geqeahdnyi siatlipnel eeltklarme lkhkkgftac
+       61 grnlgvdadm vfakkffskl hgnfqialek gnlttclliq ailieafais aynvyirvad
+      121 pfakkitegv vkdeylhlny gqewlkknls tckeelmean kvnlplikkm ldevaedasv
+      181 lamdreelme efmiayqdtl leigldnrei ar
+//
+LOCUS       d5b6e4145e32e420b1670d5308b539af         212 aa            linear   UNA 12-NOV-2013
+DEFINITION  d5b6e4145e32e420b1670d5308b539af.
+ACCESSION   urn.local...1387533899647.621
+VERSION     urn.local...1387533899647.621
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dfttdaykda ysrinaivie geqeaydnyi siatllpnds eeltklakme lkhkrgftac
+       61 gknlgveadm pfakeffskl hgnfqialkd gnlttclliq ailieafais ayhvyirvad
+      121 pfakkitqgv vndeylhlny gekwlkenlh tckdeliaan kvnlplikkm ldqvaedaat
+      181 lsmdkeelme efmiayqdal lemgldnrei ar
+//
+LOCUS       cc59ee670a765747a2c88f58c119368a         212 aa            linear   UNA 12-NOV-2013
+DEFINITION  cc59ee670a765747a2c88f58c119368a.
+ACCESSION   urn.local...1387533899648.622
+VERSION     urn.local...1387533899648.622
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dfttdsykda ysrinaivie geqeahdnyi siatlipnev eeltklarme mkhkkgftac
+       61 grnlgvvadm dfakkffskl hgnfqvalek gnlttclliq ailieafais aynvyirvad
+      121 pfakkitegv vkdeylhlny gqewlkenls tckeelmean kvnlplikkm ldevaddasv
+      181 lamdkeelme efmiayqdtl meigldnrei ar
+//
+LOCUS       c2fe46fe72533ddc42977556ec4563b9         212 aa            linear   UNA 12-NOV-2013
+DEFINITION  c2fe46fe72533ddc42977556ec4563b9.
+ACCESSION   urn.local...1387533899648.623
+VERSION     urn.local...1387533899648.623
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dfttdsykda ysrinaivie geqeahdnyi slatlipnel eeltklakme lkhkrgftac
+       61 grnlgvqadm ifakeffskl hgnfqvalsn gktttclliq ailieafais ayhvyirvad
+      121 pfakkitqgv vkdeylhlny gqewlkenla tckdelmean kvnlplikkm ldqvsedasv
+      181 lamdreelme efmiayqdtl leigldnrei ar
+//
+LOCUS       b571df4538bf10b534230bd460b71b46         212 aa            linear   UNA 12-NOV-2013
+DEFINITION  b571df4538bf10b534230bd460b71b46.
+ACCESSION   urn.local...1387533899647.620
+VERSION     urn.local...1387533899647.620
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dftsesykda ysrinavvie geqeaysnfl dlaklipeha delvrlgkme kkhmngfcac
+       61 grnlavkpdm pfaktffskl hnnfleafkv gdtttclliq ciliesfais ayhvyirvad
+      121 pfakritegv vqdeylhlny gqewlkanle tvkkdlmran kenlpliksm ldevsndaev
+      181 lhmdkeelme efmiayqdsl leigldnrei ar
+//
+LOCUS       b82eda3b5b0ed20cc6c03c75f10e5c4f         212 aa            linear   UNA 12-NOV-2013
+DEFINITION  b82eda3b5b0ed20cc6c03c75f10e5c4f.
+ACCESSION   urn.local...1387533899663.654
+VERSION     urn.local...1387533899663.654
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dftteaykda ysrinaivie geqeahdnyi slgtlipdqa eelarlarme mkhmkgftsc
+       61 grnlgvqadm afarkffepl hgnfqsalke gkvvtclliq allieafais ayhiyipvad
+      121 pfarkitegv vkdeythlny gqewlkanfe askeelfean kanlplirsm ledvaadaav
+      181 lhmekedlie dfliayneal seigfssrdi ar
+//
+LOCUS       3201536ebc624e31203b365a86c9c82f         212 aa            linear   UNA 12-NOV-2013
+DEFINITION  3201536ebc624e31203b365a86c9c82f.
+ACCESSION   urn.local...1387533899650.627
+VERSION     urn.local...1387533899650.627
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dfttdsykda ysrinaivie geqeahdnyi siatlipnel eeltklarme mkhkkgftac
+       61 grnldvvadm efakkffskl hgnfqvalkk gnvttclliq ailieafais aynvyirvad
+      121 pfakkitegv vkdeylhlny gqqwlkenls tckdelmean kvnlplikkm ldevaddasv
+      181 lamdreelme efmiayqdtl meigldnrei ar
+//
+LOCUS       23748e42edbbe791ab5bbf9ed55cdc01         212 aa            linear   UNA 12-NOV-2013
+DEFINITION  23748e42edbbe791ab5bbf9ed55cdc01.
+ACCESSION   urn.local...1387533899645.615
+VERSION     urn.local...1387533899645.615
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dfttdaykda ysrinaivie geqeaydnyi siatllpnds eeltklakme lkhkrgftac
+       61 gknlgveadm sfakeffskl hgnfqaalkn eslttclliq ailieafais ayhvyirvad
+      121 pfakkitqgv vndeylhlny gekwlkenls tckdeliaan kvnlpiikkm ldqvaddaat
+      181 lamdkeelme efmiayqdal lemgldnrei ar
+//
+LOCUS       7776df67a2687ccf4145a175bee1815f         212 aa            linear   UNA 12-NOV-2013
+DEFINITION  7776df67a2687ccf4145a175bee1815f.
+ACCESSION   urn.local...1387533899649.625
+VERSION     urn.local...1387533899649.625
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dfttdsykda ysrinaivie geqeahdnyi siatlipnel eeltklarme lkhkkgftac
+       61 grnlgvdadm vfakkffskl hgnfqialek gnlttclliq ailieafais aynvyirvad
+      121 pfakkitegv vkdeylhlny gqewlkknls tckeelmean kvnlplikkm ldevaedasv
+      181 lamdreelme efmiayqdtl leigldnrei ar
+//
+LOCUS       211cb006fc90273bdc27341d3a5ef69d         212 aa            linear   UNA 12-NOV-2013
+DEFINITION  211cb006fc90273bdc27341d3a5ef69d.
+ACCESSION   urn.local...1387533899646.619
+VERSION     urn.local...1387533899646.619
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dftsesykda ysrinavvie geqeaysnfl dlaklipeha delvrlgkme kkhmngfcac
+       61 grnlavkpdm pfaktffskl hnnfleafkv gdtttclliq ciliesfais ayhvyirvad
+      121 pfakritegv vqdeylhlny gqewlkanle tvkkdlmran kenlpliksm ldevsndaev
+      181 lhmdkeelme efmiayqdsl leigldnrei ar
+//
+LOCUS       060c97948fb347820a0276996f14ac23         212 aa            linear   UNA 12-NOV-2013
+DEFINITION  060c97948fb347820a0276996f14ac23.
+ACCESSION   urn.local...1387533899645.616
+VERSION     urn.local...1387533899645.616
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dfttdaykda ysrinaivie geqeaydnyi siasllpkds eeltklakme lkhkrgfiac
+       61 gknlsveadm vfakeffskl hgnfqtalen enlttclliq ailieafais ayhvyirvad
+      121 pfakkitqgv vndeylhlny gekwlkenlh tckneliaan kanlplikkm ldqvaddaai
+      181 lsmdkeelme efmiayqdal lemgldnrei ar
+//
+LOCUS       4a9917d3d1e66cc16186ce88b31bab06         212 aa            linear   UNA 12-NOV-2013
+DEFINITION  4a9917d3d1e66cc16186ce88b31bab06.
+ACCESSION   urn.local...1387533899651.628
+VERSION     urn.local...1387533899651.628
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dfttdsykda ysrinaivie geqeahdnyi siatlipnel eeltklarme mkhkkgftac
+       61 grnldvvadm efakkffskl hgnfqvalkk gnvttclliq ailieafais aynvyirvad
+      121 pfakkitegv vkdeylhlny gqqwlkenls tckdelmean kvnlplikkm ldevaddasv
+      181 lamdreelme efmiayqdtl meigldnrei ar
+//
+LOCUS       1d1ea1fcc91573ca6c8d7be0313a7ad6         212 aa            linear   UNA 12-NOV-2013
+DEFINITION  1d1ea1fcc91573ca6c8d7be0313a7ad6.
+ACCESSION   urn.local...1387533899650.626
+VERSION     urn.local...1387533899650.626
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dfttdsykda ysrinaivie geqeahdnyi siatlipnev eeltklarme mkhkkgftac
+       61 grnlgvvadm dfakkffskl hgnfqvalek gnlttclliq ailieafais aynvyirvad
+      121 pfakkitegv vkdeylhlny gqewlkenls tckeelmean kvnlplikkm ldevaddasv
+      181 lamdkeelme efmiayqdtl meigldnrei ar
+//
+LOCUS       e45d6aa11dd80ee04a1824a207e90779         210 aa            linear   UNA 12-NOV-2013
+DEFINITION  e45d6aa11dd80ee04a1824a207e90779.
+ACCESSION   urn.local...1387533899665.659
+VERSION     urn.local...1387533899665.659
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dftteaykda ysrinaivie geqeahdnyi slgslipdqk delaklarme mkhmkgftsc
+       61 grnlgveadm vfakkffepl hgnfqaalke gkvvtclliq allieafais ayhiyipvad
+      121 pfarkitegv vkdeythlny gqewlkanfe askdelfean kanlplirsm leevasdaav
+      181 lhmekedlie dfliayqeal geigftsrdi
+//
+LOCUS       c8b450e9f82f3048187a29fb066df034         210 aa            linear   UNA 12-NOV-2013
+DEFINITION  c8b450e9f82f3048187a29fb066df034.
+ACCESSION   urn.local...1387533899663.655
+VERSION     urn.local...1387533899663.655
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dftteaykda ysrinaivie geqeahdnyi algtlipdqk delarlarme mkhmkgftsc
+       61 grnlgvkadm vfaktffepl hrnfqsalqe gkvvtclliq allieafais ayhiyipvad
+      121 pfarkitegv vkdeythlny gqewlkanfe askdelfean kanlplirsm lddvagdaav
+      181 lhmekedlie dfliayqeal geigftsrdi
+//
+LOCUS       419224452bd7fb5f62c007c0327db842         210 aa            linear   UNA 12-NOV-2013
+DEFINITION  419224452bd7fb5f62c007c0327db842.
+ACCESSION   urn.local...1387533899657.641
+VERSION     urn.local...1387533899657.641
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dfttaeykda ysrinaivie geqeahdnyi slgtlipeqa eelsrlarme mkhmkgftac
+       61 arnlgveadm pfakeffgpl hgnfqvalke gkvvtclliq allieafais ayhiyipvad
+      121 pfarkitegv vkdeythlny gqewlkanfe askdemfaan kanlplirsm legvaadaav
+      181 lhmekedlie dfliayqeal neigfssrdi
+//
+LOCUS       798771de3c353cdcc839e8be026cd34e         210 aa            linear   UNA 12-NOV-2013
+DEFINITION  798771de3c353cdcc839e8be026cd34e.
+ACCESSION   urn.local...1387533899662.652
+VERSION     urn.local...1387533899662.652
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dftteaykda ysrinaivie geqeahdnyi slgtlipdqk delaklarme mkhmkgftsc
+       61 grnlgveadl afakkffepl hgnfqaalke gkvvtclliq allieafais ayhiyipvad
+      121 pfarkitegv vkdeythlny gqewlkanfe askdelfean kanlplirsm ledvasdaav
+      181 lhmekedlie dfliayqeal geigftsrdi
+//
+LOCUS       55522d22c962e642e93dd501a4e6a169         210 aa            linear   UNA 12-NOV-2013
+DEFINITION  55522d22c962e642e93dd501a4e6a169.
+ACCESSION   urn.local...1387533899657.642
+VERSION     urn.local...1387533899657.642
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dfttaeykda ysrinaivie geqeahdnyi slgtlipeqa eelsrlarme mkhmkgftac
+       61 arnlgveadm pfakeffgpl hgnfqvalke gkvvtclliq allieafais ayhiyipvad
+      121 pfarkitegv vkdeythlny gqewlkanfe askdemfaan kanlplirsm legvaadaav
+      181 lhmekedlie dfliayqeal neigfssrdi
+//
+LOCUS       54848e9661dd6e12077237e076797310         210 aa            linear   UNA 12-NOV-2013
+DEFINITION  54848e9661dd6e12077237e076797310.
+ACCESSION   urn.local...1387533899664.656
+VERSION     urn.local...1387533899664.656
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dftseaykda ysrinaivie geqeahdnyi algtlipeqk delarlarme mkhmkgftsc
+       61 grnlgveadl pfakeffapl hgnfqaalqe gkvvtclliq allieafais ayhiyipvad
+      121 pfarkitegv vkdeythlny gqewlkanfe askdelmean kanlplirsm leqvaadaav
+      181 lqmekedlie dfliayqeal ceigfssrdi
+//
+LOCUS       310d8cdb268cf8166e2ea3dfe41fbd0f         210 aa            linear   UNA 12-NOV-2013
+DEFINITION  310d8cdb268cf8166e2ea3dfe41fbd0f.
+ACCESSION   urn.local...1387533899662.653
+VERSION     urn.local...1387533899662.653
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dftteaykda ysrinaivie geqeahdnyi slgtlipdqa eelkrlarme mkhmkgftsc
+       61 grnlgveadl pfakkffepl hgnfqaafke gkvvtclliq allieafais ayhiyipvad
+      121 pfarkitegv vkdeythlny gqewlkanfe askdelfean kanlplirsm ledvaadaav
+      181 lhmekedlie dfliayqeal geigftsrdi
+//
+LOCUS       18e81004e199bc24bbc05f0caefe45dd         210 aa            linear   UNA 12-NOV-2013
+DEFINITION  18e81004e199bc24bbc05f0caefe45dd.
+ACCESSION   urn.local...1387533899665.660
+VERSION     urn.local...1387533899665.660
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dfssaaykda ysrinaivie geqeahdnyi slgtlipdqa delkglarme mkhmkgftac
+       61 gnnlgvtadm dfartffapl hgnfqkamke gkvvtclliq allieafais ayhiyipvad
+      121 pfarkitegv vkdeythlny gqewlkanfe askdelmean kvnlplirsm leevakdaav
+      181 lhmekedlie dfliayqeal neigfssrdi
+//
+LOCUS       9f8f40378966496e6eaa4f17b4a9712a         210 aa            linear   UNA 12-NOV-2013
+DEFINITION  9f8f40378966496e6eaa4f17b4a9712a.
+ACCESSION   urn.local...1387533899664.657
+VERSION     urn.local...1387533899664.657
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dftseaykda ysrinaivie geqeahdnyi algtlipeqk delarlarme mkhmkgftsc
+       61 grnlgveadl pfakeffapl hgnfqaalqe gkvvtclliq allieafais ayhiyipvad
+      121 pfarkitegv vkdeythlny gqewlkanfe askdelmean kanlplirsm leqvaadaav
+      181 lqmekedlie dfliayqeal ceigfssrdi
+//
+LOCUS       8c046f8f70261001198b47cb6f9df30d         210 aa            linear   UNA 12-NOV-2013
+DEFINITION  8c046f8f70261001198b47cb6f9df30d.
+ACCESSION   urn.local...1387533899658.643
+VERSION     urn.local...1387533899658.643
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dfttaeykda ysrinaivie geqeahdnyi slgtlipeqa delsrlarme mkhmkgftac
+       61 arnlgveadm pfakdffgpl hgnfqvalke gkvvtclliq allieafais ayhiyipvad
+      121 pfarkitegv vkdeythlny gqewlkanfe askdemfaan kanlplirsm legvaadaav
+      181 lhmekedlie dfliayqeal neigfssrdi
+//
+LOCUS       6c72d1714265efb38f4d778a27471658         210 aa            linear   UNA 12-NOV-2013
+DEFINITION  6c72d1714265efb38f4d778a27471658.
+ACCESSION   urn.local...1387533899665.658
+VERSION     urn.local...1387533899665.658
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dftteaykda ysrinaivie geqeahdnyi slgslipdqk delaklarme mkhmkgftsc
+       61 grnlgveadm vfaktffepl hgnfqaalke gkvvtclliq allieafais ayhiyipvad
+      121 pfarkitegv vkdeythlny gqewlkanfe askdelfean kanlplirsm leevasdaav
+      181 lhmekedlie dfliayqeal geigftsrdi
+//
+LOCUS       4acbaea857ba2b949471cc8ad4fd40af         210 aa            linear   UNA 12-NOV-2013
+DEFINITION  4acbaea857ba2b949471cc8ad4fd40af.
+ACCESSION   urn.local...1387533899659.647
+VERSION     urn.local...1387533899659.647
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dfttaaykda ysrinaivie geqeahdnyi slgtlipeqa eelkrlarme mkhmkgftsc
+       61 grnlgveadl pfakkffepl hgnfqaalke gkvvtclliq allieafais ayhiyipvad
+      121 pfarkitegv vkdeythlny gqewlkanfe asknelfean kanlplirsm ledvaadaav
+      181 lhmekedlie dfliayqeal geigftsrdi
+//
+LOCUS       d802dcbeb5cc10aa7c6e1d5b9275a389         205 aa            linear   UNA 12-NOV-2013
+DEFINITION  d802dcbeb5cc10aa7c6e1d5b9275a389.
+ACCESSION   urn.local...1387533899641.608
+VERSION     urn.local...1387533899641.608
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 mvvvgeglad rhfrllarai pedqqelerl aamegrhasn fvgcgrnlgv kpdvglarql
+       61 faplhalfle rdragdlagc lviqglvvec favaayrhyl pvadayaapi taaviadege
+      121 hlgyaehwlr erfaavetsa aaiakralpi tlsilqslta dlqaigmdpi elvasfself
+      181 qqtletigfe ppaarrilag aaaam
+//
+LOCUS       9dc9af19ef09b40c8fc8fe354717c8f3         203 aa            linear   UNA 12-NOV-2013
+DEFINITION  9dc9af19ef09b40c8fc8fe354717c8f3.
+ACCESSION   urn.local...1387533899643.611
+VERSION     urn.local...1387533899643.611
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 yrdaysrina lvivgeglad shfrllagll pedrddlmrl aameghhard fsgcgkqlgi
+       61 rpdlplarrl faplhrlfre avssgdrvsa lviqclives favaayrcyq pvadayaapi
+      121 lqtvlddeae hldygerwla vrfpevaapi aacceravpi vlavlnavra dltaigidpa
+      181 elvgefvgcf qaaiemvgfe prq
+//
+LOCUS       29f1c1b8553cc96eec1a60b02021f2af         125 aa            linear   UNA 12-NOV-2013
+DEFINITION  29f1c1b8553cc96eec1a60b02021f2af.
+ACCESSION   urn.local...1387533899652.630
+VERSION     urn.local...1387533899652.630
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 dfttdsykda ysrinaivie geqeahdnyi siatlipnel deltklakme lkhkrgftac
+       61 grnlgveadm vfakkffskl hgnfqialek gnlttclliq ailieafais ayhvyirvad
+      121 pfakk
+//
+LOCUS       c56ee08d2f085fc47d5fa61b2cd5e5e1         105 aa            linear   UNA 12-NOV-2013
+DEFINITION  c56ee08d2f085fc47d5fa61b2cd5e5e1.
+ACCESSION   urn.local...1387533899666.662
+VERSION     urn.local...1387533899666.662
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 aisayhiyip vadpfarkit egvvkdeyth lnygqewlka nfeaskeelf eankanlpli
+       61 rsmledvaad aavlhmeked liedfliayn ealseigfss rdiar
+//
+LOCUS       94a57197ef079c8f5c5ca8cfb107448a          57 aa            linear   UNA 12-NOV-2013
+DEFINITION  94a57197ef079c8f5c5ca8cfb107448a.
+ACCESSION   urn.local...1387533899644.613
+VERSION     urn.local...1387533899644.613
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 eankvnlpli kkmldevaed aqvlamdkee lmeefmiayq dtlleigldn reiarma
+//
+LOCUS       f5fe51f16fe953aa0433c8953833ded5          45 aa            linear   UNA 12-NOV-2013
+DEFINITION  f5fe51f16fe953aa0433c8953833ded5.
+ACCESSION   urn.local...1387533899643.612
+VERSION     urn.local...1387533899643.612
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+ORIGIN      
+        1 mldevaedaq vlamdkeelm eefmiayqdt lleigldnre iarma
+//

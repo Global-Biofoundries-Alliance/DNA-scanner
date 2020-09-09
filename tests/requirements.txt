@@ -1,0 +1,6 @@
+PyYML
+requests
+flask
+biopython
+pysbol
+coverage

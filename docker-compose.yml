@@ -1,0 +1,25 @@
+# Main Docker-compose File for DNA-Scanner
+# Will be extended by docker-compose.override.yml (dev use) or docker-compose.prod.yml (prod use)
+
+version: '3.3'
+
+services:
+    # Backend containing the Python API
+    backend:
+        image: dnabackend:latest
+        container_name: dnabackend
+        build:
+            context: .
+            dockerfile: Dockerfile-backend
+        restart: unless-stopped
+
+    # Frontend containing the Web-App
+    frontend:
+        image: dnafrontend:latest
+        container_name: dnafrontend
+        build:
+            context: .
+            dockerfile: Dockerfile-frontend
+        ports:
+            - "80:80"
+        restart: unless-stopped

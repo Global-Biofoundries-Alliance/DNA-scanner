@@ -1,0 +1,74 @@
+LOCUS       Pcumtae_improved        1596 bp    DNA     linear   UNA 12-NOV-2019
+DEFINITION  basierend auf Addgene plasmid #119872 & DOI:
+            0.1038/s41589-018-0168-3.
+ACCESSION   urn.local.sih.41-b6s3gbj
+VERSION     urn.local.sih.41-b6s3gbj
+KEYWORDS    .
+SOURCE      
+  ORGANISM  
+            .
+FEATURES             Location/Qualifiers
+     gene            complement(1..612)
+     misc_difference 100..102
+     misc_difference 283..285
+     promoter        complement(613..715)
+     terminator      716..768
+     promoter        769..858
+     misc_feature    769..800
+     misc_feature    827..858
+     RBS             859..882
+     CDS             883..>906
+                     /locus_tag="U712_RS11795"
+                     /old_locus_tag="U712_12075"
+                     /inference="COORDINATES: similar to AA
+                     sequence:RefSeq:NP_390353.1"
+                     /note="Derived by automated computational analysis using
+                     gene prediction method: Protein Homology."
+                     /codon_start=1
+                     /transl_table=11
+                     /product="ComG operon protein 1"
+                     /protein_id="WP_004399124.1"
+                     /db_xref="GI:490533953"
+                     /translation="MDSIEKVSKNLIEEAYLTKASDIHIVPRERDAIIHFRVDHALLK
+                     KRDMKKEECVRLISHFKFLSAMDIGERRKPQNGSLTLKLKEGNVHLRMSTLPTINEES
+                     LVIRVMPQYNIPSIDKLSLFPKTGATLLSFLKHSHGMLIFTGPTGSGKTTTLYSLVQY
+                     AKKHFNRNIVTLEDPVETRDEDVLQVQVNEKAGVTYSAGLKAILRHDPDMIILGEIRD
+                     AETAEIAVRAAMTGHLVLTSLHTRDAKGAIYRLLEFGINMNEIEQTVIAIAAQRLVDL
+                     ACPFCENGCSSVYCRQSRNTRRASVYELLYGKNLQQCIQEAKGNHANYQYQTLRQIIR
+                     KGIALGYLTTNNYDRWVYHEKD"
+                     /note="Geneious type: gene"
+     gene            <907..1596
+     misc_feature    complement(949..965)
+                     /note="Geneious type: primer_bind_reverse"
+     misc_feature    complement(1234..1251)
+                     /note="Geneious type: primer_bind_reverse"
+     primer_bind     1502..1520
+ORIGIN      
+        1 ctagcgcttg aatttcgcgt accgctctcg cgcaatttcg agtgtcgagt tcctgacacg
+       61 ctcaaagcgt tctttgtcct tctgccatag gctacgaacc acaagcccac gcaccgaatt
+      121 gaatatcaac caaaggatat cttctgcatc atcacgcgaa agaccacggc tcaccagaac
+      181 accaagccac atatcctcga cgacaaaccg attcctctct accgtgcgct gaataccctc
+      241 gcgtaacgct gggtcccggt cggcagccac aatcaaatca agtccgatag agaagtcatc
+      301 gtcgaggaaa aattcggcgg cgtcgtccag catttgctgg atgacgtcat cctctggctt
+      361 caatttcgct aatcgagccc gactgcgttc ggtgatctgt tcgtaaagcc attcaaaagt
+      421 ggcaagcaga agctcaagct ttgtcgggaa atgatggctc tgcgctcctc tggagacacc
+      481 agcagcaccg ggcacatctg cgatccggaa tcccgcgtaa cctttttccc gtaaaacccc
+      541 cagggccgct gcaatcaact tgccctgggt ctccattgcg cgctctgcct gtgttcttct
+      601 ctttggactc atacaaatct ccccctttgt tgtttctaca tatattgtaa acgctttatt
+      661 taaaaaatcc aaatatttaa actttaattt taagcacatg ggatctttga gaagtccaat
+      721 tattgaaggc ctccctaacg gggggccttt ttttgtttct ggtctcccaa caaacagaca
+      781 atctggtctg tttgtattat ggaaaatttt tctgtataat agattcaaca aacagacaat
+      841 ctggtctgtt tgtattatga ttaactaata aggaggacaa acttggattc aatagaaaag
+      901 gtaagcgagc tgattaagga gaacatgcac atgaagctgt acatggaggg caccgtgaac
+      961 aaccaccact tcaagtgcac atccgagggc gaaggcaagc cctacgaggg cacccagacc
+     1021 atgagaatca aggccgtcga gggcggccct ctccccttcg ccttcgacat cctggctacc
+     1081 agcttcatgt acggcagcaa aaccttcatc aaccacaccc agggcatccc cgacttcttt
+     1141 aagcagtcct tccctgaggg cttcacatgg gagagagtca ccacatacga agacgggggc
+     1201 gtgctgaccg ctacccagga caccagcctc caggacggct gcctcatcta caacgtcaag
+     1261 atcagagggg tgaacttccc atccaacggc cctgtgatgc agaagaaaac actcggctgg
+     1321 gaggcctcca ccgagaccct gtaccccgct gacggcggcc tggaaggcag agccgacatg
+     1381 gccctgaagc tcgtgggcgg gggccacctg atctgcaact tgaagaccac atacagatcc
+     1441 aagaaacccg ctaagaacct caagatgccc ggcgtctact atgtggacag aagactggaa
+     1501 agaatcaagg aggccgacaa agagacctac gtcgagcagc acgaggtggc tgtggccaga
+     1561 tactgcgacc tccctagcaa actggggcac agatga
+//

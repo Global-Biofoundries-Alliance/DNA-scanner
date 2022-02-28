@@ -2,6 +2,16 @@
 
 Web-application for rapid checking of multiple-DNA sequences for feasibility and time of DNA synthesis with multiple vendors.
 
+If you find this work useful, please consider citing the corresponding publication:
+
+DNA Scanner: a web application for comparing DNA synthesis feasibility, price and turnaround time across vendors
+
+Gledon Doçi, Lukas Fuchs, Yash Kharbanda, Paul Schickling, Valentin Zulkower, Nathan Hillson, Ernst Oberortner, Neil Swainston, Johannes Kabisch
+
+Synthetic Biology, Volume 5, Issue 1, 2020, ysaa011
+
+https://doi.org/10.1093/synbio/ysaa011
+
 # Installation
 
 ## First steps

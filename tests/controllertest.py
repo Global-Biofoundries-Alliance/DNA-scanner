@@ -1,14 +1,22 @@
-import unittest
+'''
+(c) Global Biofoundries Alliance 2020
+
+Licensed under the MIT License.
+
+To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
+'''
 from itertools import combinations
+from random import random
 from sys import maxsize
+import unittest
+
+from flask import json
 
 from Controller.app import app
 from Controller.configurator import YmlConfigurator as Configurator
 from Controller.session import InMemorySessionManager
 from Pinger.Entities import SequenceInformation, SequenceVendorOffers, Currency
 from Pinger.Pinger import CompositePinger
-from flask import json
-from random import random
 import random as rand
 
 
@@ -58,7 +66,8 @@ class TestController(unittest.TestCase):
 
         for i in range(self.iterations):
             handle = open(self.sequence_path, 'rb')
-            response = self.client.post('/api/upload', content_type='multipart/form-data', data={'seqfile': handle})
+            response = self.client.post(
+                '/api/upload', content_type='multipart/form-data', data={'seqfile': handle})
             self.assertIn(b"upload successful", response.data)
 
     def test_filter_endpoint(self) -> None:
@@ -67,39 +76,48 @@ class TestController(unittest.TestCase):
         for i in range(self.iterations):
             # prepare session
             handle = open(self.sequence_path, 'rb')
-            self.client.post('/api/upload', content_type='multipart/form-data', data={'seqfile': handle})
+            self.client.post(
+                '/api/upload', content_type='multipart/form-data', data={'seqfile': handle})
 
-            response = self.client.post('/api/filter', data='{"banana": "neigh"}')
+            response = self.client.post(
+                '/api/filter', data='{"banana": "neigh"}')
             self.assertIn("error", response.get_json())
 
             filter = '{filter: {}}'
             response = self.client.post('/api/filter', data={"filter": filter})
-            self.assertIn(b'Invalid filter request: Data must be in JSON format', response.data)
+            self.assertIn(
+                b'Invalid filter request: Data must be in JSON format', response.data)
 
             # test filtering vendors
             for r in range(1, len(self.vendors)):
                 for vendorTuple in combinations(self.vendors, r):
                     vendors = list(vendorTuple)
                     filter = {
-                        "filter": {"vendors": vendors, "price": [0, 100], "deliveryDays": 50, "preselectByPrice": True, \
+                        "filter": {"vendors": vendors, "price": [0, 100], "deliveryDays": 50, "preselectByPrice": True,
                                    "preselectByDeliveryDays": False}}
-                    response = self.client.post('/api/filter', content_type='application/json', data=json.dumps(filter))
-                    self.assertIn(b"filter submission successful", response.data)
+                    response = self.client.post(
+                        '/api/filter', content_type='application/json', data=json.dumps(filter))
+                    self.assertIn(
+                        b"filter submission successful", response.data)
                     response_json = self.client.post('/api/results', content_type='multipart/form-data',
                                                      data={'size': 1000, 'offset': 0}).get_json()
 
                     for res in response_json["result"]:
                         for vendor in res["vendors"]:
                             # Data present implies relevant vendor
-                            self.assertTrue(not vendor["offers"] or vendor["key"] in vendors)
+                            self.assertTrue(
+                                not vendor["offers"] or vendor["key"] in vendors)
 
                     # test filtering vendors with redundant and invalid ones
-                    tainted_vendors = vendors + vendors + [-872150987209, 666, -1]
+                    tainted_vendors = vendors + \
+                        vendors + [-872150987209, 666, -1]
                     filter = {"filter": {"vendors": tainted_vendors, "price": [0, 100], "deliveryDays": 50,
-                                         "preselectByPrice": True, \
+                                         "preselectByPrice": True,
                                          "preselectByDeliveryDays": False}}
-                    response = self.client.post('/api/filter', content_type='application/json', data=json.dumps(filter))
-                    self.assertIn(b"filter submission successful", response.data)
+                    response = self.client.post(
+                        '/api/filter', content_type='application/json', data=json.dumps(filter))
+                    self.assertIn(
+                        b"filter submission successful", response.data)
                     response_json = self.client.post('/api/results', content_type='multipart/form-data',
                                                      data={'size': 1000, 'offset': 0}).get_json()
 
@@ -111,23 +129,26 @@ class TestController(unittest.TestCase):
 
             # test filtering by price
             filter = {
-                "filter": {"vendors": [0, 1, 2], "price": [20, 50], "deliveryDays": 50, "preselectByPrice": True, \
+                "filter": {"vendors": [0, 1, 2], "price": [20, 50], "deliveryDays": 50, "preselectByPrice": True,
                            "preselectByDeliveryDays": False}}
-            response = self.client.post('/api/filter', content_type='application/json', data=json.dumps(filter))
+            response = self.client.post(
+                '/api/filter', content_type='application/json', data=json.dumps(filter))
             self.assertIn(b"filter submission successful", response.data)
             response_json = self.client.post('/api/results', content_type='multipart/form-data',
                                              data={'size': 1000, 'offset': 0}).get_json()
             for res in response_json["result"]:
                 for vendor in res["vendors"]:
                     for offer in vendor["offers"]:
-                        if (offer["price"] >= 0.0):  # negative values are placeholders and must stay in
+                        # negative values are placeholders and must stay in
+                        if (offer["price"] >= 0.0):
                             self.assertLessEqual(offer["price"], 50)
                             self.assertGreaterEqual(offer["price"], 20)
 
             # test filtering by delivery days
-            filter = {"filter": {"vendors": [0, 1, 2], "price": [0, 100], "deliveryDays": 5, "preselectByPrice": True, \
+            filter = {"filter": {"vendors": [0, 1, 2], "price": [0, 100], "deliveryDays": 5, "preselectByPrice": True,
                                  "preselectByDeliveryDays": False}}
-            response = self.client.post('/api/filter', content_type='application/json', data=json.dumps(filter))
+            response = self.client.post(
+                '/api/filter', content_type='application/json', data=json.dumps(filter))
             self.assertIn(b"filter submission successful", response.data)
             response_json = self.client.post('/api/results', content_type='multipart/form-data',
                                              data={'size': 1000, 'offset': 0}).get_json()
@@ -139,7 +160,8 @@ class TestController(unittest.TestCase):
     def test_results_endpoint(self) -> None:
         print("\nTesting /results endpoint")
 
-        # Sequence names and IDs that have already occured; Used to ensure unique names IDs
+        # Sequence names and IDs that have already occured; Used to ensure
+        # unique names IDs
         sequenceNames = []
         sequenceIDs = []
 
@@ -152,7 +174,8 @@ class TestController(unittest.TestCase):
             searchResult = self.client.post('/api/results', content_type='multipart/form-data',
                                             data={'size': 1000, 'offset': 0}).get_json()
 
-            self.assertNotIn("error", searchResult, "Results endpoint returned error: " + str(searchResult))
+            self.assertNotIn(
+                "error", searchResult, "Results endpoint returned error: " + str(searchResult))
 
             expectedCount = 0
             self.assertIn("size", searchResult.keys())
@@ -161,7 +184,8 @@ class TestController(unittest.TestCase):
             self.assertIn("result", searchResult.keys())
             self.assertIn("globalMessage", searchResult.keys())
 
-            # AdvancedMockPingers are used for testing so there should be warning messages present.
+            # AdvancedMockPingers are used for testing so there should be
+            # warning messages present.
             self.assertTrue(searchResult["globalMessage"])
 
             self.assertIn("vendorMessage", searchResult.keys())
@@ -183,8 +207,10 @@ class TestController(unittest.TestCase):
                 self.assertIn("length", result["sequenceInformation"].keys())
 
                 # Test uniqueness of names and IDs
-                self.assertNotIn(result["sequenceInformation"]["name"], sequenceNames)
-                self.assertNotIn(result["sequenceInformation"]["id"], sequenceIDs)
+                self.assertNotIn(
+                    result["sequenceInformation"]["name"], sequenceNames)
+                self.assertNotIn(
+                    result["sequenceInformation"]["id"], sequenceIDs)
                 sequenceNames.append(result["sequenceInformation"]["name"])
                 sequenceNames.append(result["sequenceInformation"]["name"])
                 sequenceIDs.append(result["sequenceInformation"]["id"])
@@ -199,7 +225,8 @@ class TestController(unittest.TestCase):
                     for offer in vendor["offers"]:
                         self.assertIn("price", offer.keys())
                         self.assertIn("currency", offer.keys())
-                        self.assertIn(offer["currency"], [currency.symbol() for currency in Currency])
+                        self.assertIn(offer["currency"], [
+                                      currency.symbol() for currency in Currency])
                         self.assertIn("turnoverTime", offer.keys())
                         self.assertIn("offerMessage", offer.keys())
                         for message in offer["offerMessage"]:
@@ -232,15 +259,19 @@ class TestController(unittest.TestCase):
         for i in range(self.iterations):
             # upload file
             handle = open(self.sequence_path, 'rb')
-            response = self.client.post('/api/upload', content_type='multipart/form-data', data={'seqfile': handle})
+            response = self.client.post(
+                '/api/upload', content_type='multipart/form-data', data={'seqfile': handle})
             self.assertIn(b"upload successful", response.data)
 
             filter = {"filter": {"vendors": [1, 2], "price": [0, 100], "deliveryDays": 100, "preselectByPrice": True,
                                  "preselectByDeliveryDays": False}}
-            filter_response = self.client.post('/api/filter', content_type='application/json', data=json.dumps(filter))
-            self.assertIn(b"filter submission successful", filter_response.data)
+            filter_response = self.client.post(
+                '/api/filter', content_type='application/json', data=json.dumps(filter))
+            self.assertIn(b"filter submission successful",
+                          filter_response.data)
 
-            # Test consistency between subsequent query results without filter change
+            # Test consistency between subsequent query results without filter
+            # change
             response = self.client.post('/api/results', content_type='multipart/form-data',
                                         data={'size': 1000, 'offset': 0})
             response2 = self.client.post('/api/results', content_type='multipart/form-data',
@@ -251,8 +282,10 @@ class TestController(unittest.TestCase):
             # ...and after identical filter submission
             filter = {"filter": {"vendors": [1, 2], "price": [0, 100], "deliveryDays": 100, "preselectByPrice": True,
                                  "preselectByDeliveryDays": False}}
-            filter_response = self.client.post('/api/filter', content_type='application/json', data=json.dumps(filter))
-            self.assertIn(b"filter submission successful", filter_response.data)
+            filter_response = self.client.post(
+                '/api/filter', content_type='application/json', data=json.dumps(filter))
+            self.assertIn(b"filter submission successful",
+                          filter_response.data)
             response2 = self.client.post('/api/results', content_type='multipart/form-data',
                                          data={'size': 1000, 'offset': 0})
             self.assertEqual(response.data, response2.data,
@@ -266,19 +299,23 @@ class TestController(unittest.TestCase):
                                    "preselectByDeliveryDays": False}}
                     filter_response = self.client.post('/api/filter', content_type='application/json',
                                                        data=json.dumps(filter))
-                    self.assertIn(b"filter submission successful", filter_response.data)
+                    self.assertIn(b"filter submission successful",
+                                  filter_response.data)
 
-                    # Test consistency between subsequent query results without filter change
+                    # Test consistency between subsequent query results without
+                    # filter change
                     response = self.client.post('/api/results', content_type='multipart/form-data',
                                                 data={'size': 1000, 'offset': 0})
                     responseDB[vendors] = response.data
 
-            # Try to confuse the server with empty, full and invalid vendor lists
+            # Try to confuse the server with empty, full and invalid vendor
+            # lists
             filter = {"filter": {"vendors": [], "price": [0, 100], "deliveryDays": 100, "preselectByPrice": True,
                                  "preselectByDeliveryDays": False}}
             filter_response = self.client.post('/api/filter', content_type='application/json',
                                                data=json.dumps(filter))
-            self.assertIn(b"filter submission successful", filter_response.data)
+            self.assertIn(b"filter submission successful",
+                          filter_response.data)
             response = self.client.post('/api/results', content_type='multipart/form-data',
                                         data={'size': 1000, 'offset': 0})
             filter = {"filter": {"vendors": [0, 1, 2], "price": [0, 100], "deliveryDays": 100,
@@ -286,14 +323,16 @@ class TestController(unittest.TestCase):
                                  "preselectByDeliveryDays": False}}
             filter_response = self.client.post('/api/filter', content_type='application/json',
                                                data=json.dumps(filter))
-            self.assertIn(b"filter submission successful", filter_response.data)
+            self.assertIn(b"filter submission successful",
+                          filter_response.data)
             response = self.client.post('/api/results', content_type='multipart/form-data',
                                         data={'size': 1000, 'offset': 0})
             filter = {"filter": {"vendors": [666, -42, 0, 0, 0, 0], "price": [0, 100], "deliveryDays": 100,
                                  "preselectByPrice": True, "preselectByDeliveryDays": False}}
             filter_response = self.client.post('/api/filter', content_type='application/json',
                                                data=json.dumps(filter))
-            self.assertIn(b"filter submission successful", filter_response.data)
+            self.assertIn(b"filter submission successful",
+                          filter_response.data)
             response = self.client.post('/api/results', content_type='multipart/form-data',
                                         data={'size': 1000, 'offset': 0})
 
@@ -305,9 +344,11 @@ class TestController(unittest.TestCase):
                                    "preselectByDeliveryDays": False}}
                     filter_response = self.client.post('/api/filter', content_type='application/json',
                                                        data=json.dumps(filter))
-                    self.assertIn(b"filter submission successful", filter_response.data)
+                    self.assertIn(b"filter submission successful",
+                                  filter_response.data)
 
-                    # Test consistency between subsequent query results without filter change
+                    # Test consistency between subsequent query results without
+                    # filter change
                     response = self.client.post('/api/results', content_type='multipart/form-data',
                                                 data={'size': 1000, 'offset': 0})
                     self.assertEqual(responseDB[vendors], response.data,
@@ -320,7 +361,8 @@ class TestController(unittest.TestCase):
         for i in range(self.iterations):
             # upload file
             handle = open(self.sequence_path, 'rb')
-            response = self.client.post('/api/upload', content_type='multipart/form-data', data={'seqfile': handle})
+            response = self.client.post(
+                '/api/upload', content_type='multipart/form-data', data={'seqfile': handle})
             self.assertIn(b"upload successful", response.data)
 
             # test sorting by price
@@ -330,7 +372,8 @@ class TestController(unittest.TestCase):
                            "preselectByDeliveryDays": False}}
             filter_response = self.client.post('/api/filter', content_type='application/json',
                                                data=json.dumps(filter))
-            self.assertIn(b"filter submission successful", filter_response.data)
+            self.assertIn(b"filter submission successful",
+                          filter_response.data)
 
             response_json = self.client.post('/api/results', content_type='multipart/form-data',
                                              data={'size': 1000, 'offset': 0}).get_json()
@@ -339,11 +382,13 @@ class TestController(unittest.TestCase):
             selector = ("price", "turnoverTime")
 
             for seqoffer in response_json["result"]:
-                # First create a starting condition that will cause a fail and will be overwritten in any sane scenario
+                # First create a starting condition that will cause a fail and
+                # will be overwritten in any sane scenario
                 for vendoffers in seqoffer["vendors"]:
                     prev_offer = (0, 0)
                     for offer in vendoffers["offers"]:
-                        offer_criteria = (offer[selector[0]] % maxsize, offer[selector[1]] % maxsize)
+                        offer_criteria = (
+                            offer[selector[0]] % maxsize, offer[selector[1]] % maxsize)
                         if offer["offerMessage"]:
                             offer_criteria = (maxsize, maxsize)
                         self.assertLessEqual(prev_offer, offer_criteria,
@@ -357,7 +402,8 @@ class TestController(unittest.TestCase):
                            "preselectByDeliveryDays": True}}
             filter_response = self.client.post('/api/filter', content_type='application/json',
                                                data=json.dumps(filter))
-            self.assertIn(b"filter submission successful", filter_response.data)
+            self.assertIn(b"filter submission successful",
+                          filter_response.data)
             response_json = self.client.post('/api/results', content_type='multipart/form-data',
                                              data={'size': 1000, 'offset': 0}).get_json()
 
@@ -365,11 +411,13 @@ class TestController(unittest.TestCase):
             selector = ("turnoverTime", "price")
 
             for seqoffer in response_json["result"]:
-                # First create a starting condition that will cause a fail and will be overwritten in any sane scenario
+                # First create a starting condition that will cause a fail and
+                # will be overwritten in any sane scenario
                 for vendoffers in seqoffer["vendors"]:
                     prev_offer = (0, 0)
                     for offer in vendoffers["offers"]:
-                        offer_criteria = (offer[selector[0]] % maxsize, offer[selector[1]] % maxsize)
+                        offer_criteria = (
+                            offer[selector[0]] % maxsize, offer[selector[1]] % maxsize)
                         if offer["offerMessage"]:
                             offer_criteria = (maxsize, maxsize)
                         self.assertLessEqual(prev_offer, offer_criteria,
@@ -382,7 +430,8 @@ class TestController(unittest.TestCase):
         for i in range(self.iterations):
             # upload file
             handle = open(self.sequence_path, 'rb')
-            response = self.client.post('/api/upload', content_type='multipart/form-data', data={'seqfile': handle})
+            response = self.client.post(
+                '/api/upload', content_type='multipart/form-data', data={'seqfile': handle})
             self.assertIn(b"upload successful", response.data)
 
             # Test preselection by price
@@ -391,18 +440,22 @@ class TestController(unittest.TestCase):
                            "preselectByDeliveryDays": False}}
             filter_response = self.client.post('/api/filter', content_type='application/json',
                                                data=json.dumps(filter))
-            self.assertIn(b"filter submission successful", filter_response.data)
+            self.assertIn(b"filter submission successful",
+                          filter_response.data)
             response_json = self.client.post('/api/results', content_type='multipart/form-data',
                                              data={'size': 1000, 'offset': 0}).get_json()
 
             for seqoffer in response_json["result"]:
-                # First create a starting condition that will cause a fail and will be overwritten in any sane scenario
+                # First create a starting condition that will cause a fail and
+                # will be overwritten in any sane scenario
                 best = maxsize - 2
                 best_secondary = maxsize - 2
                 selected = maxsize - 1
                 selected_secondary = maxsize - 1
                 first_time = True
-                offersPresent = False  # Since these are fuzzing tests there is no guarantee that there will be offers to preselect
+                # Since these are fuzzing tests there is no guarantee that
+                # there will be offers to preselect
+                offersPresent = False
                 for vendoffers in seqoffer["vendors"]:
                     for offer in vendoffers["offers"]:
                         offersPresent = True
@@ -418,8 +471,11 @@ class TestController(unittest.TestCase):
                             selected = offer["price"]
                             selected_secondary = offer["turnoverTime"]
 
-                if offersPresent and selected != maxsize - 1:  # It is possible that nothing is selected due to everything being negative
-                    self.assertEqual(selected, best, "Preselection failed for:" + str(seqoffer["vendors"]))
+                # It is possible that nothing is selected due to everything
+                # being negative
+                if offersPresent and selected != maxsize - 1:
+                    self.assertEqual(
+                        selected, best, "Preselection failed for:" + str(seqoffer["vendors"]))
                     self.assertGreaterEqual(selected, 0)
                     self.assertEqual(selected_secondary, best_secondary,
                                      "Preselection failed for:" + str(seqoffer["vendors"]))
@@ -431,18 +487,22 @@ class TestController(unittest.TestCase):
                            "preselectByDeliveryDays": True}}
             filter_response = self.client.post('/api/filter', content_type='application/json',
                                                data=json.dumps(filter))
-            self.assertIn(b"filter submission successful", filter_response.data)
+            self.assertIn(b"filter submission successful",
+                          filter_response.data)
             response_json = self.client.post('/api/results', content_type='multipart/form-data',
                                              data={'size': 1000, 'offset': 0}).get_json()
 
             for seqoffer in response_json["result"]:
-                # First create a starting condition that will cause a fail and will be overwritten in any sane scenario
+                # First create a starting condition that will cause a fail and
+                # will be overwritten in any sane scenario
                 best = maxsize - 2
                 best_secondary = maxsize - 2
                 selected = maxsize - 1
                 selected_secondary = maxsize - 1
                 first_time = True
-                offersPresent = False  # Since these are fuzzing tests there is no guarantee that there will be offers to preselect
+                # Since these are fuzzing tests there is no guarantee that
+                # there will be offers to preselect
+                offersPresent = False
                 for vendoffers in seqoffer["vendors"]:
                     for offer in vendoffers["offers"]:
                         offersPresent = True
@@ -458,8 +518,11 @@ class TestController(unittest.TestCase):
                             selected = offer["turnoverTime"]
                             selected_secondary = offer["price"]
                         first_time = False
-                if offersPresent and selected != maxsize - 1:  # It is possible that nothing is selected due to everything being negative
-                    self.assertEqual(selected, best, "Preselection failed for:" + str(seqoffer["vendors"]))
+                # It is possible that nothing is selected due to everything
+                # being negative
+                if offersPresent and selected != maxsize - 1:
+                    self.assertEqual(
+                        selected, best, "Preselection failed for:" + str(seqoffer["vendors"]))
                     self.assertGreaterEqual(selected, 0)
                     self.assertEqual(selected_secondary, best_secondary,
                                      "Preselection failed for:" + str(seqoffer["vendors"]))
@@ -476,7 +539,8 @@ class TestController(unittest.TestCase):
         for i in range(0, n_sessions):
             session = InMemorySessionManager(i)
             session.storePinger(CompositePinger())
-            session.storeSequences([SequenceInformation(str(i), str(i), str(i))])
+            session.storeSequences(
+                [SequenceInformation(str(i), str(i), str(i))])
             session.storeFilter({"vendors": [i], "price": [0, i], "deliveryDays": i,
                                  "preselectByPrice": i % 2 == 0,
                                  "preselectByDeliveryDays": i % 2 == 1})
@@ -491,13 +555,15 @@ class TestController(unittest.TestCase):
 
             sessions.append(session)
 
-        # Check if the session manager can correctly tell whether an ID is already taken
+        # Check if the session manager can correctly tell whether an ID is
+        # already taken
         for i in range(0, n_sessions):
             session = InMemorySessionManager(0)
             self.assertTrue(session.hasSession(i))
             self.assertFalse(session.hasSession(n_sessions + i + 1))
 
-        # Check if the values stored in the sessions are still the same as in the reference sessions
+        # Check if the values stored in the sessions are still the same as in
+        # the reference sessions
         for i in range(0, n_sessions):
             ref_session = sessions[i]
             session = InMemorySessionManager(i)
@@ -505,7 +571,8 @@ class TestController(unittest.TestCase):
             self.assertEqual(ref_session.loadPinger(), session.loadPinger())
 
             self.assertTrue(session.loadSequences())
-            self.assertEqual(ref_session.loadSequences(), session.loadSequences())
+            self.assertEqual(ref_session.loadSequences(),
+                             session.loadSequences())
 
             self.assertTrue(session.loadFilter())
             self.assertEqual(ref_session.loadFilter(), session.loadFilter())
@@ -513,9 +580,11 @@ class TestController(unittest.TestCase):
             self.assertEqual(ref_session.loadResults(), session.loadResults())
 
             self.assertTrue(session.loadSearchedVendors())
-            self.assertEqual(ref_session.loadSearchedVendors(), session.loadSearchedVendors())
+            self.assertEqual(ref_session.loadSearchedVendors(),
+                             session.loadSearchedVendors())
 
-        # Check if the values stored in the sessions are actually the ones intended
+        # Check if the values stored in the sessions are actually the ones
+        # intended
         for i in range(0, n_sessions):
             session = InMemorySessionManager(i)
 
@@ -529,7 +598,8 @@ class TestController(unittest.TestCase):
                                       "preselectByPrice": i % 2 == 0,
                                       "preselectByDeliveryDays": i % 2 == 1})
 
-            # The offers are a bit more elaborate since it was i encoded in binary
+            # The offers are a bit more elaborate since it was i encoded in
+            # binary
             seqoffers = []
             shifter = i
             while shifter:
@@ -554,7 +624,8 @@ class TestController(unittest.TestCase):
         for iteration in range(self.iterations):
             # upload file
             handle = open(self.sequence_path, 'rb')
-            response = self.client.post('/api/upload', content_type='multipart/form-data', data={'seqfile': handle})
+            response = self.client.post(
+                '/api/upload', content_type='multipart/form-data', data={'seqfile': handle})
             self.assertIn(b"upload successful", response.data)
 
             # This shouldn't select anything
@@ -563,12 +634,14 @@ class TestController(unittest.TestCase):
                            "preselectByDeliveryDays": False}}
             filter_response = self.client.post('/api/filter', content_type='application/json',
                                                data=json.dumps(filter))
-            self.assertIn(b"filter submission successful", filter_response.data)
+            self.assertIn(b"filter submission successful",
+                          filter_response.data)
             response_json = self.client.post('/api/results', content_type='multipart/form-data',
                                              data={'size': 1000, 'offset': 0}).get_json()
 
             selection = []
-            # Verify that nothing is selected and choose what shall be selected next time at random
+            # Verify that nothing is selected and choose what shall be selected
+            # next time at random
             for sequence in response_json["result"]:
                 for vendor in sequence["vendors"]:
                     for offer in vendor["offers"]:
@@ -588,8 +661,10 @@ class TestController(unittest.TestCase):
             for sequence in response_json["result"]:
                 for vendor in sequence["vendors"]:
                     for offer in vendor["offers"]:
-                        # An offer should be selected if and only if it was in the selection list
-                        self.assertEqual(offer["selected"], offer["key"] in selection)
+                        # An offer should be selected if and only if it was in
+                        # the selection list
+                        self.assertEqual(
+                            offer["selected"], offer["key"] in selection)
 
     def test_available_hosts_endpoint(self):
         print("\nTesting /available_hosts endpoint")
@@ -611,14 +686,16 @@ class TestController(unittest.TestCase):
 
             # upload protein sequence file
             handle = open("examples/low_temp_yeast.gb", 'rb')
-            response = self.client.post('/api/upload', content_type='multipart/form-data', data={'seqfile': handle})
+            response = self.client.post(
+                '/api/upload', content_type='multipart/form-data', data={'seqfile': handle})
             self.assertIn(b"upload successful", response.data)
 
             response_json = self.client.post('/api/results', content_type='multipart/form-data',
                                              data={'size': 1000, 'offset': 0}).get_json()
 
             for sequence in response_json["result"]:
-                self.assertGreater(sequence["sequenceInformation"]["length"], 0)
+                self.assertGreater(
+                    sequence["sequenceInformation"]["length"], 0)
 
     def test_order_endpoint(self) -> None:
         print("\nTesting /order endpoint")
@@ -632,7 +709,8 @@ class TestController(unittest.TestCase):
             searchResult = self.client.post('/api/results', content_type='multipart/form-data',
                                             data={'size': 1000, 'offset': 0}).get_json()
 
-            self.assertNotIn("error", searchResult, "Results endpoint returned error: " + str(searchResult))
+            self.assertNotIn(
+                "error", searchResult, "Results endpoint returned error: " + str(searchResult))
 
             offerkeys = []
 
@@ -641,7 +719,8 @@ class TestController(unittest.TestCase):
                     for offer in vendor["offers"]:
                         offerkeys.append(offer["key"])
 
-            orderkeys = rand.sample(offerkeys, rand.randint(0, len(offerkeys) - 1))
+            orderkeys = rand.sample(
+                offerkeys, rand.randint(0, len(offerkeys) - 1))
             response = self.client.post("/api/order", content_type="application/json",
                                         data=json.dumps({"offers": orderkeys})).get_json()
 

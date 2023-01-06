@@ -1,3 +1,10 @@
+'''
+(c) Global Biofoundries Alliance 2020
+
+Licensed under the MIT License.
+
+To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
+'''
 import unittest
 
 from Pinger import Entities
@@ -6,6 +13,8 @@ from Pinger import Entities
 #   Tests for the following files:
 #       Backend/Pinger/Entities.py
 #
+
+
 class TestEntities(unittest.TestCase):
 
     name = "Entities test"
@@ -45,6 +54,7 @@ class TestEntities(unittest.TestCase):
             self.assertFalse(key in keys)
             # add key to list
             keys.append(key)
+
 
 if __name__ == '__main__':
     unittest.main()
